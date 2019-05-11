@@ -1,2 +1,2 @@
 # OpenEmu-Shaders
-Shader framework for the OpenEmu app
+OpenEmuShaders is a framework for processing a set of shader files

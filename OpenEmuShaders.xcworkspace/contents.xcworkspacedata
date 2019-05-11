@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "container:OpenEmuShaders.xcodeproj">
+   </FileRef>
+   <Group
+      location = "container:"
+      name = "Dependencies">
+      <FileRef
+         location = "group:build/SPIRV-Cross/SPIRV-Cross.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:build/glslang/glslang.xcodeproj">
+      </FileRef>
+   </Group>
+</Workspace>

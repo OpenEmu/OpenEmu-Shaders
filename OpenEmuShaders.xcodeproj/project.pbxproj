@@ -1,0 +1,735 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		05EEE342227CC35D007D011B /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; };
+		05EEE347227CC35D007D011B /* OpenEmuShadersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05EEE346227CC35D007D011B /* OpenEmuShadersTests.m */; };
+		05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE33B227CC35D007D011B /* OpenEmuShaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		05EEE3A1227D5DF4007D011B /* SlangShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE39F227D5DF4007D011B /* SlangShader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		05EEE3AA227D625F007D011B /* SlangShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 05EEE3A0227D5DF4007D011B /* SlangShader.m */; };
+		05EEE3AC227D6904007D011B /* SlangShaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05EEE3AB227D6904007D011B /* SlangShaderTests.m */; };
+		05F5BAE02286611B004D713C /* libglslang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F5BACC22866107004D713C /* libglslang.a */; };
+		05F5BAE12286611B004D713C /* libOGLCompiler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F5BAC422866107004D713C /* libOGLCompiler.a */; };
+		05F5BAE22286611B004D713C /* libOSDependent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F5BAC622866107004D713C /* libOSDependent.a */; };
+		05F5BAE32286611B004D713C /* libspirv-cross-c.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F5BAD92286610D004D713C /* libspirv-cross-c.a */; };
+		05F5BAE42286611B004D713C /* libspirv-cross-core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F5BADB2286610D004D713C /* libspirv-cross-core.a */; };
+		05F5BAE52286611B004D713C /* libspirv-cross-glsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F5BADD2286610D004D713C /* libspirv-cross-glsl.a */; };
+		05F5BAE62286611B004D713C /* libspirv-cross-msl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F5BADF2286610D004D713C /* libspirv-cross-msl.a */; };
+		05F5BAE72286611B004D713C /* libSPIRV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F5BAC822866107004D713C /* libSPIRV.a */; };
+		A902009F295CE6ED5C8FC8CA /* ShaderReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = A9020B45B7562A79B4BCF645 /* ShaderReflection.h */; };
+		A90202F460BAF6A360430816 /* ShaderParameter.m in Sources */ = {isa = PBXBuildFile; fileRef = A902059DA3654D288F5B29C6 /* ShaderParameter.m */; };
+		A90205F1433179AFFF015F07 /* ShaderReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = A9020642C9363659BECEAAFF /* ShaderReflection.m */; };
+		A90206302FA906B0B42F2CF2 /* ShaderPassSemantics.m in Sources */ = {isa = PBXBuildFile; fileRef = A90206493F90CBEED52108D7 /* ShaderPassSemantics.m */; };
+		A9020805BAF090A04D16722C /* ShaderPassSemantics.h in Headers */ = {isa = PBXBuildFile; fileRef = A9020BF6D6C3253BE8395A68 /* ShaderPassSemantics.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A9020924C3A4D44F352257C2 /* NSScanner+Extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = A90206F34AEC813E8A7A5A0C /* NSScanner+Extensions.h */; };
+		A9020B019FC25D19EBA1984A /* ShaderParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = A90205EA65275F0335ED7B32 /* ShaderParameter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A9020CDAE9B375337B23CB35 /* SlangCompiler.mm in Sources */ = {isa = PBXBuildFile; fileRef = A90202C8B35052F56549FB38 /* SlangCompiler.mm */; };
+		A9020D05FC6DD9399E7EFBC2 /* SlangCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = A90203C72A8A32B7143EB579 /* SlangCompiler.h */; };
+		A9020E4E2EEC079F5BFCC8D7 /* NSScanner+Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = A9020703284BF77C94B9F214 /* NSScanner+Extensions.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		05EEE343227CC35D007D011B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05EEE32F227CC35C007D011B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 05EEE337227CC35C007D011B;
+			remoteInfo = OpenEmuShaders;
+		};
+		05F5BAC322866107004D713C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05F5BAB322866107004D713C /* glslang.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1446902891204830818F73E0;
+			remoteInfo = OGLCompiler;
+		};
+		05F5BAC522866107004D713C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05F5BAB322866107004D713C /* glslang.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B05020CEA5314F2A9906BCC8;
+			remoteInfo = OSDependent;
+		};
+		05F5BAC722866107004D713C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05F5BAB322866107004D713C /* glslang.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E1BC6500050F4D108BD3AD14;
+			remoteInfo = SPIRV;
+		};
+		05F5BAC922866107004D713C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05F5BAB322866107004D713C /* glslang.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1C0AE6449FA54D4AB8446663;
+			remoteInfo = SPVRemapper;
+		};
+		05F5BACB22866107004D713C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05F5BAB322866107004D713C /* glslang.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 934BA60E2CCE4A3E83BB1E6C;
+			remoteInfo = glslang;
+		};
+		05F5BAD82286610D004D713C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05F5BACD2286610D004D713C /* SPIRV-Cross.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 305E7309C4C146A1B8308765;
+			remoteInfo = "spirv-cross-c";
+		};
+		05F5BADA2286610D004D713C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05F5BACD2286610D004D713C /* SPIRV-Cross.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C6ED3E3EDF17453A825B4FB0;
+			remoteInfo = "spirv-cross-core";
+		};
+		05F5BADC2286610D004D713C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05F5BACD2286610D004D713C /* SPIRV-Cross.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E02397A5E4B94798A9557F4E;
+			remoteInfo = "spirv-cross-glsl";
+		};
+		05F5BADE2286610D004D713C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05F5BACD2286610D004D713C /* SPIRV-Cross.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 715DF60F3A9B4BC0A446B62A;
+			remoteInfo = "spirv-cross-msl";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		05EEE338227CC35D007D011B /* OpenEmuShaders.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OpenEmuShaders.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		05EEE33B227CC35D007D011B /* OpenEmuShaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenEmuShaders.h; sourceTree = "<group>"; };
+		05EEE33C227CC35D007D011B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		05EEE341227CC35D007D011B /* OpenEmuShadersTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenEmuShadersTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		05EEE346227CC35D007D011B /* OpenEmuShadersTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OpenEmuShadersTests.m; sourceTree = "<group>"; };
+		05EEE348227CC35D007D011B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		05EEE39F227D5DF4007D011B /* SlangShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlangShader.h; sourceTree = "<group>"; };
+		05EEE3A0227D5DF4007D011B /* SlangShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlangShader.m; sourceTree = "<group>"; };
+		05EEE3AB227D6904007D011B /* SlangShaderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlangShaderTests.m; sourceTree = "<group>"; };
+		05EEE3B7227E9766007D011B /* libglslang.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libglslang.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		05EEE3B9227E9766007D011B /* libOGLCompiler.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOGLCompiler.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		05EEE3BB227E9766007D011B /* libOSDependent.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOSDependent.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		05EEE3BD227E9766007D011B /* libspirv-cross-c.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-c.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		05EEE3BF227E9766007D011B /* libspirv-cross-core.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-core.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		05EEE3C1227E9766007D011B /* libspirv-cross-glsl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-glsl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		05EEE3C3227E9766007D011B /* libspirv-cross-msl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-msl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		05EEE3C5227E9766007D011B /* libSPIRV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSPIRV.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		05F5BAB322866107004D713C /* glslang.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = glslang.xcodeproj; path = 3rdparty/projects/glslang/glslang.xcodeproj; sourceTree = "<group>"; };
+		05F5BACD2286610D004D713C /* SPIRV-Cross.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "SPIRV-Cross.xcodeproj"; path = "3rdparty/projects/SPIRV-Cross/SPIRV-Cross.xcodeproj"; sourceTree = "<group>"; };
+		A90202C8B35052F56549FB38 /* SlangCompiler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SlangCompiler.mm; sourceTree = "<group>"; };
+		A90203C72A8A32B7143EB579 /* SlangCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlangCompiler.h; sourceTree = "<group>"; };
+		A902059DA3654D288F5B29C6 /* ShaderParameter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderParameter.m; sourceTree = "<group>"; };
+		A90205EA65275F0335ED7B32 /* ShaderParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderParameter.h; sourceTree = "<group>"; };
+		A9020642C9363659BECEAAFF /* ShaderReflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderReflection.m; sourceTree = "<group>"; };
+		A90206493F90CBEED52108D7 /* ShaderPassSemantics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderPassSemantics.m; sourceTree = "<group>"; };
+		A90206F34AEC813E8A7A5A0C /* NSScanner+Extensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSScanner+Extensions.h"; sourceTree = "<group>"; };
+		A9020703284BF77C94B9F214 /* NSScanner+Extensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSScanner+Extensions.m"; sourceTree = "<group>"; };
+		A9020B45B7562A79B4BCF645 /* ShaderReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderReflection.h; sourceTree = "<group>"; };
+		A9020BF6D6C3253BE8395A68 /* ShaderPassSemantics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderPassSemantics.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		05EEE335227CC35C007D011B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05F5BAE02286611B004D713C /* libglslang.a in Frameworks */,
+				05F5BAE12286611B004D713C /* libOGLCompiler.a in Frameworks */,
+				05F5BAE22286611B004D713C /* libOSDependent.a in Frameworks */,
+				05F5BAE32286611B004D713C /* libspirv-cross-c.a in Frameworks */,
+				05F5BAE42286611B004D713C /* libspirv-cross-core.a in Frameworks */,
+				05F5BAE52286611B004D713C /* libspirv-cross-glsl.a in Frameworks */,
+				05F5BAE62286611B004D713C /* libspirv-cross-msl.a in Frameworks */,
+				05F5BAE72286611B004D713C /* libSPIRV.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05EEE33E227CC35D007D011B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05EEE342227CC35D007D011B /* OpenEmuShaders.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		05EEE32E227CC35C007D011B = {
+			isa = PBXGroup;
+			children = (
+				05F5BA5422865F2C004D713C /* 3rd Party */,
+				05EEE388227CDA8F007D011B /* Source */,
+				05EEE33A227CC35D007D011B /* OpenEmuShaders */,
+				05EEE345227CC35D007D011B /* OpenEmuShadersTests */,
+				05EEE339227CC35D007D011B /* Products */,
+				05EEE3B6227E9766007D011B /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		05EEE339227CC35D007D011B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				05EEE338227CC35D007D011B /* OpenEmuShaders.framework */,
+				05EEE341227CC35D007D011B /* OpenEmuShadersTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		05EEE33A227CC35D007D011B /* OpenEmuShaders */ = {
+			isa = PBXGroup;
+			children = (
+				05EEE33B227CC35D007D011B /* OpenEmuShaders.h */,
+				05EEE33C227CC35D007D011B /* Info.plist */,
+			);
+			path = OpenEmuShaders;
+			sourceTree = "<group>";
+		};
+		05EEE345227CC35D007D011B /* OpenEmuShadersTests */ = {
+			isa = PBXGroup;
+			children = (
+				05EEE346227CC35D007D011B /* OpenEmuShadersTests.m */,
+				05EEE3AB227D6904007D011B /* SlangShaderTests.m */,
+				05EEE348227CC35D007D011B /* Info.plist */,
+			);
+			path = OpenEmuShadersTests;
+			sourceTree = "<group>";
+		};
+		05EEE388227CDA8F007D011B /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				05EEE39F227D5DF4007D011B /* SlangShader.h */,
+				05EEE3A0227D5DF4007D011B /* SlangShader.m */,
+				A902059DA3654D288F5B29C6 /* ShaderParameter.m */,
+				A90205EA65275F0335ED7B32 /* ShaderParameter.h */,
+				A9020703284BF77C94B9F214 /* NSScanner+Extensions.m */,
+				A90206F34AEC813E8A7A5A0C /* NSScanner+Extensions.h */,
+				A90202C8B35052F56549FB38 /* SlangCompiler.mm */,
+				A90203C72A8A32B7143EB579 /* SlangCompiler.h */,
+				A90206493F90CBEED52108D7 /* ShaderPassSemantics.m */,
+				A9020BF6D6C3253BE8395A68 /* ShaderPassSemantics.h */,
+				A9020642C9363659BECEAAFF /* ShaderReflection.m */,
+				A9020B45B7562A79B4BCF645 /* ShaderReflection.h */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		05EEE3B6227E9766007D011B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				05EEE3B7227E9766007D011B /* libglslang.a */,
+				05EEE3B9227E9766007D011B /* libOGLCompiler.a */,
+				05EEE3BB227E9766007D011B /* libOSDependent.a */,
+				05EEE3BD227E9766007D011B /* libspirv-cross-c.a */,
+				05EEE3BF227E9766007D011B /* libspirv-cross-core.a */,
+				05EEE3C1227E9766007D011B /* libspirv-cross-glsl.a */,
+				05EEE3C3227E9766007D011B /* libspirv-cross-msl.a */,
+				05EEE3C5227E9766007D011B /* libSPIRV.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		05F5BA5422865F2C004D713C /* 3rd Party */ = {
+			isa = PBXGroup;
+			children = (
+				05F5BAB322866107004D713C /* glslang.xcodeproj */,
+				05F5BACD2286610D004D713C /* SPIRV-Cross.xcodeproj */,
+			);
+			name = "3rd Party";
+			sourceTree = "<group>";
+		};
+		05F5BAB422866107004D713C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				05F5BAC422866107004D713C /* libOGLCompiler.a */,
+				05F5BAC622866107004D713C /* libOSDependent.a */,
+				05F5BAC822866107004D713C /* libSPIRV.a */,
+				05F5BACA22866107004D713C /* libSPVRemapper.a */,
+				05F5BACC22866107004D713C /* libglslang.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		05F5BACE2286610D004D713C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				05F5BAD92286610D004D713C /* libspirv-cross-c.a */,
+				05F5BADB2286610D004D713C /* libspirv-cross-core.a */,
+				05F5BADD2286610D004D713C /* libspirv-cross-glsl.a */,
+				05F5BADF2286610D004D713C /* libspirv-cross-msl.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		05EEE333227CC35C007D011B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */,
+				05EEE3A1227D5DF4007D011B /* SlangShader.h in Headers */,
+				A9020B019FC25D19EBA1984A /* ShaderParameter.h in Headers */,
+				A9020924C3A4D44F352257C2 /* NSScanner+Extensions.h in Headers */,
+				A9020D05FC6DD9399E7EFBC2 /* SlangCompiler.h in Headers */,
+				A9020805BAF090A04D16722C /* ShaderPassSemantics.h in Headers */,
+				A902009F295CE6ED5C8FC8CA /* ShaderReflection.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		05EEE337227CC35C007D011B /* OpenEmuShaders */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 05EEE34C227CC35D007D011B /* Build configuration list for PBXNativeTarget "OpenEmuShaders" */;
+			buildPhases = (
+				05EEE333227CC35C007D011B /* Headers */,
+				05EEE334227CC35C007D011B /* Sources */,
+				05EEE335227CC35C007D011B /* Frameworks */,
+				05EEE336227CC35C007D011B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OpenEmuShaders;
+			productName = OpenEmuShaders;
+			productReference = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		05EEE340227CC35D007D011B /* OpenEmuShadersTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 05EEE34F227CC35D007D011B /* Build configuration list for PBXNativeTarget "OpenEmuShadersTests" */;
+			buildPhases = (
+				05EEE33D227CC35D007D011B /* Sources */,
+				05EEE33E227CC35D007D011B /* Frameworks */,
+				05EEE33F227CC35D007D011B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				05EEE344227CC35D007D011B /* PBXTargetDependency */,
+			);
+			name = OpenEmuShadersTests;
+			productName = OpenEmuShadersTests;
+			productReference = 05EEE341227CC35D007D011B /* OpenEmuShadersTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		05EEE32F227CC35C007D011B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1020;
+				LastUpgradeCheck = 1020;
+				ORGANIZATIONNAME = OpenEmu;
+				TargetAttributes = {
+					05EEE337227CC35C007D011B = {
+						CreatedOnToolsVersion = 10.2.1;
+					};
+					05EEE340227CC35D007D011B = {
+						CreatedOnToolsVersion = 10.2.1;
+					};
+				};
+			};
+			buildConfigurationList = 05EEE332227CC35C007D011B /* Build configuration list for PBXProject "OpenEmuShaders" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 05EEE32E227CC35C007D011B;
+			productRefGroup = 05EEE339227CC35D007D011B /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 05F5BAB422866107004D713C /* Products */;
+					ProjectRef = 05F5BAB322866107004D713C /* glslang.xcodeproj */;
+				},
+				{
+					ProductGroup = 05F5BACE2286610D004D713C /* Products */;
+					ProjectRef = 05F5BACD2286610D004D713C /* SPIRV-Cross.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				05EEE337227CC35C007D011B /* OpenEmuShaders */,
+				05EEE340227CC35D007D011B /* OpenEmuShadersTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		05F5BAC422866107004D713C /* libOGLCompiler.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libOGLCompiler.a;
+			remoteRef = 05F5BAC322866107004D713C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		05F5BAC622866107004D713C /* libOSDependent.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libOSDependent.a;
+			remoteRef = 05F5BAC522866107004D713C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		05F5BAC822866107004D713C /* libSPIRV.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSPIRV.a;
+			remoteRef = 05F5BAC722866107004D713C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		05F5BACA22866107004D713C /* libSPVRemapper.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSPVRemapper.a;
+			remoteRef = 05F5BAC922866107004D713C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		05F5BACC22866107004D713C /* libglslang.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libglslang.a;
+			remoteRef = 05F5BACB22866107004D713C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		05F5BAD92286610D004D713C /* libspirv-cross-c.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libspirv-cross-c.a";
+			remoteRef = 05F5BAD82286610D004D713C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		05F5BADB2286610D004D713C /* libspirv-cross-core.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libspirv-cross-core.a";
+			remoteRef = 05F5BADA2286610D004D713C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		05F5BADD2286610D004D713C /* libspirv-cross-glsl.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libspirv-cross-glsl.a";
+			remoteRef = 05F5BADC2286610D004D713C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		05F5BADF2286610D004D713C /* libspirv-cross-msl.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libspirv-cross-msl.a";
+			remoteRef = 05F5BADE2286610D004D713C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		05EEE336227CC35C007D011B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05EEE33F227CC35D007D011B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		05EEE334227CC35C007D011B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05EEE3AA227D625F007D011B /* SlangShader.m in Sources */,
+				A90202F460BAF6A360430816 /* ShaderParameter.m in Sources */,
+				A9020E4E2EEC079F5BFCC8D7 /* NSScanner+Extensions.m in Sources */,
+				A9020CDAE9B375337B23CB35 /* SlangCompiler.mm in Sources */,
+				A90206302FA906B0B42F2CF2 /* ShaderPassSemantics.m in Sources */,
+				A90205F1433179AFFF015F07 /* ShaderReflection.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05EEE33D227CC35D007D011B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05EEE3AC227D6904007D011B /* SlangShaderTests.m in Sources */,
+				05EEE347227CC35D007D011B /* OpenEmuShadersTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		05EEE344227CC35D007D011B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 05EEE337227CC35C007D011B /* OpenEmuShaders */;
+			targetProxy = 05EEE343227CC35D007D011B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		05EEE34A227CC35D007D011B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = (
+					"\"$(SOURCE_ROOT)/3rdparty/glslang\"",
+					"\"$(SOURCE_ROOT)/3rdparty/SPIRV-Cross\"",
+				);
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		05EEE34B227CC35D007D011B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = (
+					"\"$(SOURCE_ROOT)/3rdparty/glslang\"",
+					"\"$(SOURCE_ROOT)/3rdparty/SPIRV-Cross\"",
+				);
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		05EEE34D227CC35D007D011B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 6N425KH923;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = OpenEmuShaders/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShaders;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		05EEE34E227CC35D007D011B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 6N425KH923;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = OpenEmuShaders/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShaders;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		05EEE350227CC35D007D011B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 6N425KH923;
+				INFOPLIST_FILE = OpenEmuShadersTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShadersTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		05EEE351227CC35D007D011B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 6N425KH923;
+				INFOPLIST_FILE = OpenEmuShadersTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShadersTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		05EEE332227CC35C007D011B /* Build configuration list for PBXProject "OpenEmuShaders" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05EEE34A227CC35D007D011B /* Debug */,
+				05EEE34B227CC35D007D011B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		05EEE34C227CC35D007D011B /* Build configuration list for PBXNativeTarget "OpenEmuShaders" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05EEE34D227CC35D007D011B /* Debug */,
+				05EEE34E227CC35D007D011B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		05EEE34F227CC35D007D011B /* Build configuration list for PBXNativeTarget "OpenEmuShadersTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05EEE350227CC35D007D011B /* Debug */,
+				05EEE351227CC35D007D011B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 05EEE32F227CC35C007D011B /* Project object */;
+}

@@ -5,6 +5,7 @@
 ## Build generated
 build/
 DerivedData/
+CMakeFiles/
 
 ## Various settings
 *.pbxuser
