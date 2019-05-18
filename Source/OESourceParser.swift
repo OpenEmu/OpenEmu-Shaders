@@ -24,7 +24,7 @@
 
 import Foundation
 
-enum OESourceParserError: CustomNSError {
+enum OESourceParserError: LocalizedError {
     
 }
 

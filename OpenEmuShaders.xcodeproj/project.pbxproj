@@ -11,7 +11,6 @@
 		052BE020228D187E00942C12 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE01F228D187E00942C12 /* TestHelpers.swift */; };
 		056AC35B228BA11E005018DA /* OEEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 056AC35A228BA11E005018DA /* OEEnums.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		056AC372228BA144005018DA /* OEEnums.m in Sources */ = {isa = PBXBuildFile; fileRef = 056AC371228BA144005018DA /* OEEnums.m */; };
-		056AC374228BA1EF005018DA /* OEEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC373228BA1EF005018DA /* OEEnums.swift */; };
 		056AC379228BA8D9005018DA /* OEShaderParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC378228BA8D9005018DA /* OEShaderParameter.swift */; };
 		056AC3A7228BB3E9005018DA /* OESourceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC3A6228BB3E9005018DA /* OESourceParser.swift */; };
 		056AC3A9228BD73F005018DA /* NSScanner+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC3A8228BD73F005018DA /* NSScanner+Extensions.swift */; };
@@ -28,8 +27,6 @@
 		05F5BAE52286611B004D713C /* libspirv-cross-glsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F5BADD2286610D004D713C /* libspirv-cross-glsl.a */; };
 		05F5BAE62286611B004D713C /* libspirv-cross-msl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F5BADF2286610D004D713C /* libspirv-cross-msl.a */; };
 		05F5BAE72286611B004D713C /* libSPIRV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F5BAC822866107004D713C /* libSPIRV.a */; };
-		05F5BAFA22875AAD004D713C /* OEShaderSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F5BAF922875AAD004D713C /* OEShaderSpec.swift */; };
-		05F5BB1222875C0B004D713C /* OEShaderSpecTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05F5BB1122875C0B004D713C /* OEShaderSpecTests.swift */; };
 		A9020051FEB9717E8F2ABA14 /* ConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9020E619BC7ACEF5904D318 /* ConfigTests.swift */; };
 		A902009F295CE6ED5C8FC8CA /* ShaderReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = A9020B45B7562A79B4BCF645 /* ShaderReflection.h */; };
 		A90203772A0E044990C034EA /* NSScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A902023035423BDAFACA21E6 /* NSScannerTests.swift */; };
@@ -119,7 +116,6 @@
 		052BE01F228D187E00942C12 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		056AC35A228BA11E005018DA /* OEEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OEEnums.h; sourceTree = "<group>"; };
 		056AC371228BA144005018DA /* OEEnums.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OEEnums.m; sourceTree = "<group>"; };
-		056AC373228BA1EF005018DA /* OEEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OEEnums.swift; sourceTree = "<group>"; };
 		056AC378228BA8D9005018DA /* OEShaderParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OEShaderParameter.swift; sourceTree = "<group>"; };
 		056AC3A6228BB3E9005018DA /* OESourceParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OESourceParser.swift; sourceTree = "<group>"; };
 		056AC3A8228BD73F005018DA /* NSScanner+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScanner+Extensions.swift"; sourceTree = "<group>"; };
@@ -141,9 +137,7 @@
 		05EEE3C5227E9766007D011B /* libSPIRV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSPIRV.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		05F5BAB322866107004D713C /* glslang.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = glslang.xcodeproj; path = 3rdparty/projects/glslang/glslang.xcodeproj; sourceTree = "<group>"; };
 		05F5BACD2286610D004D713C /* SPIRV-Cross.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "SPIRV-Cross.xcodeproj"; path = "3rdparty/projects/SPIRV-Cross/SPIRV-Cross.xcodeproj"; sourceTree = "<group>"; };
-		05F5BAF922875AAD004D713C /* OEShaderSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OEShaderSpec.swift; sourceTree = "<group>"; };
 		05F5BB1022875C0B004D713C /* OpenEmuShadersTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenEmuShadersTests-Bridging-Header.h"; sourceTree = "<group>"; };
-		05F5BB1122875C0B004D713C /* OEShaderSpecTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OEShaderSpecTests.swift; sourceTree = "<group>"; };
 		A902023035423BDAFACA21E6 /* NSScannerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSScannerTests.swift; sourceTree = "<group>"; };
 		A90202C8B35052F56549FB38 /* SlangCompiler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SlangCompiler.mm; sourceTree = "<group>"; };
 		A90203C72A8A32B7143EB579 /* SlangCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlangCompiler.h; sourceTree = "<group>"; };
@@ -217,7 +211,6 @@
 			children = (
 				05EEE3AB227D6904007D011B /* SlangShaderTests.m */,
 				05EEE348227CC35D007D011B /* Info.plist */,
-				05F5BB1122875C0B004D713C /* OEShaderSpecTests.swift */,
 				052BE008228D184600942C12 /* OESourceParserTests.swift */,
 				052BE01F228D187E00942C12 /* TestHelpers.swift */,
 				05F5BB1022875C0B004D713C /* OpenEmuShadersTests-Bridging-Header.h */,
@@ -241,8 +234,6 @@
 				A9020BF6D6C3253BE8395A68 /* ShaderPassSemantics.h */,
 				A9020642C9363659BECEAAFF /* ShaderReflection.m */,
 				A9020B45B7562A79B4BCF645 /* ShaderReflection.h */,
-				05F5BAF922875AAD004D713C /* OEShaderSpec.swift */,
-				056AC373228BA1EF005018DA /* OEEnums.swift */,
 				056AC35A228BA11E005018DA /* OEEnums.h */,
 				056AC371228BA144005018DA /* OEEnums.m */,
 				A90203E4FFF77BAF2B3ECC24 /* Config.swift */,
@@ -494,9 +485,7 @@
 				056AC3A7228BB3E9005018DA /* OESourceParser.swift in Sources */,
 				056AC379228BA8D9005018DA /* OEShaderParameter.swift in Sources */,
 				A9020CDAE9B375337B23CB35 /* SlangCompiler.mm in Sources */,
-				056AC374228BA1EF005018DA /* OEEnums.swift in Sources */,
 				A90206302FA906B0B42F2CF2 /* ShaderPassSemantics.m in Sources */,
-				05F5BAFA22875AAD004D713C /* OEShaderSpec.swift in Sources */,
 				A90205F1433179AFFF015F07 /* ShaderReflection.m in Sources */,
 				A9020AE1BBCE1F965F5F8436 /* Config.swift in Sources */,
 			);
@@ -509,7 +498,6 @@
 				05EEE3AC227D6904007D011B /* SlangShaderTests.m in Sources */,
 				052BE020228D187E00942C12 /* TestHelpers.swift in Sources */,
 				052BE009228D184600942C12 /* OESourceParserTests.swift in Sources */,
-				05F5BB1222875C0B004D713C /* OEShaderSpecTests.swift in Sources */,
 				A90203772A0E044990C034EA /* NSScannerTests.swift in Sources */,
 				A9020051FEB9717E8F2ABA14 /* ConfigTests.swift in Sources */,
 			);
