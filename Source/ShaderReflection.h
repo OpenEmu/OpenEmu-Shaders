@@ -11,7 +11,7 @@
 @property (nonatomic) NSUInteger binding;
 @property (nonatomic) NSUInteger uboOffset;
 @property (nonatomic) NSUInteger pushOffset;
-@property (nonatomic) StageUsage stageUsage;
+@property (nonatomic) OEStageUsage stageUsage;
 @property (nonatomic) BOOL texture;
 @property (nonatomic) BOOL uboActive;
 @property (nonatomic) BOOL pushActive;
@@ -41,8 +41,8 @@
 @property (nonatomic) size_t uboSize;
 @property (nonatomic) size_t pushSize;
 @property (nonatomic) NSUInteger uboBinding;
-@property (nonatomic) StageUsage uboStageUsage;
-@property (nonatomic) StageUsage pushStageUsage;
+@property (nonatomic) OEStageUsage uboStageUsage;
+@property (nonatomic) OEStageUsage pushStageUsage;
 @property (nonatomic, readonly) NSDictionary<OEShaderTextureSemantic, NSMutableArray<ShaderTextureSemanticMeta *> *> *textures;
 @property (nonatomic, readonly) NSDictionary<OEShaderBufferSemantic, ShaderSemanticMeta *> *semantics;
 @property (nonatomic, readonly) NSArray<ShaderSemanticMeta *> *floatParameters;

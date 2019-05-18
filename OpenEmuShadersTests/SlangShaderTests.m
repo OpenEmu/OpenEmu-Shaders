@@ -8,6 +8,9 @@
 
 #import <XCTest/XCTest.h>
 #import "SlangShader.h"
+#import <OpenEmuShaders/OpenEmuShaders-Swift.h>
+
+@class OEShaderSpec;
 
 @interface SlangShaderTests : XCTestCase
 
@@ -22,9 +25,19 @@
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
+
 - (void)testExample {
-    NSURL *url = [NSURL fileURLWithPath:@"/Volumes/Data/projects/libretro/slang-shaders/crt/phosphorlut.plist"];
-    SlangShader *r = [[SlangShader alloc] initFromURL:url];
+    OEShaderSpec *s = [OEShaderSpec new];
+    OEShaderParameter *p1 = [[OEShaderParameter alloc] initWithName:@"foo"];
+    OEShaderParameter *p2 = [[OEShaderParameter alloc] initWithName:@"foo2"];
+    XCTAssertFalse([p1 isEqual:p2]);
+    
+    NSURL *url = [NSURL fileURLWithPath:@"/Volumes/Data/projects/libretro/slang-shaders/crt/phosphorlut.slangp"];
+
+    NSError *err;
+    NSDictionary<NSString *, id> *cfg = [ShaderConfigSerialization configFromURL:url error:&err];
+
+    SlangShader *r = [[SlangShader alloc] initFromURL:url error:&err];
     ShaderPassSemantics *sem = [ShaderPassSemantics new];
     ShaderPassBindings *bind = [ShaderPassBindings new];
 

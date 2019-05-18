@@ -9,9 +9,9 @@
 /* Begin PBXAggregateTarget section */
 		137B11438E8C4D2086EAAFFC /* ZERO_CHECK */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 26B75C70CACE428D9A3C41A3 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildConfigurationList = 452927CD2AD34F6EB6932614 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
 			buildPhases = (
-				99A3778DDD1644279E7E0F7A /* CMake Rules */,
+				4107FF76AEB8406CA0698347 /* CMake Rules */,
 			);
 			dependencies = (
 			);
@@ -20,9 +20,9 @@
 		};
 		26525B99C82C44DC82015B46 /* RUN_TESTS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = F40BE07E081149F59EAE2397 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = 4AABA955B69C41A8A62FC9EA /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
-				CEC4746B1B334365B0FE2ED9 /* CMake PostBuild Rules */,
+				E98313486D9946ABB689157F /* CMake PostBuild Rules */,
 			);
 			dependencies = (
 			);
@@ -31,28 +31,28 @@
 		};
 		B20E887111D2494DB04786F4 /* ALL_BUILD */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 9C3C5C80988A4AF3802385B7 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildConfigurationList = 10FE60CB44594C438845D1E1 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
 			buildPhases = (
-				308C63552860489AA5D08457 /* CMake Rules */,
+				FB5B4A382A1340409359727E /* CMake Rules */,
 			);
 			dependencies = (
-				AD65FAC4929C4EEA888718A2 /* PBXTargetDependency */,
-				9928BF41B6924B8CA97CD57A /* PBXTargetDependency */,
-				164CE19EE6D9444A8E7CA77C /* PBXTargetDependency */,
-				FDBE022CC7C44169B77F742B /* PBXTargetDependency */,
-				B95CF7294D1E4A2D967392D3 /* PBXTargetDependency */,
+				0781FF6B5DD548B18EBDA94E /* PBXTargetDependency */,
+				2C5DD1EA757F4AC682F14209 /* PBXTargetDependency */,
+				3E0AB769B4D14F9B883F7659 /* PBXTargetDependency */,
+				BD6A24F56C4B4682989130F4 /* PBXTargetDependency */,
+				9DFAE675109349BE8388134B /* PBXTargetDependency */,
 			);
 			name = ALL_BUILD;
 			productName = ALL_BUILD;
 		};
 		DC26E7B7D66F497AA9C915E6 /* install */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 27C546A09011422AA9870667 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildConfigurationList = C0E34886795C45208D4AE862 /* Build configuration list for PBXAggregateTarget "install" */;
 			buildPhases = (
-				9ACBB1644E074AB1992E765C /* CMake PostBuild Rules */,
+				8D5287FB41C14888A96D4C61 /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				A0881AA6B27E4BD1B491AE75 /* PBXTargetDependency */,
+				509B032D4F9345DDB4B8492B /* PBXTargetDependency */,
 			);
 			name = install;
 			productName = install;
@@ -60,170 +60,170 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		0CB913C2CAA54743AEAC8C65 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.h */ = {isa = PBXBuildFile; fileRef = 60C3280043034DBEA002D64D /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.h */; };
-		113B9DCC5BCF41D08848C167 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.hpp */ = {isa = PBXBuildFile; fileRef = 4A340F7A1C0244309CD9BED3 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.hpp */; };
-		12769532FAB440FE8A65E33C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.cpp */ = {isa = PBXBuildFile; fileRef = 8AD5878BEA374EED9E64F9CF /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.cpp */; };
-		1833A89A05B84E95974F6181 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.cpp */ = {isa = PBXBuildFile; fileRef = E31C8AD5665D456E8C353CE0 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.cpp */; };
-		1D6743615561466EB3D0A28C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_error_handling.hpp */ = {isa = PBXBuildFile; fileRef = F3C0BCDC7906498B96AD9452 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_error_handling.hpp */; };
-		1FC4487574D649E88441430C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = A3FA7FA5720B4900BCF69491 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */; };
-		280202C90E1D4575AB320C86 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.cpp */ = {isa = PBXBuildFile; fileRef = D175B24397E5448AA7A593FC /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.cpp */; };
-		30D57859F6AD4E83BE5FF434 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_common.hpp */ = {isa = PBXBuildFile; fileRef = E2F7AFD164174A038E596094 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_common.hpp */; };
-		396E5FDD30FF4C65B36B6812 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 66E5E776BDEE4398ABA0DEF0 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */; };
-		4208D1F9F97F4D0193DEE3CE /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.hpp */ = {isa = PBXBuildFile; fileRef = CED45C8D61364C278EEA6210 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.hpp */; };
-		64C3C8A5FFAC4C27A4478E30 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.cpp */ = {isa = PBXBuildFile; fileRef = 6FB510886958478890D550FB /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.cpp */; };
-		6AA1E345224842BDBDBED980 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.hpp */ = {isa = PBXBuildFile; fileRef = 63AE79B01B874679BCEDB289 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.hpp */; };
-		6D973FAB860049BEAB2B0613 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.cpp */ = {isa = PBXBuildFile; fileRef = B0B5DEE9CED34E5CAE070191 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.cpp */; };
-		79D416BBE1D24979B78249BF /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.hpp */ = {isa = PBXBuildFile; fileRef = 7EC22BD92D764FB1A4745E8D /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.hpp */; };
-		862ADAA1E1514898B24C63F0 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.h */ = {isa = PBXBuildFile; fileRef = ED2DD6BE81D54D688562AC7D /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.h */; };
-		86E40BC9357A4FA784260458 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 195E53AE2FC747808F3DF78F /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */; };
-		8DFC7F5376FF4DC391BB851C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 52E8E11BD8984528AF24500B /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */; };
-		AB60284FEB0A4C65B8CF45C6 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.cpp */ = {isa = PBXBuildFile; fileRef = 99E794044B9E4D169FE0E824 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.cpp */; };
-		B6028631CBCC44569A56F1AE /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/GLSL.std.450.h */ = {isa = PBXBuildFile; fileRef = 062BA17C71E242AA933C8D57 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/GLSL.std.450.h */; };
-		B79FD915982C43A8831717D0 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_containers.hpp */ = {isa = PBXBuildFile; fileRef = C7C47E107AA44987BDC12D45 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_containers.hpp */; };
-		CF6730AB0D2D47859DA1BCF5 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.hpp */ = {isa = PBXBuildFile; fileRef = AFEAC50D10AE4C9896D135BE /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.hpp */; };
-		D6381FC16DA547F7BB058606 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.hpp */ = {isa = PBXBuildFile; fileRef = FBC38D08FB754F01AEA1DAD6 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.hpp */; };
-		EE4405A3D20846A79C0114EC /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.cpp */ = {isa = PBXBuildFile; fileRef = 99DADDB4D3B74E1DA46B18F8 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.cpp */; };
-		F35840AEAA234BAC875E6239 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.hpp */ = {isa = PBXBuildFile; fileRef = 5C2472CA1F8A440E80C41833 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.hpp */; };
+		060B705003764C71B8796DB1 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.hpp */ = {isa = PBXBuildFile; fileRef = 76569502F5FB4019B05406B3 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.hpp */; };
+		0B8A2B9303E646BCA6A1DAFB /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.cpp */ = {isa = PBXBuildFile; fileRef = E9F3845845014D09ACEBBD4A /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.cpp */; };
+		0F3E8D9B595743C8A7A33292 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.hpp */ = {isa = PBXBuildFile; fileRef = 31AB4C55C9F1425D9235ABCF /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.hpp */; };
+		0FF2A8F62C8540C88B71FBCA /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 2EBFB2BB95F64E79A3D1DEF5 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */; };
+		113E52FC95334EAD976E865A /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 14E1B3AB070C45B999F96465 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */; };
+		1CCBF5F3FDC4454D917410E6 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 77B4A7F90E6C4606BD479467 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */; };
+		257C7B40E2C44A5F9C16CFC0 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.cpp */ = {isa = PBXBuildFile; fileRef = 8DE9163BC8A0413FA68F6BBC /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.cpp */; };
+		46DD87F08A9D40A9B060E62D /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_containers.hpp */ = {isa = PBXBuildFile; fileRef = 1D0C7C8799084948BDF1E7CE /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_containers.hpp */; };
+		4BC179518F544BB98DE24B6C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.cpp */ = {isa = PBXBuildFile; fileRef = 9D4C5BB405264A0D8A846E41 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.cpp */; };
+		4E4C9D9E654744548049D789 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_common.hpp */ = {isa = PBXBuildFile; fileRef = 10801AD5784D4984921F7A99 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_common.hpp */; };
+		58FC74FDCF694D61A5701FE4 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.cpp */ = {isa = PBXBuildFile; fileRef = 2A14ED32BB734868A8DEC490 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.cpp */; };
+		77BA72B1839349ED9C1A42C7 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.cpp */ = {isa = PBXBuildFile; fileRef = 509DB6AA3ED540E8B28F2A3C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.cpp */; };
+		7BE35EC9886045469EEC981E /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.hpp */ = {isa = PBXBuildFile; fileRef = 595D88EA930B4A4D9725AE6F /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.hpp */; };
+		9D5079379D2A4FF5AAFD51AC /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.h */ = {isa = PBXBuildFile; fileRef = FDA79DCDD0AD4C3EA1EEFD70 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.h */; };
+		9E25A30CAC6B4999828BF702 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.hpp */ = {isa = PBXBuildFile; fileRef = C6FE42AED46044A1B2CFFC99 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.hpp */; };
+		9E8FF4A6236441B6B8FB384F /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_error_handling.hpp */ = {isa = PBXBuildFile; fileRef = 6E0DF3EF043744C383696ACE /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_error_handling.hpp */; };
+		A476DF5EB7F74AAAA32D3906 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.hpp */ = {isa = PBXBuildFile; fileRef = 4D3B500850474510A7E6F71A /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.hpp */; };
+		C52578957CFD4B55B3226D99 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.hpp */ = {isa = PBXBuildFile; fileRef = EFA81DD3355D4CABA4E54389 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.hpp */; };
+		D6C488CA2F1349FBA67F567B /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.hpp */ = {isa = PBXBuildFile; fileRef = 71A1E8DD78A145979CB3B0A5 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.hpp */; };
+		DAAA6AB01ABA4946B095525D /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.cpp */ = {isa = PBXBuildFile; fileRef = 896303ED5DAE4515A389368B /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.cpp */; };
+		E8C46B853059447D98DA7B68 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.cpp */ = {isa = PBXBuildFile; fileRef = 0102BBC24BB447B782729F25 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.cpp */; };
+		F00E498A179B45CBA2B25ED0 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 076EC8F3A1724B7D989855D4 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */; };
+		FB0945C90CEE4662982B8614 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.h */ = {isa = PBXBuildFile; fileRef = 7D4A0A38F2B4428BA139636C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.h */; };
+		FD4C30A6288C4A57820D26D5 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/GLSL.std.450.h */ = {isa = PBXBuildFile; fileRef = 3C8751CA195C49BBA4A42311 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/GLSL.std.450.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		07D2093C46EE4009B4458B74 /* RelWithDebInfo */ = {
+		1142697953404354A4D97DA7 /* RelWithDebInfo */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = RelWithDebInfo;
 		};
-		B88B074CF4FD42169DACE75E /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Debug;
-		};
-		C4AC4A81F93B4966B406092F /* MinSizeRel */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = MinSizeRel;
-		};
-		DB111314F62F402CBA898749 /* Release */ = {
+		D8C00A66012344E5898EC24E /* Release */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Release;
 		};
+		F01769F2230B4EDC98B2ED34 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		FE3CF2028CE0411FA9952040 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		0B530572B03746ABAA523845 /* PBXContainerItemProxy */ = {
+		011C99D7EB62406993F71502 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 137B11438E8C4D2086EAAFFC;
+			remoteInfo = ZERO_CHECK;
+		};
+		10193F80E6EC4E0C9DFB31B5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 137B11438E8C4D2086EAAFFC;
+			remoteInfo = ZERO_CHECK;
+		};
+		11A9C17C4B2D4F77A08D696B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = E5AEC70EBE0843BB86F90629;
 			remoteInfo = "spirv-cross-core";
 		};
-		365626273F494545A82762F8 /* PBXContainerItemProxy */ = {
+		208511523F5642EF86359F27 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C59A5665DB16418AAF882F3D;
-			remoteInfo = "spirv-cross-msl";
+			remoteGlobalIDString = 0696D59F0998484988F77700;
+			remoteInfo = "spirv-cross-glsl";
 		};
-		44D0EFC17FCC41B4B8380E55 /* PBXContainerItemProxy */ = {
+		5BBFC49B7DAF4EF28FCFB07A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 137B11438E8C4D2086EAAFFC;
-			remoteInfo = ZERO_CHECK;
+			remoteGlobalIDString = 0696D59F0998484988F77700;
+			remoteInfo = "spirv-cross-glsl";
 		};
-		5E832CC43CF64031AC2614FC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 137B11438E8C4D2086EAAFFC;
-			remoteInfo = ZERO_CHECK;
-		};
-		6F224AA4FF6B4399A244BB1F /* PBXContainerItemProxy */ = {
+		5D491A74D13A40A6B3807266 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 75384277CC1C4B65B8967964;
 			remoteInfo = "spirv-cross-c";
 		};
-		8A711ECDF184441AA127B1AB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0696D59F0998484988F77700;
-			remoteInfo = "spirv-cross-glsl";
-		};
-		8C01E99EF97A4833B909AEF7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 137B11438E8C4D2086EAAFFC;
-			remoteInfo = ZERO_CHECK;
-		};
-		A45D092192DC4ABD9C10AABD /* PBXContainerItemProxy */ = {
+		60A1FF8F3C84446BB06D3163 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = E5AEC70EBE0843BB86F90629;
 			remoteInfo = "spirv-cross-core";
 		};
-		AB1DA5E6790043B5BAF93A76 /* PBXContainerItemProxy */ = {
+		7564934667E6429EB05AAA61 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 137B11438E8C4D2086EAAFFC;
 			remoteInfo = ZERO_CHECK;
 		};
-		AE4FF2F14A5A4F07B521E271 /* PBXContainerItemProxy */ = {
+		88278FF599914BA4811C726F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = C59A5665DB16418AAF882F3D;
 			remoteInfo = "spirv-cross-msl";
 		};
-		BE06018CA6DA4EAD890017E3 /* PBXContainerItemProxy */ = {
+		A3C3DA9F38DA42AEAB146FBC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E5AEC70EBE0843BB86F90629;
+			remoteInfo = "spirv-cross-core";
+		};
+		A596C7DAA8004749A65A2060 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 137B11438E8C4D2086EAAFFC;
 			remoteInfo = ZERO_CHECK;
 		};
-		D3F9E625BF084E58A80F713F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E5AEC70EBE0843BB86F90629;
-			remoteInfo = "spirv-cross-core";
-		};
-		D501838182EE4341BE324BF4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E5AEC70EBE0843BB86F90629;
-			remoteInfo = "spirv-cross-core";
-		};
-		F1D7EEEEDDAC4FCDA0D79FA1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0696D59F0998484988F77700;
-			remoteInfo = "spirv-cross-glsl";
-		};
-		F54795C5358D49558672AD7C /* PBXContainerItemProxy */ = {
+		B03AA6DEABE344DCA88A495D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B20E887111D2494DB04786F4;
 			remoteInfo = ALL_BUILD;
 		};
-		FDA331CEC36943DC9A653BB5 /* PBXContainerItemProxy */ = {
+		B440B008E30944D2BF834AFC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E5AEC70EBE0843BB86F90629;
+			remoteInfo = "spirv-cross-core";
+		};
+		B8BC6CCBCD4B4FD1B4051840 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 137B11438E8C4D2086EAAFFC;
+			remoteInfo = ZERO_CHECK;
+		};
+		CC86E7E5AD0445D2B26AE1D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C59A5665DB16418AAF882F3D;
+			remoteInfo = "spirv-cross-msl";
+		};
+		DD2697CB3A5146D983C16B1F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A41C9D1CCD2472D8B892869 /* Project object */;
 			proxyType = 1;
@@ -233,191 +233,191 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		062BA17C71E242AA933C8D57 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/GLSL.std.450.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GLSL.std.450.h; path = GLSL.std.450.h; sourceTree = SOURCE_ROOT; };
-		195E53AE2FC747808F3DF78F /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		305E7309C4C146A1B8308765 /* spirv-cross-c */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-c.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4A340F7A1C0244309CD9BED3 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_parsed_ir.hpp; path = spirv_cross_parsed_ir.hpp; sourceTree = SOURCE_ROOT; };
-		52E8E11BD8984528AF24500B /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		5C2472CA1F8A440E80C41833 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_glsl.hpp; path = spirv_glsl.hpp; sourceTree = SOURCE_ROOT; };
-		60C3280043034DBEA002D64D /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = spirv.h; path = spirv.h; sourceTree = SOURCE_ROOT; };
-		63AE79B01B874679BCEDB289 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross.hpp; path = spirv_cross.hpp; sourceTree = SOURCE_ROOT; };
-		66E5E776BDEE4398ABA0DEF0 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		6FB510886958478890D550FB /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_msl.cpp; path = spirv_msl.cpp; sourceTree = SOURCE_ROOT; };
-		715DF60F3A9B4BC0A446B62A /* spirv-cross-msl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-msl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7EC22BD92D764FB1A4745E8D /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cfg.hpp; path = spirv_cfg.hpp; sourceTree = SOURCE_ROOT; };
-		8AD5878BEA374EED9E64F9CF /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cfg.cpp; path = spirv_cfg.cpp; sourceTree = SOURCE_ROOT; };
-		99DADDB4D3B74E1DA46B18F8 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_glsl.cpp; path = spirv_glsl.cpp; sourceTree = SOURCE_ROOT; };
-		99E794044B9E4D169FE0E824 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cross_c.cpp; path = spirv_cross_c.cpp; sourceTree = SOURCE_ROOT; };
-		A3FA7FA5720B4900BCF69491 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		AFEAC50D10AE4C9896D135BE /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_parser.hpp; path = spirv_parser.hpp; sourceTree = SOURCE_ROOT; };
-		B0B5DEE9CED34E5CAE070191 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cross_parsed_ir.cpp; path = spirv_cross_parsed_ir.cpp; sourceTree = SOURCE_ROOT; };
-		C6ED3E3EDF17453A825B4FB0 /* spirv-cross-core */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-core.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		C7C47E107AA44987BDC12D45 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_containers.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_containers.hpp; path = spirv_cross_containers.hpp; sourceTree = SOURCE_ROOT; };
-		CED45C8D61364C278EEA6210 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv.hpp; path = spirv.hpp; sourceTree = SOURCE_ROOT; };
-		D175B24397E5448AA7A593FC /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cross.cpp; path = spirv_cross.cpp; sourceTree = SOURCE_ROOT; };
-		E02397A5E4B94798A9557F4E /* spirv-cross-glsl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-glsl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E2F7AFD164174A038E596094 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_common.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_common.hpp; path = spirv_common.hpp; sourceTree = SOURCE_ROOT; };
-		E31C8AD5665D456E8C353CE0 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_parser.cpp; path = spirv_parser.cpp; sourceTree = SOURCE_ROOT; };
-		ED2DD6BE81D54D688562AC7D /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = spirv_cross_c.h; path = spirv_cross_c.h; sourceTree = SOURCE_ROOT; };
-		F3C0BCDC7906498B96AD9452 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_error_handling.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_error_handling.hpp; path = spirv_cross_error_handling.hpp; sourceTree = SOURCE_ROOT; };
-		FB4DC321EB334F48973098DD /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		FBC38D08FB754F01AEA1DAD6 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_msl.hpp; path = spirv_msl.hpp; sourceTree = SOURCE_ROOT; };
+		0102BBC24BB447B782729F25 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cross.cpp; path = spirv_cross.cpp; sourceTree = SOURCE_ROOT; };
+		076EC8F3A1724B7D989855D4 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		10801AD5784D4984921F7A99 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_common.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_common.hpp; path = spirv_common.hpp; sourceTree = SOURCE_ROOT; };
+		14E1B3AB070C45B999F96465 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		1D0C7C8799084948BDF1E7CE /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_containers.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_containers.hpp; path = spirv_cross_containers.hpp; sourceTree = SOURCE_ROOT; };
+		2A14ED32BB734868A8DEC490 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cross_parsed_ir.cpp; path = spirv_cross_parsed_ir.cpp; sourceTree = SOURCE_ROOT; };
+		2EBFB2BB95F64E79A3D1DEF5 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		31AB4C55C9F1425D9235ABCF /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv.hpp; path = spirv.hpp; sourceTree = SOURCE_ROOT; };
+		37A1E7A098144A8C87CE3355 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		3C8751CA195C49BBA4A42311 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/GLSL.std.450.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GLSL.std.450.h; path = GLSL.std.450.h; sourceTree = SOURCE_ROOT; };
+		4D3B500850474510A7E6F71A /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_glsl.hpp; path = spirv_glsl.hpp; sourceTree = SOURCE_ROOT; };
+		4E1396899CF24EDA925B2201 /* spirv-cross-c */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-c.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		509DB6AA3ED540E8B28F2A3C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_msl.cpp; path = spirv_msl.cpp; sourceTree = SOURCE_ROOT; };
+		595D88EA930B4A4D9725AE6F /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross.hpp; path = spirv_cross.hpp; sourceTree = SOURCE_ROOT; };
+		6DC98DA86ADF4942B45CFCAC /* spirv-cross-glsl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-glsl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E0DF3EF043744C383696ACE /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_error_handling.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_error_handling.hpp; path = spirv_cross_error_handling.hpp; sourceTree = SOURCE_ROOT; };
+		71A1E8DD78A145979CB3B0A5 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_msl.hpp; path = spirv_msl.hpp; sourceTree = SOURCE_ROOT; };
+		76569502F5FB4019B05406B3 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_parser.hpp; path = spirv_parser.hpp; sourceTree = SOURCE_ROOT; };
+		77B4A7F90E6C4606BD479467 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		7D4A0A38F2B4428BA139636C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = spirv_cross_c.h; path = spirv_cross_c.h; sourceTree = SOURCE_ROOT; };
+		8852A41453A04818A447C1A3 /* spirv-cross-core */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-core.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		896303ED5DAE4515A389368B /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_glsl.cpp; path = spirv_glsl.cpp; sourceTree = SOURCE_ROOT; };
+		8DE9163BC8A0413FA68F6BBC /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cross_c.cpp; path = spirv_cross_c.cpp; sourceTree = SOURCE_ROOT; };
+		9D4C5BB405264A0D8A846E41 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cfg.cpp; path = spirv_cfg.cpp; sourceTree = SOURCE_ROOT; };
+		C6FE42AED46044A1B2CFFC99 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cfg.hpp; path = spirv_cfg.hpp; sourceTree = SOURCE_ROOT; };
+		E9F3845845014D09ACEBBD4A /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_parser.cpp; path = spirv_parser.cpp; sourceTree = SOURCE_ROOT; };
+		EFA81DD3355D4CABA4E54389 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_parsed_ir.hpp; path = spirv_cross_parsed_ir.hpp; sourceTree = SOURCE_ROOT; };
+		F226F88FA8364C4788277DEB /* spirv-cross-msl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-msl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDA79DCDD0AD4C3EA1EEFD70 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = spirv.h; path = spirv.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		358617D322DD4102B9A3B37F /* Header Files */ = {
+		0EAED4E989274F0989A70902 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				FBC38D08FB754F01AEA1DAD6 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.hpp */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		35FB9A5C084144068EE3F79F /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				99DADDB4D3B74E1DA46B18F8 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.cpp */,
+				896303ED5DAE4515A389368B /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		391A8608CB90474594E856FF /* Header Files */ = {
+		1003377507E14DCAB758D3DF /* spirv-cross-glsl */ = {
 			isa = PBXGroup;
 			children = (
-				5C2472CA1F8A440E80C41833 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.hpp */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		410D506D54CF4CF4B064554F /* Header Files */ = {
-			isa = PBXGroup;
-			children = (
-				60C3280043034DBEA002D64D /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.h */,
-				ED2DD6BE81D54D688562AC7D /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.h */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		4FD254F53773411D8FC129BF /* spirv-cross-glsl */ = {
-			isa = PBXGroup;
-			children = (
-				35FB9A5C084144068EE3F79F /* Source Files */,
-				391A8608CB90474594E856FF /* Header Files */,
-				A3FA7FA5720B4900BCF69491 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */,
+				0EAED4E989274F0989A70902 /* Source Files */,
+				DD7CA4DFB9FA4C9796BC010E /* Header Files */,
+				2EBFB2BB95F64E79A3D1DEF5 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */,
 			);
 			name = "spirv-cross-glsl";
 			sourceTree = "<group>";
 		};
-		50FD3E49BA1B46E0943F83DA /* spirv-cross-core */ = {
+		169E61B785D84EBFAE07FE8E /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				A8422DD4139749A7BBE56E0C /* Header Files */,
-				B9B31FCEBF1D4A0C8EDE7D81 /* Source Files */,
-				52E8E11BD8984528AF24500B /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */,
+				8DE9163BC8A0413FA68F6BBC /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		17B78440E73E41A49E259127 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				CBFE786E287242CDB5D3F962 /* CMake Rules */,
+				37A1E7A098144A8C87CE3355 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		21E6EA1898CE4BE4A0F57239 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				9D4C5BB405264A0D8A846E41 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.cpp */,
+				0102BBC24BB447B782729F25 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.cpp */,
+				2A14ED32BB734868A8DEC490 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.cpp */,
+				E9F3845845014D09ACEBBD4A /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		2673D624EA5D49FAB99FCFAE /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				FDA79DCDD0AD4C3EA1EEFD70 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.h */,
+				7D4A0A38F2B4428BA139636C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		415C9C490E864C4089C4AEF3 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				71A1E8DD78A145979CB3B0A5 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.hpp */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		88C906D1743240DAB390496D /* spirv-cross-msl */ = {
+			isa = PBXGroup;
+			children = (
+				E7D5FB5EF4424C41A5CEFCBD /* Source Files */,
+				415C9C490E864C4089C4AEF3 /* Header Files */,
+				14E1B3AB070C45B999F96465 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */,
+			);
+			name = "spirv-cross-msl";
+			sourceTree = "<group>";
+		};
+		97B565BE2268481D8234CDCB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4E1396899CF24EDA925B2201 /* spirv-cross-c */,
+				8852A41453A04818A447C1A3 /* spirv-cross-core */,
+				6DC98DA86ADF4942B45CFCAC /* spirv-cross-glsl */,
+				F226F88FA8364C4788277DEB /* spirv-cross-msl */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BAE62725B8FE4BB28E552260 = {
+			isa = PBXGroup;
+			children = (
+				E0B916D98DA94C65ABB6A4BB /* spirv-cross-c */,
+				88C906D1743240DAB390496D /* spirv-cross-msl */,
+				1003377507E14DCAB758D3DF /* spirv-cross-glsl */,
+				C81133A677EF4B74819FC7D3 /* spirv-cross-core */,
+				17B78440E73E41A49E259127 /* ALL_BUILD */,
+				97B565BE2268481D8234CDCB /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C07DD6E190464B3B9BD62D06 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				3C8751CA195C49BBA4A42311 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/GLSL.std.450.h */,
+				31AB4C55C9F1425D9235ABCF /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.hpp */,
+				C6FE42AED46044A1B2CFFC99 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.hpp */,
+				10801AD5784D4984921F7A99 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_common.hpp */,
+				595D88EA930B4A4D9725AE6F /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.hpp */,
+				1D0C7C8799084948BDF1E7CE /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_containers.hpp */,
+				6E0DF3EF043744C383696ACE /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_error_handling.hpp */,
+				EFA81DD3355D4CABA4E54389 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.hpp */,
+				76569502F5FB4019B05406B3 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.hpp */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		C81133A677EF4B74819FC7D3 /* spirv-cross-core */ = {
+			isa = PBXGroup;
+			children = (
+				C07DD6E190464B3B9BD62D06 /* Header Files */,
+				21E6EA1898CE4BE4A0F57239 /* Source Files */,
+				076EC8F3A1724B7D989855D4 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */,
 			);
 			name = "spirv-cross-core";
 			sourceTree = "<group>";
 		};
-		621E9CB8933543AEB0441AF0 = {
-			isa = PBXGroup;
-			children = (
-				EA8BCE5A64FE409B8B89D5F8 /* spirv-cross-c */,
-				C62D45BCE2774F70A6544912 /* spirv-cross-msl */,
-				4FD254F53773411D8FC129BF /* spirv-cross-glsl */,
-				50FD3E49BA1B46E0943F83DA /* spirv-cross-core */,
-				A84167A7CCEE4E94AB17B17A /* ALL_BUILD */,
-				B439D9039D3D426D8D11EB34 /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		6D034158D6884E68B5B1B815 /* CMake Rules */ = {
+		CBFE786E287242CDB5D3F962 /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		8237D2C474214AE4ACE17ED1 /* Source Files */ = {
+		DD7CA4DFB9FA4C9796BC010E /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				6FB510886958478890D550FB /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.cpp */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		911D81BBA5B3456B8D2D024A /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				99E794044B9E4D169FE0E824 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.cpp */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		A84167A7CCEE4E94AB17B17A /* ALL_BUILD */ = {
-			isa = PBXGroup;
-			children = (
-				6D034158D6884E68B5B1B815 /* CMake Rules */,
-				FB4DC321EB334F48973098DD /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */,
-			);
-			name = ALL_BUILD;
-			sourceTree = "<group>";
-		};
-		A8422DD4139749A7BBE56E0C /* Header Files */ = {
-			isa = PBXGroup;
-			children = (
-				062BA17C71E242AA933C8D57 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/GLSL.std.450.h */,
-				CED45C8D61364C278EEA6210 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv.hpp */,
-				7EC22BD92D764FB1A4745E8D /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.hpp */,
-				E2F7AFD164174A038E596094 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_common.hpp */,
-				63AE79B01B874679BCEDB289 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.hpp */,
-				C7C47E107AA44987BDC12D45 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_containers.hpp */,
-				F3C0BCDC7906498B96AD9452 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_error_handling.hpp */,
-				4A340F7A1C0244309CD9BED3 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.hpp */,
-				AFEAC50D10AE4C9896D135BE /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.hpp */,
+				4D3B500850474510A7E6F71A /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.hpp */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
 		};
-		B439D9039D3D426D8D11EB34 /* Products */ = {
+		E0B916D98DA94C65ABB6A4BB /* spirv-cross-c */ = {
 			isa = PBXGroup;
 			children = (
-				305E7309C4C146A1B8308765 /* spirv-cross-c */,
-				C6ED3E3EDF17453A825B4FB0 /* spirv-cross-core */,
-				E02397A5E4B94798A9557F4E /* spirv-cross-glsl */,
-				715DF60F3A9B4BC0A446B62A /* spirv-cross-msl */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		B9B31FCEBF1D4A0C8EDE7D81 /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				8AD5878BEA374EED9E64F9CF /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.cpp */,
-				D175B24397E5448AA7A593FC /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.cpp */,
-				B0B5DEE9CED34E5CAE070191 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.cpp */,
-				E31C8AD5665D456E8C353CE0 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.cpp */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		C62D45BCE2774F70A6544912 /* spirv-cross-msl */ = {
-			isa = PBXGroup;
-			children = (
-				8237D2C474214AE4ACE17ED1 /* Source Files */,
-				358617D322DD4102B9A3B37F /* Header Files */,
-				195E53AE2FC747808F3DF78F /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */,
-			);
-			name = "spirv-cross-msl";
-			sourceTree = "<group>";
-		};
-		EA8BCE5A64FE409B8B89D5F8 /* spirv-cross-c */ = {
-			isa = PBXGroup;
-			children = (
-				410D506D54CF4CF4B064554F /* Header Files */,
-				911D81BBA5B3456B8D2D024A /* Source Files */,
-				66E5E776BDEE4398ABA0DEF0 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */,
+				2673D624EA5D49FAB99FCFAE /* Header Files */,
+				169E61B785D84EBFAE07FE8E /* Source Files */,
+				77B4A7F90E6C4606BD479467 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/CMakeLists.txt */,
 			);
 			name = "spirv-cross-c";
+			sourceTree = "<group>";
+		};
+		E7D5FB5EF4424C41A5CEFCBD /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				509DB6AA3ED540E8B28F2A3C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.cpp */,
+			);
+			name = "Source Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -425,72 +425,72 @@
 /* Begin PBXNativeTarget section */
 		0696D59F0998484988F77700 /* spirv-cross-glsl */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 60BC2D194DA74FB7BDF7FBBC /* Build configuration list for PBXNativeTarget "spirv-cross-glsl" */;
+			buildConfigurationList = 93B37D8EA7534ECC8050B931 /* Build configuration list for PBXNativeTarget "spirv-cross-glsl" */;
 			buildPhases = (
-				75D1BC6C5421407CAD2D6C75 /* Sources */,
+				0E05119B18AD42358B7C86FB /* Sources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				942E0DA865014ABCB08AC6CC /* PBXTargetDependency */,
-				65B2B0AE55E44DB989B2AE43 /* PBXTargetDependency */,
+				F07478D6600642FBB070C5E6 /* PBXTargetDependency */,
+				F23A54E27FE34D81B3F7F4F5 /* PBXTargetDependency */,
 			);
 			name = "spirv-cross-glsl";
 			productName = "spirv-cross-glsl";
-			productReference = E02397A5E4B94798A9557F4E /* spirv-cross-glsl */;
+			productReference = 6DC98DA86ADF4942B45CFCAC /* spirv-cross-glsl */;
 			productType = "com.apple.product-type.library.static";
 		};
 		75384277CC1C4B65B8967964 /* spirv-cross-c */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F25CD8CEB75E4ABB872A8C5E /* Build configuration list for PBXNativeTarget "spirv-cross-c" */;
+			buildConfigurationList = 243612C7C7F7479AB3B560CC /* Build configuration list for PBXNativeTarget "spirv-cross-c" */;
 			buildPhases = (
-				3CDF927AFCA84C92AF7177FF /* Sources */,
+				630420B44DB84A3799C2BD1D /* Sources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				1DC13643F1A94035A40FA608 /* PBXTargetDependency */,
-				6429AE6D65AD499AAF19B353 /* PBXTargetDependency */,
-				DC52CFAA1D8D45AA948CFD35 /* PBXTargetDependency */,
-				F8D44AC748D4493F86B06DBD /* PBXTargetDependency */,
+				D28759F23C1F44539BEC8131 /* PBXTargetDependency */,
+				5D021BC17C114278AF509AA7 /* PBXTargetDependency */,
+				A049CF11F0BF43B3BCEC1F91 /* PBXTargetDependency */,
+				047C5083B2EF4ADDA02729C5 /* PBXTargetDependency */,
 			);
 			name = "spirv-cross-c";
 			productName = "spirv-cross-c";
-			productReference = 305E7309C4C146A1B8308765 /* spirv-cross-c */;
+			productReference = 4E1396899CF24EDA925B2201 /* spirv-cross-c */;
 			productType = "com.apple.product-type.library.static";
 		};
 		C59A5665DB16418AAF882F3D /* spirv-cross-msl */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB7C484C3F13470695286784 /* Build configuration list for PBXNativeTarget "spirv-cross-msl" */;
+			buildConfigurationList = 74894913EDE4409C800CDAA4 /* Build configuration list for PBXNativeTarget "spirv-cross-msl" */;
 			buildPhases = (
-				DDD559BB6E0B4A03B46BA802 /* Sources */,
+				CDAA8ED5B9D741E2A125E81B /* Sources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				9D3CDC44F92D4980BF4BD119 /* PBXTargetDependency */,
-				CE5C59D967B74EE4B0338352 /* PBXTargetDependency */,
-				FE0F58F61C1B4DA3BC995B1D /* PBXTargetDependency */,
+				31AD7A5B95444EF0A0E5C483 /* PBXTargetDependency */,
+				61FD79544CAB43A99F673B2C /* PBXTargetDependency */,
+				073CEA7309AC466C8DE2E4E1 /* PBXTargetDependency */,
 			);
 			name = "spirv-cross-msl";
 			productName = "spirv-cross-msl";
-			productReference = 715DF60F3A9B4BC0A446B62A /* spirv-cross-msl */;
+			productReference = F226F88FA8364C4788277DEB /* spirv-cross-msl */;
 			productType = "com.apple.product-type.library.static";
 		};
 		E5AEC70EBE0843BB86F90629 /* spirv-cross-core */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5D4DB6989E514528A4FB9AC9 /* Build configuration list for PBXNativeTarget "spirv-cross-core" */;
+			buildConfigurationList = 7340A5E9BE4841FD8E232301 /* Build configuration list for PBXNativeTarget "spirv-cross-core" */;
 			buildPhases = (
-				7AB5E258BCEE429695E38BEE /* Sources */,
+				9524188DF62F4CB0B9A5CADC /* Sources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				610682F90F144379B28E6FA0 /* PBXTargetDependency */,
+				5C2E79B8AAD244178EE07A8B /* PBXTargetDependency */,
 			);
 			name = "spirv-cross-core";
 			productName = "spirv-cross-core";
-			productReference = C6ED3E3EDF17453A825B4FB0 /* spirv-cross-core */;
+			productReference = 8852A41453A04818A447C1A3 /* spirv-cross-core */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -502,18 +502,18 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1020;
 			};
-			buildConfigurationList = F212EB37C67745729026A2EB /* Build configuration list for PBXProject "SPIRV-Cross" */;
+			buildConfigurationList = A3C77302083C46239FFB96B5 /* Build configuration list for PBXProject "SPIRV-Cross" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				B88B074CF4FD42169DACE75E /* Debug */,
-				DB111314F62F402CBA898749 /* Release */,
-				C4AC4A81F93B4966B406092F /* MinSizeRel */,
-				07D2093C46EE4009B4458B74 /* RelWithDebInfo */,
+				F01769F2230B4EDC98B2ED34 /* Debug */,
+				D8C00A66012344E5898EC24E /* Release */,
+				FE3CF2028CE0411FA9952040 /* MinSizeRel */,
+				1142697953404354A4D97DA7 /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = 621E9CB8933543AEB0441AF0;
+			mainGroup = BAE62725B8FE4BB28E552260;
 			projectDirPath = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross";
 			projectRoot = "";
 			targets = (
@@ -530,7 +530,7 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0C76085B7FAF4195B2237E31 = {
+		15FF07E2CC82410998AA0205 = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -545,33 +545,7 @@
 exit 0";
 			showEnvVarsInLog = 0;
 		};
-		308C63552860489AA5D08457 /* CMake Rules */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			name = "CMake Rules";
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "make -C /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross -f /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/CMakeScripts/ALL_BUILD_cmakeRulesBuildPhase.make$CONFIGURATION OBJDIR=$(basename \"$OBJECT_FILE_DIR_normal\") all";
-			showEnvVarsInLog = 0;
-		};
-		62383F8C07674777BF4C74E6 = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# shell script goes here
-exit 0";
-			showEnvVarsInLog = 0;
-		};
-		99A3778DDD1644279E7E0F7A /* CMake Rules */ = {
+		4107FF76AEB8406CA0698347 /* CMake Rules */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -582,7 +556,37 @@ exit 0";
 			shellScript = "make -C /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross -f /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/CMakeScripts/ZERO_CHECK_cmakeRulesBuildPhase.make$CONFIGURATION OBJDIR=$(basename \"$OBJECT_FILE_DIR_normal\") all";
 			showEnvVarsInLog = 0;
 		};
-		9ACBB1644E074AB1992E765C /* CMake PostBuild Rules */ = {
+		44B036E5E936402884CD6B06 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		49AA65C6CAFA48F0B43E42EB = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		8D5287FB41C14888A96D4C61 /* CMake PostBuild Rules */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -593,22 +597,7 @@ exit 0";
 			shellScript = "make -C /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross -f /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/CMakeScripts/install_postBuildPhase.make$CONFIGURATION OBJDIR=$(basename \"$OBJECT_FILE_DIR_normal\") all";
 			showEnvVarsInLog = 0;
 		};
-		9C758012B7554DED902CBA11 = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# shell script goes here
-exit 0";
-			showEnvVarsInLog = 0;
-		};
-		CEC4746B1B334365B0FE2ED9 /* CMake PostBuild Rules */ = {
+		E98313486D9946ABB689157F /* CMake PostBuild Rules */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -619,7 +608,7 @@ exit 0";
 			shellScript = "make -C /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross -f /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/CMakeScripts/RUN_TESTS_postBuildPhase.make$CONFIGURATION OBJDIR=$(basename \"$OBJECT_FILE_DIR_normal\") all";
 			showEnvVarsInLog = 0;
 		};
-		D80658EFA906420F997D0246 = {
+		FAE78AAC75EC48688EB6363D = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -634,717 +623,142 @@ exit 0";
 exit 0";
 			showEnvVarsInLog = 0;
 		};
+		FB5B4A382A1340409359727E /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross -f /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/CMakeScripts/ALL_BUILD_cmakeRulesBuildPhase.make$CONFIGURATION OBJDIR=$(basename \"$OBJECT_FILE_DIR_normal\") all";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3CDF927AFCA84C92AF7177FF /* Sources */ = {
+		0E05119B18AD42358B7C86FB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB60284FEB0A4C65B8CF45C6 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.cpp */,
+				DAAA6AB01ABA4946B095525D /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		75D1BC6C5421407CAD2D6C75 /* Sources */ = {
+		630420B44DB84A3799C2BD1D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE4405A3D20846A79C0114EC /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_glsl.cpp */,
+				257C7B40E2C44A5F9C16CFC0 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_c.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7AB5E258BCEE429695E38BEE /* Sources */ = {
+		9524188DF62F4CB0B9A5CADC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				12769532FAB440FE8A65E33C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.cpp */,
-				280202C90E1D4575AB320C86 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.cpp */,
-				6D973FAB860049BEAB2B0613 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.cpp */,
-				1833A89A05B84E95974F6181 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.cpp */,
+				4BC179518F544BB98DE24B6C /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cfg.cpp */,
+				E8C46B853059447D98DA7B68 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross.cpp */,
+				58FC74FDCF694D61A5701FE4 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.cpp */,
+				0B8A2B9303E646BCA6A1DAFB /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_parser.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DDD559BB6E0B4A03B46BA802 /* Sources */ = {
+		CDAA8ED5B9D741E2A125E81B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64C3C8A5FFAC4C27A4478E30 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.cpp */,
+				77BA72B1839349ED9C1A42C7 /* /Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross/spirv_msl.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		164CE19EE6D9444A8E7CA77C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C59A5665DB16418AAF882F3D /* spirv-cross-msl */;
-			targetProxy = AE4FF2F14A5A4F07B521E271 /* PBXContainerItemProxy */;
-		};
-		1DC13643F1A94035A40FA608 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E5AEC70EBE0843BB86F90629 /* spirv-cross-core */;
-			targetProxy = A45D092192DC4ABD9C10AABD /* PBXContainerItemProxy */;
-		};
-		610682F90F144379B28E6FA0 /* PBXTargetDependency */ = {
+		047C5083B2EF4ADDA02729C5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 137B11438E8C4D2086EAAFFC /* ZERO_CHECK */;
-			targetProxy = 5E832CC43CF64031AC2614FC /* PBXContainerItemProxy */;
+			targetProxy = B8BC6CCBCD4B4FD1B4051840 /* PBXContainerItemProxy */;
 		};
-		6429AE6D65AD499AAF19B353 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C59A5665DB16418AAF882F3D /* spirv-cross-msl */;
-			targetProxy = 365626273F494545A82762F8 /* PBXContainerItemProxy */;
-		};
-		65B2B0AE55E44DB989B2AE43 /* PBXTargetDependency */ = {
+		073CEA7309AC466C8DE2E4E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 137B11438E8C4D2086EAAFFC /* ZERO_CHECK */;
-			targetProxy = 8C01E99EF97A4833B909AEF7 /* PBXContainerItemProxy */;
+			targetProxy = 011C99D7EB62406993F71502 /* PBXContainerItemProxy */;
 		};
-		942E0DA865014ABCB08AC6CC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E5AEC70EBE0843BB86F90629 /* spirv-cross-core */;
-			targetProxy = D3F9E625BF084E58A80F713F /* PBXContainerItemProxy */;
-		};
-		9928BF41B6924B8CA97CD57A /* PBXTargetDependency */ = {
+		0781FF6B5DD548B18EBDA94E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 75384277CC1C4B65B8967964 /* spirv-cross-c */;
-			targetProxy = 6F224AA4FF6B4399A244BB1F /* PBXContainerItemProxy */;
+			targetProxy = 5D491A74D13A40A6B3807266 /* PBXContainerItemProxy */;
 		};
-		9D3CDC44F92D4980BF4BD119 /* PBXTargetDependency */ = {
+		2C5DD1EA757F4AC682F14209 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E5AEC70EBE0843BB86F90629 /* spirv-cross-core */;
-			targetProxy = 0B530572B03746ABAA523845 /* PBXContainerItemProxy */;
+			target = C59A5665DB16418AAF882F3D /* spirv-cross-msl */;
+			targetProxy = 88278FF599914BA4811C726F /* PBXContainerItemProxy */;
 		};
-		A0881AA6B27E4BD1B491AE75 /* PBXTargetDependency */ = {
+		31AD7A5B95444EF0A0E5C483 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0696D59F0998484988F77700 /* spirv-cross-glsl */;
+			targetProxy = 208511523F5642EF86359F27 /* PBXContainerItemProxy */;
+		};
+		3E0AB769B4D14F9B883F7659 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0696D59F0998484988F77700 /* spirv-cross-glsl */;
+			targetProxy = DD2697CB3A5146D983C16B1F /* PBXContainerItemProxy */;
+		};
+		509B032D4F9345DDB4B8492B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B20E887111D2494DB04786F4 /* ALL_BUILD */;
-			targetProxy = F54795C5358D49558672AD7C /* PBXContainerItemProxy */;
+			targetProxy = B03AA6DEABE344DCA88A495D /* PBXContainerItemProxy */;
 		};
-		AD65FAC4929C4EEA888718A2 /* PBXTargetDependency */ = {
+		5C2E79B8AAD244178EE07A8B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 137B11438E8C4D2086EAAFFC /* ZERO_CHECK */;
+			targetProxy = 7564934667E6429EB05AAA61 /* PBXContainerItemProxy */;
+		};
+		5D021BC17C114278AF509AA7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0696D59F0998484988F77700 /* spirv-cross-glsl */;
+			targetProxy = 5BBFC49B7DAF4EF28FCFB07A /* PBXContainerItemProxy */;
+		};
+		61FD79544CAB43A99F673B2C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E5AEC70EBE0843BB86F90629 /* spirv-cross-core */;
-			targetProxy = D501838182EE4341BE324BF4 /* PBXContainerItemProxy */;
+			targetProxy = B440B008E30944D2BF834AFC /* PBXContainerItemProxy */;
 		};
-		B95CF7294D1E4A2D967392D3 /* PBXTargetDependency */ = {
+		9DFAE675109349BE8388134B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 137B11438E8C4D2086EAAFFC /* ZERO_CHECK */;
-			targetProxy = 44D0EFC17FCC41B4B8380E55 /* PBXContainerItemProxy */;
+			targetProxy = 10193F80E6EC4E0C9DFB31B5 /* PBXContainerItemProxy */;
 		};
-		CE5C59D967B74EE4B0338352 /* PBXTargetDependency */ = {
+		A049CF11F0BF43B3BCEC1F91 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0696D59F0998484988F77700 /* spirv-cross-glsl */;
-			targetProxy = 8A711ECDF184441AA127B1AB /* PBXContainerItemProxy */;
+			target = E5AEC70EBE0843BB86F90629 /* spirv-cross-core */;
+			targetProxy = A3C3DA9F38DA42AEAB146FBC /* PBXContainerItemProxy */;
 		};
-		DC52CFAA1D8D45AA948CFD35 /* PBXTargetDependency */ = {
+		BD6A24F56C4B4682989130F4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0696D59F0998484988F77700 /* spirv-cross-glsl */;
-			targetProxy = F1D7EEEEDDAC4FCDA0D79FA1 /* PBXContainerItemProxy */;
+			target = E5AEC70EBE0843BB86F90629 /* spirv-cross-core */;
+			targetProxy = 11A9C17C4B2D4F77A08D696B /* PBXContainerItemProxy */;
 		};
-		F8D44AC748D4493F86B06DBD /* PBXTargetDependency */ = {
+		D28759F23C1F44539BEC8131 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C59A5665DB16418AAF882F3D /* spirv-cross-msl */;
+			targetProxy = CC86E7E5AD0445D2B26AE1D9 /* PBXContainerItemProxy */;
+		};
+		F07478D6600642FBB070C5E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E5AEC70EBE0843BB86F90629 /* spirv-cross-core */;
+			targetProxy = 60A1FF8F3C84446BB06D3163 /* PBXContainerItemProxy */;
+		};
+		F23A54E27FE34D81B3F7F4F5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 137B11438E8C4D2086EAAFFC /* ZERO_CHECK */;
-			targetProxy = BE06018CA6DA4EAD890017E3 /* PBXContainerItemProxy */;
-		};
-		FDBE022CC7C44169B77F742B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0696D59F0998484988F77700 /* spirv-cross-glsl */;
-			targetProxy = FDA331CEC36943DC9A653BB5 /* PBXContainerItemProxy */;
-		};
-		FE0F58F61C1B4DA3BC995B1D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 137B11438E8C4D2086EAAFFC /* ZERO_CHECK */;
-			targetProxy = AB1DA5E6790043B5BAF93A76 /* PBXContainerItemProxy */;
+			targetProxy = A596C7DAA8004749A65A2060 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0B4A7C93E75F420A9F565A6E /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		0CBCC3DD1D294523A824FE85 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'SPIRV_CROSS_C_API_GLSL=1'","'SPIRV_CROSS_C_API_MSL=1'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "   -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-c";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Debug;
-		};
-		0E211AD97DDF4D4C8E5608BC /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-core";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		155814049A2647DB91FF8A91 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-core";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		18D7C60D71C1404B8D75E8CF /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk;
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/build";
-			};
-			name = MinSizeRel;
-		};
-		29BBC3204F29450781912761 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk;
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/build";
-			};
-			name = Debug;
-		};
-		29D8A539B680415AB732DB89 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		2D6DE136A8944640B6B434A8 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		2ECA5AA47BBC4EF5A2E66DAD /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'SPIRV_CROSS_C_API_GLSL=1'","'SPIRV_CROSS_C_API_MSL=1'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-c";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		3100CE70F03D4D99AB3FF830 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'SPIRV_CROSS_C_API_GLSL=1'","'SPIRV_CROSS_C_API_MSL=1'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-c";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		3C560A62BE274B53A757772B /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk;
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/build";
-			};
-			name = RelWithDebInfo;
-		};
-		429BA91999284C6AA5F6BAA4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Debug;
-		};
-		45FB920A57D7464C85724D44 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-msl";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		4E81D1449E0E409695D35D11 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-msl";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Release;
-		};
-		51BC3666E880430FBD3A55B9 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-glsl";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		61897653CC95480EBD5395FE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "   -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-core";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Debug;
-		};
-		6ABCB7A94E424FB6A4830481 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk;
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/build";
-			};
-			name = Release;
-		};
-		7158D52CE09D4DBB8AA2BC70 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-core";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Release;
-		};
-		72D77BA627F04732B3E57F2B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "   -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-glsl";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Debug;
-		};
-		8E3739F6B65C403C9F3C1E8D /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-msl";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		8F8C5B297D754D9D9ADECD27 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		922BAFA0991542F48842E55B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Debug;
-		};
-		94404E388B374A8E80443D08 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-glsl";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Release;
-		};
-		95CC84F9C310495780E4F7CD /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		AB39E4F5400D4285841CE2CC /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
-				OTHER_LIBTOOLFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-glsl";
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		B48B329BB5C34FA68523AAB5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Release;
-		};
-		BA35E81DCA304259AD5C317D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Release;
-		};
-		BE9E79366338481DB72BE33A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Release;
-		};
-		BF438214E2914C5AA8DA2504 /* Release */ = {
+		06D046A9F5EA4FF18070440D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1369,7 +783,86 @@ exit 0";
 			};
 			name = Release;
 		};
-		DBA6B94CF90C4E6FAF451CA2 /* Debug */ = {
+		07CEAE939FA04A66A9416140 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk;
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/build";
+			};
+			name = RelWithDebInfo;
+		};
+		1035EAB99381446185A3EC5A /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-glsl";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		11770390225C47BDBE9794C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-glsl";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Release;
+		};
+		1973CF81440C47F7A54B9891 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		1ACF7502AE2C489B816876D9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1394,7 +887,92 @@ exit 0";
 			};
 			name = Debug;
 		};
-		E384FCBA3F144752B34C92C0 /* Release */ = {
+		23849BB4EF3F4904B3637553 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-msl";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Release;
+		};
+		25C1A06841224CCCB7D81DC1 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		3CB6CEE0958E4E789377274F /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		3CFB244EC91743CDA551FFA3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Debug;
+		};
+		4AC848B005B74202B737E117 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1414,27 +992,32 @@ exit 0";
 			};
 			name = Release;
 		};
-		E725CE6723FE4EB8B03079EE /* MinSizeRel */ = {
+		536B18D6618C46D6AB5EC19F /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
 				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
+				PRODUCT_NAME = "spirv-cross-core";
 				SECTORDER_FLAGS = "";
 				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
 			};
-			name = MinSizeRel;
+			name = RelWithDebInfo;
 		};
-		EBE4ED0F3B8546FE9A338EAF /* RelWithDebInfo */ = {
+		57D65BF6743C433B98A401FE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1452,29 +1035,9 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
 			};
-			name = RelWithDebInfo;
+			name = Release;
 		};
-		F44C6B477D1143BF8B29890F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = " ";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
-			};
-			name = Debug;
-		};
-		F5E2B2021D0B4863B0E5A324 /* MinSizeRel */ = {
+		5FE2CD7DA3C04C83A70FD1A5 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1494,7 +1057,52 @@ exit 0";
 			};
 			name = MinSizeRel;
 		};
-		FC9DFFFCAC9E4ED98FB399F9 /* Debug */ = {
+		7192B7D418754AAC922E6BDB /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-msl";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		81675021FC024A51BBFC3314 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Debug;
+		};
+		9B060578FE904F1DAD5392A2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1512,106 +1120,498 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
 			};
+			name = Release;
+		};
+		A1CC2D64D2A84216AAAFFD46 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'SPIRV_CROSS_C_API_GLSL=1'","'SPIRV_CROSS_C_API_MSL=1'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-c";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		AB4816DEF1F64CCEB482528E /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-glsl";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		B6799FE6E8394D2E8BD72EA3 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		B9D0963AB7CD49CBBAF22ADB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "   -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-core";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
 			name = Debug;
+		};
+		BBB3118039454A96AA819F0B /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		BEA5726842504D1CA8B587AC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-core";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Release;
+		};
+		C25C1A2338CD44F78F7BDC8A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'SPIRV_CROSS_C_API_GLSL=1'","'SPIRV_CROSS_C_API_MSL=1'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "   -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-c";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Debug;
+		};
+		C6B6274540D743D78AE8BCC6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk;
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/build";
+			};
+			name = Debug;
+		};
+		D00783B00A424885870CC20A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk;
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/build";
+			};
+			name = Release;
+		};
+		D25A85DCC47D4CB09FF4FA5E /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		D270EA39EB4E48DAAF0F638E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Debug;
+		};
+		D6B6F452A08044DEA9033B0C /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		D85B585A06014B9C8B8728DE /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'SPIRV_CROSS_C_API_GLSL=1'","'SPIRV_CROSS_C_API_MSL=1'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-c";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		E5A9B45D77C74A898B7842B7 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk;
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross/build";
+			};
+			name = MinSizeRel;
+		};
+		EF7CBA4CBE5C49FF97D01562 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-core";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		F4E08FC2A80F4FF9B0FA7C32 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Debug;
+		};
+		F5F76B8B8645492C9A6EECF1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "   -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-glsl";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Debug;
+		};
+		F7BBBB42530F4973AE759C86 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/SPIRV-Cross");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG -Wall -Wextra -Werror -Wshadow '-std=gnu++11'  ";
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-msl";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		FE6CD38313D843078C0A4DC6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost","-Wno-four-char-constants","-Wno-unknown-pragmas","$(inherited)");
+			};
+			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		26B75C70CACE428D9A3C41A3 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		10FE60CB44594C438845D1E1 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				429BA91999284C6AA5F6BAA4 /* Debug */,
-				BE9E79366338481DB72BE33A /* Release */,
-				8F8C5B297D754D9D9ADECD27 /* MinSizeRel */,
-				EBE4ED0F3B8546FE9A338EAF /* RelWithDebInfo */,
+				81675021FC024A51BBFC3314 /* Debug */,
+				4AC848B005B74202B737E117 /* Release */,
+				BBB3118039454A96AA819F0B /* MinSizeRel */,
+				25C1A06841224CCCB7D81DC1 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		27C546A09011422AA9870667 /* Build configuration list for PBXAggregateTarget "install" */ = {
+		243612C7C7F7479AB3B560CC /* Build configuration list for PBXNativeTarget "spirv-cross-c" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FC9DFFFCAC9E4ED98FB399F9 /* Debug */,
-				B48B329BB5C34FA68523AAB5 /* Release */,
-				E725CE6723FE4EB8B03079EE /* MinSizeRel */,
-				95CC84F9C310495780E4F7CD /* RelWithDebInfo */,
+				C25C1A2338CD44F78F7BDC8A /* Debug */,
+				06D046A9F5EA4FF18070440D /* Release */,
+				A1CC2D64D2A84216AAAFFD46 /* MinSizeRel */,
+				D85B585A06014B9C8B8728DE /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		5D4DB6989E514528A4FB9AC9 /* Build configuration list for PBXNativeTarget "spirv-cross-core" */ = {
+		452927CD2AD34F6EB6932614 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				61897653CC95480EBD5395FE /* Debug */,
-				7158D52CE09D4DBB8AA2BC70 /* Release */,
-				155814049A2647DB91FF8A91 /* MinSizeRel */,
-				0E211AD97DDF4D4C8E5608BC /* RelWithDebInfo */,
+				F4E08FC2A80F4FF9B0FA7C32 /* Debug */,
+				57D65BF6743C433B98A401FE /* Release */,
+				D6B6F452A08044DEA9033B0C /* MinSizeRel */,
+				1973CF81440C47F7A54B9891 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		60BC2D194DA74FB7BDF7FBBC /* Build configuration list for PBXNativeTarget "spirv-cross-glsl" */ = {
+		4AABA955B69C41A8A62FC9EA /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				72D77BA627F04732B3E57F2B /* Debug */,
-				94404E388B374A8E80443D08 /* Release */,
-				51BC3666E880430FBD3A55B9 /* MinSizeRel */,
-				AB39E4F5400D4285841CE2CC /* RelWithDebInfo */,
+				D270EA39EB4E48DAAF0F638E /* Debug */,
+				FE6CD38313D843078C0A4DC6 /* Release */,
+				5FE2CD7DA3C04C83A70FD1A5 /* MinSizeRel */,
+				D25A85DCC47D4CB09FF4FA5E /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		9C3C5C80988A4AF3802385B7 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		7340A5E9BE4841FD8E232301 /* Build configuration list for PBXNativeTarget "spirv-cross-core" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				922BAFA0991542F48842E55B /* Debug */,
-				E384FCBA3F144752B34C92C0 /* Release */,
-				0B4A7C93E75F420A9F565A6E /* MinSizeRel */,
-				2D6DE136A8944640B6B434A8 /* RelWithDebInfo */,
+				B9D0963AB7CD49CBBAF22ADB /* Debug */,
+				BEA5726842504D1CA8B587AC /* Release */,
+				EF7CBA4CBE5C49FF97D01562 /* MinSizeRel */,
+				536B18D6618C46D6AB5EC19F /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		DB7C484C3F13470695286784 /* Build configuration list for PBXNativeTarget "spirv-cross-msl" */ = {
+		74894913EDE4409C800CDAA4 /* Build configuration list for PBXNativeTarget "spirv-cross-msl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DBA6B94CF90C4E6FAF451CA2 /* Debug */,
-				4E81D1449E0E409695D35D11 /* Release */,
-				45FB920A57D7464C85724D44 /* MinSizeRel */,
-				8E3739F6B65C403C9F3C1E8D /* RelWithDebInfo */,
+				1ACF7502AE2C489B816876D9 /* Debug */,
+				23849BB4EF3F4904B3637553 /* Release */,
+				7192B7D418754AAC922E6BDB /* MinSizeRel */,
+				F7BBBB42530F4973AE759C86 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		F212EB37C67745729026A2EB /* Build configuration list for PBXProject "SPIRV-Cross" */ = {
+		93B37D8EA7534ECC8050B931 /* Build configuration list for PBXNativeTarget "spirv-cross-glsl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				29BBC3204F29450781912761 /* Debug */,
-				6ABCB7A94E424FB6A4830481 /* Release */,
-				18D7C60D71C1404B8D75E8CF /* MinSizeRel */,
-				3C560A62BE274B53A757772B /* RelWithDebInfo */,
+				F5F76B8B8645492C9A6EECF1 /* Debug */,
+				11770390225C47BDBE9794C6 /* Release */,
+				1035EAB99381446185A3EC5A /* MinSizeRel */,
+				AB4816DEF1F64CCEB482528E /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		F25CD8CEB75E4ABB872A8C5E /* Build configuration list for PBXNativeTarget "spirv-cross-c" */ = {
+		A3C77302083C46239FFB96B5 /* Build configuration list for PBXProject "SPIRV-Cross" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0CBCC3DD1D294523A824FE85 /* Debug */,
-				BF438214E2914C5AA8DA2504 /* Release */,
-				3100CE70F03D4D99AB3FF830 /* MinSizeRel */,
-				2ECA5AA47BBC4EF5A2E66DAD /* RelWithDebInfo */,
+				C6B6274540D743D78AE8BCC6 /* Debug */,
+				D00783B00A424885870CC20A /* Release */,
+				E5A9B45D77C74A898B7842B7 /* MinSizeRel */,
+				07CEAE939FA04A66A9416140 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		F40BE07E081149F59EAE2397 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		C0E34886795C45208D4AE862 /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F44C6B477D1143BF8B29890F /* Debug */,
-				BA35E81DCA304259AD5C317D /* Release */,
-				F5E2B2021D0B4863B0E5A324 /* MinSizeRel */,
-				29D8A539B680415AB732DB89 /* RelWithDebInfo */,
+				3CFB244EC91743CDA551FFA3 /* Debug */,
+				9B060578FE904F1DAD5392A2 /* Release */,
+				3CB6CEE0958E4E789377274F /* MinSizeRel */,
+				B6799FE6E8394D2E8BD72EA3 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

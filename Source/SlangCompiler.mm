@@ -14,9 +14,7 @@ using namespace std;
 - (instancetype)initWithVector:(shared_ptr<vector<uint32_t>>)spirv;
 @end
 
-@implementation SlangCompiler {
-
-}
+@implementation SlangCompiler
 
 static TBuiltInResource resources;
 

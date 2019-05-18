@@ -4,6 +4,7 @@
 //
 
 #import "ShaderReflection.h"
+#import <OpenEmuShaders/OpenEmuShaders-Swift.h>
 
 @implementation ShaderTextureSemanticMeta
 @end
@@ -388,7 +389,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
 
     sem.binding = binding;
     sem.texture = YES;
-    sem.stageUsage = StageUsageFragment;
+    sem.stageUsage = OEStageUsageFragment;
 
     return YES;
 }
@@ -410,8 +411,8 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
 
     [desc appendString:@"\n"];
     [desc appendFormat:@"  → Uniforms (vertex: %s, fragment %s):\n",
-                       _uboStageUsage & StageUsageVertex ? "YES" : "NO",
-                       _uboStageUsage & StageUsageFragment ? "YES" : "NO"];
+                       _uboStageUsage & OEStageUsageVertex ? "YES" : "NO",
+                       _uboStageUsage & OEStageUsageFragment ? "YES" : "NO"];
     for (OEShaderBufferSemantic sem in OEShaderConstants.bufferSemantics) {
         ShaderSemanticMeta *meta = _semantics[sem];
         if (meta.uboActive) {
@@ -430,8 +431,8 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
 
     [desc appendString:@"\n"];
     [desc appendFormat:@"  → Push (vertex: %s, fragment %s):\n",
-                       _pushStageUsage & StageUsageVertex ? "YES" : "NO",
-                       _pushStageUsage & StageUsageFragment ? "YES" : "NO"];
+                       _pushStageUsage & OEStageUsageVertex ? "YES" : "NO",
+                       _pushStageUsage & OEStageUsageFragment ? "YES" : "NO"];
 
     for (OEShaderBufferSemantic sem in OEShaderConstants.bufferSemantics) {
         ShaderSemanticMeta *meta = _semantics[sem];

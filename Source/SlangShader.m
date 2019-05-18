@@ -1,26 +1,28 @@
-/**
- * Copyright (c) 2019 Stuart Carnie
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- */
+// Copyright (c) 2019, OpenEmu Team
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the OpenEmu Team nor the
+//       names of its contributors may be used to endorse or promote products
+//       derived from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY OpenEmu Team ''AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL OpenEmu Team BE LIABLE FOR ANY
+// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#import <OpenEmuShaders/OpenEmuShaders-Swift.h>
 #import <Foundation/Foundation.h>
 #import "SlangShader.h"
 #import "spirv.h"
@@ -28,261 +30,6 @@
 #import "SlangCompiler.h"
 #import "ShaderReflection.h"
 #import "ShaderPassSemantics.h"
-#import "NSScanner+Extensions.h"
-
-/*!
- * SlangSource is responsible for parsing the .slang source file from the provided url.
- *
- * @details
- * Valid @c #pragma directives include @c name, @c format and @c parameter.
- */
-@interface SlangSource : NSObject
-
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) SlangFormat format;
-@property (nonatomic, readonly) NSDictionary<NSString *, ShaderParameter *> *parameters;
-
-@property (nonatomic, readonly) NSString *vertexSource;
-@property (nonatomic, readonly) NSString *fragmentSource;
-
-- (instancetype)initFromURL:(NSURL *)url error:(NSError **)error;
-
-@end
-
-@implementation SlangSource {
-    NSMutableArray<NSString *> *_buffer;
-    NSMutableDictionary<NSString *, ShaderParameter *> *_parameters;
-    NSString *_vertexSource;
-    NSString *_fragmentSource;
-}
-
-+ (NSCharacterSet *)identifierChars {
-    static dispatch_once_t once;
-    static NSMutableCharacterSet *set;
-    dispatch_once(&once, ^{
-        set = [NSMutableCharacterSet characterSetWithBitmapRepresentation:NSCharacterSet.alphanumericCharacterSet.bitmapRepresentation];
-        [set formUnionWithCharacterSet:[NSCharacterSet characterSetWithCharactersInString:@"_"]];
-    });
-    return set;
-}
-
-- (instancetype)initFromURL:(NSURL *)url error:(NSError **)error {
-    self = [super init];
-
-    _buffer = [NSMutableArray<NSString *> new];
-    _parameters = [NSMutableDictionary<NSString *, ShaderParameter *> new];
-    _format = SlangFormatUnknown;
-
-    @autoreleasepool {
-        NSError *err = nil;
-        [self load:url isRoot:YES error:&err];
-
-        if (err != nil) {
-            if (error != nil) {
-                *error = err;
-            }
-            return nil;
-        }
-    }
-
-    return self;
-}
-
-- (void)load:(NSURL *)url isRoot:(BOOL)root error:(NSError **)error {
-    NSString *f = [NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:error];
-    if (*error != nil) {
-        return;
-    }
-
-    NSArray<NSString *> *lines = [f componentsSeparatedByCharactersInSet:NSCharacterSet.newlineCharacterSet];
-    NSString *filename = url.lastPathComponent;
-
-    NSUInteger lno = 1;
-
-    NSEnumerator<NSString *> *oe = lines.objectEnumerator;
-    if (root) {
-        NSString *line = oe.nextObject;
-
-        if (![line hasPrefix:@"#version "]) {
-            *error = [NSError errorWithDomain:OEShaderErrorDomain
-                                         code:OEShaderMissingVersion
-                                     userInfo:@{
-                                         NSLocalizedDescriptionKey: NSLocalizedString(@"Root slang shader missing #version", @"The slang file is missing the required #version directive")
-                                     }];
-            return;
-        }
-        [_buffer addObject:line];
-        [_buffer addObject:@"#extension GL_GOOGLE_cpp_style_line_directive : require"];
-        lno++;
-    }
-
-    [_buffer addObject:[NSString stringWithFormat:@"#line %lu \"%@\"", lno, filename]];
-
-    for (NSString *line in oe) {
-        if ([line hasPrefix:@"#include "]) {
-            NSScanner *s = [NSScanner scannerWithString:line];
-            [s scanString:@"#include " intoString:nil];
-            NSString *filepath = nil;
-            if (![s scanQuotedString:&filepath] || filepath.length == 0) {
-                NSLog(@"missing file");
-                // TODO(sgc): fix this
-            }
-            NSURL *file = [NSURL fileURLWithPath:filepath relativeToURL:url.URLByDeletingLastPathComponent];
-            [self load:file isRoot:NO error:error];
-            if (*error != nil) {
-                return;
-            }
-
-            // add line directive to reset to this file after include
-            [_buffer addObject:[NSString stringWithFormat:@"#line %lu \"%@\"", lno, filename]];
-        } else {
-            [_buffer addObject:line];
-
-            BOOL hasPreprocessor = NO;
-            if ([line hasPrefix:@"#pragma"]) {
-                hasPreprocessor = YES;
-                [self processPragma:line error:error];
-            } else if ([line hasPrefix:@"#endif"]) {
-                hasPreprocessor = YES;
-            }
-
-            if (hasPreprocessor) {
-                [_buffer addObject:[NSString stringWithFormat:@"#line %lu \"%@\"", lno + 1, filename]];
-            }
-        }
-        lno += 1;
-    }
-}
-
-- (void)processPragma:(NSString *)pragma error:(NSError **)error {
-    if ([pragma hasPrefix:@"#pragma name "]) {
-        if (_name != nil) {
-            *error = [NSError errorWithDomain:OEShaderErrorDomain
-                                         code:OEShaderMultipleNamePragma
-                                     userInfo:@{
-                                         NSLocalizedDescriptionKey: NSLocalizedString(@"#pragma name declared multiple times", @"The slang file contains multiple declarations of the #pragma name directive")
-                                     }];
-            return;
-
-        }
-    } else if ([pragma hasPrefix:@"#pragma parameter "]) {
-        NSScanner *scan = [NSScanner scannerWithString:pragma];
-        [scan scanString:@"#pragma parameter " intoString:nil];
-
-        int count = 0;
-        NSString *name;
-        count += [scan scanCharactersFromSet:self.class.identifierChars intoString:&name] ? 1 : 0;
-
-        NSString *desc;
-        count += [scan scanQuotedString:&desc] ? 1 : 0;
-
-        float initial, minimum, maximum, step;
-        count += [scan scanFloat:&initial] ? 1 : 0;
-        count += [scan scanFloat:&minimum] ? 1 : 0;
-        count += [scan scanFloat:&maximum] ? 1 : 0;
-        count += [scan scanFloat:&step] ? 1 : 0;
-        if (count == 5) {
-            step = 0.1f * (maximum - minimum);
-            count += 1;
-        }
-
-        if (count == 6) {
-            // valid parameter
-            ShaderParameter *param = [ShaderParameter new];
-            param.name = name;
-            param.desc = desc;
-            param.initial = initial;
-            param.value = initial;
-            param.minimum = minimum;
-            param.maximum = maximum;
-            param.step = step;
-
-            ShaderParameter *existing = _parameters[name];
-            if (existing != nil && ![param isEqual:existing]) {
-                *error = [NSError errorWithDomain:OEShaderErrorDomain
-                                             code:OEShaderDuplicateParameterPragma
-                                         userInfo:@{
-                                             NSLocalizedDescriptionKey: NSLocalizedString(@"duplicate #pragma parameter", @"The slang file contains duplicate #pragma parameter directives")
-                                         }];
-                return;
-            }
-            _parameters[name] = param;
-        } else {
-            *error = [NSError errorWithDomain:OEShaderErrorDomain
-                                         code:OEShaderMultipleFormatPragma
-                                     userInfo:@{
-                                         NSLocalizedDescriptionKey: NSLocalizedString(@"#pragma parameter format invalid", @"The slang file contains an invalid #pragma parameter directive")
-                                     }];
-            return;
-        }
-    } else if ([pragma hasPrefix:@"#pragma format "]) {
-        if (_format != SlangFormatUnknown) {
-            *error = [NSError errorWithDomain:OEShaderErrorDomain
-                                         code:OEShaderMultipleFormatPragma
-                                     userInfo:@{
-                                         NSLocalizedDescriptionKey: NSLocalizedString(@"#pragma format declared multiple times", @"The slang file contains multiple declarations of the #pragma format directive")
-                                     }];
-            return;
-        }
-
-        NSScanner *scan = [NSScanner scannerWithString:pragma];
-        [scan scanString:@"#pragma format " intoString:nil];
-        int count = 0;
-        NSString *fmt;
-        [scan scanCharactersFromSet:self.class.identifierChars intoString:&fmt];
-        _format = SlangFormatFromGLSlangNSString(fmt);
-        if (_format == SlangFormatUnknown) {
-            *error = [NSError errorWithDomain:OEShaderErrorDomain
-                                         code:OEShaderMultipleFormatPragma
-                                     userInfo:@{
-                                         NSLocalizedDescriptionKey: NSLocalizedString(@"#pragma format is invalid", @"The slang file contains an invalid format directive")
-                                     }];
-            return;
-        }
-    }
-}
-
-- (NSString *)findSourceForStage:(NSString *)stage {
-    NSMutableArray<NSString *> *src = [NSMutableArray new];
-
-    NSEnumerator<NSString *> *lines = _buffer.objectEnumerator;
-    [src addObject:lines.nextObject];
-
-    BOOL store = YES;
-
-    for (NSString *line in lines) {
-        if ([line hasPrefix:@"#pragma stage "]) {
-            NSScanner *scan = [NSScanner scannerWithString:line];
-            [scan scanString:@"#pragma stage " intoString:nil];
-            NSString *v;
-            [scan scanCharactersFromSet:NSCharacterSet.alphanumericCharacterSet intoString:&v];
-            store = [v isEqualToString:stage];
-        } else if ([line hasPrefix:@"#pragma name "] || [line hasPrefix:@"#pragma format "]) {
-            // skip
-        } else if (store) {
-            [src addObject:line];
-        }
-    }
-
-    return [src componentsJoinedByString:@"\n"];
-}
-
-- (NSString *)vertexSource {
-    if (_vertexSource == nil) {
-        _vertexSource = [self findSourceForStage:@"vertex"];
-    }
-    return _vertexSource;
-}
-
-- (NSString *)fragmentSource {
-    if (_fragmentSource == nil) {
-        _fragmentSource = [self findSourceForStage:@"fragment"];
-    }
-    return _fragmentSource;
-}
-
-@end
-
 
 static NSString *IDToNSString(id obj) {
     if ([obj isKindOfClass:NSString.class])
@@ -290,53 +37,63 @@ static NSString *IDToNSString(id obj) {
     return nil;
 }
 
-static ShaderPassWrap ShaderPassWrapFromNSString(NSString *wrapMode) {
+static OEShaderPassWrap OEShaderPassWrapFromNSString(NSString *wrapMode) {
     if (wrapMode == nil)
-        return ShaderPassWrapDefault;
+        return OEShaderPassWrapDefault;
 
     if ([wrapMode isEqualToString:@"clamp_to_border"])
-        return ShaderPassWrapBorder;
+        return OEShaderPassWrapBorder;
     else if ([wrapMode isEqualToString:@"clamp_to_edge"])
-        return ShaderPassWrapEdge;
+        return OEShaderPassWrapEdge;
     else if ([wrapMode isEqualToString:@"repeat"])
-        return ShaderPassWrapRepeat;
+        return OEShaderPassWrapRepeat;
     else if ([wrapMode isEqualToString:@"mirrored_repeat"])
-        return ShaderPassWrapMirroredRepeat;
+        return OEShaderPassWrapMirroredRepeat;
 
     NSLog(@"invalid wrap mode %@. Choose from clamp_to_border, clamp_to_edge, repeat or mirrored_repeat", wrapMode);
 
-    return ShaderPassWrapDefault;
+    return OEShaderPassWrapDefault;
 }
 
-static ShaderPassScale ShaderPassScaleFromNSString(NSString *scale) {
+static OEShaderPassScale OEShaderPassScaleFromNSString(NSString *scale) {
     if ([scale isEqualToString:@"source"])
-        return ShaderPassScaleInput;
+        return OEShaderPassScaleInput;
     if ([scale isEqualToString:@"viewport"])
-        return ShaderPassScaleViewport;
+        return OEShaderPassScaleViewport;
     if ([scale isEqualToString:@"absolute"])
-        return ShaderPassScaleAbsolute;
-    return ShaderPassScaleInvalid;
+        return OEShaderPassScaleAbsolute;
+    return OEShaderPassScaleInvalid;
 }
 
-static ShaderPassFilter ShaderPassFilterFromObject(id obj) {
+static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
     if (obj == nil) {
-        return ShaderPassFilterUnspecified;
+        return OEShaderPassFilterUnspecified;
     }
 
     if ([obj boolValue]) {
-        return ShaderPassFilterLinear;
+        return OEShaderPassFilterLinear;
     }
-    return ShaderPassFilterNearest;
+    return OEShaderPassFilterNearest;
 }
 
+// Manual declaration of internal Swift class
+@interface OESourceParser: NSObject
+@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) SlangFormat format;
+@property (nonatomic, readonly) NSString *vertexSource;
+@property (nonatomic, readonly) NSString *fragmentSource;
+@property (nonatomic, readonly) NSDictionary<NSString *, OEShaderParameter *> *parameters;
+- (instancetype)initFromURL:(NSURL *)url error:(NSError **)error;
+@end
+
 @interface ShaderPass ()
-@property (nonatomic, readonly) SlangSource *source;
+@property (nonatomic, readonly) OESourceParser *source;
 @end
 
 @implementation ShaderPass {
     NSURL *_url;
     NSUInteger _index;
-    SlangSource *_source;
+    OESourceParser *_source;
 }
 
 - (instancetype)initWithURL:(NSURL *)url
@@ -345,10 +102,10 @@ static ShaderPassFilter ShaderPassFilterFromObject(id obj) {
     if (self = [super init]) {
         _url = url;
         _index = index;
-        _source = [[SlangSource alloc] initFromURL:url error:nil];
+        _source = [[OESourceParser alloc] initFromURL:url error:nil];
         
-        self.filter = ShaderPassFilterFromObject(d[@"filterLinear"]);
-        self.wrapMode = ShaderPassWrapFromNSString(IDToNSString(d[@"wrapMode"]));
+        self.filter = OEShaderPassFilterFromObject(d[@"filterLinear"]);
+        self.wrapMode = OEShaderPassWrapFromNSString(IDToNSString(d[@"wrapMode"]));
 
         id obj = nil;
 
@@ -376,27 +133,27 @@ static ShaderPassFilter ShaderPassFilterFromObject(id obj) {
         if (d[@"scaleType"] != nil || d[@"scaleTypeX"] != nil || d[@"scaleTypeY"] != nil) {
             // scale
             self.valid = YES;
-            self.scaleX = ShaderPassScaleInput;
-            self.scaleY = ShaderPassScaleInput;
+            self.scaleX = OEShaderPassScaleInput;
+            self.scaleY = OEShaderPassScaleInput;
             CGSize size = {0};
             CGSize scale = CGSizeMake(1.0, 1.0);
             
             NSString *str = nil;
             if ((str = IDToNSString(d[@"scaleType"])) != nil) {
-                self.scaleX = ShaderPassScaleFromNSString(str);
+                self.scaleX = OEShaderPassScaleFromNSString(str);
                 self.scaleY = self.scaleX;
             } else {
                 if ((str = IDToNSString(d[@"scaleTypeX"])) != nil) {
-                    self.scaleX = ShaderPassScaleFromNSString(str);
+                    self.scaleX = OEShaderPassScaleFromNSString(str);
                 }
                 if ((str = IDToNSString(d[@"scaleTypeY"])) != nil) {
-                    self.scaleX = ShaderPassScaleFromNSString(str);
+                    self.scaleY= OEShaderPassScaleFromNSString(str);
                 }
             }
             
             // scale-x
             if ((obj = d[@"scale"] ?: d[@"scaleX"]) != nil) {
-                if (self.scaleX == ShaderPassScaleAbsolute) {
+                if (self.scaleX == OEShaderPassScaleAbsolute) {
                     size.width = [obj unsignedIntegerValue];
                 } else {
                     scale.width = [obj doubleValue];
@@ -405,7 +162,7 @@ static ShaderPassFilter ShaderPassFilterFromObject(id obj) {
             
             // scale-y
             if ((obj = d[@"scale"] ?: d[@"scaleY"]) != nil) {
-                if (self.scaleY == ShaderPassScaleAbsolute) {
+                if (self.scaleY == OEShaderPassScaleAbsolute) {
                     size.height = [obj unsignedIntegerValue];
                 } else {
                     scale.height = [obj doubleValue];
@@ -445,8 +202,8 @@ static ShaderPassFilter ShaderPassFilterFromObject(id obj) {
         _url = url;
         _name = name;
 
-        self.filter = ShaderPassFilterFromObject(d[@"linear"]);
-        self.wrapMode = ShaderPassWrapFromNSString(IDToNSString(d[@"wrapMode"]));
+        self.filter = OEShaderPassFilterFromObject(d[@"linear"]);
+        self.wrapMode = OEShaderPassWrapFromNSString(IDToNSString(d[@"wrapMode"]));
 
         id obj = nil;
         if ((obj = d[@"mipmapInput"]) != nil) {
@@ -460,15 +217,14 @@ static ShaderPassFilter ShaderPassFilterFromObject(id obj) {
 @end
 
 @implementation SlangShader {
-    ShaderType _type;
     NSURL *_url;
     NSMutableArray<ShaderPass *> *_passes;
     NSMutableArray<ShaderLUT *> *_luts;
-    NSMutableArray<ShaderParameter *> *_parameters;
-    NSMutableDictionary<NSString *, ShaderParameter *> *_parametersMap;
+    NSMutableArray<OEShaderParameter *> *_parameters;
+    NSMutableDictionary<NSString *, OEShaderParameter *> *_parametersMap;
 }
 
-- (instancetype)initFromURL:(NSURL *)url {
+- (instancetype)initFromURL:(NSURL *)url error:(NSError **)error {
     if (self = [super init]) {
         _url = url;
         _parameters = [NSMutableArray new];
@@ -476,7 +232,14 @@ static ShaderPassFilter ShaderPassFilterFromObject(id obj) {
 
         NSURL *base = [url URLByDeletingLastPathComponent];
 
-        NSDictionary *d = [NSDictionary dictionaryWithContentsOfURL:url];
+        NSError *err;
+        NSDictionary<NSString *, id> *d = [ShaderConfigSerialization configFromURL:url error:&err];
+        if (err != nil) {
+            if (error != nil) {
+                *error = err;
+            }
+            return nil;
+        }
 
         NSArray *passes = d[@"passes"];
         _passes = [NSMutableArray arrayWithCapacity:passes.count];
@@ -484,8 +247,8 @@ static ShaderPassFilter ShaderPassFilterFromObject(id obj) {
         NSUInteger i = 0;
         for (NSDictionary *spec in passes) {
             NSString *path = spec[@"shader"];
-            _passes[i] = [[ShaderPass alloc] initWithURL:[NSURL fileURLWithPath:path
-                                                                  relativeToURL:base]
+            _passes[i] = [[ShaderPass alloc] initWithURL:[NSURL URLWithString:path
+                                                                relativeToURL:base]
                                                    index:i
                                               dictionary:spec];
             i++;
@@ -499,8 +262,8 @@ static ShaderPassFilter ShaderPassFilterFromObject(id obj) {
             for (NSString *key in textures.keyEnumerator) {
                 NSDictionary *spec = textures[key];
                 NSString *path = spec[@"path"];
-                _luts[i] = [[ShaderLUT alloc] initWithURL:[NSURL fileURLWithPath:path
-                                                                   relativeToURL:base]
+                _luts[i] = [[ShaderLUT alloc] initWithURL:[NSURL URLWithString:path
+                                                                 relativeToURL:base]
                                                      name:key
                                                dictionary:spec];
                 i++;
@@ -510,9 +273,9 @@ static ShaderPassFilter ShaderPassFilterFromObject(id obj) {
         // collect parameters
         i = 0;
         for (ShaderPass *pass in _passes) {
-            NSDictionary < NSString *, ShaderParameter * > *params = pass.source.parameters;
-            for (ShaderParameter *param in params.objectEnumerator) {
-                ShaderParameter *existing = _parametersMap[param.name];
+            NSDictionary < NSString *, OEShaderParameter * > *params = pass.source.parameters;
+            for (OEShaderParameter *param in params.objectEnumerator) {
+                OEShaderParameter *existing = _parametersMap[param.name];
                 if (existing != nil && ![param isEqual:existing]) {
                     // TODO(SGC) conflicting parameters
                     assert("conflicting parameters");
@@ -527,7 +290,7 @@ static ShaderPassFilter ShaderPassFilterFromObject(id obj) {
         NSDictionary < NSString *, NSNumber * > *params = d[@"parameters"];
         if (params != nil) {
             for (NSString *name in params) {
-                ShaderParameter *existing = _parametersMap[name];
+                OEShaderParameter *existing = _parametersMap[name];
                 if (existing) {
                     existing.initial = [params[name] floatValue];
                     existing.value = [params[name] floatValue];
@@ -688,7 +451,7 @@ void error_callback(void *userdata, const char *error) {
     }
 
     for (NSUInteger i = 0; i < _parameters.count; i++) {
-        ShaderParameter *param = _parameters[i];
+        OEShaderParameter *param = _parameters[i];
         if (![ref addBufferSemantic:OEShaderBufferSemanticFloatParameter passIndex:i name:param.name]) {
             return NO;
         }
@@ -731,7 +494,7 @@ void error_callback(void *userdata, const char *error) {
     NSUInteger i = 0;
     for (ShaderSemanticMeta *meta in ref.floatParameters) {
         NSString *name = [ref nameForBufferSemantic:OEShaderBufferSemanticFloatParameter index:i];
-        ShaderParameter *param = _parameters[i];
+        OEShaderParameter *param = _parameters[i];
         if (meta.uboActive) {
             [uboB addUniformData:param.valuePtr
                             size:meta.numberOfComponents * sizeof(float)
@@ -752,7 +515,7 @@ void error_callback(void *userdata, const char *error) {
 
         NSUInteger index = 0;
         for (ShaderTextureSemanticMeta *meta in a) {
-            if (meta.stageUsage != StageUsageNone) {
+            if (meta.stageUsage != OEStageUsageNone) {
                 ShaderPassTextureBinding *bind = [passBindings addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)((uintptr_t)(void *)tex.texture + index * tex.textureStride)];
 
                 if (sem == OEShaderTextureSemanticUser) {
@@ -883,39 +646,37 @@ void error_callback(void *userdata, const char *error) {
 
     unsigned uboBinding = vertexUBOBinding != -1u ? vertexUBOBinding : fragmentUBOBinding;
 
-    const NSUInteger MAX_BINDINGS = 16;
-
     bool hasUBO = vertexUBO || fragmentUBO;
-    if (hasUBO && uboBinding >= MAX_BINDINGS) {
-        NSLog(@"%u bindings exceeds max of %lu", uboBinding, MAX_BINDINGS);
+    if (hasUBO && uboBinding >= kMaxShaderBindings) {
+        NSLog(@"%u bindings exceeds max of %d", uboBinding, kMaxShaderBindings);
         return NO;
     }
 
     ref.uboBinding = hasUBO ? uboBinding : 0;
 
     if (vertexUBO) {
-        ref.uboStageUsage = StageUsageVertex;
+        ref.uboStageUsage = OEStageUsageVertex;
         size_t sz = 0;
         spvc_compiler_get_declared_struct_size(vsCompiler, spvc_compiler_get_type_handle(vsCompiler, vertexUBO->base_type_id), &sz);
         ref.uboSize = sz;
     }
 
     if (vertexPush) {
-        ref.pushStageUsage = StageUsageVertex;
+        ref.pushStageUsage = OEStageUsageVertex;
         size_t sz = 0;
         spvc_compiler_get_declared_struct_size(vsCompiler, spvc_compiler_get_type_handle(vsCompiler, vertexPush->base_type_id), &sz);
         ref.pushSize = sz;
     }
 
     if (fragmentUBO) {
-        ref.uboStageUsage |= StageUsageFragment;
+        ref.uboStageUsage |= OEStageUsageFragment;
         size_t sz = 0;
         spvc_compiler_get_declared_struct_size(fsCompiler, spvc_compiler_get_type_handle(fsCompiler, fragmentUBO->base_type_id), &sz);
         ref.uboSize = MAX(ref.uboSize, sz);
     }
 
     if (fragmentPush) {
-        ref.pushStageUsage |= StageUsageFragment;
+        ref.pushStageUsage |= OEStageUsageFragment;
         size_t sz = 0;
         spvc_compiler_get_declared_struct_size(fsCompiler, spvc_compiler_get_type_handle(fsCompiler, fragmentPush->base_type_id), &sz);
         ref.pushSize = MAX(ref.pushSize, sz);
@@ -942,8 +703,8 @@ void error_callback(void *userdata, const char *error) {
         }
 
         NSUInteger binding = spvc_compiler_get_decoration(fsCompiler, tex->id, SpvDecorationBinding);
-        if (binding >= MAX_BINDINGS) {
-            NSLog(@"fragment shader texture binding exceeds %lu", MAX_BINDINGS);
+        if (binding >= kMaxShaderBindings) {
+            NSLog(@"fragment shader texture binding exceeds %d", kMaxShaderBindings);
             return NO;
         }
 
