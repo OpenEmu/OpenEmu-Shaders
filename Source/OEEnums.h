@@ -191,18 +191,6 @@ extern SlangFormat SlangFormatFromGLSlangNSString(NSString *str);
 
 #pragma mark -
 
-extern NSString *const OEShaderErrorDomain;
-
-typedef NS_ERROR_ENUM(OEShaderErrorDomain, OEShaderErrorCodes) {
-    OEShaderMissingVersion = -1,
-    OEShaderMultipleFormatPragma = -2,
-    OEShaderMultipleNamePragma = -3,
-    OEShaderDuplicateParameterPragma = -4,
-    OEShaderIncludeNotFound = -5,
-    OEShaderInvalidParameterPragma = -6,
-    OEShaderInvalidFormatPragma = -7,
-};
-
 typedef NS_OPTIONS(NSUInteger, OEStageUsage) {
     OEStageUsageNone = 0,
     OEStageUsageVertex = (1 << 0), // semantic is used by the vertex shader

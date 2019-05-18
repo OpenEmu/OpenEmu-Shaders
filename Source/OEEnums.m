@@ -56,8 +56,6 @@ OEShaderBufferSemantic const OEShaderBufferSemanticFloatParameter = @"FloatParam
 
 @end
 
-NSString *const OEShaderErrorDomain = @"org.openemu.Shader.ErrorDomain";
-
 SlangFormat SlangFormatFromGLSlangNSString(NSString *str) {
 #undef FMT
 #define FMT(fmt, x) if ([str isEqualToString:@ #fmt]) return SlangFormat ## x
