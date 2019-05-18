@@ -24,7 +24,7 @@
 
 import Foundation
 
-enum OESourceParserError: LocalizedError {
+enum SourceParserError: LocalizedError {
     case missingVersion
     case multipleFormatPragma
     case multipleNamePragma
@@ -59,13 +59,13 @@ enum OESourceParserError: LocalizedError {
  * Valid `#pragma` directives include `name`, `format` and `parameter`.
  */
 @objc(OESourceParser)
-class OESourceParser: NSObject {
+class SourceParser: NSObject {
 
     private var buffer: [String]
 
     @objc private(set) var name: String?
 
-    @objc var parameters: [String: OEShaderParameter]
+    @objc var parameters: [String: ShaderParameter]
 
     @objc var format: SlangFormat
 
@@ -142,7 +142,7 @@ class OESourceParser: NSObject {
             let line = oe.next()
             switch line?.hasPrefix(Prefixes.version) {
             case .some(false), .none:
-                throw OESourceParserError.missingVersion
+                throw SourceParserError.missingVersion
             default:
                 buffer.append(line!)
                 buffer.append("#extension GL_GOOGLE_cpp_style_line_directive : require")
@@ -157,7 +157,7 @@ class OESourceParser: NSObject {
                 let s = Scanner(string: line)
                 s.scanString(Prefixes.include, into: nil)
                 guard let filepath = s.scanQuotedString() else {
-                    throw OESourceParserError.includeNotFound
+                    throw SourceParserError.includeNotFound
                 }
                 let file = URL(string: filepath, relativeTo: url.deletingLastPathComponent())!
                 try self.load(file, isRoot: false)
@@ -190,7 +190,7 @@ class OESourceParser: NSObject {
     fileprivate func processPragma(line: String) throws {
         if line.hasPrefix(Prefixes.pragmaName) {
             if name != nil {
-                throw OESourceParserError.multipleNamePragma
+                throw SourceParserError.multipleNamePragma
             }
 
             name = String(line.dropFirst(Prefixes.pragmaName.count))
@@ -203,11 +203,11 @@ class OESourceParser: NSObject {
             count += s.scanCharacters(from: .identifierCharacters, into: &tmp) ? 1 : 0
 
             guard let name = tmp as String? else {
-                throw OESourceParserError.invalidParameterPragma
+                throw SourceParserError.invalidParameterPragma
             }
 
             guard let desc = s.scanQuotedString() else {
-                throw OESourceParserError.invalidParameterPragma
+                throw SourceParserError.invalidParameterPragma
             }
             count += 1
             var initial: Float = 0, minimum: Float = 0, maximum: Float = 0, step: Float = 0
@@ -222,7 +222,7 @@ class OESourceParser: NSObject {
             }
 
             if count == 6 {
-                let param = OEShaderParameter(name: name, desc: desc)
+                let param = ShaderParameter(name: name, desc: desc)
                 param.initial = initial;
                 param.value = initial;
                 param.minimum = minimum;
@@ -230,16 +230,16 @@ class OESourceParser: NSObject {
                 param.step = step;
 
                 if let existing = parameters[name], param == existing {
-                    throw OESourceParserError.duplicateParameterPragma
+                    throw SourceParserError.duplicateParameterPragma
                 }
 
                 parameters[name] = param
             } else {
-                throw OESourceParserError.invalidParameterPragma
+                throw SourceParserError.invalidParameterPragma
             }
         } else if line.hasPrefix(Prefixes.pragmaFormat) {
             if format != .unknown {
-                throw OESourceParserError.invalidParameterPragma
+                throw SourceParserError.invalidParameterPragma
             }
 
             let s = Scanner(string: line)
@@ -250,7 +250,7 @@ class OESourceParser: NSObject {
                 format = SlangFormatFromGLSlangNSString(fmt);
             }
             if format == .unknown {
-                throw OESourceParserError.invalidFormatPragma
+                throw SourceParserError.invalidFormatPragma
             }
         }
     }

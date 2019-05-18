@@ -24,8 +24,9 @@
 
 import Foundation
 
+@objc(OEShaderParameter)
 @objcMembers
-public class OEShaderParameter : NSObject {
+public class ShaderParameter: NSObject {
     public var name: String
     public var desc: String
     public var value: Float = 0.0
@@ -44,15 +45,15 @@ public class OEShaderParameter : NSObject {
     }
     
     public override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? OEShaderParameter else {
+        guard let other = object as? ShaderParameter else {
             return false
         }
         return self == other
     }
 }
 
-extension OEShaderParameter {
-    static func == (lhs: OEShaderParameter, rhs: OEShaderParameter) -> Bool {
+extension ShaderParameter {
+    static func == (lhs: ShaderParameter, rhs: ShaderParameter) -> Bool {
         return lhs.name == rhs.name &&
             lhs.desc == rhs.desc &&
             lhs.initial == rhs.initial &&

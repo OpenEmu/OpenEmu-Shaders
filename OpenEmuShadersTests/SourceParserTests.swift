@@ -26,7 +26,7 @@ import XCTest
 
 @testable import OpenEmuShaders
 
-class OESourceParserTests: XCTestCase {
+class SourceParserTests: XCTestCase {
     override func setUp() {
         InMemProtocol.requests = [:]
     }
@@ -67,7 +67,7 @@ class OESourceParserTests: XCTestCase {
         
         do {
             let url = URL(string: "mem://foo.slang")!
-            let p = try OESourceParser(fromURL: url)
+            let p = try SourceParser(fromURL: url)
             
             XCTAssertEqual(p.vertexSource, expected[0])
             XCTAssertEqual(p.fragmentSource, expected[1])
@@ -94,14 +94,14 @@ class OESourceParserTests: XCTestCase {
         
         do {
             let url = URL(string: "mem://foo.slang")!
-            let p = try OESourceParser(fromURL: url)
+            let p = try SourceParser(fromURL: url)
             XCTAssertEqual(p.name, "this_is_the_name")
             XCTAssertEqual(p.format, SlangFormat.r8Unorm)
             let pp = p.parameters["FrameColor_R"]
             XCTAssertNotNil(pp)
             
             let p1 = pp!
-            let p2 = OEShaderParameter(name: "FrameColor_R", desc: "Frame Color R")
+            let p2 = ShaderParameter(name: "FrameColor_R", desc: "Frame Color R")
             p2.initial = 0.2
             p2.minimum = 0.4
             p2.maximum = 0.6
@@ -175,7 +175,7 @@ class OESourceParserTests: XCTestCase {
         
         do {
             let url = URL(string: "mem:///root/foo.slang")!
-            let p = try OESourceParser(fromURL: url)
+            let p = try SourceParser(fromURL: url)
             XCTAssertEqual(p.name, "this_is_the_name")
             XCTAssertEqual(p.vertexSource, expected[0])
             XCTAssertEqual(p.fragmentSource, expected[1])
