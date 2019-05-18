@@ -28,30 +28,30 @@
 
 @interface ShaderPass : NSObject
 
-@property (nonatomic, readwrite) NSURL *url;
-@property (nonatomic, readwrite) NSUInteger frameCountMod;
-@property (nonatomic, readwrite) OEShaderPassScale scaleX;
-@property (nonatomic, readwrite) OEShaderPassScale scaleY;
-@property (nonatomic, readwrite) SlangFormat format;
+@property (nonatomic, readwrite) NSURL              *url;
+@property (nonatomic, readwrite) NSUInteger         frameCountMod;
+@property (nonatomic, readwrite) OEShaderPassScale  scaleX;
+@property (nonatomic, readwrite) OEShaderPassScale  scaleY;
+@property (nonatomic, readwrite) SlangFormat        format;
 @property (nonatomic, readwrite) OEShaderPassFilter filter;
-@property (nonatomic, readwrite) OEShaderPassWrap wrapMode;
-@property (nonatomic, readwrite) CGSize scale;
-@property (nonatomic, readwrite) CGSize size;
-@property (nonatomic, readwrite) BOOL valid;
-@property (nonatomic, readwrite) BOOL isFloat;
-@property (nonatomic, readwrite) BOOL issRGB;
-@property (nonatomic, readwrite) BOOL isMipmap;
-@property (nonatomic, readwrite) BOOL isFeedback;
-@property (nonatomic, readwrite) NSString *alias;
+@property (nonatomic, readwrite) OEShaderPassWrap   wrapMode;
+@property (nonatomic, readwrite) CGSize             scale;
+@property (nonatomic, readwrite) CGSize             size;
+@property (nonatomic, readwrite) BOOL               valid;
+@property (nonatomic, readwrite) BOOL               isFloat;
+@property (nonatomic, readwrite) BOOL               issRGB;
+@property (nonatomic, readwrite) BOOL               isMipmap;
+@property (nonatomic, readwrite) BOOL               isFeedback;
+@property (nonatomic, readwrite) NSString           *alias;
 
 @end
 
 @interface ShaderLUT : NSObject
 
-@property (nonatomic, readwrite) NSURL *url;
-@property (nonatomic, readwrite) NSString *name;
-@property (nonatomic, readwrite) OEShaderPassWrap wrapMode;
-@property (nonatomic, readwrite) BOOL isMipmap;
+@property (nonatomic, readwrite) NSURL              *url;
+@property (nonatomic, readwrite) NSString           *name;
+@property (nonatomic, readwrite) OEShaderPassWrap   wrapMode;
+@property (nonatomic, readwrite) BOOL               isMipmap;
 @property (nonatomic, readwrite) OEShaderPassFilter filter;
 
 @end
@@ -60,10 +60,10 @@
 
 - (instancetype)initFromURL:(NSURL *)url error:(NSError **)error;
 
-@property (nonatomic, readonly) NSArray<ShaderPass *> *passes;
+@property (nonatomic, readonly) NSArray<ShaderPass *>        *passes;
 @property (nonatomic, readonly) NSArray<OEShaderParameter *> *parameters;
-@property (nonatomic, readonly) NSArray<ShaderLUT *> *luts;
-@property (nonatomic, readonly) NSUInteger historySize;
+@property (nonatomic, readonly) NSArray<ShaderLUT *>         *luts;
+@property (nonatomic, readonly) NSUInteger                   historySize;
 
 - (BOOL)buildPass:(NSUInteger)passNumber
      metalVersion:(NSUInteger)version

@@ -37,11 +37,11 @@ public extension Scanner {
         guard let s = tmp as String? else {
             return nil
         }
-        
+
         if !self.scanString("\"", into: nil) {
             return nil
         }
-        
+
         return s
     }
 }

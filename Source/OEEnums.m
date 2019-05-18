@@ -9,47 +9,47 @@
 #import <Foundation/Foundation.h>
 #import "OEEnums.h"
 
-OEShaderTextureSemantic const OEShaderTextureSemanticOriginal = @"Original";
-OEShaderTextureSemantic const OEShaderTextureSemanticSource = @"Source";
+OEShaderTextureSemantic const OEShaderTextureSemanticOriginal        = @"Original";
+OEShaderTextureSemantic const OEShaderTextureSemanticSource          = @"Source";
 OEShaderTextureSemantic const OEShaderTextureSemanticOriginalHistory = @"OriginalHistory";
-OEShaderTextureSemantic const OEShaderTextureSemanticPassOutput = @"PassOutput";
-OEShaderTextureSemantic const OEShaderTextureSemanticPassFeedback = @"PassFeedback";
-OEShaderTextureSemantic const OEShaderTextureSemanticUser = @"User";
+OEShaderTextureSemantic const OEShaderTextureSemanticPassOutput      = @"PassOutput";
+OEShaderTextureSemantic const OEShaderTextureSemanticPassFeedback    = @"PassFeedback";
+OEShaderTextureSemantic const OEShaderTextureSemanticUser            = @"User";
 
-OEShaderBufferSemantic const OEShaderBufferSemanticMVP = @"MVP";
-OEShaderBufferSemantic const OEShaderBufferSemanticOutput = @"Output";
+OEShaderBufferSemantic const OEShaderBufferSemanticMVP               = @"MVP";
+OEShaderBufferSemantic const OEShaderBufferSemanticOutput            = @"Output";
 OEShaderBufferSemantic const OEShaderBufferSemanticFinalViewportSize = @"FinalViewportSize";
-OEShaderBufferSemantic const OEShaderBufferSemanticFrameCount = @"FrameCount";
-OEShaderBufferSemantic const OEShaderBufferSemanticFloatParameter = @"FloatParameter";
+OEShaderBufferSemantic const OEShaderBufferSemanticFrameCount        = @"FrameCount";
+OEShaderBufferSemantic const OEShaderBufferSemanticFloatParameter    = @"FloatParameter";
 
 @implementation OEShaderConstants
 + (NSArray<OEShaderTextureSemantic> *)textureSemantics {
-    static dispatch_once_t once;
+    static dispatch_once_t                  once;
     static NSArray<OEShaderTextureSemantic> *res;
     dispatch_once(&once, ^{
         res = @[
-                OEShaderTextureSemanticOriginal,
-                OEShaderTextureSemanticSource,
-                OEShaderTextureSemanticOriginalHistory,
-                OEShaderTextureSemanticPassOutput,
-                OEShaderTextureSemanticPassFeedback,
-                OEShaderTextureSemanticUser,
-                ];
+            OEShaderTextureSemanticOriginal,
+            OEShaderTextureSemanticSource,
+            OEShaderTextureSemanticOriginalHistory,
+            OEShaderTextureSemanticPassOutput,
+            OEShaderTextureSemanticPassFeedback,
+            OEShaderTextureSemanticUser,
+        ];
     });
     return res;
 }
 
 + (NSArray<OEShaderBufferSemantic> *)bufferSemantics {
-    static dispatch_once_t once;
+    static dispatch_once_t                 once;
     static NSArray<OEShaderBufferSemantic> *res;
     dispatch_once(&once, ^{
         res = @[
-                OEShaderBufferSemanticMVP,
-                OEShaderBufferSemanticOutput,
-                OEShaderBufferSemanticFinalViewportSize,
-                OEShaderBufferSemanticFrameCount,
-                OEShaderBufferSemanticFloatParameter,
-                ];
+            OEShaderBufferSemanticMVP,
+            OEShaderBufferSemanticOutput,
+            OEShaderBufferSemanticFinalViewportSize,
+            OEShaderBufferSemanticFrameCount,
+            OEShaderBufferSemanticFloatParameter,
+        ];
     });
     return res;
 }
@@ -89,6 +89,6 @@ SlangFormat SlangFormatFromGLSlangNSString(NSString *str) {
     FMT(R32G32B32A32_UINT, R32G32B32A32Uint);
     FMT(R32G32B32A32_SINT, R32G32B32A32Sint);
     FMT(R32G32B32A32_SFLOAT, R32G32B32A32Sfloat);
-    
+
     return SlangFormatUnknown;
 }

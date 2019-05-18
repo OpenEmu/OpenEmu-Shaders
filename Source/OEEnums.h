@@ -139,7 +139,6 @@ FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticFloatParame
 
 @interface OEShaderConstants : NSObject
 + (NSArray<OEShaderTextureSemantic> *)textureSemantics;
-
 + (NSArray<OEShaderBufferSemantic> *)bufferSemantics;
 @end
 
@@ -192,8 +191,8 @@ extern SlangFormat SlangFormatFromGLSlangNSString(NSString *str);
 #pragma mark -
 
 typedef NS_OPTIONS(NSUInteger, OEStageUsage) {
-    OEStageUsageNone = 0,
-    OEStageUsageVertex = (1 << 0), // semantic is used by the vertex shader
+    OEStageUsageNone     = 0,
+    OEStageUsageVertex   = (1 << 0), // semantic is used by the vertex shader
     OEStageUsageFragment = (1 << 1), // semantic is used by the fragment shader
 };
 
@@ -212,7 +211,7 @@ typedef NS_ENUM(NSUInteger, OEShaderPassFilter) {
 };
 
 typedef NS_ENUM(NSUInteger, OEShaderPassWrap) {
-    OEShaderPassWrapBorder = 0,
+    OEShaderPassWrapBorder  = 0,
     OEShaderPassWrapDefault = OEShaderPassWrapBorder,
     OEShaderPassWrapEdge,
     OEShaderPassWrapRepeat,

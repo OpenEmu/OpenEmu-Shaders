@@ -29,7 +29,7 @@ import XCTest
 class NSScannerTests: XCTestCase {
 
     func testScanQuotedString() {
-        let scan = Scanner(string: "3.0 \"hello there\" YES")
+        let scan      = Scanner(string: "3.0 \"hello there\" YES")
         var f: Double = 0;
         XCTAssertTrue(scan.scanDouble(&f));
         XCTAssertEqual(f, 3.0);

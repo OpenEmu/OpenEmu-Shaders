@@ -29,7 +29,7 @@
 
 static NSString *IDToNSString(id obj) {
     if ([obj isKindOfClass:NSString.class])
-        return (NSString *) obj;
+        return (NSString *)obj;
     return nil;
 }
 
@@ -73,8 +73,8 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
 }
 
 @implementation ShaderPass {
-    NSURL *_url;
-    NSUInteger _index;
+    NSURL          *_url;
+    NSUInteger     _index;
     OESourceParser *_source;
 }
 
@@ -82,11 +82,11 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
                       index:(NSUInteger)index
                  dictionary:(NSDictionary *)d {
     if (self = [super init]) {
-        _url = url;
-        _index = index;
+        _url    = url;
+        _index  = index;
         _source = [[OESourceParser alloc] initFromURL:url error:nil];
 
-        self.filter = OEShaderPassFilterFromObject(d[@"filterLinear"]);
+        self.filter   = OEShaderPassFilterFromObject(d[@"filterLinear"]);
         self.wrapMode = OEShaderPassWrapFromNSString(IDToNSString(d[@"wrapMode"]));
 
         id obj = nil;
@@ -114,10 +114,10 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
 
         if (d[@"scaleType"] != nil || d[@"scaleTypeX"] != nil || d[@"scaleTypeY"] != nil) {
             // scale
-            self.valid = YES;
+            self.valid  = YES;
             self.scaleX = OEShaderPassScaleInput;
             self.scaleY = OEShaderPassScaleInput;
-            CGSize size = {0};
+            CGSize size  = {0};
             CGSize scale = CGSizeMake(1.0, 1.0);
 
             NSString *str = nil;
@@ -151,7 +151,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
                 }
             }
 
-            self.size = size;
+            self.size  = size;
             self.scale = scale;
         }
     }
@@ -185,10 +185,10 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
                        name:(NSString *)name
                  dictionary:(NSDictionary *)d {
     if (self = [super init]) {
-        _url = url;
+        _url  = url;
         _name = name;
 
-        self.filter = OEShaderPassFilterFromObject(d[@"linear"]);
+        self.filter   = OEShaderPassFilterFromObject(d[@"linear"]);
         self.wrapMode = OEShaderPassWrapFromNSString(IDToNSString(d[@"wrapMode"]));
 
         id obj = nil;
@@ -203,24 +203,24 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
 @end
 
 @implementation SlangShader {
-    NSURL *_url;
-    NSMutableArray<ShaderPass *> *_passes;
-    NSMutableArray<ShaderLUT *> *_luts;
-    NSMutableArray<OEShaderParameter *> *_parameters;
+    NSURL                                                *_url;
+    NSMutableArray<ShaderPass *>                         *_passes;
+    NSMutableArray<ShaderLUT *>                          *_luts;
+    NSMutableArray<OEShaderParameter *>                  *_parameters;
     NSMutableDictionary<NSString *, OEShaderParameter *> *_parametersMap;
-    OEShaderPassCompiler *_compiler;
+    OEShaderPassCompiler                                 *_compiler;
 
 }
 
 - (instancetype)initFromURL:(NSURL *)url error:(NSError **)error {
     if (self = [super init]) {
-        _url = url;
-        _parameters = [NSMutableArray new];
+        _url           = url;
+        _parameters    = [NSMutableArray new];
         _parametersMap = [NSMutableDictionary new];
 
-        NSURL *base = [url URLByDeletingLastPathComponent];
+        NSURL *base                     = [url URLByDeletingLastPathComponent];
 
-        NSError *err;
+        NSError                      *err;
         NSDictionary<NSString *, id> *d = [ShaderConfigSerialization configFromURL:url error:&err];
         if (err != nil) {
             if (error != nil) {
@@ -232,7 +232,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
         NSArray *passes = d[@"passes"];
         _passes = [NSMutableArray arrayWithCapacity:passes.count];
 
-        NSUInteger i = 0;
+        NSUInteger        i = 0;
         for (NSDictionary *spec in passes) {
             NSString *path = spec[@"shader"];
             _passes[i] = [[ShaderPass alloc] initWithURL:[NSURL URLWithString:path
@@ -246,10 +246,10 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
         NSDictionary < NSString *, NSDictionary * > *textures = d[@"textures"];
         if (textures != nil) {
             _luts = [NSMutableArray arrayWithCapacity:textures.count];
-            i = 0;
+            i     = 0;
             for (NSString *key in textures.keyEnumerator) {
                 NSDictionary *spec = textures[key];
-                NSString *path = spec[@"path"];
+                NSString     *path = spec[@"path"];
                 _luts[i] = [[ShaderLUT alloc] initWithURL:[NSURL URLWithString:path
                                                                  relativeToURL:base]
                                                      name:key
@@ -262,7 +262,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
         i = 0;
         for (ShaderPass *pass in _passes) {
             NSDictionary < NSString *, OEShaderParameter * > *params = pass.source.parameters;
-            for (OEShaderParameter *param in params.objectEnumerator) {
+            for (OEShaderParameter                           *param in params.objectEnumerator) {
                 OEShaderParameter *existing = _parametersMap[param.name];
                 if (existing != nil && ![param isEqual:existing]) {
                     // TODO(SGC) conflicting parameters
@@ -281,7 +281,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
                 OEShaderParameter *existing = _parametersMap[name];
                 if (existing) {
                     existing.initial = [params[name] floatValue];
-                    existing.value = [params[name] floatValue];
+                    existing.value   = [params[name] floatValue];
                 }
             }
         }

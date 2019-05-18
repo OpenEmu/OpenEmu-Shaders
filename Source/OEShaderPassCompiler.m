@@ -28,7 +28,7 @@
 // typedef void (*spvc_error_callback)(void *userdata, const char *error);
 
 void error_callback(void *userdata, const char *error) {
-    OEShaderPassCompiler *compiler = (__bridge OEShaderPassCompiler *) userdata;
+    OEShaderPassCompiler *compiler = (__bridge OEShaderPassCompiler *)userdata;
     [compiler compileError:error];
 }
 
@@ -50,10 +50,10 @@ void error_callback(void *userdata, const char *error) {
     spvc_context ctx;
     spvc_context_create(&ctx);
 
-    spvc_context_set_error_callback(ctx, error_callback, (__bridge void *) self);
+    spvc_context_set_error_callback(ctx, error_callback, (__bridge void *)self);
 
     // vertex shader
-    SlangCompiler *c = [SlangCompiler new];
+    SlangCompiler *c  = [SlangCompiler new];
     ShaderProgram *vs = [c compileVertex:pass.source.vertexSource error:nil];
 
     spvc_parsed_ir vs_ir = nil;
@@ -66,7 +66,7 @@ void error_callback(void *userdata, const char *error) {
     spvc_compiler_create_shader_resources(vs_compiler, &vs_resources);
 
     spvc_reflected_resource const *resource = nil;
-    size_t resource_size;
+    size_t                        resource_size;
 
     spvc_resources_get_resource_list_for_type(vs_resources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, &resource, &resource_size);
     if (resource_size > 0) {
@@ -111,7 +111,7 @@ void error_callback(void *userdata, const char *error) {
     // fragment compile
     spvc_compiler_options fs_options;
     spvc_compiler_create_compiler_options(fs_compiler, &fs_options);
-    spvc_compiler_options_set_uint(fs_options, SPVC_COMPILER_OPTION_MSL_VERSION, 20000);
+    spvc_compiler_options_set_uint(fs_options, SPVC_COMPILER_OPTION_MSL_VERSION, (unsigned int)version);
     spvc_compiler_install_compiler_options(fs_compiler, fs_options);
     char const *fs_code;
     spvc_compiler_compile(fs_compiler, &fs_code);
@@ -190,18 +190,18 @@ void error_callback(void *userdata, const char *error) {
     // UBO
     ShaderPassBufferBinding *uboB = passBindings.buffers[0];
     uboB.stageUsage = ref.uboStageUsage;
-    uboB.binding = ref.uboBinding;
-    uboB.size = (ref.uboSize + 0xf) & ~0xf; // round up to nearest 16 bytes
+    uboB.binding    = ref.uboBinding;
+    uboB.size       = (ref.uboSize + 0xf) & ~0xf; // round up to nearest 16 bytes
 
     // push constants
     ShaderPassBufferBinding *pshB = passBindings.buffers[1];
     pshB.stageUsage = ref.pushStageUsage;
-    pshB.binding = ref.uboBinding ? 0 : 1; // if there is a UBO, this should be binding 0
-    pshB.size = (ref.pushSize + 0xf) & ~0xf; // round up to nearest 16 bytes
+    pshB.binding    = ref.uboBinding ? 0 : 1; // if there is a UBO, this should be binding 0
+    pshB.size       = (ref.pushSize + 0xf) & ~0xf; // round up to nearest 16 bytes
 
     for (OEShaderBufferSemantic sem in ref.semantics) {
         ShaderSemanticMeta *meta = ref.semantics[sem];
-        NSString *name = [ref nameForBufferSemantic:sem index:0];
+        NSString           *name = [ref nameForBufferSemantic:sem index:0];
         if (meta.uboActive) {
             [uboB addUniformData:passSemantics.uniforms[sem].data
                             size:meta.numberOfComponents * sizeof(float)
@@ -215,9 +215,9 @@ void error_callback(void *userdata, const char *error) {
         }
     }
 
-    NSUInteger i = 0;
+    NSUInteger              i = 0;
     for (ShaderSemanticMeta *meta in ref.floatParameters) {
-        NSString *name = [ref nameForBufferSemantic:OEShaderBufferSemanticFloatParameter index:i];
+        NSString          *name  = [ref nameForBufferSemantic:OEShaderBufferSemanticFloatParameter index:i];
         OEShaderParameter *param = _shader.parameters[i];
         if (meta.uboActive) {
             [uboB addUniformData:param.valuePtr
@@ -234,25 +234,25 @@ void error_callback(void *userdata, const char *error) {
     }
 
     for (OEShaderTextureSemantic sem in ref.textures) {
-        NSArray<ShaderTextureSemanticMeta *> *a = ref.textures[sem];
-        ShaderPassTextureSemantics *tex = passSemantics.textures[sem];
+        NSArray<ShaderTextureSemanticMeta *> *a   = ref.textures[sem];
+        ShaderPassTextureSemantics           *tex = passSemantics.textures[sem];
 
-        NSUInteger index = 0;
+        NSUInteger                     index = 0;
         for (ShaderTextureSemanticMeta *meta in a) {
             if (meta.stageUsage != OEStageUsageNone) {
                 ShaderPassTextureBinding *bind = [passBindings addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)((uintptr_t)(void *)tex.texture + index * tex.textureStride)];
 
                 if (sem == OEShaderTextureSemanticUser) {
-                    bind.wrap = _shader.luts[index].wrapMode;
+                    bind.wrap   = _shader.luts[index].wrapMode;
                     bind.filter = _shader.luts[index].filter;
                 } else {
-                    bind.wrap = _shader.passes[passNumber].wrapMode;
+                    bind.wrap   = _shader.passes[passNumber].wrapMode;
                     bind.filter = _shader.passes[passNumber].filter;
                 }
 
                 bind.stageUsage = meta.stageUsage;
-                bind.binding = meta.binding;
-                bind.name = [ref nameForTextureSemantic:sem index:index];
+                bind.binding    = meta.binding;
+                bind.name       = [ref nameForTextureSemantic:sem index:index];
 
                 if (sem == OEShaderTextureSemanticPassFeedback) {
                     _shader.passes[index].isFeedback = YES;
@@ -285,7 +285,7 @@ void error_callback(void *userdata, const char *error) {
     vertexResources:(spvc_resources)vsResources fragmentResources:(spvc_resources)fsResources {
 
     spvc_reflected_resource const *list;
-    size_t list_size;
+    size_t                        list_size;
 #define CHECK_EMPTY(RES, TYPE) list_size = 0; \
     spvc_resources_get_resource_list_for_type(RES, TYPE, &list, &list_size); \
     if (list_size > 0) { \
@@ -359,7 +359,7 @@ void error_callback(void *userdata, const char *error) {
         return NO;
     }
 
-    unsigned vertexUBOBinding = vertexUBO ? spvc_compiler_get_decoration(vsCompiler, vertexUBO->id, SpvDecorationBinding) : -1u;
+    unsigned vertexUBOBinding   = vertexUBO ? spvc_compiler_get_decoration(vsCompiler, vertexUBO->id, SpvDecorationBinding) : -1u;
     unsigned fragmentUBOBinding = fragmentUBO ? spvc_compiler_get_decoration(fsCompiler, fragmentUBO->id, SpvDecorationBinding) : -1u;
     if (vertexUBOBinding != -1u &&
         fragmentUBOBinding != -1u &&
@@ -464,7 +464,7 @@ void error_callback(void *userdata, const char *error) {
     }
 
     unsigned vecsz = spvc_type_get_vector_size(type);
-    unsigned cols = spvc_type_get_columns(type);
+    unsigned cols  = spvc_type_get_columns(type);
 
     if ([semantic isEqualToString:OEShaderBufferSemanticMVP]) {
         return bt == SPVC_BASETYPE_FP32 && vecsz == 4 && cols == 4;
@@ -496,15 +496,15 @@ void error_callback(void *userdata, const char *error) {
                      resource:(spvc_reflected_resource const *)res ubo:(BOOL)ubo {
 
     spvc_buffer_range const *ranges;
-    size_t num_ranges = 0;
+    size_t                  num_ranges = 0;
     spvc_compiler_get_active_buffer_ranges(compiler, res->id, &ranges, &num_ranges);
     for (size_t i = 0; i < num_ranges; i++) {
         spvc_buffer_range const *range = &ranges[i];
-        char const *name = spvc_compiler_get_member_name(compiler, res->base_type_id, range->index);
-        spvc_type type = spvc_compiler_get_type_handle(compiler, spvc_type_get_member_type(spvc_compiler_get_type_handle(compiler, res->base_type_id), range->index));
+        char const              *name  = spvc_compiler_get_member_name(compiler, res->base_type_id, range->index);
+        spvc_type               type   = spvc_compiler_get_type_handle(compiler, spvc_type_get_member_type(spvc_compiler_get_type_handle(compiler, res->base_type_id), range->index));
 
-        ShaderSemanticMap *bufferSem = [ref bufferSemanticForUniformName:[NSString stringWithUTF8String:name]];
-        ShaderTextureSemanticMap *texSem = [ref textureSemanticForUniformName:[NSString stringWithUTF8String:name]];
+        ShaderSemanticMap        *bufferSem = [ref bufferSemanticForUniformName:[NSString stringWithUTF8String:name]];
+        ShaderTextureSemanticMap *texSem    = [ref textureSemanticForUniformName:[NSString stringWithUTF8String:name]];
 
         if (texSem.semantic == OEShaderTextureSemanticPassOutput && texSem.index >= ref.passNumber) {
             NSLog(@"shader pass #%lu is attempting to use output from self or later pass #%lu", ref.passNumber, texSem.index);
@@ -512,7 +512,7 @@ void error_callback(void *userdata, const char *error) {
         }
 
         unsigned vecsz = spvc_type_get_vector_size(type);
-        unsigned cols = spvc_type_get_columns(type);
+        unsigned cols  = spvc_type_get_columns(type);
 
         if (bufferSem) {
             if (![self validateType:type forSemantic:bufferSem.semantic]) {

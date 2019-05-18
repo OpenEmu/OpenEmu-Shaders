@@ -27,23 +27,23 @@ import Foundation
 @objc(OEShaderParameter)
 @objcMembers
 public class ShaderParameter: NSObject {
-    public var name: String
-    public var desc: String
-    public var value: Float = 0.0
+    public var name:    String
+    public var desc:    String
+    public var value:   Float = 0.0
     public var initial: Float = 0.0
     public var minimum: Float = 0.0
     public var maximum: Float = 1.0
-    public var step: Float = 0.01
-    
+    public var step:    Float = 0.01
+
     public var valuePtr: UnsafeMutablePointer<Float> {
         return UnsafeMutablePointer<Float>(&value)
     }
-    
+
     public init(name: String, desc: String) {
         self.name = name
         self.desc = desc
     }
-    
+
     public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? ShaderParameter else {
             return false
@@ -53,7 +53,7 @@ public class ShaderParameter: NSObject {
 }
 
 extension ShaderParameter {
-    static func == (lhs: ShaderParameter, rhs: ShaderParameter) -> Bool {
+    static func ==(lhs: ShaderParameter, rhs: ShaderParameter) -> Bool {
         return lhs.name == rhs.name &&
             lhs.desc == rhs.desc &&
             lhs.initial == rhs.initial &&

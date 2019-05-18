@@ -28,7 +28,7 @@
 @interface ShaderProgram : NSObject
 
 @property (nonatomic, readonly) SpvId const *spirv;
-@property (nonatomic, readonly) size_t spirvLength;
+@property (nonatomic, readonly) size_t      spirvLength;
 
 @end
 

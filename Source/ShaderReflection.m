@@ -36,7 +36,7 @@
 + (instancetype)mapWithSemantic:(OEShaderTextureSemantic)semantic index:(NSUInteger)index {
     ShaderTextureSemanticMap *m = [self new];
     m.semantic = semantic;
-    m.index = index;
+    m.index    = index;
     return m;
 }
 
@@ -47,7 +47,7 @@
 + (instancetype)mapWithSemantic:(OEShaderBufferSemantic)semantic index:(NSUInteger)index {
     ShaderSemanticMap *m = [self new];
     m.semantic = semantic;
-    m.index = index;
+    m.index    = index;
     return m;
 }
 
@@ -56,21 +56,21 @@
 @implementation ShaderReflection {
 
     NSMutableDictionary<OEShaderTextureSemantic, NSMutableArray<ShaderTextureSemanticMeta *> *> *_textures;
-    NSMutableDictionary<OEShaderBufferSemantic, ShaderSemanticMeta *> *_semantics;
-    NSMutableArray<ShaderSemanticMeta *> *_floatParameters;
+    NSMutableDictionary<OEShaderBufferSemantic, ShaderSemanticMeta *>                           *_semantics;
+    NSMutableArray<ShaderSemanticMeta *>                                                        *_floatParameters;
 
     NSMutableDictionary<NSString *, ShaderTextureSemanticMap *> *_textureSemanticMap;
     NSMutableDictionary<NSString *, ShaderTextureSemanticMap *> *_textureUniformSemanticMap;
-    NSMutableDictionary<NSString *, ShaderSemanticMap *> *_semanticMap;
+    NSMutableDictionary<NSString *, ShaderSemanticMap *>        *_semanticMap;
 }
 
-static NSDictionary<OEShaderTextureSemantic, NSNumber *> *textureSemanticArrays;
-static NSDictionary<OEShaderTextureSemantic, NSString *> *textureSemanticToName;
-static NSDictionary<OEShaderTextureSemantic, NSString *> *textureSemanticToUniformName;
+static NSDictionary<OEShaderTextureSemantic, NSNumber *>    *textureSemanticArrays;
+static NSDictionary<OEShaderTextureSemantic, NSString *>    *textureSemanticToName;
+static NSDictionary<OEShaderTextureSemantic, NSString *>    *textureSemanticToUniformName;
 static NSDictionary<NSString *, ShaderTextureSemanticMap *> *textureSemanticNames;
 static NSDictionary<NSString *, ShaderTextureSemanticMap *> *textureSemanticUniformNames;
-static NSDictionary<NSString *, ShaderSemanticMap *> *semanticUniformNames;
-static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
+static NSDictionary<NSString *, ShaderSemanticMap *>        *semanticUniformNames;
+static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformName;
 
 + (void)initialize {
     dispatch_once_t once;
@@ -83,7 +83,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
             OEShaderTextureSemanticPassFeedback: @YES,
             OEShaderTextureSemanticUser: @YES,
         };
-        textureSemanticNames = @{
+        textureSemanticNames  = @{
             @"Original": [ShaderTextureSemanticMap mapWithSemantic:OEShaderTextureSemanticOriginal index:0],
             @"Source": [ShaderTextureSemanticMap mapWithSemantic:OEShaderTextureSemanticSource index:1],
             @"OriginalHistory": [ShaderTextureSemanticMap mapWithSemantic:OEShaderTextureSemanticOriginalHistory index:2],
@@ -100,7 +100,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
             OEShaderTextureSemanticUser: @"User",
         };
 
-        textureSemanticUniformNames = @{
+        textureSemanticUniformNames  = @{
             @"OriginalSize": [ShaderTextureSemanticMap mapWithSemantic:OEShaderTextureSemanticOriginal index:0],
             @"SourceSize": [ShaderTextureSemanticMap mapWithSemantic:OEShaderTextureSemanticSource index:1],
             @"OriginalHistorySize": [ShaderTextureSemanticMap mapWithSemantic:OEShaderTextureSemanticOriginalHistory index:2],
@@ -117,7 +117,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
             OEShaderTextureSemanticUser: @"UserSize",
         };
 
-        semanticUniformNames = @{
+        semanticUniformNames  = @{
             @"MVP": [ShaderSemanticMap mapWithSemantic:OEShaderBufferSemanticMVP index:0],
             @"OutputSize": [ShaderSemanticMap mapWithSemantic:OEShaderBufferSemanticOutput index:1],
             @"FinalViewportSize": [ShaderSemanticMap mapWithSemantic:OEShaderBufferSemanticFinalViewportSize index:2],
@@ -136,23 +136,23 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
     self = [super init];
 
     _textures = [NSMutableDictionary<OEShaderTextureSemantic, NSMutableArray<ShaderTextureSemanticMeta *> *> new];
-    _textures[OEShaderTextureSemanticOriginal] = [NSMutableArray<ShaderTextureSemanticMeta *> new];
-    _textures[OEShaderTextureSemanticSource] = [NSMutableArray<ShaderTextureSemanticMeta *> new];
+    _textures[OEShaderTextureSemanticOriginal]        = [NSMutableArray<ShaderTextureSemanticMeta *> new];
+    _textures[OEShaderTextureSemanticSource]          = [NSMutableArray<ShaderTextureSemanticMeta *> new];
     _textures[OEShaderTextureSemanticOriginalHistory] = [NSMutableArray<ShaderTextureSemanticMeta *> new];
-    _textures[OEShaderTextureSemanticPassOutput] = [NSMutableArray<ShaderTextureSemanticMeta *> new];
-    _textures[OEShaderTextureSemanticPassFeedback] = [NSMutableArray<ShaderTextureSemanticMeta *> new];
-    _textures[OEShaderTextureSemanticUser] = [NSMutableArray<ShaderTextureSemanticMeta *> new];
+    _textures[OEShaderTextureSemanticPassOutput]      = [NSMutableArray<ShaderTextureSemanticMeta *> new];
+    _textures[OEShaderTextureSemanticPassFeedback]    = [NSMutableArray<ShaderTextureSemanticMeta *> new];
+    _textures[OEShaderTextureSemanticUser]            = [NSMutableArray<ShaderTextureSemanticMeta *> new];
 
     _semantics = [NSMutableDictionary<OEShaderBufferSemantic, ShaderSemanticMeta *> new];
-    _semantics[OEShaderBufferSemanticMVP] = [ShaderSemanticMeta new];
-    _semantics[OEShaderBufferSemanticOutput] = [ShaderSemanticMeta new];
+    _semantics[OEShaderBufferSemanticMVP]               = [ShaderSemanticMeta new];
+    _semantics[OEShaderBufferSemanticOutput]            = [ShaderSemanticMeta new];
     _semantics[OEShaderBufferSemanticFinalViewportSize] = [ShaderSemanticMeta new];
-    _semantics[OEShaderBufferSemanticFrameCount] = [ShaderSemanticMeta new];
+    _semantics[OEShaderBufferSemanticFrameCount]        = [ShaderSemanticMeta new];
 
-    _floatParameters = [NSMutableArray<ShaderSemanticMeta *> new];
-    _textureSemanticMap = [NSMutableDictionary<NSString *, ShaderTextureSemanticMap *> new];
+    _floatParameters           = [NSMutableArray<ShaderSemanticMeta *> new];
+    _textureSemanticMap        = [NSMutableDictionary<NSString *, ShaderTextureSemanticMap *> new];
     _textureUniformSemanticMap = [NSMutableDictionary<NSString *, ShaderTextureSemanticMap *> new];
-    _semanticMap = [NSMutableDictionary<NSString *, ShaderSemanticMap *> new];
+    _semanticMap               = [NSMutableDictionary<NSString *, ShaderSemanticMap *> new];
 
     return self;
 }
@@ -165,7 +165,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
     }
     e = [ShaderTextureSemanticMap new];
     e.semantic = semantic;
-    e.index = i;
+    e.index    = i;
     _textureSemanticMap[name] = e;
     return YES;
 }
@@ -178,7 +178,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
     }
     e = [ShaderTextureSemanticMap new];
     e.semantic = semantic;
-    e.index = i;
+    e.index    = i;
     _textureUniformSemanticMap[name] = e;
     return YES;
 }
@@ -191,7 +191,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
     }
     e = [ShaderSemanticMap new];
     e.semantic = semantic;
-    e.index = i;
+    e.index    = i;
     _semanticMap[name] = e;
     return YES;
 }
@@ -260,7 +260,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
         ShaderTextureSemanticMap *sem = names[key];
         if ([self textureSemanticIsArray:sem.semantic]) {
             if ([name hasPrefix:key]) {
-                NSUInteger index = (NSUInteger) [[name substringFromIndex:key.length] integerValue];
+                NSUInteger index = (NSUInteger)[[name substringFromIndex:key.length] integerValue];
                 return [ShaderTextureSemanticMap mapWithSemantic:sem.semantic index:index];
             }
         } else if ([name isEqualToString:key]) {
@@ -309,7 +309,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
 
     if (sem.numberOfComponents != vecSize && (sem.uboActive || sem.pushActive)) {
         NSLog(@"vertex and fragment shaders have different data type sizes for same parameter #%lu (%lu / %lu)",
-            index, sem.numberOfComponents, (size_t) vecSize);
+            index, sem.numberOfComponents, (size_t)vecSize);
         return NO;
     }
 
@@ -340,7 +340,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
 
     if (sem.numberOfComponents != vecSize && (sem.uboActive || sem.pushActive)) {
         NSLog(@"vertex and fragment shaders have different data type sizes for same semantic %@ (%lu / %lu)",
-            semantic, sem.numberOfComponents, (size_t) vecSize);
+            semantic, sem.numberOfComponents, (size_t)vecSize);
         return NO;
     }
 
@@ -361,7 +361,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
         sem.pushActive = YES;
         sem.pushOffset = offset;
     }
-    sem.numberOfComponents = vecSize;
+    sem.numberOfComponents  = vecSize;
     return YES;
 }
 
@@ -406,8 +406,8 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
         array[index] = sem;
     }
 
-    sem.binding = binding;
-    sem.texture = YES;
+    sem.binding    = binding;
+    sem.texture    = YES;
     sem.stageUsage = OEStageUsageFragment;
 
     return YES;
@@ -419,7 +419,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
     [desc appendString:@"  → textures:\n"];
 
     for (OEShaderTextureSemantic sem in OEShaderConstants.textureSemantics) {
-        NSUInteger i = 0;
+        NSUInteger                     i = 0;
         for (ShaderTextureSemanticMeta *meta in _textures[sem]) {
             if (meta.texture) {
                 [desc appendFormat:@"      %@ (#%lu)\n", sem, i];
@@ -432,14 +432,14 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
     [desc appendFormat:@"  → Uniforms (vertex: %s, fragment %s):\n",
                        _uboStageUsage & OEStageUsageVertex ? "YES" : "NO",
                        _uboStageUsage & OEStageUsageFragment ? "YES" : "NO"];
-    for (OEShaderBufferSemantic sem in OEShaderConstants.bufferSemantics) {
+    for (OEShaderBufferSemantic  sem in OEShaderConstants.bufferSemantics) {
         ShaderSemanticMeta *meta = _semantics[sem];
         if (meta.uboActive) {
             [desc appendFormat:@"      UBO  %@ (offset: %lu)\n", sem, meta.uboOffset];
         }
     }
     for (OEShaderTextureSemantic sem in OEShaderConstants.textureSemantics) {
-        NSUInteger i = 0;
+        NSUInteger                     i = 0;
         for (ShaderTextureSemanticMeta *meta in _textures[sem]) {
             if (meta.uboActive) {
                 [desc appendFormat:@"      UBO  %@ (#%lu) (offset: %lu)\n", textureSemanticToUniformName[sem], i, meta.uboOffset];
@@ -461,7 +461,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
     }
 
     for (OEShaderTextureSemantic sem in OEShaderConstants.textureSemantics) {
-        NSUInteger i = 0;
+        NSUInteger                     i = 0;
         for (ShaderTextureSemanticMeta *meta in _textures[sem]) {
             if (meta.pushActive) {
                 [desc appendFormat:@"      PUSH %@ (#%lu) (offset: %lu)\n", textureSemanticToUniformName[sem], i, meta.pushOffset];
@@ -473,7 +473,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *> *semanticToUniformName;
     [desc appendString:@"\n"];
     [desc appendString:@"  → Parameters:\n"];
 
-    NSUInteger i = 0;
+    NSUInteger              i = 0;
     for (ShaderSemanticMeta *meta in _floatParameters) {
         if (meta.uboActive) {
             [desc appendFormat:@"      UBO  #%lu (offset: %lu)\n", i, meta.uboOffset];

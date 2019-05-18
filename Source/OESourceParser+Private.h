@@ -28,19 +28,19 @@
 
 // Manual declaration of internal Swift class
 @interface OESourceParser : NSObject
-@property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) SlangFormat format;
-@property (nonatomic, readonly) NSString *vertexSource;
-@property (nonatomic, readonly) NSString *fragmentSource;
+@property (nonatomic, readonly) NSString                                      *name;
+@property (nonatomic, readonly) SlangFormat                                   format;
+@property (nonatomic, readonly) NSString                                      *vertexSource;
+@property (nonatomic, readonly) NSString                                      *fragmentSource;
 @property (nonatomic, readonly) NSDictionary<NSString *, OEShaderParameter *> *parameters;
 
 - (instancetype)initFromURL:(NSURL *)url error:(NSError **)error;
 @end
 
-@interface ShaderPass (Private)
+@interface ShaderPass(Private)
 @property (nonatomic, readonly) OESourceParser *source;
 @end
 
-@interface SlangShader (Private)
+@interface SlangShader(Private)
 @property (nonatomic) NSUInteger historySize;
 @end
