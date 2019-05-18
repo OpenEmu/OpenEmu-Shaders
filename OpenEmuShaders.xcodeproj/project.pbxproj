@@ -30,9 +30,12 @@
 		A9020051FEB9717E8F2ABA14 /* ConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9020E619BC7ACEF5904D318 /* ConfigTests.swift */; };
 		A902009F295CE6ED5C8FC8CA /* ShaderReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = A9020B45B7562A79B4BCF645 /* ShaderReflection.h */; };
 		A90203772A0E044990C034EA /* NSScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A902023035423BDAFACA21E6 /* NSScannerTests.swift */; };
+		A90205711DC1472EA0049303 /* OEShaderPassCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = A90209158C7B9B4C8306CD0D /* OEShaderPassCompiler.h */; };
 		A90205F1433179AFFF015F07 /* ShaderReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = A9020642C9363659BECEAAFF /* ShaderReflection.m */; };
 		A90206302FA906B0B42F2CF2 /* ShaderPassSemantics.m in Sources */ = {isa = PBXBuildFile; fileRef = A90206493F90CBEED52108D7 /* ShaderPassSemantics.m */; };
+		A9020770F02FBC42EDC65CC7 /* OESourceParser+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A90200FD5FAAA6164A305470 /* OESourceParser+Private.h */; };
 		A9020805BAF090A04D16722C /* ShaderPassSemantics.h in Headers */ = {isa = PBXBuildFile; fileRef = A9020BF6D6C3253BE8395A68 /* ShaderPassSemantics.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A90209064B397A0A2B1BFDC0 /* OEShaderPassCompiler.m in Sources */ = {isa = PBXBuildFile; fileRef = A902093DEC93994FE062176F /* OEShaderPassCompiler.m */; };
 		A9020AE1BBCE1F965F5F8436 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90203E4FFF77BAF2B3ECC24 /* Config.swift */; };
 		A9020CDAE9B375337B23CB35 /* SlangCompiler.mm in Sources */ = {isa = PBXBuildFile; fileRef = A90202C8B35052F56549FB38 /* SlangCompiler.mm */; };
 		A9020D05FC6DD9399E7EFBC2 /* SlangCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = A90203C72A8A32B7143EB579 /* SlangCompiler.h */; };
@@ -138,12 +141,15 @@
 		05F5BAB322866107004D713C /* glslang.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = glslang.xcodeproj; path = 3rdparty/projects/glslang/glslang.xcodeproj; sourceTree = "<group>"; };
 		05F5BACD2286610D004D713C /* SPIRV-Cross.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "SPIRV-Cross.xcodeproj"; path = "3rdparty/projects/SPIRV-Cross/SPIRV-Cross.xcodeproj"; sourceTree = "<group>"; };
 		05F5BB1022875C0B004D713C /* OpenEmuShadersTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenEmuShadersTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		A90200FD5FAAA6164A305470 /* OESourceParser+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OESourceParser+Private.h"; sourceTree = "<group>"; };
 		A902023035423BDAFACA21E6 /* NSScannerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSScannerTests.swift; sourceTree = "<group>"; };
 		A90202C8B35052F56549FB38 /* SlangCompiler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SlangCompiler.mm; sourceTree = "<group>"; };
 		A90203C72A8A32B7143EB579 /* SlangCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlangCompiler.h; sourceTree = "<group>"; };
 		A90203E4FFF77BAF2B3ECC24 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		A9020642C9363659BECEAAFF /* ShaderReflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderReflection.m; sourceTree = "<group>"; };
 		A90206493F90CBEED52108D7 /* ShaderPassSemantics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderPassSemantics.m; sourceTree = "<group>"; };
+		A90209158C7B9B4C8306CD0D /* OEShaderPassCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEShaderPassCompiler.h; sourceTree = "<group>"; };
+		A902093DEC93994FE062176F /* OEShaderPassCompiler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEShaderPassCompiler.m; sourceTree = "<group>"; };
 		A9020B45B7562A79B4BCF645 /* ShaderReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderReflection.h; sourceTree = "<group>"; };
 		A9020BF6D6C3253BE8395A68 /* ShaderPassSemantics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderPassSemantics.h; sourceTree = "<group>"; };
 		A9020E619BC7ACEF5904D318 /* ConfigTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigTests.swift; sourceTree = "<group>"; };
@@ -237,6 +243,9 @@
 				056AC35A228BA11E005018DA /* OEEnums.h */,
 				056AC371228BA144005018DA /* OEEnums.m */,
 				A90203E4FFF77BAF2B3ECC24 /* Config.swift */,
+				A902093DEC93994FE062176F /* OEShaderPassCompiler.m */,
+				A90209158C7B9B4C8306CD0D /* OEShaderPassCompiler.h */,
+				A90200FD5FAAA6164A305470 /* OESourceParser+Private.h */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -301,6 +310,8 @@
 				A9020D05FC6DD9399E7EFBC2 /* SlangCompiler.h in Headers */,
 				A9020805BAF090A04D16722C /* ShaderPassSemantics.h in Headers */,
 				A902009F295CE6ED5C8FC8CA /* ShaderReflection.h in Headers */,
+				A90205711DC1472EA0049303 /* OEShaderPassCompiler.h in Headers */,
+				A9020770F02FBC42EDC65CC7 /* OESourceParser+Private.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -488,6 +499,7 @@
 				A90206302FA906B0B42F2CF2 /* ShaderPassSemantics.m in Sources */,
 				A90205F1433179AFFF015F07 /* ShaderReflection.m in Sources */,
 				A9020AE1BBCE1F965F5F8436 /* Config.swift in Sources */,
+				A90209064B397A0A2B1BFDC0 /* OEShaderPassCompiler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

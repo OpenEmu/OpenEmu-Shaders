@@ -33,8 +33,8 @@
 @implementation SlangShaderTests
 
 - (void)testExample {
-    OEShaderParameter *p1 = [[OEShaderParameter alloc] initWithName:@"foo"];
-    OEShaderParameter *p2 = [[OEShaderParameter alloc] initWithName:@"foo2"];
+    OEShaderParameter *p1 = [[OEShaderParameter alloc] initWithName:@"foo" desc: @""];
+    OEShaderParameter *p2 = [[OEShaderParameter alloc] initWithName:@"foo2" desc: @""];
     XCTAssertFalse([p1 isEqual:p2]);
     
     NSURL *url = [NSURL fileURLWithPath:@"/Volumes/Data/projects/libretro/slang-shaders/crt/phosphorlut.slangp"];

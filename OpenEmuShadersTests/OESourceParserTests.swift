@@ -101,8 +101,7 @@ class OESourceParserTests: XCTestCase {
             XCTAssertNotNil(pp)
             
             let p1 = pp!
-            let p2 = OEShaderParameter(name: "FrameColor_R")
-            p2.desc = "Frame Color R"
+            let p2 = OEShaderParameter(name: "FrameColor_R", desc: "Frame Color R")
             p2.initial = 0.2
             p2.minimum = 0.4
             p2.maximum = 0.6

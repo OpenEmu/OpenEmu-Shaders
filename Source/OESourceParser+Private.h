@@ -22,42 +22,25 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
+#import <Foundation/Foundation.h>
 
-@objcMembers
-public class OEShaderParameter : NSObject {
-    public var name: String
-    public var desc: String
-    public var value: Float = 0.0
-    public var initial: Float = 0.0
-    public var minimum: Float = 0.0
-    public var maximum: Float = 1.0
-    public var step: Float = 0.01
-    
-    public var valuePtr: UnsafeMutablePointer<Float> {
-        return UnsafeMutablePointer<Float>(&value)
-    }
-    
-    public init(name: String, desc: String) {
-        self.name = name
-        self.desc = desc
-    }
-    
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? OEShaderParameter else {
-            return false
-        }
-        return self == other
-    }
-}
+@class OEShaderParameter;
 
-extension OEShaderParameter {
-    static func == (lhs: OEShaderParameter, rhs: OEShaderParameter) -> Bool {
-        return lhs.name == rhs.name &&
-            lhs.desc == rhs.desc &&
-            lhs.initial == rhs.initial &&
-            lhs.minimum == rhs.minimum &&
-            lhs.maximum == rhs.maximum &&
-            lhs.step == rhs.step;
-    }
-}
+// Manual declaration of internal Swift class
+@interface OESourceParser : NSObject
+@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) SlangFormat format;
+@property (nonatomic, readonly) NSString *vertexSource;
+@property (nonatomic, readonly) NSString *fragmentSource;
+@property (nonatomic, readonly) NSDictionary<NSString *, OEShaderParameter *> *parameters;
+
+- (instancetype)initFromURL:(NSURL *)url error:(NSError **)error;
+@end
+
+@interface ShaderPass (Private)
+@property (nonatomic, readonly) OESourceParser *source;
+@end
+
+@interface SlangShader (Private)
+@property (nonatomic) NSUInteger historySize;
+@end
