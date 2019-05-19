@@ -149,7 +149,8 @@ FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticFloatParame
 #define kMaxConstantBuffers 2
 #define kMaxShaderBindings  16
 
-typedef NS_ENUM(NSUInteger, SlangFormat) {
+typedef NS_ENUM(NSUInteger, SlangFormat)
+{
     SlangFormatUnknown = 0,
     SlangFormatR8Unorm,
     SlangFormatR8Uint,
@@ -190,27 +191,31 @@ extern SlangFormat SlangFormatFromGLSlangNSString(NSString *str);
 
 #pragma mark -
 
-typedef NS_OPTIONS(NSUInteger, OEStageUsage) {
+typedef NS_OPTIONS(NSUInteger, OEStageUsage)
+{
     OEStageUsageNone     = 0,
     OEStageUsageVertex   = (1 << 0), // semantic is used by the vertex shader
     OEStageUsageFragment = (1 << 1), // semantic is used by the fragment shader
 };
 
-typedef NS_ENUM(NSUInteger, OEShaderPassScale) {
+typedef NS_ENUM(NSUInteger, OEShaderPassScale)
+{
     OEShaderPassScaleInput = 0,
     OEShaderPassScaleAbsolute,
     OEShaderPassScaleViewport,
     OEShaderPassScaleInvalid,
 };
 
-typedef NS_ENUM(NSUInteger, OEShaderPassFilter) {
+typedef NS_ENUM(NSUInteger, OEShaderPassFilter)
+{
     OEShaderPassFilterUnspecified = 0,
     OEShaderPassFilterLinear,
     OEShaderPassFilterNearest,
     OEShaderPassFilterCount,
 };
 
-typedef NS_ENUM(NSUInteger, OEShaderPassWrap) {
+typedef NS_ENUM(NSUInteger, OEShaderPassWrap)
+{
     OEShaderPassWrapBorder  = 0,
     OEShaderPassWrapDefault = OEShaderPassWrapBorder,
     OEShaderPassWrapEdge,

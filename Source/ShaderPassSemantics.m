@@ -26,7 +26,8 @@
 
 @implementation ShaderPassUniformBinding
 
-+ (instancetype)makeUniformWithData:(void *)data size:(size_t)size offset:(size_t)offset name:(NSString *)name {
++ (instancetype)makeUniformWithData:(void *)data size:(size_t)size offset:(size_t)offset name:(NSString *)name
+{
     ShaderPassUniformBinding *u = [self new];
     u.data   = data;
     u.size   = size;
@@ -36,17 +37,20 @@
 }
 @end
 
-@implementation ShaderPassBufferBinding {
+@implementation ShaderPassBufferBinding
+{
     NSMutableArray<ShaderPassUniformBinding *> *_uniforms;
 }
 
-- (instancetype)init {
+- (instancetype)init
+{
     self      = [super init];
     _uniforms = [NSMutableArray new];
     return self;
 }
 
-- (ShaderPassUniformBinding *)addUniformData:(void *)data size:(size_t)size offset:(size_t)offset name:(NSString *)name {
+- (ShaderPassUniformBinding *)addUniformData:(void *)data size:(size_t)size offset:(size_t)offset name:(NSString *)name
+{
     ShaderPassUniformBinding *u = [ShaderPassUniformBinding makeUniformWithData:data size:size offset:offset name:name];
     [_uniforms addObject:u];
     return u;
@@ -54,7 +58,8 @@
 @end
 
 @implementation ShaderPassTextureBinding
-+ (instancetype)makeWithTexture:(id<MTLTexture> __unsafe_unretained *)texture {
++ (instancetype)makeWithTexture:(id<MTLTexture> __unsafe_unretained *)texture
+{
     ShaderPassTextureBinding *s = [self new];
     s.texture = texture;
     return s;
@@ -62,22 +67,25 @@
 @end
 
 
-@implementation ShaderPassBindings {
+@implementation ShaderPassBindings
+{
     NSMutableArray<ShaderPassTextureBinding *> *_textures;
     NSArray<ShaderPassBufferBinding *>         *_buffers;
 }
 
-- (instancetype)init {
+- (instancetype)init
+{
     self = [super init];
-
+    
     _textures = [NSMutableArray new];
     // equivalent to kMaxConstantBuffers
     _buffers  = @[[ShaderPassBufferBinding new], [ShaderPassBufferBinding new]];
-
+    
     return self;
 }
 
-- (ShaderPassTextureBinding *)addTexture:(id<MTLTexture> __unsafe_unretained *)texture {
+- (ShaderPassTextureBinding *)addTexture:(id<MTLTexture> __unsafe_unretained *)texture
+{
     ShaderPassTextureBinding *t = [ShaderPassTextureBinding makeWithTexture:texture];
     [_textures addObject:t];
     return t;
@@ -87,7 +95,8 @@
 
 @implementation ShaderPassBufferSemantics
 
-+ (instancetype)makeWithData:(void *)data {
++ (instancetype)makeWithData:(void *)data
+{
     ShaderPassBufferSemantics *s = [self new];
     s.data = data;
     return s;
@@ -99,7 +108,8 @@
 + (instancetype)makeWithTexture:(id<MTLTexture> __unsafe_unretained *)texture
                          stride:(size_t)ts
                            size:(void *)size
-                         stride:(size_t)ss {
+                         stride:(size_t)ss
+{
     ShaderPassTextureSemantics *s = [self new];
     s.texture       = texture;
     s.textureStride = ts;
@@ -109,12 +119,14 @@
 }
 @end
 
-@implementation ShaderPassSemantics {
+@implementation ShaderPassSemantics
+{
     NSMutableDictionary<OEShaderTextureSemantic, ShaderPassTextureSemantics *> *_textures;
     NSMutableDictionary<OEShaderBufferSemantic, ShaderPassBufferSemantics *>   *_uniforms;
 }
 
-- (instancetype)init {
+- (instancetype)init
+{
     self      = [super init];
     _textures = [NSMutableDictionary<OEShaderTextureSemantic, ShaderPassTextureSemantics *> new];
     _uniforms = [NSMutableDictionary<OEShaderBufferSemantic, ShaderPassBufferSemantics *> new];
@@ -125,11 +137,13 @@
             stride:(size_t)ts
               size:(void *)size
             stride:(size_t)ss
-          semantic:(OEShaderTextureSemantic)semantic {
+          semantic:(OEShaderTextureSemantic)semantic
+{
     _textures[semantic] = [ShaderPassTextureSemantics makeWithTexture:texture stride:ts size:size stride:ss];
 }
 
-- (void)addUniformData:(void *)data semantic:(OEShaderBufferSemantic)semantic {
+- (void)addUniformData:(void *)data semantic:(OEShaderBufferSemantic)semantic
+{
     _uniforms[semantic] = [ShaderPassBufferSemantics makeWithData:data];
 }
 @end

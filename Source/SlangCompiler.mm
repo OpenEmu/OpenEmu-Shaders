@@ -37,11 +37,12 @@ using namespace std;
 
 static TBuiltInResource resources;
 
-+ (void)initialize {
++ (void)initialize
+{
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         InitializeProcess();
-
+        
         resources.maxLights                                   = 32;
         resources.maxClipPlanes                               = 6;
         resources.maxTextureUnits                             = 32;
@@ -137,49 +138,53 @@ static TBuiltInResource resources;
     });
 }
 
-- (instancetype)init {
+- (instancetype)init
+{
     self = [super init];
-
+    
     return self;
 }
 
-- (ShaderProgram *)compileVertex:(NSString *)src error:(NSError **)error {
+- (ShaderProgram *)compileVertex:(NSString *)src error:(NSError **)error
+{
     return [self compileSPIRV:src language:EShLangVertex error:error];
 }
 
-- (ShaderProgram *)compileFragment:(NSString *)src error:(NSError **)error {
+- (ShaderProgram *)compileFragment:(NSString *)src error:(NSError **)error
+{
     return [self compileSPIRV:src language:EShLangFragment error:error];
 }
 
-- (ShaderProgram *)compileSPIRV:(NSString *)src language:(EShLanguage)language error:(NSError **)error {
+- (ShaderProgram *)compileSPIRV:(NSString *)src language:(EShLanguage)language error:(NSError **)error
+{
     TShader    shader(language);
     const char *str = src.UTF8String;
     shader.setStrings(&str, 1);
-
+    
     EShMessages messages  = static_cast<EShMessages>(EShMsgDefault | EShMsgVulkanRules | EShMsgSpvRules);
-
+    
     string msg;
     auto   forbid_include = glslang::TShader::ForbidIncluder();
     if (!shader.preprocess(&resources, 100, ENoProfile, false, false, messages, &msg, forbid_include)) {
         NSLog(@"%s", msg.c_str());
         return nil;
     }
-
+    
     if (!shader.parse(&resources, 100, false, messages)) {
         NSLog(@"%s", shader.getInfoLog());
         NSLog(@"%s", shader.getInfoDebugLog());
         return nil;
     }
-
+    
     TProgram program;
     program.addShader(&shader);
-
+    
     if (!program.link(messages)) {
         NSLog(@"%s", program.getInfoLog());
         NSLog(@"%s", program.getInfoDebugLog());
         return nil;
     }
-
+    
     shared_ptr<vector<uint32_t>> spirv(new vector<uint32_t>());
     GlslangToSpv(*program.getIntermediate(language), *spirv.get());
     return [[ShaderProgram alloc] initWithVector:spirv];
@@ -187,23 +192,27 @@ static TBuiltInResource resources;
 
 @end
 
-@implementation ShaderProgram {
+@implementation ShaderProgram
+{
     shared_ptr<vector<uint32_t>> _spirv;
 }
 
-- (instancetype)initWithVector:(shared_ptr<vector<uint32_t>>)spirv {
+- (instancetype)initWithVector:(shared_ptr<vector<uint32_t>>)spirv
+{
     self = [super init];
-
+    
     _spirv = spirv;
-
+    
     return self;
 }
 
-- (SpvId const *)spirv {
+- (SpvId const *)spirv
+{
     return _spirv->data();
 }
 
-- (size_t)spirvLength {
+- (size_t)spirvLength
+{
     return _spirv->size();
 }
 

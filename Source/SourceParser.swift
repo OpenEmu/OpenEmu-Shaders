@@ -32,7 +32,7 @@ enum SourceParserError: LocalizedError {
     case includeNotFound
     case invalidParameterPragma
     case invalidFormatPragma
-
+    
     var errorDescription: String? {
         switch self {
         case .missingVersion:
@@ -60,41 +60,41 @@ enum SourceParserError: LocalizedError {
  */
 @objc(OESourceParser)
 class SourceParser: NSObject {
-
+    
     private var buffer: [String]
-
+    
     @objc private(set) var name: String?
-
+    
     @objc var parameters: [String: ShaderParameter]
-
+    
     @objc var format: SlangFormat
-
+    
     /**
      Returns the vertex shader portion of the slang file
      */
     @objc lazy var vertexSource: String = {
         return self.findSource(forStage: "vertex")
     }()
-
+    
     /**
      Returns the fragment shader portion of the slang file
      */
     @objc lazy var fragmentSource: String = {
         return self.findSource(forStage: "fragment")
     }()
-
+    
     @objc
     init(fromURL url: URL) throws {
         buffer = []
         parameters = [:]
         format = .unknown
         super.init()
-
+        
         try autoreleasepool {
             try self.load(url, isRoot: true)
         }
     }
-
+    
     fileprivate func findSource(forStage: String) -> String {
         var src: [String] = []
         var keep          = true
@@ -114,10 +114,10 @@ class SourceParser: NSObject {
                 src.append(line)
             }
         }
-
+        
         return src.joined(separator: "\n")
     }
-
+    
     struct Prefixes {
         static let version      = "#version "
         static let include      = "#include "
@@ -128,15 +128,15 @@ class SourceParser: NSObject {
         static let pragmaFormat = "#pragma format "
         static let pragmaStage  = "#pragma stage "
     }
-
-
+    
+    
     fileprivate func load(_ url: URL, isRoot: Bool) throws {
         let f        = try String(contentsOf: url)
         let lines    = f.components(separatedBy: "\n")
         let filename = url.lastPathComponent
-
+        
         var lno = 1
-
+        
         var oe = lines.makeIterator()
         if isRoot {
             let line = oe.next()
@@ -149,9 +149,9 @@ class SourceParser: NSObject {
                 lno += 1;
             }
         }
-
+        
         buffer.append("#line \(lno) \"\(filename)\"")
-
+        
         for line in oe {
             if line.hasPrefix(Prefixes.include) {
                 let s = Scanner(string: line)
@@ -164,7 +164,7 @@ class SourceParser: NSObject {
                 buffer.append("#line \(lno) \"\(filename)\"")
             } else {
                 buffer.append(line)
-
+                
                 var hasPreprocessor = false;
                 if line.hasPrefix(Prefixes.pragma) {
                     hasPreprocessor = true;
@@ -172,7 +172,7 @@ class SourceParser: NSObject {
                 } else if line.hasPrefix(Prefixes.endif) {
                     hasPreprocessor = true;
                 }
-
+                
                 if hasPreprocessor {
                     buffer.append("#line \(lno + 1) \"\(filename)\"")
                 }
@@ -180,32 +180,32 @@ class SourceParser: NSObject {
             lno += 1;
         }
     }
-
+    
     static let identifierCharacters = { () -> CharacterSet in
         var set = CharacterSet.alphanumerics
         set.formUnion(CharacterSet(charactersIn: "_"))
         return set as CharacterSet
     }
-
+    
     fileprivate func processPragma(line: String) throws {
         if line.hasPrefix(Prefixes.pragmaName) {
             if name != nil {
                 throw SourceParserError.multipleNamePragma
             }
-
+            
             name = String(line.dropFirst(Prefixes.pragmaName.count))
         } else if line.hasPrefix(Prefixes.pragmaParam) {
             let s = Scanner(string: line)
             s.scanString(Prefixes.pragmaParam, into: nil)
-
+            
             var count = 0;
             var tmp: NSString?
             count += s.scanCharacters(from: .identifierCharacters, into: &tmp) ? 1 : 0
-
+            
             guard let name = tmp as String? else {
                 throw SourceParserError.invalidParameterPragma
             }
-
+            
             guard let desc = s.scanQuotedString() else {
                 throw SourceParserError.invalidParameterPragma
             }
@@ -215,12 +215,12 @@ class SourceParser: NSObject {
             count += s.scanFloat(&minimum) ? 1 : 0
             count += s.scanFloat(&maximum) ? 1 : 0
             count += s.scanFloat(&step) ? 1 : 0
-
+            
             if count == 5 {
                 step = 0.1 * (maximum - minimum);
                 count += 1;
             }
-
+            
             if count == 6 {
                 let param = ShaderParameter(name: name, desc: desc)
                 param.initial = initial;
@@ -228,11 +228,11 @@ class SourceParser: NSObject {
                 param.minimum = minimum;
                 param.maximum = maximum;
                 param.step = step;
-
+                
                 if let existing = parameters[name], param == existing {
                     throw SourceParserError.duplicateParameterPragma
                 }
-
+                
                 parameters[name] = param
             } else {
                 throw SourceParserError.invalidParameterPragma
@@ -241,7 +241,7 @@ class SourceParser: NSObject {
             if format != .unknown {
                 throw SourceParserError.invalidParameterPragma
             }
-
+            
             let s = Scanner(string: line)
             s.scanString(Prefixes.pragmaFormat, into: nil)
             var tmp: NSString?
@@ -262,11 +262,11 @@ extension CharacterSet {
         set.formUnion(CharacterSet(charactersIn: "_"))
         return set
     }()
-
+    
     static var doubleQuotes: CharacterSet = {
         return CharacterSet(charactersIn: "\"")
     }()
-
+    
     static var whitespacesAndComment: CharacterSet = {
         var set = CharacterSet.whitespaces
         set.formUnion(CharacterSet(charactersIn: "#"))

@@ -23,32 +23,34 @@ OEShaderBufferSemantic const OEShaderBufferSemanticFrameCount        = @"FrameCo
 OEShaderBufferSemantic const OEShaderBufferSemanticFloatParameter    = @"FloatParameter";
 
 @implementation OEShaderConstants
-+ (NSArray<OEShaderTextureSemantic> *)textureSemantics {
++ (NSArray<OEShaderTextureSemantic> *)textureSemantics
+{
     static dispatch_once_t                  once;
     static NSArray<OEShaderTextureSemantic> *res;
     dispatch_once(&once, ^{
         res = @[
-            OEShaderTextureSemanticOriginal,
-            OEShaderTextureSemanticSource,
-            OEShaderTextureSemanticOriginalHistory,
-            OEShaderTextureSemanticPassOutput,
-            OEShaderTextureSemanticPassFeedback,
-            OEShaderTextureSemanticUser,
+                OEShaderTextureSemanticOriginal,
+                OEShaderTextureSemanticSource,
+                OEShaderTextureSemanticOriginalHistory,
+                OEShaderTextureSemanticPassOutput,
+                OEShaderTextureSemanticPassFeedback,
+                OEShaderTextureSemanticUser,
         ];
     });
     return res;
 }
 
-+ (NSArray<OEShaderBufferSemantic> *)bufferSemantics {
++ (NSArray<OEShaderBufferSemantic> *)bufferSemantics
+{
     static dispatch_once_t                 once;
     static NSArray<OEShaderBufferSemantic> *res;
     dispatch_once(&once, ^{
         res = @[
-            OEShaderBufferSemanticMVP,
-            OEShaderBufferSemanticOutput,
-            OEShaderBufferSemanticFinalViewportSize,
-            OEShaderBufferSemanticFrameCount,
-            OEShaderBufferSemanticFloatParameter,
+                OEShaderBufferSemanticMVP,
+                OEShaderBufferSemanticOutput,
+                OEShaderBufferSemanticFinalViewportSize,
+                OEShaderBufferSemanticFrameCount,
+                OEShaderBufferSemanticFloatParameter,
         ];
     });
     return res;
@@ -56,7 +58,8 @@ OEShaderBufferSemantic const OEShaderBufferSemanticFloatParameter    = @"FloatPa
 
 @end
 
-SlangFormat SlangFormatFromGLSlangNSString(NSString *str) {
+SlangFormat SlangFormatFromGLSlangNSString(NSString *str)
+{
 #undef FMT
 #define FMT(fmt, x) if ([str isEqualToString:@ #fmt]) return SlangFormat ## x
     FMT(R8_UNORM, R8Unorm);
@@ -89,6 +92,6 @@ SlangFormat SlangFormatFromGLSlangNSString(NSString *str) {
     FMT(R32G32B32A32_UINT, R32G32B32A32Uint);
     FMT(R32G32B32A32_SINT, R32G32B32A32Sint);
     FMT(R32G32B32A32_SFLOAT, R32G32B32A32Sfloat);
-
+    
     return SlangFormatUnknown;
 }

@@ -27,16 +27,18 @@
 #import "OEShaderPassCompiler.h"
 #import "OESourceParser+Private.h"
 
-static NSString *IDToNSString(id obj) {
+static NSString *IDToNSString(id obj)
+{
     if ([obj isKindOfClass:NSString.class])
         return (NSString *)obj;
     return nil;
 }
 
-static OEShaderPassWrap OEShaderPassWrapFromNSString(NSString *wrapMode) {
+static OEShaderPassWrap OEShaderPassWrapFromNSString(NSString *wrapMode)
+{
     if (wrapMode == nil)
         return OEShaderPassWrapDefault;
-
+    
     if ([wrapMode isEqualToString:@"clamp_to_border"])
         return OEShaderPassWrapBorder;
     else if ([wrapMode isEqualToString:@"clamp_to_edge"])
@@ -45,13 +47,14 @@ static OEShaderPassWrap OEShaderPassWrapFromNSString(NSString *wrapMode) {
         return OEShaderPassWrapRepeat;
     else if ([wrapMode isEqualToString:@"mirrored_repeat"])
         return OEShaderPassWrapMirroredRepeat;
-
+    
     NSLog(@"invalid wrap mode %@. Choose from clamp_to_border, clamp_to_edge, repeat or mirrored_repeat", wrapMode);
-
+    
     return OEShaderPassWrapDefault;
 }
 
-static OEShaderPassScale OEShaderPassScaleFromNSString(NSString *scale) {
+static OEShaderPassScale OEShaderPassScaleFromNSString(NSString *scale)
+{
     if ([scale isEqualToString:@"source"])
         return OEShaderPassScaleInput;
     if ([scale isEqualToString:@"viewport"])
@@ -61,18 +64,20 @@ static OEShaderPassScale OEShaderPassScaleFromNSString(NSString *scale) {
     return OEShaderPassScaleInvalid;
 }
 
-static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
+static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
+{
     if (obj == nil) {
         return OEShaderPassFilterUnspecified;
     }
-
+    
     if ([obj boolValue]) {
         return OEShaderPassFilterLinear;
     }
     return OEShaderPassFilterNearest;
 }
 
-@implementation ShaderPass {
+@implementation ShaderPass
+{
     NSURL          *_url;
     NSUInteger     _index;
     OESourceParser *_source;
@@ -80,38 +85,39 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
 
 - (instancetype)initWithURL:(NSURL *)url
                       index:(NSUInteger)index
-                 dictionary:(NSDictionary *)d {
+                 dictionary:(NSDictionary *)d
+{
     if (self = [super init]) {
         _url    = url;
         _index  = index;
         _source = [[OESourceParser alloc] initFromURL:url error:nil];
-
+        
         self.filter   = OEShaderPassFilterFromObject(d[@"filterLinear"]);
         self.wrapMode = OEShaderPassWrapFromNSString(IDToNSString(d[@"wrapMode"]));
-
+        
         id obj = nil;
-
+        
         if ((obj = d[@"frameCountMod"]) != nil) {
             self.frameCountMod = [obj unsignedIntegerValue];
         }
-
+        
         if ((obj = d[@"srgbFramebuffer"]) != nil) {
             self.issRGB = [obj boolValue];
         }
-
+        
         if ((obj = d[@"floatFramebuffer"]) != nil) {
             self.isFloat = [obj boolValue];
         }
-
+        
         if ((obj = d[@"mipmapInput"]) != nil) {
             self.isMipmap = [obj boolValue];
         }
-
+        
         self.alias = IDToNSString(d[@"alias"]);
         if (self.alias == nil || self.alias.length == 0) {
             self.alias = _source.name;
         }
-
+        
         if (d[@"scaleType"] != nil || d[@"scaleTypeX"] != nil || d[@"scaleTypeY"] != nil) {
             // scale
             self.valid  = YES;
@@ -119,7 +125,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
             self.scaleY = OEShaderPassScaleInput;
             CGSize size  = {0};
             CGSize scale = CGSizeMake(1.0, 1.0);
-
+            
             NSString *str = nil;
             if ((str = IDToNSString(d[@"scaleType"])) != nil) {
                 self.scaleX = OEShaderPassScaleFromNSString(str);
@@ -132,7 +138,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
                     self.scaleY = OEShaderPassScaleFromNSString(str);
                 }
             }
-
+            
             // scale-x
             if ((obj = d[@"scale"] ?: d[@"scaleX"]) != nil) {
                 if (self.scaleX == OEShaderPassScaleAbsolute) {
@@ -141,7 +147,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
                     scale.width = [obj doubleValue];
                 }
             }
-
+            
             // scale-y
             if ((obj = d[@"scale"] ?: d[@"scaleY"]) != nil) {
                 if (self.scaleY == OEShaderPassScaleAbsolute) {
@@ -150,7 +156,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
                     scale.height = [obj doubleValue];
                 }
             }
-
+            
             self.size  = size;
             self.scale = scale;
         }
@@ -158,11 +164,13 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
     return self;
 }
 
-- (OESourceParser *)source {
+- (OESourceParser *)source
+{
     return _source;
 }
 
-- (SlangFormat)format {
+- (SlangFormat)format
+{
     SlangFormat format = _source.format;
     if (format == SlangFormatUnknown) {
         if (_issRGB) {
@@ -178,19 +186,21 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
 
 @end
 
-@implementation ShaderLUT {
+@implementation ShaderLUT
+{
 }
 
 - (instancetype)initWithURL:(NSURL *)url
                        name:(NSString *)name
-                 dictionary:(NSDictionary *)d {
+                 dictionary:(NSDictionary *)d
+{
     if (self = [super init]) {
         _url  = url;
         _name = name;
-
+        
         self.filter   = OEShaderPassFilterFromObject(d[@"linear"]);
         self.wrapMode = OEShaderPassWrapFromNSString(IDToNSString(d[@"wrapMode"]));
-
+        
         id obj = nil;
         if ((obj = d[@"mipmapInput"]) != nil) {
             self.isMipmap = [obj boolValue];
@@ -202,24 +212,26 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
 
 @end
 
-@implementation SlangShader {
+@implementation SlangShader
+{
     NSURL                                                *_url;
     NSMutableArray<ShaderPass *>                         *_passes;
     NSMutableArray<ShaderLUT *>                          *_luts;
     NSMutableArray<OEShaderParameter *>                  *_parameters;
     NSMutableDictionary<NSString *, OEShaderParameter *> *_parametersMap;
     OEShaderPassCompiler                                 *_compiler;
-
+    
 }
 
-- (instancetype)initFromURL:(NSURL *)url error:(NSError **)error {
+- (instancetype)initFromURL:(NSURL *)url error:(NSError **)error
+{
     if (self = [super init]) {
         _url           = url;
         _parameters    = [NSMutableArray new];
         _parametersMap = [NSMutableDictionary new];
-
+        
         NSURL *base                     = [url URLByDeletingLastPathComponent];
-
+        
         NSError                      *err;
         NSDictionary<NSString *, id> *d = [ShaderConfigSerialization configFromURL:url error:&err];
         if (err != nil) {
@@ -228,10 +240,10 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
             }
             return nil;
         }
-
+        
         NSArray *passes = d[@"passes"];
         _passes = [NSMutableArray arrayWithCapacity:passes.count];
-
+        
         NSUInteger        i = 0;
         for (NSDictionary *spec in passes) {
             NSString *path = spec[@"shader"];
@@ -241,7 +253,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
                                               dictionary:spec];
             i++;
         }
-
+        
         // parse look-up textures
         NSDictionary < NSString *, NSDictionary * > *textures = d[@"textures"];
         if (textures != nil) {
@@ -257,7 +269,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
                 i++;
             }
         }
-
+        
         // collect parameters
         i = 0;
         for (ShaderPass *pass in _passes) {
@@ -273,7 +285,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
             }
             i++;
         }
-
+        
         // resolve overrides from .plist
         NSDictionary < NSString *, NSNumber * > *params = d[@"parameters"];
         if (params != nil) {
@@ -285,7 +297,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
                 }
             }
         }
-
+        
         _compiler = [[OEShaderPassCompiler alloc] initWithShaderModel:self];
     }
     return self;
@@ -296,8 +308,9 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj) {
     passSemantics:(ShaderPassSemantics *)passSemantics
      passBindings:(ShaderPassBindings *)passBindings
            vertex:(NSString **)vsrc
-         fragment:(NSString **)fsrc {
-
+         fragment:(NSString **)fsrc
+{
+    
     return [_compiler buildPass:passNumber
                    metalVersion:version
                   passSemantics:passSemantics
