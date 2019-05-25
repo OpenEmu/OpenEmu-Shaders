@@ -169,16 +169,16 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
     return _source;
 }
 
-- (SlangFormat)format
+- (MTLPixelFormat)format
 {
-    SlangFormat format = _source.format;
-    if (format == SlangFormatUnknown) {
+    MTLPixelFormat format = _source.format;
+    if (format == MTLPixelFormatInvalid) {
         if (_issRGB) {
-            format = SlangFormatR8G8B8A8Srgb;
+            format = MTLPixelFormatBGRA8Unorm_sRGB;
         } else if (_isFloat) {
-            format = SlangFormatR16G16B16A16Sfloat;
+            format = MTLPixelFormatRGBA16Float;
         } else {
-            format = SlangFormatR8G8B8A8Unorm;
+            format = MTLPixelFormatBGRA8Unorm;
         }
     }
     return format;

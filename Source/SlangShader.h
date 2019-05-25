@@ -32,7 +32,7 @@
 @property (nonatomic, readwrite) NSUInteger         frameCountMod;
 @property (nonatomic, readwrite) OEShaderPassScale  scaleX;
 @property (nonatomic, readwrite) OEShaderPassScale  scaleY;
-@property (nonatomic, readwrite) SlangFormat        format;
+@property (nonatomic, readwrite) MTLPixelFormat     format;
 @property (nonatomic, readwrite) OEShaderPassFilter filter;
 @property (nonatomic, readwrite) OEShaderPassWrap   wrapMode;
 @property (nonatomic, readwrite) CGSize             scale;

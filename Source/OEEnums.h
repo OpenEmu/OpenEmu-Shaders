@@ -23,6 +23,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
+@import Metal;
 
 typedef NSString *OEShaderTextureSemantic NS_TYPED_ENUM;
 
@@ -149,45 +150,8 @@ FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticFloatParame
 #define kMaxConstantBuffers 2
 #define kMaxShaderBindings  16
 
-typedef NS_ENUM(NSUInteger, SlangFormat)
-{
-    SlangFormatUnknown = 0,
-    SlangFormatR8Unorm,
-    SlangFormatR8Uint,
-    SlangFormatR8Sint,
-    SlangFormatR8G8Unorm,
-    SlangFormatR8G8Uint,
-    SlangFormatR8G8Sint,
-    SlangFormatR8G8B8A8Unorm,
-    SlangFormatR8G8B8A8Uint,
-    SlangFormatR8G8B8A8Sint,
-    SlangFormatR8G8B8A8Srgb,
-    SlangFormatA2B10G10R10UnormPack32,
-    SlangFormatA2B10G10R10UintPack32,
-    SlangFormatR16Uint,
-    SlangFormatR16Sint,
-    SlangFormatR16Sfloat,
-    SlangFormatR16G16Uint,
-    SlangFormatR16G16Sint,
-    SlangFormatR16G16Sfloat,
-    SlangFormatR16G16B16A16Uint,
-    SlangFormatR16G16B16A16Sint,
-    SlangFormatR16G16B16A16Sfloat,
-    SlangFormatR32Uint,
-    SlangFormatR32Sint,
-    SlangFormatR32Sfloat,
-    SlangFormatR32G32Uint,
-    SlangFormatR32G32Sint,
-    SlangFormatR32G32Sfloat,
-    SlangFormatR32G32B32A32Uint,
-    SlangFormatR32G32B32A32Sint,
-    SlangFormatR32G32B32A32Sfloat,
-    SlangFormatMax
-};
-
-
-/*! @brief Converts a GL Slang format string */
-extern SlangFormat SlangFormatFromGLSlangNSString(NSString *str);
+/*! @brief Converts a GL Slang format string to Metal */
+extern MTLPixelFormat MTLPixelFormatFromGLSlangNSString(NSString *str);
 
 #pragma mark -
 

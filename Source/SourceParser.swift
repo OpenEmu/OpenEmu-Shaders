@@ -23,6 +23,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
+import Metal
 
 enum SourceParserError: LocalizedError {
     case missingVersion
@@ -67,7 +68,7 @@ class SourceParser: NSObject {
     
     @objc var parameters: [String: ShaderParameter]
     
-    @objc var format: SlangFormat
+    @objc var format: MTLPixelFormat
     
     /**
      Returns the vertex shader portion of the slang file
@@ -87,7 +88,7 @@ class SourceParser: NSObject {
     init(fromURL url: URL) throws {
         buffer = []
         parameters = [:]
-        format = .unknown
+        format = .invalid
         super.init()
         
         try autoreleasepool {
@@ -132,7 +133,7 @@ class SourceParser: NSObject {
     
     fileprivate func load(_ url: URL, isRoot: Bool) throws {
         let f        = try String(contentsOf: url)
-        let lines    = f.components(separatedBy: "\n")
+        let lines    = f.components(separatedBy: .newlines)
         let filename = url.lastPathComponent
         
         var lno = 1
@@ -238,7 +239,7 @@ class SourceParser: NSObject {
                 throw SourceParserError.invalidParameterPragma
             }
         } else if line.hasPrefix(Prefixes.pragmaFormat) {
-            if format != .unknown {
+            if format != .invalid {
                 throw SourceParserError.invalidParameterPragma
             }
             
@@ -247,9 +248,9 @@ class SourceParser: NSObject {
             var tmp: NSString?
             s.scanCharacters(from: .identifierCharacters, into: &tmp)
             if let fmt = tmp as String? {
-                format = SlangFormatFromGLSlangNSString(fmt);
+                format = MTLPixelFormatFromGLSlangNSString(fmt);
             }
-            if format == .unknown {
+            if format == .invalid {
                 throw SourceParserError.invalidFormatPragma
             }
         }
