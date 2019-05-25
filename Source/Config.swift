@@ -230,17 +230,17 @@ enum ConfigKeyValue {
 }
 
 struct ConfigScanner {
-    private let lines: [Substring]
+    private let lines: [String]
     private var line:  Int
     private var pos:   String.Index
     
     init(_ text: String) {
-        lines = text.split(separator: "\n")
+        lines = text.components(separatedBy: .newlines)
         line = 0
         pos = text.startIndex
     }
     
-    private var text: Substring {
+    private var text: String {
         return lines[line]
     }
     
