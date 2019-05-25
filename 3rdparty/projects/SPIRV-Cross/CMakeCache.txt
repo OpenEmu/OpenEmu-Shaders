@@ -187,6 +187,9 @@ CMAKE_STRIP:FILEPATH=/Applications/Xcode.app/Contents/Developer/Toolchains/Xcode
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//Git command line client
+GIT_EXECUTABLE:FILEPATH=/Applications/Xcode.app/Contents/Developer/usr/bin/git
+
 //Value Computed by CMake
 SPIRV-Cross_BINARY_DIR:STATIC=/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty/projects/SPIRV-Cross
 
@@ -380,6 +383,10 @@ CMAKE_STRIP-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//Details about finding Git
+FIND_PACKAGE_MESSAGE_DETAILS_Git:INTERNAL=[/Applications/Xcode.app/Contents/Developer/usr/bin/git][v2.20.1 (Apple Git-117)()]
+//ADVANCED property for variable: GIT_EXECUTABLE
+GIT_EXECUTABLE-ADVANCED:INTERNAL=1
 //Stored Xcode object GUID
 PROJECT_SPIRV-Cross_GUID_CMAKE:INTERNAL=8A41C9D1CCD2472D8B892869
 //Stored Xcode object GUID
