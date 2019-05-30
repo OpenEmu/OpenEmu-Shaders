@@ -22,17 +22,18 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
+#import "ShaderTypes.h"
 
-//! Project version number for OpenEmuShaders.
-FOUNDATION_EXPORT double OpenEmuShadersVersionNumber;
+/* macOS requires constants in a buffer to have a 256 byte alignment. */
+#ifdef TARGET_OS_MAC
+#define kMetalBufferAlignment 256
+#else
+#define kMetalBufferAlignment 4
+#endif
 
-//! Project version string for OpenEmuShaders.
-FOUNDATION_EXPORT const unsigned char OpenEmuShadersVersionString[];
+#define MTL_ALIGN_BUFFER(size) ((size + kMetalBufferAlignment - 1) & (~(kMetalBufferAlignment - 1)))
 
-// In this header, you should import all the public headers of your framework using statements like #import <OpenEmuShaders/PublicHeader.h>
-
-#import "OEEnums.h"
-#import "ShaderPassSemantics.h"
-#import "SlangShader.h"
-#import "FrameView.h"
+extern matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bottom);
+extern matrix_float4x4 matrix_rotate_z(float rot);
+extern matrix_float4x4 make_matrix_float4x4(const float *v);

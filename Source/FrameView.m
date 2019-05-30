@@ -1,0 +1,989 @@
+// Copyright (c) 2019, OpenEmu Team
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//     * Redistributions of source code must retain the above copyright
+//       notice, this list of conditions and the following disclaimer.
+//     * Redistributions in binary form must reproduce the above copyright
+//       notice, this list of conditions and the following disclaimer in the
+//       documentation and/or other materials provided with the distribution.
+//     * Neither the name of the OpenEmu Team nor the
+//       names of its contributors may be used to endorse or promote products
+//       derived from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY OpenEmu Team ''AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL OpenEmu Team BE LIABLE FOR ANY
+// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+@import MetalKit;
+
+#import "FrameView.h"
+#import "RendererCommon.h"
+#import "OEMTLPixelConverter.h"
+#import <OpenEmuShaders/OpenEmuShaders.h>
+#import <CoreImage/CoreImage.h>
+#import <OpenEmuShaders/OpenEmuShaders-Swift.h>
+
+#define MTLALIGN(x) __attribute__((aligned(x)))
+
+typedef struct
+{
+    float x;
+    float y;
+    float z;
+    float w;
+} float4_t;
+
+typedef struct texture
+{
+    id<MTLTexture> view;
+    float4_t       viewSize;
+} texture_t;
+
+@implementation FrameView
+{
+    OEMTLPixelFormat    _format;
+    MTLPixelFormat      _sourceFormat;
+    BOOL                _formatIsNative;
+    id<MTLDevice>       _device;
+    id<MTLLibrary>      _library;
+    MTKTextureLoader    *_loader;
+    OEMTLPixelConverter *_converter;
+    Vertex              _vertex[4];
+    
+    NSUInteger    _srcBytesPerRow;
+    id<MTLBuffer> _srcBuffer;          // source buffer
+    
+    id<MTLSamplerState> _samplers[OEShaderPassFilterCount][OEShaderPassWrapCount];
+    
+    // #pragma mark screenshots
+    id<MTLCommandQueue> _commandQueue;
+    id<MTLTexture>      _screenshotTexture;
+    CIContext           *_ciContext;
+    
+    SlangShader *_shader;
+    
+    NSUInteger _frameCount;
+    NSUInteger _passCount;
+    NSUInteger _lutCount;
+    NSUInteger _historyCount;
+    
+    id<MTLTexture> _texture;       // final render texture
+    texture_t      _sourceTextures[kMaxFrameHistory + 1];
+    
+    struct
+    {
+        MTLViewport viewport;
+        float4_t    outputSize;
+    }              _outputFrame;
+    
+    struct
+    {
+        id<MTLBuffer>              buffers[2];
+        texture_t                  renderTarget;
+        texture_t                  feedbackTarget;
+        uint32_t                   frameCount;
+        uint32_t                   frameCountMod;
+        ShaderPassBindings         *bindings;
+        MTLViewport                viewport;
+        id<MTLRenderPipelineState> state;
+        BOOL                       hasFeedback;
+    }              _pass[kMaxShaderPasses];
+    
+    texture_t _luts[kMaxTextures];
+    
+    BOOL          _renderTargetsNeedResize;
+    BOOL          _historyNeedsInit;
+    
+    CGSize _sourceSize;
+    CGSize _aspectSize;
+    CGSize _drawableSize;
+    // aspect-adjusted output bound
+    NSRect _outputBounds;
+    
+    // render target layer state
+    id<MTLRenderPipelineState> _pipelineState;
+    id<MTLSamplerState>        _samplerStateLinear;
+    id<MTLSamplerState>        _samplerStateNearest;
+    unsigned                   _rotation;
+    Uniforms                   _uniforms;
+    Uniforms                   _uniformsNoRotate;
+}
+
+- (instancetype)initWithDevice:(id<MTLDevice>)device
+{
+    self = [super init];
+    _format = OEMTLPixelFormatInvalid;
+    
+    NSError *err = nil;
+    _device    = device;
+    _library   = [_device newDefaultLibraryWithBundle:[NSBundle bundleForClass:self.class] error:&err];
+    if (err != nil) {
+        NSLog(@"error initializing Metal library: %@", err.localizedDescription);
+    }
+    assert(err == nil);
+    _loader    = [[MTKTextureLoader alloc] initWithDevice:device];
+    _converter = [[OEMTLPixelConverter alloc] initWithDevice:_device
+                                                     library:_library
+                                                       error:&err];
+    if (err != nil) {
+        NSLog(@"error initializing pixel converter: %@", err.localizedDescription);
+    }
+    assert(err == nil);
+    
+    if (![self OE_initState]) {
+        return nil;
+    }
+    [self OE_initSamplers];
+    
+    Vertex v[4] = {
+            {simd_make_float4(0, 1, 0, 1), simd_make_float2(0, 1)},
+            {simd_make_float4(1, 1, 0, 1), simd_make_float2(1, 1)},
+            {simd_make_float4(0, 0, 0, 1), simd_make_float2(0, 0)},
+            {simd_make_float4(1, 0, 0, 1), simd_make_float2(1, 0)},
+    };
+    memcpy(_vertex, v, sizeof(_vertex));
+    
+    [self setRotation:0];
+    
+    _renderTargetsNeedResize = YES;
+    
+    return self;
+}
+
+- (BOOL)OE_initState
+{
+    {
+        MTLVertexDescriptor *vd = [MTLVertexDescriptor new];
+        vd.attributes[0].offset = offsetof(Vertex, position);
+        vd.attributes[0].format = MTLVertexFormatFloat4;
+        vd.attributes[1].offset = offsetof(Vertex, texCoord);
+        vd.attributes[1].format = MTLVertexFormatFloat2;
+        vd.layouts[0].stride    = sizeof(Vertex);
+        
+        MTLRenderPipelineDescriptor *psd = [MTLRenderPipelineDescriptor new];
+        psd.label = @"Pipeline+No Alpha";
+        
+        MTLRenderPipelineColorAttachmentDescriptor *ca = psd.colorAttachments[0];
+        ca.pixelFormat                 = MTLPixelFormatBGRA8Unorm; // NOTE(sgc): expected layer format (could be taken from layer.pixelFormat)
+        ca.blendingEnabled             = NO;
+        ca.sourceAlphaBlendFactor      = MTLBlendFactorSourceAlpha;
+        ca.sourceRGBBlendFactor        = MTLBlendFactorSourceAlpha;
+        ca.destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+        ca.destinationRGBBlendFactor   = MTLBlendFactorOneMinusSourceAlpha;
+        
+        psd.sampleCount      = 1;
+        psd.vertexDescriptor = vd;
+        psd.vertexFunction   = [_library newFunctionWithName:@"basic_vertex_proj_tex"];
+        psd.fragmentFunction = [_library newFunctionWithName:@"basic_fragment_proj_tex"];
+        
+        NSError *err;
+        _pipelineState = [_device newRenderPipelineStateWithDescriptor:psd error:&err];
+        if (err != nil) {
+            NSLog(@"error creating pipeline state: %@", err.localizedDescription);
+            return NO;
+        }
+    }
+    
+    {
+        MTLSamplerDescriptor *sd = [MTLSamplerDescriptor new];
+        _samplerStateNearest = [_device newSamplerStateWithDescriptor:sd];
+        
+        sd.minFilter = MTLSamplerMinMagFilterLinear;
+        sd.magFilter = MTLSamplerMinMagFilterLinear;
+        _samplerStateLinear = [_device newSamplerStateWithDescriptor:sd];
+    }
+    
+    return YES;
+}
+
+- (void)OE_initSamplers
+{
+    MTLSamplerDescriptor *sd = [MTLSamplerDescriptor new];
+    
+    /* Initialize samplers */
+    for (unsigned i = 0; i < OEShaderPassWrapCount; i++) {
+        switch (i) {
+            case OEShaderPassWrapBorder:
+                sd.sAddressMode = MTLSamplerAddressModeClampToBorderColor;
+                break;
+            
+            case OEShaderPassWrapEdge:
+                sd.sAddressMode = MTLSamplerAddressModeClampToEdge;
+                break;
+            
+            case OEShaderPassWrapRepeat:
+                sd.sAddressMode = MTLSamplerAddressModeRepeat;
+                break;
+            
+            case OEShaderPassWrapMirroredRepeat:
+                sd.sAddressMode = MTLSamplerAddressModeMirrorRepeat;
+                break;
+            
+            default:
+                continue;
+        }
+        sd.tAddressMode = sd.sAddressMode;
+        sd.rAddressMode = sd.sAddressMode;
+        sd.minFilter    = MTLSamplerMinMagFilterLinear;
+        sd.magFilter    = MTLSamplerMinMagFilterLinear;
+        
+        id<MTLSamplerState> ss = [_device newSamplerStateWithDescriptor:sd];
+        _samplers[OEShaderPassFilterLinear][i] = ss;
+        
+        sd.minFilter = MTLSamplerMinMagFilterNearest;
+        sd.magFilter = MTLSamplerMinMagFilterNearest;
+        
+        ss = [_device newSamplerStateWithDescriptor:sd];
+        _samplers[OEShaderPassFilterNearest][i] = ss;
+    }
+}
+
+- (void)setRotation:(unsigned)rotation
+{
+    _rotation = 270 * rotation;
+    
+    /* Calculate projection. */
+    _uniformsNoRotate.projectionMatrix = matrix_proj_ortho(0, 1, 0, 1);
+    
+    matrix_float4x4 rot = matrix_rotate_z((float)(M_PI * _rotation / 180.0f));
+    _uniforms.projectionMatrix = simd_mul(rot, _uniformsNoRotate.projectionMatrix);
+}
+
+- (void)setDefaultFilteringLinear:(BOOL)linear
+{
+    for (int i = 0; i < OEShaderPassWrapCount; i++) {
+        if (linear)
+            _samplers[OEShaderPassFilterUnspecified][i] = _samplers[OEShaderPassFilterLinear][i];
+        else
+            _samplers[OEShaderPassFilterUnspecified][i] = _samplers[OEShaderPassFilterNearest][i];
+    }
+}
+
+- (void)setSourceSize:(CGSize)size
+{
+    if (CGSizeEqualToSize(_sourceSize, size)) {
+        return;
+    }
+    
+    _sourceSize              = size;
+    _renderTargetsNeedResize = YES;
+}
+
+- (CGSize)sourceSize
+{
+    return _sourceSize;
+}
+
+- (void)OE_updateHistory
+{
+    if (_shader) {
+        if (_historyCount) {
+            if (_historyNeedsInit) {
+                [self OE_initHistory];
+            } else {
+                texture_t       tmp = _sourceTextures[_historyCount];
+                for (NSUInteger k   = _historyCount; k > 0; k--) {
+                    _sourceTextures[k] = _sourceTextures[k - 1];
+                }
+                _sourceTextures[0]  = tmp;
+            }
+        }
+    }
+    
+    /* either no history, or we moved a texture of a different size in the front slot */
+    if (_sourceTextures[0].viewSize.x != _sourceSize.width || _sourceTextures[0].viewSize.y != _sourceSize.height) {
+        MTLTextureDescriptor *td = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:_sourceFormat
+                                                                                      width:_sourceSize.width
+                                                                                     height:_sourceSize.height
+                                                                                  mipmapped:NO];
+        td.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
+        [self OE_initTexture:&_sourceTextures[0] withDescriptor:td];
+    }
+}
+
+/*
+ * Take the raw visible game rect and turn it into a smaller rect
+ * which is centered inside 'bounds' and has aspect ratio 'aspectSize'.
+ * ATM we try to fill the window, but maybe someday we'll support fixed zooms.
+ */
+static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
+{
+    CGFloat wantAspect = aspectSize.width / aspectSize.height;
+    CGFloat viewAspect = size.width / size.height;
+    
+    CGFloat minFactor;
+    NSRect  outRect;
+    
+    if (viewAspect >= wantAspect) {
+        // Raw image is too wide (normal case), squish inwards
+        minFactor = wantAspect / viewAspect;
+        
+        outRect.size.height = size.height;
+        outRect.size.width  = size.width * minFactor;
+    } else {
+        // Raw image is too tall, squish upwards
+        minFactor = viewAspect / wantAspect;
+        
+        outRect.size.height = size.height * minFactor;
+        outRect.size.width  = size.width;
+    }
+    
+    outRect.origin.x = (size.width - outRect.size.width) / 2;
+    outRect.origin.y = (size.height - outRect.size.height) / 2;
+    
+    
+    // This is going into a Nearest Neighbor, so the edges should be on pixels!
+    return NSIntegralRectWithOptions(outRect, NSAlignAllEdgesNearest);
+}
+
+- (void)OE_resize {
+    _outputBounds = FitAspectRectIntoRect(_aspectSize, _drawableSize);
+    CGSize size = _outputBounds.size;
+    
+    _outputFrame.viewport = (MTLViewport){
+        .originX = _outputBounds.origin.x,
+        .originY = _outputBounds.origin.y,
+        .width   = size.width,
+        .height  = size.height,
+        .znear   = 0.0,
+        .zfar    = 1.0,
+    };
+    _outputFrame.outputSize.x     = size.width;
+    _outputFrame.outputSize.y     = size.height;
+    _outputFrame.outputSize.z     = 1.0f / size.width;
+    _outputFrame.outputSize.w     = 1.0f / size.height;
+    
+    if (_shader) {
+        _renderTargetsNeedResize = YES;
+    }
+}
+
+- (void)setSourceSize:(CGSize)size aspect:(CGSize)aspect {
+    if (CGSizeEqualToSize(size, _sourceSize) && CGSizeEqualToSize(aspect, _aspectSize)) {
+        return;
+    }
+    
+    _sourceSize = size;
+    _aspectSize = aspect;
+    [self OE_resize];
+}
+
+- (void)setDrawableSize:(CGSize)size {
+    if (CGSizeEqualToSize(size, _drawableSize)) {
+        return;
+    }
+    
+    _drawableSize = size;
+    [self OE_resize];
+}
+
+- (void)setFormat:(OEMTLPixelFormat)format {
+    if (format == _format) {
+        return;
+    }
+    
+    _format = format;
+    switch (format) {
+            
+        case OEMTLPixelFormatRGBA8Unorm:
+        case OEMTLPixelFormatB5G6R5Unorm:
+        case OEMTLPixelFormatBGRA4Unorm:
+            _sourceFormat   = MTLPixelFormatBGRA8Unorm;
+            _formatIsNative = NO;
+            break;
+            
+        case OEMTLPixelFormatBGRA8Unorm:
+        case OEMTLPixelFormatBGRX8Unorm:
+            _sourceFormat   = MTLPixelFormatBGRA8Unorm;
+            _formatIsNative = YES;
+            break;
+            
+        default:
+            NSParameterAssert("unsupported format");
+            break;
+    }
+}
+
+- (id<MTLBuffer>)allocateBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow bytes:(void *)pointer
+{
+    [self setFormat:format];
+    _srcBytesPerRow = bytesPerRow;
+    _srcBuffer      = [_device newBufferWithBytesNoCopy:pointer length:height * bytesPerRow options:MTLResourceStorageModeShared deallocator:nil];
+    return _srcBuffer;
+}
+
+- (id<MTLBuffer>)allocateBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow
+{
+    [self setFormat:format];
+    _srcBytesPerRow = bytesPerRow;
+    _srcBuffer      = [_device newBufferWithLength:height * bytesPerRow options:MTLResourceStorageModeShared];
+    return _srcBuffer;
+}
+
+- (id<MTLCommandQueue>)commandQueue
+{
+    if (_commandQueue == nil) {
+        _commandQueue = [_device newCommandQueue];
+    }
+    return _commandQueue;
+}
+
+- (CIContext *)OE_ciContext
+{
+    if (_ciContext == nil) {
+        _ciContext = [CIContext new];
+    }
+    return _ciContext;
+}
+
+- (id<MTLTexture>)screenshotTexture
+{
+    if (_screenshotTexture == nil ||
+            _screenshotTexture.width != _drawableSize.width ||
+            _screenshotTexture.height != _drawableSize.height) {
+        MTLTextureDescriptor *td = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
+                                                                                      width:(NSUInteger)_drawableSize.width
+                                                                                     height:(NSUInteger)_drawableSize.height
+                                                                                  mipmapped:NO];
+        td.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
+        _screenshotTexture = [_device newTextureWithDescriptor:td];
+    }
+    return _screenshotTexture;
+}
+
+- (NSBitmapImageRep *)OE_imageFromTexture:(id<MTLTexture>)tex
+{
+    NSDictionary<CIImageOption, id> *opts = @{
+            kCIImageNearestSampling: @YES,
+    };
+    CIContext                       *ctx  = [self OE_ciContext];
+    CIImage                         *img  = [[CIImage alloc] initWithMTLTexture:tex options:opts];
+    img = [img imageBySettingAlphaOneInExtent:img.extent];
+    // flip image
+    img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
+    CGImageRef cgImg = [ctx createCGImage:img fromRect:img.extent];
+    return [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
+}
+
+- (NSBitmapImageRep *)captureSourceImage
+{
+    return [self OE_imageFromTexture:_sourceTextures[0].view];
+}
+
+- (NSBitmapImageRep *)captureOutputImage
+{
+    id<MTLTexture>          tex  = [self screenshotTexture];
+    MTLRenderPassDescriptor *rpd = [MTLRenderPassDescriptor new];
+    rpd.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 1);
+    rpd.colorAttachments[0].loadAction = MTLLoadActionClear;
+    rpd.colorAttachments[0].texture    = tex;
+    id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
+    [self renderWithCommandBuffer:commandBuffer renderPassDescriptor:rpd];
+    [commandBuffer commit];
+    [commandBuffer waitUntilCompleted];
+    return [self OE_imageFromTexture:tex];
+}
+
+- (void)OE_prepareNextFrameWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
+{
+    _frameCount++;
+    [self OE_resizeRenderTargets];
+    [self OE_updateHistory];
+    _texture = _sourceTextures[0].view;
+    
+    if (_formatIsNative) {
+        MTLSize                   size = {.width = (NSUInteger)_sourceSize.width, .height = (NSUInteger)_sourceSize.height, .depth = 1};
+        MTLOrigin                 zero = {0};
+        id<MTLBlitCommandEncoder> bce  = [commandBuffer blitCommandEncoder];
+        [bce copyFromBuffer:_srcBuffer
+               sourceOffset:0
+          sourceBytesPerRow:_srcBytesPerRow
+        sourceBytesPerImage:_srcBuffer.length
+                 sourceSize:size
+                  toTexture:_texture
+           destinationSlice:0
+           destinationLevel:0
+          destinationOrigin:zero];
+        [bce endEncoding];
+    } else {
+        [_converter convertWithBuffer:_srcBuffer bytesPerRow:_srcBytesPerRow fromFormat:_format to:_texture commandBuffer:commandBuffer];
+    }
+}
+
+- (void)OE_initTexture:(texture_t *)t withDescriptor:(MTLTextureDescriptor *)td
+{
+    t->view       = [_device newTextureWithDescriptor:td];
+    t->viewSize.x = td.width;
+    t->viewSize.y = td.height;
+    t->viewSize.z = 1.0f / td.width;
+    t->viewSize.w = 1.0f / td.height;
+}
+
+- (void)OE_initTexture:(texture_t *)t withTexture:(id<MTLTexture>)tex
+{
+    t->view       = tex;
+    t->viewSize.x = tex.width;
+    t->viewSize.y = tex.height;
+    t->viewSize.z = 1.0f / tex.width;
+    t->viewSize.w = 1.0f / tex.height;
+}
+
+- (void)OE_initHistory
+{
+    MTLTextureDescriptor *td = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:_sourceFormat
+                                                                                  width:_sourceSize.width
+                                                                                 height:_sourceSize.height
+                                                                              mipmapped:NO];
+    td.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
+    
+    for (int i = 0; i < _historyCount + 1; i++) {
+        [self OE_initTexture:&_sourceTextures[i] withDescriptor:td];
+    }
+    _historyNeedsInit = NO;
+}
+
+- (void)OE_renderTexture:(id<MTLTexture>)texture renderCommandEncoder:(id<MTLRenderCommandEncoder>)rce
+{
+    [rce setVertexBytes:&_uniforms length:sizeof(_uniforms) atIndex:BufferIndexUniforms];
+    [rce setRenderPipelineState:_pipelineState];
+    [rce setFragmentSamplerState:_samplerStateNearest atIndex:SamplerIndexDraw];
+    [rce setViewport:_outputFrame.viewport];
+    [rce setVertexBytes:&_vertex length:sizeof(_vertex) atIndex:BufferIndexPositions];
+    [rce setFragmentTexture:texture atIndex:TextureIndexColor];
+    [rce drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
+}
+
+- (void)renderWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
+           renderPassDescriptor:(MTLRenderPassDescriptor *)renderPassDescriptor;
+{
+    [self OE_prepareNextFrameWithCommandBuffer:commandBuffer];
+    
+    if (!_shader || _passCount == 0) {
+        id<MTLRenderCommandEncoder> finalPass = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
+        [self OE_renderTexture:_texture renderCommandEncoder:finalPass];
+        [finalPass endEncoding];
+        return;
+    }
+    
+    id<MTLRenderCommandEncoder> finalPass = nil;
+    
+    for (NSUInteger i = 0; i < _passCount; i++) {
+        if (_pass[i].hasFeedback) {
+            texture_t tmp = _pass[i].feedbackTarget;
+            _pass[i].feedbackTarget = _pass[i].renderTarget;
+            _pass[i].renderTarget   = tmp;
+        }
+    }
+    
+    MTLRenderPassDescriptor *rpd = [MTLRenderPassDescriptor new];
+    rpd.colorAttachments[0].loadAction  = MTLLoadActionDontCare;
+    rpd.colorAttachments[0].storeAction = MTLStoreActionStore;
+    
+    for (unsigned i = 0; i < _passCount; i++) {
+        BOOL useFinalPass = (_pass[i].renderTarget.view == nil);
+        
+        id<MTLRenderCommandEncoder> rce = nil;
+        if (useFinalPass) {
+            assert(i == _passCount - 1);
+            finalPass = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
+            rce       = finalPass;
+        } else {
+            rpd.colorAttachments[0].texture = _pass[i].renderTarget.view;
+            rce = [commandBuffer renderCommandEncoderWithDescriptor:rpd];
+        }
+
+#if DEBUG && METAL_DEBUG
+        rce.label = [NSString stringWithFormat:@"pass %d", i];
+#endif
+        
+        [rce setRenderPipelineState:_pass[i].state];
+        rce.label = _pass[i].state.label;
+        
+        _pass[i].frameCount = (uint32_t)_frameCount;
+        if (_pass[i].frameCountMod) {
+            _pass[i].frameCount %= _pass[i].frameCountMod;
+        }
+        
+        for (unsigned                 j = 0; j < kMaxConstantBuffers; j++) {
+            id<MTLBuffer>           buffer      = _pass[i].buffers[j];
+            ShaderPassBufferBinding *buffer_sem = _pass[i].bindings.buffers[j];
+            
+            if (buffer_sem.stageUsage && buffer_sem.uniforms.count > 0) {
+                void                          *data = buffer.contents;
+                for (ShaderPassUniformBinding *uniform in buffer_sem.uniforms) {
+                    memcpy((uint8_t *)data + uniform.offset, uniform.data, uniform.size);
+                }
+                
+                if (buffer_sem.stageUsage & OEStageUsageVertex)
+                    [rce setVertexBuffer:buffer offset:0 atIndex:buffer_sem.binding];
+                
+                if (buffer_sem.stageUsage & OEStageUsageFragment)
+                    [rce setFragmentBuffer:buffer offset:0 atIndex:buffer_sem.binding];
+                [buffer didModifyRange:NSMakeRange(0, buffer.length)];
+            }
+        }
+        
+        __unsafe_unretained id<MTLTexture> textures[kMaxShaderBindings] = {NULL};
+        id<MTLSamplerState>           samplers[kMaxShaderBindings]      = {NULL};
+        for (ShaderPassTextureBinding *bind in _pass[i].bindings.textures) {
+            NSUInteger binding = bind.binding;
+            textures[binding] = *(bind.texture);
+            samplers[binding] = _samplers[bind.filter][bind.wrap];
+        }
+        
+        if (useFinalPass) {
+            [rce setViewport:_outputFrame.viewport];
+        } else {
+            [rce setViewport:_pass[i].viewport];
+        }
+        
+        [rce setFragmentTextures:textures withRange:NSMakeRange(0, kMaxShaderBindings)];
+        [rce setFragmentSamplerStates:samplers withRange:NSMakeRange(0, kMaxShaderBindings)];
+        [rce setVertexBytes:_vertex length:sizeof(_vertex) atIndex:4];
+        [rce drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
+        [rce endEncoding];
+    }
+    
+    if (finalPass == nil) {
+        finalPass = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
+        [self OE_renderTexture:_pass[_passCount - 1].renderTarget.view renderCommandEncoder:finalPass];
+        [finalPass endEncoding];
+    }
+}
+
+- (void)OE_resizeRenderTargets
+{
+    if (!_shader || !_renderTargetsNeedResize) return;
+    
+    // release existing targets
+    for (int i = 0; i < _passCount; i++) {
+        _pass[i].renderTarget.view   = nil;
+        _pass[i].feedbackTarget.view = nil;
+        bzero(&_pass[i].renderTarget.viewSize, sizeof(_pass[i].renderTarget.viewSize));
+        bzero(&_pass[i].feedbackTarget.viewSize, sizeof(_pass[i].feedbackTarget.viewSize));
+    }
+    
+    NSInteger width = _sourceSize.width, height = _sourceSize.height;
+    
+    CGSize size = CGSizeMake(_outputFrame.viewport.width, _outputFrame.viewport.height);
+    
+    for (unsigned i = 0; i < _passCount; i++) {
+        ShaderPass *pass = _shader.passes[i];
+        
+        if (pass.valid) {
+            switch (pass.scaleX) {
+                case OEShaderPassScaleInput:
+                    width *= pass.scale.width;
+                    break;
+                
+                case OEShaderPassScaleViewport:
+                    width = (NSInteger)(size.width * pass.scale.width);
+                    break;
+                
+                case OEShaderPassScaleAbsolute:
+                    width = (NSInteger)pass.size.width;
+                    break;
+                
+                default:
+                    break;
+            }
+            
+            if (!width)
+                width = size.width;
+            
+            switch (pass.scaleY) {
+                case OEShaderPassScaleInput:
+                    height *= pass.scale.height;
+                    break;
+                
+                case OEShaderPassScaleViewport:
+                    height = (NSInteger)(size.height * pass.scale.height);
+                    break;
+                
+                case OEShaderPassScaleAbsolute:
+                    height = (NSInteger)pass.size.width;
+                    break;
+                
+                default:
+                    break;
+            }
+            
+            if (!height)
+                height = size.height;
+        } else if (i == (_passCount - 1)) {
+            width  = size.width;
+            height = size.height;
+        }
+        
+        NSLog(@"pass %d, render target size %lu x %lu", i, width, height);
+        
+        MTLPixelFormat fmt = _pass[i].bindings.format;
+        if ((i != (_passCount - 1)) ||
+                (width != size.width) || (height != size.height) ||
+                fmt != MTLPixelFormatBGRA8Unorm) {
+            _pass[i].viewport.width  = width;
+            _pass[i].viewport.height = height;
+            _pass[i].viewport.znear  = 0.0;
+            _pass[i].viewport.zfar   = 1.0;
+            
+            MTLTextureDescriptor *td = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:fmt
+                                                                                          width:width
+                                                                                         height:height
+                                                                                      mipmapped:NO];
+            td.storageMode = MTLStorageModePrivate;
+            td.usage       = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
+            [self OE_initTexture:&_pass[i].renderTarget withDescriptor:td];
+            
+            if (pass.isFeedback) {
+                [self OE_initTexture:&_pass[i].feedbackTarget withDescriptor:td];
+            }
+        } else {
+            _pass[i].renderTarget.viewSize.x = width;
+            _pass[i].renderTarget.viewSize.y = height;
+            _pass[i].renderTarget.viewSize.z = 1.0f / width;
+            _pass[i].renderTarget.viewSize.w = 1.0f / height;
+        }
+    }
+    
+    _renderTargetsNeedResize = NO;
+}
+
+- (void)OE_freeShaderResources
+{
+    for (int i = 0; i < kMaxShaderPasses; i++) {
+        _pass[i].renderTarget.view   = nil;
+        _pass[i].feedbackTarget.view = nil;
+        _pass[i].bindings            = nil;
+        _pass[i].state               = nil;
+        
+        bzero(&_pass[i].renderTarget.viewSize, sizeof(_pass[i].renderTarget.viewSize));
+        bzero(&_pass[i].feedbackTarget.viewSize, sizeof(_pass[i].feedbackTarget.viewSize));
+        
+        for (unsigned j = 0; j < kMaxConstantBuffers; j++) {
+            _pass[i].buffers[j] = nil;
+        }
+    }
+    
+    for (int i = 0; i < kMaxTextures; i++) {
+        _luts[i].view = nil;
+    }
+    
+    for (int i = 0; i <= kMaxFrameHistory; i++) {
+        _sourceTextures[i].view = nil;
+        bzero(&_sourceTextures[i].viewSize, sizeof(_sourceTextures[i].viewSize));
+    }
+    
+    _historyCount = 0;
+    _passCount    = 0;
+    _lutCount     = 0;
+}
+
+- (BOOL)setShaderFromURL:(NSURL *)url
+{
+    [self OE_freeShaderResources];
+    
+    NSError     *err;
+    SlangShader *ss = [[SlangShader alloc] initFromURL:url error:&err];
+    if (ss == nil) {
+        return NO;
+    }
+    
+    _historyCount = ss.historySize;
+    _passCount    = ss.passes.count;
+    _lutCount     = ss.luts.count;
+    
+    MTLCompileOptions *options = [MTLCompileOptions new];
+    options.fastMathEnabled = YES;
+    
+    @try {
+        texture_t     *source = &_sourceTextures[0];
+        for (unsigned i       = 0; i < _passCount; source = &_pass[i++].renderTarget) {
+            ShaderPass *pass = ss.passes[i];
+            _pass[i].hasFeedback   = pass.isFeedback;
+            _pass[i].frameCountMod = (uint32_t)pass.frameCountMod;
+            
+            matrix_float4x4 *mvp = (i == _passCount - 1) ? &_uniforms.projectionMatrix : &_uniformsNoRotate.projectionMatrix;
+            
+            ShaderPassSemantics *sem = [ShaderPassSemantics new];
+            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_sourceTextures[0].view stride:0
+                       size:&_sourceTextures[0].viewSize stride:0
+                   semantic:OEShaderTextureSemanticOriginal];
+            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&source->view stride:0
+                       size:&source->viewSize stride:0
+                   semantic:OEShaderTextureSemanticSource];
+            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_sourceTextures[0].view stride:sizeof(*_sourceTextures)
+                       size:&_sourceTextures[0].viewSize stride:sizeof(*_sourceTextures)
+                   semantic:OEShaderTextureSemanticOriginalHistory];
+            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_pass[0].renderTarget.view stride:sizeof(*_pass)
+                       size:&_pass[0].renderTarget.viewSize stride:sizeof(*_pass)
+                   semantic:OEShaderTextureSemanticPassOutput];
+            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_pass[0].feedbackTarget.view stride:sizeof(*_pass)
+                       size:&_pass[0].feedbackTarget.viewSize stride:sizeof(*_pass)
+                   semantic:OEShaderTextureSemanticPassFeedback];
+            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_luts[0].view stride:sizeof(*_luts)
+                       size:&_luts[0].viewSize stride:sizeof(*_luts)
+                   semantic:OEShaderTextureSemanticUser];
+            
+            [sem addUniformData:mvp semantic:OEShaderBufferSemanticMVP];
+            [sem addUniformData:&_pass[i].renderTarget.viewSize semantic:OEShaderBufferSemanticOutput];
+            [sem addUniformData:&_outputFrame.outputSize semantic:OEShaderBufferSemanticFinalViewportSize];
+            [sem addUniformData:&_pass[i].frameCount semantic:OEShaderBufferSemanticFrameCount];
+            
+            NSString *vs_src = nil;
+            NSString *fs_src = nil;
+            _pass[i].bindings = [ShaderPassBindings new];
+            if (![ss buildPass:i
+                  metalVersion:20000
+                 passSemantics:sem
+                  passBindings:_pass[i].bindings
+                        vertex:&vs_src
+                      fragment:&fs_src]) {
+                return NO;
+            }
+
+#ifdef DEBUG
+            BOOL save_msl = NO;
+#else
+            BOOL save_msl = NO;
+#endif
+            // vertex descriptor
+            @try {
+                MTLVertexDescriptor *vd = [MTLVertexDescriptor new];
+                vd.attributes[0].offset      = offsetof(Vertex, position);
+                vd.attributes[0].format      = MTLVertexFormatFloat4;
+                vd.attributes[0].bufferIndex = 4;
+                vd.attributes[1].offset      = offsetof(Vertex, texCoord);
+                vd.attributes[1].format      = MTLVertexFormatFloat2;
+                vd.attributes[1].bufferIndex = 4;
+                vd.layouts[4].stride         = sizeof(Vertex);
+                vd.layouts[4].stepFunction   = MTLVertexStepFunctionPerVertex;
+                
+                MTLRenderPipelineDescriptor *psd = [MTLRenderPipelineDescriptor new];
+                psd.label = [NSString stringWithFormat:@"pass %d", i];
+                
+                MTLRenderPipelineColorAttachmentDescriptor *ca = psd.colorAttachments[0];
+                
+                ca.pixelFormat                 = _pass[i].bindings.format;
+                ca.blendingEnabled             = NO;
+                ca.sourceAlphaBlendFactor      = MTLBlendFactorSourceAlpha;
+                ca.sourceRGBBlendFactor        = MTLBlendFactorSourceAlpha;
+                ca.destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+                ca.destinationRGBBlendFactor   = MTLBlendFactorOneMinusSourceAlpha;
+                
+                psd.sampleCount      = 1;
+                psd.vertexDescriptor = vd;
+                
+                NSError        *err;
+                id<MTLLibrary> lib   = [_device newLibraryWithSource:vs_src options:options error:&err];
+                if (err != nil) {
+                    if (lib == nil) {
+                        save_msl = YES;
+                        NSLog(@"unable to compile vertex shader: %@", err.localizedDescription);
+                        return NO;
+                    }
+#if DEBUG_SHADER
+                    NSLog(@"warnings compiling vertex shader: %@", err.localizedDescription);
+#endif
+                }
+                
+                psd.vertexFunction = [lib newFunctionWithName:@"main0"];
+                
+                lib = [_device newLibraryWithSource:fs_src options:nil error:&err];
+                if (err != nil) {
+                    if (lib == nil) {
+                        save_msl = YES;
+                        NSLog(@"unable to compile fragment shader: %@", err.localizedDescription);
+                        return NO;
+                    }
+#if DEBUG_SHADER
+                    NSLog(@"warnings compiling fragment shader: %@", err.localizedDescription);
+#endif
+                }
+                psd.fragmentFunction = [lib newFunctionWithName:@"main0"];
+                
+                _pass[i].state = [_device newRenderPipelineStateWithDescriptor:psd error:&err];
+                if (err != nil) {
+                    save_msl = YES;
+                    NSLog(@"error creating pipeline state for pass %d: %@", i, err.localizedDescription);
+                    return NO;
+                }
+                
+                for (unsigned j = 0; j < kMaxConstantBuffers; j++) {
+                    size_t size = _pass[i].bindings.buffers[j].size;
+                    if (size == 0) {
+                        continue;
+                    }
+                    
+                    id<MTLBuffer> buf = [_device newBufferWithLength:size options:MTLResourceStorageModeManaged];
+                    _pass[i].buffers[j] = buf;
+                }
+            }
+            @finally {
+                if (save_msl) {
+                    NSString *basePath = [pass.url.absoluteString stringByDeletingPathExtension];
+                    
+                    NSLog(@"saving metal shader files to %@", basePath);
+                    
+                    NSError *err = nil;
+                    [vs_src writeToFile:[basePath stringByAppendingPathExtension:@"vs.metal"]
+                             atomically:NO
+                               encoding:NSStringEncodingConversionAllowLossy
+                                  error:&err];
+                    if (err != nil) {
+                        NSLog(@"unable to save vertex shader source: %d: %@", i, err.localizedDescription);
+                    }
+                    
+                    err = nil;
+                    [fs_src writeToFile:[basePath stringByAppendingPathExtension:@"fs.metal"]
+                             atomically:NO
+                               encoding:NSStringEncodingConversionAllowLossy
+                                  error:&err];
+                    if (err != nil) {
+                        NSLog(@"unable to save fragment shader source: %d: %@", i, err.localizedDescription);
+                    }
+                }
+            }
+        }
+        
+        NSDictionary<MTKTextureLoaderOption, id> *opts = @{
+                MTKTextureLoaderOptionGenerateMipmaps: @YES,
+                MTKTextureLoaderOptionAllocateMipmaps: @YES,
+        };
+        
+        for (unsigned i = 0; i < _lutCount; i++) {
+            ShaderLUT *lut   = ss.luts[i];
+            
+            NSError        *err;
+            id<MTLTexture> t = [_loader newTextureWithContentsOfURL:lut.url options:opts error:&err];
+            if (err != nil) {
+                NSLog(@"unable to load LUT texture at path '%@': %@", lut.url, err);
+                continue;
+            }
+            
+            [self OE_initTexture:&_luts[i] withTexture:t];
+        }
+        
+        _shader = ss;
+        ss      = nil;
+    }
+    @finally {
+        if (ss) {
+            [self OE_freeShaderResources];
+        }
+    }
+    
+    _renderTargetsNeedResize = YES;
+    _historyNeedsInit        = YES;
+    
+    return YES;
+}
+
+@end

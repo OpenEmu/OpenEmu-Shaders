@@ -155,6 +155,28 @@ extern MTLPixelFormat MTLPixelFormatFromGLSlangNSString(NSString *str);
 
 #pragma mark -
 
+typedef NS_ENUM(NSUInteger, OEMTLPixelFormat)
+{
+    OEMTLPixelFormatInvalid,
+    
+    // 16-bit formats
+    OEMTLPixelFormatBGRA4Unorm NS_SWIFT_NAME(bgra4Unorm),
+    OEMTLPixelFormatB5G6R5Unorm NS_SWIFT_NAME(b5g6r5Unorm),
+    OEMTLPixelFormatB5G5R5A1Unorm NS_SWIFT_NAME(b5g5r5a1Unorm),
+    
+    OEMTLPixelFormatRGBA8Unorm NS_SWIFT_NAME(rgba8Unorm),
+    
+    // native, no conversion
+    OEMTLPixelFormatBGRA8Unorm NS_SWIFT_NAME(bgra8Unorm),
+    OEMTLPixelFormatBGRX8Unorm NS_SWIFT_NAME(rgbx8Unorm), // no alpha
+    
+    OEMTLPixelFormatCount,
+};
+
+extern NSUInteger OEMTLPixelFormatToBPP(OEMTLPixelFormat format);
+extern NSString *NSStringFromOEMTLPixelFormat(OEMTLPixelFormat format);
+
+
 typedef NS_OPTIONS(NSUInteger, OEStageUsage)
 {
     OEStageUsageNone     = 0,

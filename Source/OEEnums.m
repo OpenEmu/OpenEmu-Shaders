@@ -95,3 +95,49 @@ MTLPixelFormat MTLPixelFormatFromGLSlangNSString(NSString *str)
     
     return MTLPixelFormatInvalid;
 }
+
+NSUInteger OEMTLPixelFormatToBPP(OEMTLPixelFormat format)
+{
+    switch (format)
+    {
+        case OEMTLPixelFormatRGBA8Unorm:
+        case OEMTLPixelFormatBGRA8Unorm:
+        case OEMTLPixelFormatBGRX8Unorm:
+            return 4;
+        
+        case OEMTLPixelFormatB5G6R5Unorm:
+        case OEMTLPixelFormatB5G5R5A1Unorm:
+        case OEMTLPixelFormatBGRA4Unorm:
+            return 2;
+        
+        default:
+            NSLog(@"RPixelFormatToBPP: unknown RPixel format: %lu", format);
+            return 4;
+    }
+}
+
+static NSString *OEMTLPixelStrings[OEMTLPixelFormatCount];
+
+NSString *NSStringFromOEMTLPixelFormat(OEMTLPixelFormat format)
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+
+#define STRING(literal) OEMTLPixelStrings[literal] = @#literal
+        STRING(OEMTLPixelFormatInvalid);
+        STRING(OEMTLPixelFormatB5G6R5Unorm);
+        STRING(OEMTLPixelFormatB5G5R5A1Unorm);
+        STRING(OEMTLPixelFormatBGRA4Unorm);
+        STRING(OEMTLPixelFormatBGRA8Unorm);
+        STRING(OEMTLPixelFormatBGRX8Unorm);
+#undef STRING
+    
+    });
+    
+    if (format >= OEMTLPixelFormatCount)
+    {
+        format = OEMTLPixelFormatInvalid;
+    }
+    
+    return OEMTLPixelStrings[format];
+}
