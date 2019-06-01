@@ -494,8 +494,9 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     CIContext                       *ctx  = [self OE_ciContext];
     CIImage                         *img  = [[CIImage alloc] initWithMTLTexture:tex options:opts];
     img = [img imageBySettingAlphaOneInExtent:img.extent];
-    // flip image
-    img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
+    if (!_sourceTexture || !_sourceTextureIsFlipped) {
+        img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
+    }
     CGImageRef cgImg = [ctx createCGImage:img fromRect:img.extent];
     return [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
 }
