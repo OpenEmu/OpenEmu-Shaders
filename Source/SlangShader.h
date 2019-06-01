@@ -63,7 +63,7 @@
 @property (nonatomic, readonly) NSArray<ShaderPass *>        *passes;
 @property (nonatomic, readonly) NSArray<OEShaderParameter *> *parameters;
 @property (nonatomic, readonly) NSArray<ShaderLUT *>         *luts;
-@property (nonatomic, readonly) NSUInteger                   historySize;
+@property (nonatomic, readonly) NSUInteger                   historyCount;
 
 - (BOOL)buildPass:(NSUInteger)passNumber
      metalVersion:(NSUInteger)version

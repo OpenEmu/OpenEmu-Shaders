@@ -42,5 +42,5 @@
 @end
 
 @interface SlangShader(Private)
-@property (nonatomic) NSUInteger historySize;
+@property (nonatomic) NSUInteger historyCount;
 @end

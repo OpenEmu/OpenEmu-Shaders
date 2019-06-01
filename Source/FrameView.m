@@ -57,9 +57,10 @@ typedef struct texture
     MTKTextureLoader    *_loader;
     OEMTLPixelConverter *_converter;
     Vertex              _vertex[4];
+    Vertex              _vertexFlipped[4];
     
-    NSUInteger    _srcBytesPerRow;
-    id<MTLBuffer> _srcBuffer;          // source buffer
+    NSUInteger      _srcBytesPerRow;
+    id<MTLBuffer>   _srcBuffer;          // source buffer OR
     
     id<MTLSamplerState> _samplers[OEShaderPassFilterCount][OEShaderPassWrapCount];
     
@@ -98,6 +99,7 @@ typedef struct texture
     }              _pass[kMaxShaderPasses];
     
     texture_t _luts[kMaxTextures];
+    BOOL      _lutsFlipped;
     
     BOOL          _renderTargetsNeedResize;
     BOOL          _historyNeedsInit;
@@ -143,13 +145,19 @@ typedef struct texture
     }
     [self OE_initSamplers];
     
-    Vertex v[4] = {
-            {simd_make_float4(0, 1, 0, 1), simd_make_float2(0, 1)},
-            {simd_make_float4(1, 1, 0, 1), simd_make_float2(1, 1)},
-            {simd_make_float4(0, 0, 0, 1), simd_make_float2(0, 0)},
-            {simd_make_float4(1, 0, 0, 1), simd_make_float2(1, 0)},
-    };
-    memcpy(_vertex, v, sizeof(_vertex));
+    memcpy(_vertex, (void *)(Vertex[4]){
+        {simd_make_float4(0, 1, 0, 1), simd_make_float2(0, 1)},
+        {simd_make_float4(1, 1, 0, 1), simd_make_float2(1, 1)},
+        {simd_make_float4(0, 0, 0, 1), simd_make_float2(0, 0)},
+        {simd_make_float4(1, 0, 0, 1), simd_make_float2(1, 0)},
+    }, sizeof(_vertex));
+    
+    memcpy(_vertexFlipped, (void *)(Vertex[4]) {
+        {simd_make_float4(0, 1, 0, 1), simd_make_float2(0, 0)},
+        {simd_make_float4(0, 0, 0, 1), simd_make_float2(0, 1)},
+        {simd_make_float4(1, 1, 0, 1), simd_make_float2(1, 0)},
+        {simd_make_float4(1, 0, 0, 1), simd_make_float2(1, 1)},
+    }, sizeof(_vertexFlipped));
     
     [self setRotation:0];
     
@@ -282,6 +290,21 @@ typedef struct texture
     return _sourceSize;
 }
 
+- (void)setSourceTexture:(id<MTLTexture>)sourceTexture {
+    if (_sourceTexture == sourceTexture) {
+        return;
+    }
+    
+    _srcBuffer = nil;
+    _texture = nil;
+    _sourceTexture = sourceTexture;
+    _sourceFormat  = MTLPixelFormatBGRA8Unorm;
+}
+
+- (void)setSourceTextureIsFlipped:(BOOL)sourceTextureIsFlipped {
+    _sourceTextureIsFlipped = sourceTextureIsFlipped;
+}
+
 - (void)OE_updateHistory
 {
     if (_shader) {
@@ -296,6 +319,11 @@ typedef struct texture
                 _sourceTextures[0]  = tmp;
             }
         }
+    }
+    
+    if (_historyCount == 0 && _sourceTexture) {
+        [self OE_initTexture:&_sourceTextures[0] withTexture:_sourceTexture];
+        return;
     }
     
     /* either no history, or we moved a texture of a different size in the front slot */
@@ -392,7 +420,6 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     
     _format = format;
     switch (format) {
-            
         case OEMTLPixelFormatRGBA8Unorm:
         case OEMTLPixelFormatB5G6R5Unorm:
         case OEMTLPixelFormatBGRA4Unorm:
@@ -475,7 +502,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 
 - (NSBitmapImageRep *)captureSourceImage
 {
-    return [self OE_imageFromTexture:_sourceTextures[0].view];
+    return [self OE_imageFromTexture:_texture];
 }
 
 - (NSBitmapImageRep *)captureOutputImage
@@ -499,22 +526,46 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     [self OE_updateHistory];
     _texture = _sourceTextures[0].view;
     
-    if (_formatIsNative) {
+    if (_srcBuffer) {
+        if (_formatIsNative) {
+            MTLSize                   size = {.width = (NSUInteger)_sourceSize.width, .height = (NSUInteger)_sourceSize.height, .depth = 1};
+            MTLOrigin                 zero = {0};
+            id<MTLBlitCommandEncoder> bce  = [commandBuffer blitCommandEncoder];
+            [bce copyFromBuffer:_srcBuffer
+                   sourceOffset:0
+              sourceBytesPerRow:_srcBytesPerRow
+            sourceBytesPerImage:_srcBuffer.length
+                     sourceSize:size
+                      toTexture:_texture
+               destinationSlice:0
+               destinationLevel:0
+              destinationOrigin:zero];
+            [bce endEncoding];
+        } else {
+            [_converter convertWithBuffer:_srcBuffer bytesPerRow:_srcBytesPerRow fromFormat:_format to:_texture commandBuffer:commandBuffer];
+        }
+        return;
+    }
+    
+    if (_sourceTexture) {
+        if (_historyCount == 0) {
+            // _sourceTextures[0].view == _sourceTexture
+            return;
+        }
+        
         MTLSize                   size = {.width = (NSUInteger)_sourceSize.width, .height = (NSUInteger)_sourceSize.height, .depth = 1};
         MTLOrigin                 zero = {0};
         id<MTLBlitCommandEncoder> bce  = [commandBuffer blitCommandEncoder];
-        [bce copyFromBuffer:_srcBuffer
-               sourceOffset:0
-          sourceBytesPerRow:_srcBytesPerRow
-        sourceBytesPerImage:_srcBuffer.length
-                 sourceSize:size
-                  toTexture:_texture
-           destinationSlice:0
-           destinationLevel:0
-          destinationOrigin:zero];
+        [bce copyFromTexture:_sourceTexture
+                 sourceSlice:0
+                 sourceLevel:0
+                sourceOrigin:zero
+                  sourceSize:size
+                   toTexture:_texture
+            destinationSlice:0
+            destinationLevel:0
+           destinationOrigin:zero];
         [bce endEncoding];
-    } else {
-        [_converter convertWithBuffer:_srcBuffer bytesPerRow:_srcBytesPerRow fromFormat:_format to:_texture commandBuffer:commandBuffer];
     }
 }
 
@@ -556,7 +607,13 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     [rce setRenderPipelineState:_pipelineState];
     [rce setFragmentSamplerState:_samplerStateNearest atIndex:SamplerIndexDraw];
     [rce setViewport:_outputFrame.viewport];
-    [rce setVertexBytes:&_vertex length:sizeof(_vertex) atIndex:BufferIndexPositions];
+
+    if (_sourceTexture && _sourceTextureIsFlipped) {
+        [rce setVertexBytes:_vertexFlipped length:sizeof(_vertexFlipped) atIndex:BufferIndexPositions];
+    } else {
+        [rce setVertexBytes:_vertex length:sizeof(_vertex) atIndex:BufferIndexPositions];
+    }
+
     [rce setFragmentTexture:texture atIndex:TextureIndexColor];
     [rce drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
 }
@@ -647,7 +704,12 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         
         [rce setFragmentTextures:textures withRange:NSMakeRange(0, kMaxShaderBindings)];
         [rce setFragmentSamplerStates:samplers withRange:NSMakeRange(0, kMaxShaderBindings)];
-        [rce setVertexBytes:_vertex length:sizeof(_vertex) atIndex:4];
+        
+        if (useFinalPass && _sourceTexture && _sourceTextureIsFlipped) {
+            [rce setVertexBytes:_vertexFlipped length:sizeof(_vertexFlipped) atIndex:4];
+        } else {
+            [rce setVertexBytes:_vertex length:sizeof(_vertex) atIndex:4];
+        }
         [rce drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
         [rce endEncoding];
     }
@@ -796,7 +858,6 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         return NO;
     }
     
-    _historyCount = ss.historySize;
     _passCount    = ss.passes.count;
     _lutCount     = ss.luts.count;
     
@@ -952,27 +1013,11 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 }
             }
         }
-        
-        NSDictionary<MTKTextureLoaderOption, id> *opts = @{
-                MTKTextureLoaderOptionGenerateMipmaps: @YES,
-                MTKTextureLoaderOptionAllocateMipmaps: @YES,
-        };
-        
-        for (unsigned i = 0; i < _lutCount; i++) {
-            ShaderLUT *lut   = ss.luts[i];
-            
-            NSError        *err;
-            id<MTLTexture> t = [_loader newTextureWithContentsOfURL:lut.url options:opts error:&err];
-            if (err != nil) {
-                NSLog(@"unable to load LUT texture at path '%@': %@", lut.url, err);
-                continue;
-            }
-            
-            [self OE_initTexture:&_luts[i] withTexture:t];
-        }
-        
-        _shader = ss;
+
+        _historyCount = ss.historyCount;
+        _shader       = ss;
         ss      = nil;
+        [self loadLuts];
     }
     @finally {
         if (ss) {
@@ -984,6 +1029,31 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     _historyNeedsInit        = YES;
     
     return YES;
+}
+
+- (void)loadLuts {
+    BOOL flipped = _sourceTexture && _sourceTextureIsFlipped;
+
+    NSDictionary<MTKTextureLoaderOption, id> *opts = @{
+                                                       MTKTextureLoaderOptionGenerateMipmaps: @YES,
+                                                       MTKTextureLoaderOptionAllocateMipmaps: @YES,
+                                                       MTKTextureLoaderOptionSRGB: @NO,
+                                                       MTKTextureLoaderOriginFlippedVertically: @(flipped),
+                                                       MTKTextureLoaderOptionTextureStorageMode: @(MTLStorageModePrivate),
+                                                       };
+    
+    for (unsigned i = 0; i < _lutCount; i++) {
+        ShaderLUT *lut   = _shader.luts[i];
+        
+        NSError        *err;
+        id<MTLTexture> t = [_loader newTextureWithContentsOfURL:lut.url options:opts error:&err];
+        if (err != nil) {
+            NSLog(@"unable to load LUT texture at path '%@': %@", lut.url, err);
+            continue;
+        }
+        
+        [self OE_initTexture:&_luts[i] withTexture:t];
+    }
 }
 
 @end

@@ -235,7 +235,7 @@ struct ConfigScanner {
     private var pos:   String.Index
     
     init(_ text: String) {
-        lines = text.components(separatedBy: .newlines)
+        lines = text.split { $0.isNewline }.map(String.init)
         line = 0
         pos = text.startIndex
     }

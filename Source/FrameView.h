@@ -32,10 +32,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) OEMTLPixelFormat format;
 /*! @brief the size of the source texture */
-@property (nonatomic, readonly) CGSize           sourceSize;
-@property (nonatomic, readonly) CGSize           sourceAspectSize;
-@property (nonatomic, readonly) SlangShader      *shader;
-@property (nonatomic) CGSize                     drawableSize;
+@property (nonatomic, readonly) CGSize          sourceSize;
+@property (nonatomic, readonly) CGSize          sourceAspectSize;
+@property (nonatomic)           id<MTLTexture>  sourceTexture;
+@property (nonatomic)           BOOL            sourceTextureIsFlipped;
+@property (nonatomic, readonly) SlangShader     *shader;
+@property (nonatomic) CGSize                    drawableSize;
 
 - (instancetype)initWithDevice:(id<MTLDevice>)device;
 

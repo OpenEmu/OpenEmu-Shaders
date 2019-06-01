@@ -220,7 +220,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
     NSMutableArray<OEShaderParameter *>                  *_parameters;
     NSMutableDictionary<NSString *, OEShaderParameter *> *_parametersMap;
     OEShaderPassCompiler                                 *_compiler;
-    
+    NSUInteger                                           _historyCount;
 }
 
 - (instancetype)initFromURL:(NSURL *)url error:(NSError **)error
@@ -276,9 +276,13 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
             NSDictionary < NSString *, OEShaderParameter * > *params = pass.source.parameters;
             for (OEShaderParameter                           *param in params.objectEnumerator) {
                 OEShaderParameter *existing = _parametersMap[param.name];
-                if (existing != nil && ![param isEqual:existing]) {
-                    // TODO(SGC) conflicting parameters
-                    assert("conflicting parameters");
+                if (existing != nil) {
+                    if (![param isEqual:existing]) {
+                        // TODO(SGC) conflicting parameters
+                        assert("conflicting parameters");
+                    }
+                    // it is a value duplicate, so skip
+                    continue;
                 }
                 [_parameters addObject:param];
                 _parametersMap[param.name] = param;
@@ -317,6 +321,10 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
                    passBindings:passBindings
                          vertex:vsrc
                        fragment:fsrc];
+}
+
+- (void)setHistoryCount:(NSUInteger)historyCount {
+    _historyCount = historyCount;
 }
 
 @end

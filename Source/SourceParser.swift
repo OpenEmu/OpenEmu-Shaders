@@ -133,7 +133,7 @@ class SourceParser: NSObject {
     
     fileprivate func load(_ url: URL, isRoot: Bool) throws {
         let f        = try String(contentsOf: url)
-        let lines    = f.components(separatedBy: .newlines)
+        let lines    = f.split { $0.isNewline }.map(String.init)
         let filename = url.lastPathComponent
         
         var lno = 1
