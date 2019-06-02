@@ -77,7 +77,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
 
 + (void)initialize
 {
-    dispatch_once_t once;
+    static dispatch_once_t once;
     dispatch_once(&once, ^{
         textureSemanticArrays = @{
                 OEShaderTextureSemanticOriginal: @NO,
@@ -140,7 +140,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
 {
     self = [super init];
     
-    _textures = [NSMutableDictionary<OEShaderTextureSemantic, NSMutableArray<ShaderTextureSemanticMeta *> *> new];
+    _textures = [NSMutableDictionary<OEShaderTextureSemantic, NSMutableArray<ShaderTextureSemanticMeta *> *> dictionaryWithCapacity:6];
     _textures[OEShaderTextureSemanticOriginal]        = [NSMutableArray<ShaderTextureSemanticMeta *> new];
     _textures[OEShaderTextureSemanticSource]          = [NSMutableArray<ShaderTextureSemanticMeta *> new];
     _textures[OEShaderTextureSemanticOriginalHistory] = [NSMutableArray<ShaderTextureSemanticMeta *> new];
@@ -148,7 +148,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
     _textures[OEShaderTextureSemanticPassFeedback]    = [NSMutableArray<ShaderTextureSemanticMeta *> new];
     _textures[OEShaderTextureSemanticUser]            = [NSMutableArray<ShaderTextureSemanticMeta *> new];
     
-    _semantics = [NSMutableDictionary<OEShaderBufferSemantic, ShaderSemanticMeta *> new];
+    _semantics = [NSMutableDictionary<OEShaderBufferSemantic, ShaderSemanticMeta *> dictionaryWithCapacity:4];
     _semantics[OEShaderBufferSemanticMVP]               = [ShaderSemanticMeta new];
     _semantics[OEShaderBufferSemanticOutput]            = [ShaderSemanticMeta new];
     _semantics[OEShaderBufferSemanticFinalViewportSize] = [ShaderSemanticMeta new];
