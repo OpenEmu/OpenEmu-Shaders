@@ -48,6 +48,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (id<MTLBuffer>)allocateBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow bytes:(void *)pointer;
 
 - (void)renderWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer renderPassDescriptor:(MTLRenderPassDescriptor *)renderPassDescriptor;
+- (void)renderWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
+      renderPassDescriptorBlock:(MTLRenderPassDescriptor *(NS_NOESCAPE ^)(void))block;
 
 /*! @brief returns an image of the last rendered source image */
 - (NSBitmapImageRep *)captureSourceImage;
