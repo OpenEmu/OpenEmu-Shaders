@@ -162,7 +162,7 @@ typedef NS_ENUM(NSUInteger, OEMTLPixelFormat)
     // 16-bit formats
     OEMTLPixelFormatBGRA4Unorm NS_SWIFT_NAME(bgra4Unorm),
     OEMTLPixelFormatB5G6R5Unorm NS_SWIFT_NAME(b5g6r5Unorm),
-    OEMTLPixelFormatB5G5R5A1Unorm NS_SWIFT_NAME(b5g5r5a1Unorm),
+    OEMTLPixelFormatR5G5B5A1Unorm NS_SWIFT_NAME(r5g5b5a1Unorm),
     
     OEMTLPixelFormatRGBA8Unorm NS_SWIFT_NAME(rgba8Unorm),
     

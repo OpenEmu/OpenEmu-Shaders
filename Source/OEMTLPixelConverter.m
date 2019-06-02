@@ -89,7 +89,20 @@
         NSLog(@"unable to create 'convert_bgra4444_to_bgra8888_buf' conversion filter: %@", err.localizedDescription);
         return nil;
     }
-    
+
+    _bufToTex[OEMTLPixelFormatR5G5B5A1Unorm] = [Filter newFilterWithFunctionName:@"convert_bgra5551_to_bgra8888_buf"
+                                                                        device:device
+                                                                       library:library
+                                                                        format:OEMTLPixelFormatR5G5B5A1Unorm
+                                                                         error:&err];
+    if (err) {
+        if (error) {
+            *error = err;
+        }
+        NSLog(@"unable to create 'convert_rgb565_to_bgra8888_buf' conversion filter: %@", err.localizedDescription);
+        return nil;
+    }
+
     _bufToTex[OEMTLPixelFormatB5G6R5Unorm] = [Filter newFilterWithFunctionName:@"convert_rgb565_to_bgra8888_buf"
                                                                         device:device
                                                                        library:library

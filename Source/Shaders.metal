@@ -99,6 +99,21 @@ kernel void convert_bgra4444_to_bgra8888_buf(device ushort * in  [[ buffer(0) ]]
     out.write(half4(pix2) / 15.0, gid);
 }
 
+kernel void convert_bgra5551_to_bgra8888_buf(device ushort * in  [[ buffer(0) ]],
+                                             constant uint & stride  [[ buffer(1) ]],
+                                             texture2d<half, access::write> out [[ texture(0) ]],
+                                             uint2 gid [[ thread_position_in_grid ]])
+{
+    ushort pix  = in[gid.y * stride + gid.x];
+    uchar4 pix2 = uchar4(extract_bits(pix,  0, 5),
+                         extract_bits(pix,  5, 5),
+                         extract_bits(pix, 10, 5),
+                         extract_bits(pix, 15, 1)
+                         );
+
+    out.write(half4(pix2) / half4(0x1f, 0x1f, 0x1f, 0xff), gid);
+}
+
 kernel void convert_rgb565_to_bgra8888_buf(device ushort * in  [[ buffer(0) ]],
                                            constant uint & stride  [[ buffer(1) ]],
                                            texture2d<half, access::write> out [[ texture(0) ]],

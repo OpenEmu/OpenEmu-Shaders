@@ -419,6 +419,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     _format = format;
     switch (format) {
         case OEMTLPixelFormatRGBA8Unorm:
+        case OEMTLPixelFormatR5G5B5A1Unorm:
         case OEMTLPixelFormatB5G6R5Unorm:
         case OEMTLPixelFormatBGRA4Unorm:
             _sourceFormat   = MTLPixelFormatBGRA8Unorm;
