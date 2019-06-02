@@ -31,8 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FrameView : NSObject
 
 @property (nonatomic, readonly) OEMTLPixelFormat format;
-/*! @brief the size of the source texture */
-@property (nonatomic, readonly) CGSize          sourceSize;
+@property (nonatomic, readonly) CGRect          sourceRect;
 @property (nonatomic, readonly) CGSize          sourceAspectSize;
 @property (nonatomic)           id<MTLTexture>  sourceTexture;
 @property (nonatomic)           BOOL            sourceTextureIsFlipped;
@@ -41,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithDevice:(id<MTLDevice>)device;
 
-- (void)setSourceSize:(CGSize)size aspect:(CGSize)aspect;
+- (void)setSourceRect:(CGRect)rect aspect:(CGSize)aspect;
 - (void)setDrawableSize:(CGSize)drawableSize;
 
 - (id<MTLBuffer>)allocateBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow;

@@ -104,7 +104,7 @@ typedef struct texture
     BOOL          _renderTargetsNeedResize;
     BOOL          _historyNeedsInit;
     
-    CGSize _sourceSize;
+    CGRect _sourceRect;
     CGSize _aspectSize;
     CGSize _drawableSize;
     // aspect-adjusted output bound
@@ -282,21 +282,6 @@ typedef struct texture
     }
 }
 
-- (void)setSourceSize:(CGSize)size
-{
-    if (CGSizeEqualToSize(_sourceSize, size)) {
-        return;
-    }
-    
-    _sourceSize              = size;
-    _renderTargetsNeedResize = YES;
-}
-
-- (CGSize)sourceSize
-{
-    return _sourceSize;
-}
-
 - (void)setSourceTexture:(id<MTLTexture>)sourceTexture {
     if (_sourceTexture == sourceTexture) {
         return;
@@ -334,10 +319,10 @@ typedef struct texture
     }
     
     /* either no history, or we moved a texture of a different size in the front slot */
-    if (_sourceTextures[0].viewSize.x != _sourceSize.width || _sourceTextures[0].viewSize.y != _sourceSize.height) {
+    if (_sourceTextures[0].viewSize.x != _sourceRect.size.width || _sourceTextures[0].viewSize.y != _sourceRect.size.height) {
         MTLTextureDescriptor *td = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:_sourceFormat
-                                                                                      width:_sourceSize.width
-                                                                                     height:_sourceSize.height
+                                                                                      width:_sourceRect.size.width
+                                                                                     height:_sourceRect.size.height
                                                                                   mipmapped:NO];
         td.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
         [self OE_initTexture:&_sourceTextures[0] withDescriptor:td];
@@ -380,7 +365,12 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 }
 
 - (void)OE_resize {
-    _outputBounds = FitAspectRectIntoRect(_aspectSize, _drawableSize);
+    NSRect bounds = FitAspectRectIntoRect(_aspectSize, _drawableSize);
+    if (CGPointEqualToPoint(_outputBounds.origin, bounds.origin) && CGSizeEqualToSize(_outputBounds.size, bounds.size)) {
+        return;
+    }
+    
+    _outputBounds = bounds;
     CGSize size = _outputBounds.size;
     
     _outputFrame.viewport = (MTLViewport){
@@ -401,12 +391,13 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     }
 }
 
-- (void)setSourceSize:(CGSize)size aspect:(CGSize)aspect {
-    if (CGSizeEqualToSize(size, _sourceSize) && CGSizeEqualToSize(aspect, _aspectSize)) {
+- (void)setSourceRect:(CGRect)rect aspect:(CGSize)aspect
+{
+    if (CGRectEqualToRect(_sourceRect, rect) && CGSizeEqualToSize(_aspectSize, aspect)) {
         return;
     }
     
-    _sourceSize = size;
+    _sourceRect = rect;
     _aspectSize = aspect;
     [self OE_resize];
 }
@@ -513,11 +504,32 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 
 - (NSBitmapImageRep *)captureSourceImage
 {
-    return [self OE_imageFromTexture:_texture];
+    NSDictionary<CIImageOption, id> *opts = @{
+                                              kCIImageNearestSampling: @YES,
+                                              };
+    CIContext *ctx  = [self OE_ciContext];
+    CIImage   *img  = [[CIImage alloc] initWithMTLTexture:_texture options:opts];
+    
+    // only take the current screen rect
+    if (!CGRectEqualToRect(img.extent, _sourceRect)) {
+        img    = [img imageByCroppingToRect:_sourceRect];
+    }
+    
+    img = [img imageBySettingAlphaOneInExtent:img.extent];
+    if (!_sourceTexture || !_sourceTextureIsFlipped) {
+        img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
+    }
+    
+    CGImageRef cgImg = [ctx createCGImage:img fromRect:img.extent];
+    NSBitmapImageRep *result = [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
+    CGImageRelease(cgImg);
+    
+    return result;
 }
 
 - (NSBitmapImageRep *)captureOutputImage
 {
+    // render the filtered image
     id<MTLTexture>          tex  = [self screenshotTexture];
     MTLRenderPassDescriptor *rpd = [MTLRenderPassDescriptor new];
     rpd.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 1);
@@ -527,7 +539,20 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     [self renderWithCommandBuffer:commandBuffer renderPassDescriptor:rpd];
     [commandBuffer commit];
     [commandBuffer waitUntilCompleted];
-    return [self OE_imageFromTexture:tex];
+    
+    // copy to an NSBitmap
+    NSDictionary<CIImageOption, id> *opts = @{
+                                              kCIImageNearestSampling: @YES,
+                                              };
+    CIContext *ctx = [self OE_ciContext];
+    CIImage   *img = [[CIImage alloc] initWithMTLTexture:tex options:opts];
+    img = [img imageBySettingAlphaOneInExtent:img.extent];
+    img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
+    CGImageRef cgImg = [ctx createCGImage:img fromRect:img.extent];
+    NSBitmapImageRep *result = [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
+    CGImageRelease(cgImg);
+    
+    return result;
 }
 
 - (void)OE_prepareNextFrameWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
@@ -538,19 +563,15 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     _texture = _sourceTextures[0].view;
     
     if (_srcBuffer) {
+        // TODO(sgc): if _sourceRect.origin is non-zero, this is broken
+        assert(CGPointEqualToPoint(_sourceRect.origin, CGPointZero));
+        
         if (_formatIsNative) {
-            MTLSize                   size = {.width = (NSUInteger)_sourceSize.width, .height = (NSUInteger)_sourceSize.height, .depth = 1};
+            MTLSize                   size = {.width = (NSUInteger)_sourceRect.size.width, .height = (NSUInteger)_sourceRect.size.height, .depth = 1};
             MTLOrigin                 zero = {0};
             id<MTLBlitCommandEncoder> bce  = [commandBuffer blitCommandEncoder];
-            [bce copyFromBuffer:_srcBuffer
-                   sourceOffset:0
-              sourceBytesPerRow:_srcBytesPerRow
-            sourceBytesPerImage:_srcBuffer.length
-                     sourceSize:size
-                      toTexture:_texture
-               destinationSlice:0
-               destinationLevel:0
-              destinationOrigin:zero];
+            [bce copyFromBuffer:_srcBuffer sourceOffset:0 sourceBytesPerRow:_srcBytesPerRow sourceBytesPerImage:_srcBuffer.length sourceSize:size
+                      toTexture:_texture destinationSlice:0 destinationLevel:0 destinationOrigin:zero];
             [bce endEncoding];
         } else {
             [_converter convertWithBuffer:_srcBuffer bytesPerRow:_srcBytesPerRow fromFormat:_format to:_texture commandBuffer:commandBuffer];
@@ -564,18 +585,12 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             return;
         }
         
-        MTLSize                   size = {.width = (NSUInteger)_sourceSize.width, .height = (NSUInteger)_sourceSize.height, .depth = 1};
+        MTLOrigin                 orig = {.x = _sourceRect.origin.x, .y = _sourceRect.origin.y, .z = 0};
+        MTLSize                   size = {.width = (NSUInteger)_sourceRect.size.width, .height = (NSUInteger)_sourceRect.size.height, .depth = 1};
         MTLOrigin                 zero = {0};
         id<MTLBlitCommandEncoder> bce  = [commandBuffer blitCommandEncoder];
-        [bce copyFromTexture:_sourceTexture
-                 sourceSlice:0
-                 sourceLevel:0
-                sourceOrigin:zero
-                  sourceSize:size
-                   toTexture:_texture
-            destinationSlice:0
-            destinationLevel:0
-           destinationOrigin:zero];
+        [bce copyFromTexture:_sourceTexture sourceSlice:0 sourceLevel:0 sourceOrigin:orig sourceSize:size
+                   toTexture:_texture destinationSlice:0 destinationLevel:0 destinationOrigin:zero];
         [bce endEncoding];
     }
 }
@@ -601,8 +616,8 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 - (void)OE_initHistory
 {
     MTLTextureDescriptor *td = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:_sourceFormat
-                                                                                  width:_sourceSize.width
-                                                                                 height:_sourceSize.height
+                                                                                  width:_sourceRect.size.width
+                                                                                 height:_sourceRect.size.height
                                                                               mipmapped:NO];
     td.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
     
@@ -627,6 +642,14 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 
     [rce setFragmentTexture:texture atIndex:TextureIndexColor];
     [rce drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
+}
+
+- (void)renderWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
+           renderPassDescriptor:(MTLRenderPassDescriptor *)rpd
+{
+    [self renderWithCommandBuffer:commandBuffer renderPassDescriptorBlock:^MTLRenderPassDescriptor * {
+        return rpd;
+    }];
 }
 
 - (void)renderWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
@@ -747,7 +770,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         bzero(&_pass[i].feedbackTarget.viewSize, sizeof(_pass[i].feedbackTarget.viewSize));
     }
     
-    NSInteger width = _sourceSize.width, height = _sourceSize.height;
+    NSInteger width = _sourceRect.size.width, height = _sourceRect.size.height;
     
     CGSize size = CGSizeMake(_outputFrame.viewport.width, _outputFrame.viewport.height);
     
