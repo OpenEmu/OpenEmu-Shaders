@@ -1,6 +1,0 @@
-#ifndef SPIRV_CROSS_GIT_VERSION_H_
-#define SPIRV_CROSS_GIT_VERSION_H_
-
-#define SPIRV_CROSS_GIT_REVISION "Git commit: cb686a5 Timestamp: 2019-05-29T22:29:36"
-
-#endif
