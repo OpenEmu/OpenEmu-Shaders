@@ -498,7 +498,10 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
     }
     CGImageRef cgImg = [ctx createCGImage:img fromRect:img.extent];
-    return [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
+    NSBitmapImageRep *result = [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
+    CGImageRelease(cgImg);
+
+    return result;
 }
 
 - (NSBitmapImageRep *)captureSourceImage
