@@ -84,5 +84,13 @@ typedef struct
     float time;
 } Uniforms;
 
+#pragma mark - Structs for pixel conversion
+
+typedef struct
+{
+    vector_uint2    origin;
+    uint            stride;
+} BufferUniforms;
+
 #endif /* ShaderTypes_h */
 

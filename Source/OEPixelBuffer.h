@@ -22,18 +22,17 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#import <Cocoa/Cocoa.h>
-
-//! Project version number for OpenEmuShaders.
-FOUNDATION_EXPORT double OpenEmuShadersVersionNumber;
-
-//! Project version string for OpenEmuShaders.
-FOUNDATION_EXPORT const unsigned char OpenEmuShadersVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <OpenEmuShaders/PublicHeader.h>
-
+#import <Foundation/Foundation.h>
 #import "OEEnums.h"
-#import "ShaderPassSemantics.h"
-#import "SlangShader.h"
-#import "OEPixelBuffer.h"
-#import "FrameView.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface OEPixelBuffer : NSObject
+
+@property (nonatomic, readonly) CGSize sourceSize;
+@property (nonatomic)           CGRect outputRect;
+@property (nonatomic, readonly) void   *contents;
+
+@end
+
+NS_ASSUME_NONNULL_END

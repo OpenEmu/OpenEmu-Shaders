@@ -27,21 +27,25 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class SlangShader;
+@class OEPixelBuffer;
 
 @interface FrameView : NSObject
 
-@property (nonatomic, readonly) OEMTLPixelFormat format;
-@property (nonatomic, readonly) CGRect          sourceRect;
-@property (nonatomic, readonly) CGSize          sourceAspectSize;
-@property (nonatomic)           id<MTLTexture>  sourceTexture;
-@property (nonatomic)           BOOL            sourceTextureIsFlipped;
-@property (nonatomic, readonly) SlangShader     *shader;
-@property (nonatomic) CGSize                    drawableSize;
+@property (nonatomic, readonly) OEMTLPixelFormat    format;
+@property (nonatomic, readonly) CGRect              sourceRect;
+@property (nonatomic, readonly) CGSize              sourceAspectSize;
+@property (nonatomic)           id<MTLTexture>      sourceTexture;
+@property (nonatomic)           BOOL                sourceTextureIsFlipped;
+@property (nonatomic, readonly) SlangShader         *shader;
+@property (nonatomic) CGSize                        drawableSize;
 
 - (instancetype)initWithDevice:(id<MTLDevice>)device;
 
 - (void)setSourceRect:(CGRect)rect aspect:(CGSize)aspect;
 - (void)setDrawableSize:(CGSize)drawableSize;
+
+- (OEPixelBuffer *)newBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow;
+- (OEPixelBuffer *)newBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow bytes:(void *)pointer;
 
 - (id<MTLBuffer>)allocateBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow;
 - (id<MTLBuffer>)allocateBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow bytes:(void *)pointer;

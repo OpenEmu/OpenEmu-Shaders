@@ -27,8 +27,10 @@
 @interface OEMTLPixelConverter : NSObject
 
 - (instancetype)initWithDevice:(id<MTLDevice>)device library:(id<MTLLibrary>)library error:(NSError **)error;
-- (void)convertWithTexture:(id<MTLTexture>)src fromFormat:(OEMTLPixelFormat)fmt to:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb;
-- (void)convertWithBuffer:(id<MTLBuffer>)src bytesPerRow:(NSUInteger)bytesPerRow fromFormat:(OEMTLPixelFormat)fmt to:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb;
+- (void)convertFromTexture:(id<MTLTexture>)src sourceFormat:(OEMTLPixelFormat)fmt
+                 toTexture:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb;
+- (void)convertFromBuffer:(id<MTLBuffer>)src sourceFormat:(OEMTLPixelFormat)fmt sourceOrigin:(MTLOrigin)sourceOrigin sourceBytesPerRow:(NSUInteger)bytesPerRow
+                toTexture:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb;
 
 @end
 

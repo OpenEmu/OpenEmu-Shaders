@@ -114,6 +114,8 @@
 		052A2B8922A438F800483370 /* spirv.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 052A2B8022A438F700483370 /* spirv.hpp */; };
 		052A2B8A22A438F800483370 /* spirv_parser.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 052A2B8122A438F700483370 /* spirv_parser.hpp */; };
 		052A2B8B22A438F800483370 /* spirv_cross_parsed_ir.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 052A2B8222A438F700483370 /* spirv_cross_parsed_ir.hpp */; };
+		052A2B8E22A475D300483370 /* OEPixelBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 052A2B8C22A475D300483370 /* OEPixelBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		052A2B8F22A475D300483370 /* OEPixelBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 052A2B8D22A475D300483370 /* OEPixelBuffer.m */; };
 		052BE009228D184600942C12 /* SourceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE008228D184600942C12 /* SourceParserTests.swift */; };
 		052BE020228D187E00942C12 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE01F228D187E00942C12 /* TestHelpers.swift */; };
 		056AC35B228BA11E005018DA /* OEEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 056AC35A228BA11E005018DA /* OEEnums.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -268,6 +270,9 @@
 		052A2B8022A438F700483370 /* spirv.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = spirv.hpp; path = "3rdparty/SPIRV-Cross/spirv.hpp"; sourceTree = "<group>"; };
 		052A2B8122A438F700483370 /* spirv_parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = spirv_parser.hpp; path = "3rdparty/SPIRV-Cross/spirv_parser.hpp"; sourceTree = "<group>"; };
 		052A2B8222A438F700483370 /* spirv_cross_parsed_ir.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = spirv_cross_parsed_ir.hpp; path = "3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.hpp"; sourceTree = "<group>"; };
+		052A2B8C22A475D300483370 /* OEPixelBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OEPixelBuffer.h; sourceTree = "<group>"; };
+		052A2B8D22A475D300483370 /* OEPixelBuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OEPixelBuffer.m; sourceTree = "<group>"; };
+		052A2B9022A476FE00483370 /* OEPixelBuffer+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OEPixelBuffer+Internal.h"; sourceTree = "<group>"; };
 		052BE008228D184600942C12 /* SourceParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceParserTests.swift; sourceTree = "<group>"; };
 		052BE01F228D187E00942C12 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		056AC35A228BA11E005018DA /* OEEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OEEnums.h; sourceTree = "<group>"; };
@@ -657,6 +662,9 @@
 			children = (
 				05FB7D7B229F765A0070633C /* OEMTLPixelConverter.h */,
 				05FB7D7C229F765A0070633C /* OEMTLPixelConverter.m */,
+				052A2B8C22A475D300483370 /* OEPixelBuffer.h */,
+				052A2B9022A476FE00483370 /* OEPixelBuffer+Internal.h */,
+				052A2B8D22A475D300483370 /* OEPixelBuffer.m */,
 				05F54954229BBA8800561C14 /* FrameView.h */,
 				05F54955229BBA8800561C14 /* FrameView.m */,
 				05F54953229BBA8800561C14 /* RendererCommon.h */,
@@ -709,6 +717,7 @@
 				052A2B8722A438F800483370 /* spirv_cross_containers.hpp in Headers */,
 				052A2B0122A41FFD00483370 /* Types.h in Headers */,
 				052A2B5522A420CC00483370 /* GLSL.ext.KHR.h in Headers */,
+				052A2B8E22A475D300483370 /* OEPixelBuffer.h in Headers */,
 				052A2B0E22A41FFD00483370 /* reflection.h in Headers */,
 				052A2AFD22A41FFD00483370 /* PoolAlloc.h in Headers */,
 				052A2B5622A420CC00483370 /* hex_float.h in Headers */,
@@ -885,6 +894,7 @@
 				052A2AD322A41FEA00483370 /* PoolAlloc.cpp in Sources */,
 				056AC3A7228BB3E9005018DA /* SourceParser.swift in Sources */,
 				052A2B3B22A420C000483370 /* GlslangToSpv.cpp in Sources */,
+				052A2B8F22A475D300483370 /* OEPixelBuffer.m in Sources */,
 				052A2B3822A420C000483370 /* SpvPostProcess.cpp in Sources */,
 				052A2AD422A41FEA00483370 /* ParseHelper.cpp in Sources */,
 				052A2AC322A41FEA00483370 /* PpAtom.cpp in Sources */,
@@ -999,6 +1009,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1059,6 +1070,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;

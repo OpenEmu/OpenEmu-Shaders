@@ -22,6 +22,7 @@
  */
 
 #import "OEMTLPixelConverter.h"
+#import "ShaderTypes.h"
 
 @interface Filter : NSObject
 
@@ -29,8 +30,10 @@
 
 - (instancetype)initWithKernel:(id<MTLComputePipelineState>)kernel bytesPerPixel:(NSUInteger)bytesPerPixel;
 
-- (void)convertTexture:(id<MTLTexture>)src out:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb;
-- (void)convertBuffer:(id<MTLBuffer>)src bytesPerRow:(NSUInteger)bytesPerRow out:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb;
+- (void)convertFromTexture:(id<MTLTexture>)src
+                 toTexture:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb;
+- (void)convertFromBuffer:(id<MTLBuffer>)src sourceOrigin:(MTLOrigin)sourceOrigin sourceBytesPerRow:(NSUInteger)bytesPerRow
+                toTexture:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb;
 
 + (instancetype)newFilterWithFunctionName:(NSString *)name
                                    device:(id<MTLDevice>)device
@@ -46,104 +49,71 @@
     Filter *_bufToTex[OEMTLPixelFormatCount]; // convert to bgra8888
 }
 
+typedef NS_ENUM(NSUInteger, ConverterType)
+{
+    ConverterTypeTexToTex = 0,
+    ConverterTypeBufToTex = 1
+};
+
+typedef struct {
+    ConverterType       type;
+    OEMTLPixelFormat    format;
+    char const *        name;
+} ConverterInfo;
+
+static ConverterInfo const converterInfos[] = {
+    {ConverterTypeTexToTex, OEMTLPixelFormatBGRA4Unorm,    "convert_bgra4444_to_bgra8888"},
+    {ConverterTypeTexToTex, OEMTLPixelFormatB5G6R5Unorm,   "convert_rgb565_to_bgra8888"},
+    {ConverterTypeBufToTex, OEMTLPixelFormatBGRA4Unorm,    "convert_bgra4444_to_bgra8888_buf"},
+    {ConverterTypeBufToTex, OEMTLPixelFormatB5G6R5Unorm,   "convert_rgb565_to_bgra8888_buf"},
+    {ConverterTypeBufToTex, OEMTLPixelFormatR5G5B5A1Unorm, "convert_bgra5551_to_bgra8888_buf"},
+    {ConverterTypeBufToTex, OEMTLPixelFormatRGBA8Unorm,    "convert_rgba8888_to_bgra8888_buf"},
+};
+
 - (instancetype)initWithDevice:(id<MTLDevice>)device library:(id<MTLLibrary>)library error:(NSError **)error
 {
     self = [super init];
     
     NSError *err = nil;
-    _texToTex[OEMTLPixelFormatBGRA4Unorm] = [Filter newFilterWithFunctionName:@"convert_bgra4444_to_bgra8888"
-                                                                       device:device
-                                                                      library:library
-                                                                       format:OEMTLPixelFormatBGRA4Unorm
-                                                                        error:&err];
-    if (err) {
-        if (error) {
-            *error = err;
+    for (int i = 0; i < sizeof(converterInfos)/sizeof(*converterInfos); i++) {
+        ConverterInfo const * ci = &converterInfos[i];
+        Filter *fi = [Filter newFilterWithFunctionName:[NSString stringWithUTF8String:ci->name]
+                                                device:device
+                                               library:library
+                                                format:ci->format
+                                                 error:&err];
+        if (err) {
+            if (error) {
+                *error = err;
+            }
+            NSLog(@"unable to create '%s' conversion filter: %@", ci->name, err.localizedDescription);
+            return nil;
         }
-        NSLog(@"unable to create 'convert_bgra4444_to_bgra8888' conversion filter: %@", err.localizedDescription);
-        return nil;
+        
+        if (ci->type == ConverterTypeTexToTex) {
+            _texToTex[ci->format]  = fi;
+        } else {
+            _bufToTex[ci->format]  = fi;
+        }
     }
     
-    _texToTex[OEMTLPixelFormatB5G6R5Unorm] = [Filter newFilterWithFunctionName:@"convert_rgb565_to_bgra8888"
-                                                                        device:device
-                                                                       library:library
-                                                                        format:OEMTLPixelFormatB5G6R5Unorm
-                                                                         error:&err];
-    if (err) {
-        if (error) {
-            *error = err;
-        }
-        NSLog(@"unable to create 'convert_rgb565_to_bgra8888' conversion filter: %@", err.localizedDescription);
-        return nil;
-    }
-    
-    _bufToTex[OEMTLPixelFormatBGRA4Unorm] = [Filter newFilterWithFunctionName:@"convert_bgra4444_to_bgra8888_buf"
-                                                                       device:device
-                                                                      library:library
-                                                                       format:OEMTLPixelFormatBGRA4Unorm
-                                                                        error:&err];
-    if (err) {
-        if (error) {
-            *error = err;
-        }
-        NSLog(@"unable to create 'convert_bgra4444_to_bgra8888_buf' conversion filter: %@", err.localizedDescription);
-        return nil;
-    }
-
-    _bufToTex[OEMTLPixelFormatR5G5B5A1Unorm] = [Filter newFilterWithFunctionName:@"convert_bgra5551_to_bgra8888_buf"
-                                                                        device:device
-                                                                       library:library
-                                                                        format:OEMTLPixelFormatR5G5B5A1Unorm
-                                                                         error:&err];
-    if (err) {
-        if (error) {
-            *error = err;
-        }
-        NSLog(@"unable to create 'convert_rgb565_to_bgra8888_buf' conversion filter: %@", err.localizedDescription);
-        return nil;
-    }
-
-    _bufToTex[OEMTLPixelFormatB5G6R5Unorm] = [Filter newFilterWithFunctionName:@"convert_rgb565_to_bgra8888_buf"
-                                                                        device:device
-                                                                       library:library
-                                                                        format:OEMTLPixelFormatB5G6R5Unorm
-                                                                         error:&err];
-    if (err) {
-        if (error) {
-            *error = err;
-        }
-        NSLog(@"unable to create 'convert_rgb565_to_bgra8888_buf' conversion filter: %@", err.localizedDescription);
-        return nil;
-    }
-
-    _bufToTex[OEMTLPixelFormatRGBA8Unorm] = [Filter newFilterWithFunctionName:@"convert_rgba8888_to_bgra8888_buf"
-                                                                        device:device
-                                                                       library:library
-                                                                        format:OEMTLPixelFormatRGBA8Unorm
-                                                                         error:&err];
-    if (err) {
-        if (error) {
-            *error = err;
-        }
-        NSLog(@"unable to create 'convert_rgb565_to_bgra8888_buf' conversion filter: %@", err.localizedDescription);
-        return nil;
-    }
-
     return self;
 }
 
-- (void)convertWithTexture:(id<MTLTexture>)src fromFormat:(OEMTLPixelFormat)fmt to:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb
+- (void)convertFromTexture:(id<MTLTexture>)src sourceFormat:(OEMTLPixelFormat)fmt
+                 toTexture:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb
 {
     Filter *filter = _texToTex[fmt];
     assert(filter != nil);
-    [filter convertTexture:src out:dst commandBuffer:cb];
+    [filter convertFromTexture:src toTexture:dst commandBuffer:cb];
 }
 
-- (void)convertWithBuffer:(id<MTLBuffer>)src bytesPerRow:(NSUInteger)bytesPerRow fromFormat:(OEMTLPixelFormat)fmt to:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb
+- (void)convertFromBuffer:(id<MTLBuffer>)src sourceFormat:(OEMTLPixelFormat)fmt sourceOrigin:(MTLOrigin)sourceOrigin sourceBytesPerRow:(NSUInteger)bytesPerRow
+                toTexture:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb
 {
     Filter *filter = _bufToTex[fmt];
     assert(filter != nil);
-    [filter convertBuffer:src bytesPerRow:bytesPerRow out:dst commandBuffer:cb];
+    [filter convertFromBuffer:src sourceOrigin:sourceOrigin sourceBytesPerRow:bytesPerRow toTexture:dst commandBuffer:cb];
 }
 
 @end
@@ -178,15 +148,15 @@
     return self;
 }
 
-- (void)convertTexture:(id<MTLTexture>)src out:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb
+- (void)convertFromTexture:(id<MTLTexture>)src
+                 toTexture:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb
 {
     id<MTLComputeCommandEncoder> ce = [cb computeCommandEncoder];
     ce.label = @"filter cb";
     
     [ce setComputePipelineState:_kernel];
-    
-    [ce setTexture:src atIndex:0];
-    [ce setTexture:dst atIndex:1];
+    id<MTLTexture> textures[2] = { src, dst };
+    [ce setTextures:textures withRange:NSMakeRange(0, 2)];
     
     MTLSize size  = MTLSizeMake(16, 16, 1);
     MTLSize count = MTLSizeMake((src.width + size.width + 1) / size.width, (src.height + size.height + 1) / size.height, 1);
@@ -196,21 +166,22 @@
     [ce endEncoding];
 }
 
-- (void)convertBuffer:(id<MTLBuffer>)src bytesPerRow:(NSUInteger)bytesPerRow out:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb
+- (void)convertFromBuffer:(id<MTLBuffer>)src sourceOrigin:(MTLOrigin)sourceOrigin sourceBytesPerRow:(NSUInteger)bytesPerRow
+                toTexture:(id<MTLTexture>)dst commandBuffer:(id<MTLCommandBuffer>)cb
 {
     id<MTLComputeCommandEncoder> ce = [cb computeCommandEncoder];
     ce.label = @"filter cb";
     
     [ce setComputePipelineState:_kernel];
     
-    NSUInteger stride = bytesPerRow / _bytesPerPixel;
+    BufferUniforms const uni = {
+        .origin = simd_make_uint2((uint32_t)sourceOrigin.x, (uint32_t)sourceOrigin.y),
+        .stride = (uint32_t)(bytesPerRow / _bytesPerPixel),
+    };
     
     [ce setBuffer:src offset:0 atIndex:0];
-    [ce setBytes:&stride length:sizeof(stride) atIndex:1];
+    [ce setBytes:&uni length:sizeof(uni) atIndex:1];
     [ce setTexture:dst atIndex:0];
-    
-    //    MTLSize size  = MTLSizeMake(32, 1, 1);
-    //    MTLSize count = MTLSizeMake((src.length) / 32, 1, 1);
     
     MTLSize size  = MTLSizeMake(16, 16, 1);
     MTLSize count = MTLSizeMake((dst.width + size.width + 1) / size.width, (dst.height + size.height + 1) / size.height, 1);

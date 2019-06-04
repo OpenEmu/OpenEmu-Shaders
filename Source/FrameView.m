@@ -25,6 +25,7 @@
 @import MetalKit;
 
 #import "FrameView.h"
+#import "OEPixelBuffer+Internal.h"
 #import "RendererCommon.h"
 #import "OEMTLPixelConverter.h"
 #import <OpenEmuShaders/OpenEmuShaders.h>
@@ -50,7 +51,6 @@ typedef struct texture
 @implementation FrameView
 {
     OEMTLPixelFormat    _format;
-    MTLPixelFormat      _sourceFormat;
     BOOL                _formatIsNative;
     id<MTLDevice>       _device;
     id<MTLLibrary>      _library;
@@ -59,8 +59,9 @@ typedef struct texture
     Vertex              _vertex[4];
     Vertex              _vertexFlipped[4];
     
+    OEPixelBuffer   *_pixelBuffer;
     NSUInteger      _srcBytesPerRow;
-    id<MTLBuffer>   _srcBuffer;          // source buffer OR
+    id<MTLBuffer>   _srcBuffer;
     
     id<MTLSamplerState> _samplers[OEShaderPassFilterCount][OEShaderPassWrapCount];
     
@@ -287,10 +288,9 @@ typedef struct texture
         return;
     }
     
-    _srcBuffer = nil;
+    _pixelBuffer = nil;
     _texture = nil;
     _sourceTexture = sourceTexture;
-    _sourceFormat  = MTLPixelFormatBGRA8Unorm;
 }
 
 - (void)setSourceTextureIsFlipped:(BOOL)sourceTextureIsFlipped {
@@ -320,11 +320,12 @@ typedef struct texture
     
     /* either no history, or we moved a texture of a different size in the front slot */
     if (_sourceTextures[0].viewSize.x != _sourceRect.size.width || _sourceTextures[0].viewSize.y != _sourceRect.size.height) {
-        MTLTextureDescriptor *td = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:_sourceFormat
+        MTLTextureDescriptor *td = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
                                                                                       width:_sourceRect.size.width
                                                                                      height:_sourceRect.size.height
                                                                                   mipmapped:NO];
-        td.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
+        td.storageMode  = MTLStorageModePrivate;
+        td.usage        = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
         [self OE_initTexture:&_sourceTextures[0] withDescriptor:td];
     }
 }
@@ -398,6 +399,9 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     }
     
     _sourceRect = rect;
+    if (_pixelBuffer) {
+        _pixelBuffer.outputRect = rect;
+    }
     _aspectSize = aspect;
     [self OE_resize];
 }
@@ -422,13 +426,11 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         case OEMTLPixelFormatR5G5B5A1Unorm:
         case OEMTLPixelFormatB5G6R5Unorm:
         case OEMTLPixelFormatBGRA4Unorm:
-            _sourceFormat   = MTLPixelFormatBGRA8Unorm;
             _formatIsNative = NO;
             break;
             
         case OEMTLPixelFormatBGRA8Unorm:
         case OEMTLPixelFormatBGRX8Unorm:
-            _sourceFormat   = MTLPixelFormatBGRA8Unorm;
             _formatIsNative = YES;
             break;
             
@@ -436,6 +438,30 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             NSParameterAssert("unsupported format");
             break;
     }
+}
+
+- (OEPixelBuffer *)newBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow
+{
+    if (!_pixelBuffer) {
+        _pixelBuffer = [[OEPixelBuffer alloc] initWithDevice:_device converter:_converter];
+    }
+    
+    [_pixelBuffer allocateBufferWithFormat:format height:height bytesPerRow:bytesPerRow];
+    _pixelBuffer.outputRect = _sourceRect;
+    
+    return _pixelBuffer;
+}
+
+- (OEPixelBuffer *)newBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow bytes:(void *)pointer
+{
+    if (!_pixelBuffer) {
+        _pixelBuffer = [[OEPixelBuffer alloc] initWithDevice:_device converter:_converter];
+    }
+    
+    [_pixelBuffer allocateBufferWithFormat:format height:height bytesPerRow:bytesPerRow bytes:pointer];
+    _pixelBuffer.outputRect = _sourceRect;
+    
+    return _pixelBuffer;
 }
 
 - (id<MTLBuffer>)allocateBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow bytes:(void *)pointer
@@ -479,7 +505,8 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                                                                                       width:(NSUInteger)_drawableSize.width
                                                                                      height:(NSUInteger)_drawableSize.height
                                                                                   mipmapped:NO];
-        td.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
+        td.storageMode  = MTLStorageModePrivate;
+        td.usage        = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
         _screenshotTexture = [_device newTextureWithDescriptor:td];
     }
     return _screenshotTexture;
@@ -563,20 +590,8 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     [self OE_updateHistory];
     _texture = _sourceTextures[0].view;
     
-    if (_srcBuffer) {
-        // TODO(sgc): if _sourceRect.origin is non-zero, this is broken
-        assert(CGPointEqualToPoint(_sourceRect.origin, CGPointZero));
-        
-        if (_formatIsNative) {
-            MTLSize                   size = {.width = (NSUInteger)_sourceRect.size.width, .height = (NSUInteger)_sourceRect.size.height, .depth = 1};
-            MTLOrigin                 zero = {0};
-            id<MTLBlitCommandEncoder> bce  = [commandBuffer blitCommandEncoder];
-            [bce copyFromBuffer:_srcBuffer sourceOffset:0 sourceBytesPerRow:_srcBytesPerRow sourceBytesPerImage:_srcBuffer.length sourceSize:size
-                      toTexture:_texture destinationSlice:0 destinationLevel:0 destinationOrigin:zero];
-            [bce endEncoding];
-        } else {
-            [_converter convertWithBuffer:_srcBuffer bytesPerRow:_srcBytesPerRow fromFormat:_format to:_texture commandBuffer:commandBuffer];
-        }
+    if (_pixelBuffer) {
+        [_pixelBuffer prepareWithCommandBuffer:commandBuffer texture:_texture];
         return;
     }
     
@@ -616,11 +631,12 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 
 - (void)OE_initHistory
 {
-    MTLTextureDescriptor *td = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:_sourceFormat
+    MTLTextureDescriptor *td = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
                                                                                   width:_sourceRect.size.width
                                                                                  height:_sourceRect.size.height
                                                                               mipmapped:NO];
-    td.usage = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
+    td.storageMode  = MTLStorageModePrivate;
+    td.usage        = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
     
     for (int i = 0; i < _historyCount + 1; i++) {
         [self OE_initTexture:&_sourceTextures[i] withDescriptor:td];
