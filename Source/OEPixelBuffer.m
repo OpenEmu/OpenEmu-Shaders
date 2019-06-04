@@ -35,6 +35,7 @@ typedef NS_OPTIONS(NSUInteger, BufferOption)
     // standard options
     
     BufferOptionNativeZeroNoCopy    = (BufferOptionNative | BufferOptionOriginZero | BufferOptionNoCopy),
+    BufferOptionNativeNoCopy        = (BufferOptionNative | BufferOptionNoCopy),
     BufferOptionNativeZeroCopy      = (BufferOptionNative | BufferOptionOriginZero),
     BufferOptionConvertZeroNoCopy   = (BufferOptionOriginZero | BufferOptionNoCopy),
     BufferOptionConvertNoCopy       = (BufferOptionNoCopy),
@@ -155,6 +156,7 @@ BufferOption BufferOptionMustCopy(BufferOption o) {
 - (void)prepareWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer texture:(id<MTLTexture>)texture
 {
     switch (_options) {
+        case BufferOptionNativeNoCopy:
         case BufferOptionNativeZeroNoCopy:
             [self OE_updateNativeFullCommandBuffer:commandBuffer texture:texture];
             break;
@@ -164,7 +166,10 @@ BufferOption BufferOptionMustCopy(BufferOption o) {
                 // replaceRegion not supported for private storage mode
                 [self OE_updateNativeFullCommandBuffer:commandBuffer texture:texture];
             } else {
-                [texture replaceRegion:MTLRegionMake2D(0, 0, _sourceSize.width, _sourceSize.height) mipmapLevel:0 withBytes:_buffer bytesPerRow:_srcBytesPerRow];
+                [texture replaceRegion:MTLRegionMake2D(_outputRect.origin.x, _outputRect.origin.y, _outputRect.size.width, _outputRect.size.height)
+                           mipmapLevel:0
+                             withBytes:_buffer
+                           bytesPerRow:_srcBytesPerRow];
             }
             break;
             
@@ -199,7 +204,10 @@ BufferOption BufferOptionMustCopy(BufferOption o) {
     MTLSize                   size = {.width = (NSUInteger)_outputRect.size.width, .height = (NSUInteger)_outputRect.size.height, .depth = 1};
     MTLOrigin                 zero = {0};
     id<MTLBlitCommandEncoder> bce  = [commandBuffer blitCommandEncoder];
-    [bce copyFromBuffer:_srcBuffer sourceOffset:0 sourceBytesPerRow:_srcBytesPerRow sourceBytesPerImage:_srcBuffer.length sourceSize:size
+    
+    NSUInteger offset = (_outputRect.origin.y * _srcBytesPerRow) + _outputRect.origin.x * 4 /* 4 bpp */;
+    NSUInteger len    = _srcBuffer.length - (_outputRect.origin.y * _srcBytesPerRow);
+    [bce copyFromBuffer:_srcBuffer sourceOffset:offset sourceBytesPerRow:_srcBytesPerRow sourceBytesPerImage:len sourceSize:size
               toTexture:texture destinationSlice:0 destinationLevel:0 destinationOrigin:zero];
     [bce endEncoding];
 }
