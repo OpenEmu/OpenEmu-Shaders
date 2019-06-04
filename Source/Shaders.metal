@@ -111,7 +111,7 @@ kernel void convert_bgra5551_to_bgra8888_buf(device ushort * in  [[ buffer(0) ]]
                          extract_bits(pix, 15, 1)
                          );
 
-    out.write(half4(pix2) / half4(0x1f, 0x1f, 0x1f, 0xff), gid);
+    out.write(half4(pix2) / half4(0x1f, 0x1f, 0x1f, 1), gid);
 }
 
 kernel void convert_rgb565_to_bgra8888_buf(device ushort * in  [[ buffer(0) ]],
