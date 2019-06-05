@@ -68,6 +68,7 @@ static ConverterInfo const converterInfos[] = {
     {ConverterTypeBufToTex, OEMTLPixelFormatB5G6R5Unorm,   "convert_rgb565_to_bgra8888_buf"},
     {ConverterTypeBufToTex, OEMTLPixelFormatR5G5B5A1Unorm, "convert_bgra5551_to_bgra8888_buf"},
     {ConverterTypeBufToTex, OEMTLPixelFormatRGBA8Unorm,    "convert_rgba8888_to_bgra8888_buf"},
+    {ConverterTypeBufToTex, OEMTLPixelFormatABGR8Unorm,    "convert_abgr8888_to_bgra8888_buf"},
 };
 
 - (instancetype)initWithDevice:(id<MTLDevice>)device library:(id<MTLLibrary>)library error:(NSError **)error

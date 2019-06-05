@@ -138,3 +138,12 @@ kernel void convert_rgba8888_to_bgra8888_buf(device uchar4 * in  [[ buffer(0) ]]
     uchar4 pix = in[(gid.y + uniforms.origin.y) * uniforms.stride + uniforms.origin.x + gid.x];
     out.write(half4(pix.abgr) / 255.0, gid);
 }
+
+kernel void convert_abgr8888_to_bgra8888_buf(device uchar4 * in  [[ buffer(0) ]],
+                                             constant BufferUniforms & uniforms  [[ buffer(1) ]],
+                                             texture2d<half, access::write> out [[ texture(0) ]],
+                                             uint2 gid [[ thread_position_in_grid ]])
+{
+    uchar4 pix = in[(gid.y + uniforms.origin.y) * uniforms.stride + uniforms.origin.x + gid.x];
+    out.write(half4(pix.rgba) / 255.0, gid);
+}

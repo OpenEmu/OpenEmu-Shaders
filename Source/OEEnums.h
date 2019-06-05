@@ -165,7 +165,8 @@ typedef NS_ENUM(NSUInteger, OEMTLPixelFormat)
     OEMTLPixelFormatR5G5B5A1Unorm NS_SWIFT_NAME(r5g5b5a1Unorm),
     
     OEMTLPixelFormatRGBA8Unorm NS_SWIFT_NAME(rgba8Unorm),
-    
+    OEMTLPixelFormatABGR8Unorm NS_SWIFT_NAME(abgr8Unorm),
+
     // native, no conversion
     OEMTLPixelFormatBGRA8Unorm NS_SWIFT_NAME(bgra8Unorm),
     OEMTLPixelFormatBGRX8Unorm NS_SWIFT_NAME(rgbx8Unorm), // no alpha

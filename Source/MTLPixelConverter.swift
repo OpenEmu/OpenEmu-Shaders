@@ -121,6 +121,11 @@ public class MTLPixelConverter: NSObject {
                 device: device,
                 library: self.library,
                 format: .rgba8Unorm)
+        bufToTex[.abgr8Unorm] = try MTLPixelConverter.makeFilter(
+            function: "convert_abgr8888_to_bgra8888_buf",
+            device: device,
+            library: self.library,
+            format: .abgr8Unorm)
         self.bufToTex = bufToTex
     }
     
