@@ -304,14 +304,14 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
     return [self textureSemanticForUniformName:name names:textureSemanticNames];
 }
 
-- (void)resizeArray:(NSMutableArray *)array withCapacity:(NSUInteger)items class:(Class)class
+- (void)resizeArray:(NSMutableArray *)array withCapacity:(NSUInteger)items class:(Class)cls
 {
     if (array.count > items) {
         return;
     }
     
     while (array.count <= items) {
-        [array addObject:[class new]];
+        [array addObject:[cls new]];
     }
 }
 

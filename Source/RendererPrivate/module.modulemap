@@ -1,0 +1,4 @@
+module RendererPrivate {
+    header "../ShaderTypes.h"
+    export *
+}

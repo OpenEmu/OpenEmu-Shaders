@@ -29,7 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 @class SlangShader;
 @class OEPixelBuffer;
 
-@interface FrameView : NSObject
+typedef MTLRenderPassDescriptor * __nullable (^OEGetDescriptorBlock)(void);
+
+@interface OEFilterChain : NSObject
 
 @property (nonatomic, readonly) OEMTLPixelFormat    format;
 @property (nonatomic, readonly) CGRect              sourceRect;
@@ -52,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)renderWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer renderPassDescriptor:(MTLRenderPassDescriptor *)renderPassDescriptor;
 - (void)renderWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
-      renderPassDescriptorBlock:(MTLRenderPassDescriptor *(NS_NOESCAPE ^)(void))block;
+      renderPassDescriptorBlock:(NS_NOESCAPE OEGetDescriptorBlock)block;
 
 /*! @brief returns an image of the last rendered source image */
 - (NSBitmapImageRep *)captureSourceImage;

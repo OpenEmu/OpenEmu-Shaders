@@ -24,6 +24,7 @@
 
 #import "OEPixelBuffer+Internal.h"
 #import "OEMTLPixelConverter.h"
+#import <OpenEmuShaders/OpenEmuShaders-Swift.h>
 
 typedef NS_OPTIONS(NSUInteger, BufferOption)
 {
@@ -49,7 +50,7 @@ BufferOption BufferOptionMustCopy(BufferOption o) {
 
 @implementation OEPixelBuffer {
     id<MTLDevice>       _device;
-    OEMTLPixelConverter *_converter;
+    MTLPixelConverter *_converter;
     
     OEMTLPixelFormat    _format;
     NSUInteger          _srcBytesPerRow;
@@ -85,7 +86,7 @@ BufferOption BufferOptionMustCopy(BufferOption o) {
 
 #pragma mark - internal APIs
 
-- (instancetype)initWithDevice:(id<MTLDevice>)device converter:(OEMTLPixelConverter *)converter
+- (instancetype)initWithDevice:(id<MTLDevice>)device converter:(MTLPixelConverter *)converter
 {
     if (!(self = [super init])) {
         return nil;

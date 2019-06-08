@@ -24,7 +24,7 @@
 
 @import MetalKit;
 
-#import "FrameView.h"
+#import "OEFilterChain.h"
 #import "OEPixelBuffer+Internal.h"
 #import "RendererCommon.h"
 #import "OEMTLPixelConverter.h"
@@ -48,14 +48,14 @@ typedef struct texture
     float4_t       viewSize;
 } texture_t;
 
-@implementation FrameView
+@implementation OEFilterChain
 {
     OEMTLPixelFormat    _format;
     BOOL                _formatIsNative;
     id<MTLDevice>       _device;
     id<MTLLibrary>      _library;
     MTKTextureLoader    *_loader;
-    OEMTLPixelConverter *_converter;
+    MTLPixelConverter *_converter;
     Vertex              _vertex[4];
     Vertex              _vertexFlipped[4];
     
@@ -133,7 +133,7 @@ typedef struct texture
     }
     assert(err == nil);
     _loader    = [[MTKTextureLoader alloc] initWithDevice:device];
-    _converter = [[OEMTLPixelConverter alloc] initWithDevice:_device
+    _converter = [[MTLPixelConverter alloc] initWithDevice:_device
                                                      library:_library
                                                        error:&err];
     if (err != nil) {

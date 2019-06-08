@@ -1,0 +1,3 @@
+module RendererPrivate {
+    export *
+}

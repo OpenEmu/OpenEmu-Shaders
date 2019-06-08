@@ -100,6 +100,7 @@ NSUInteger OEMTLPixelFormatToBPP(OEMTLPixelFormat format)
 {
     switch (format)
     {
+        case OEMTLPixelFormatABGR8Unorm:
         case OEMTLPixelFormatRGBA8Unorm:
         case OEMTLPixelFormatBGRA8Unorm:
         case OEMTLPixelFormatBGRX8Unorm:
@@ -128,6 +129,8 @@ NSString *NSStringFromOEMTLPixelFormat(OEMTLPixelFormat format)
         STRING(OEMTLPixelFormatB5G6R5Unorm);
         STRING(OEMTLPixelFormatR5G5B5A1Unorm);
         STRING(OEMTLPixelFormatBGRA4Unorm);
+        STRING(OEMTLPixelFormatABGR8Unorm);
+        STRING(OEMTLPixelFormatRGBA8Unorm);
         STRING(OEMTLPixelFormatBGRA8Unorm);
         STRING(OEMTLPixelFormatBGRX8Unorm);
 #undef STRING

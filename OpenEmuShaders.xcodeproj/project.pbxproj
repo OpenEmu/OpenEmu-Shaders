@@ -132,8 +132,8 @@
 		05F54958229BBA8800561C14 /* RendererCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 05F54950229BBA8800561C14 /* RendererCommon.m */; };
 		05F54959229BBA8800561C14 /* ShaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 05F54951229BBA8800561C14 /* ShaderTypes.h */; };
 		05F5495B229BBA8800561C14 /* RendererCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 05F54953229BBA8800561C14 /* RendererCommon.h */; };
-		05F5495C229BBA8800561C14 /* FrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = 05F54954229BBA8800561C14 /* FrameView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		05F5495D229BBA8800561C14 /* FrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 05F54955229BBA8800561C14 /* FrameView.m */; };
+		05F5495C229BBA8800561C14 /* OEFilterChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 05F54954229BBA8800561C14 /* OEFilterChain.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		05F5495D229BBA8800561C14 /* OEFilterChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 05F54955229BBA8800561C14 /* OEFilterChain.m */; };
 		05FB7D7D229F765A0070633C /* OEMTLPixelConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 05FB7D7B229F765A0070633C /* OEMTLPixelConverter.h */; };
 		05FB7D7E229F765A0070633C /* OEMTLPixelConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 05FB7D7C229F765A0070633C /* OEMTLPixelConverter.m */; };
 		A9020051FEB9717E8F2ABA14 /* ConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9020E619BC7ACEF5904D318 /* ConfigTests.swift */; };
@@ -280,6 +280,8 @@
 		056AC378228BA8D9005018DA /* ShaderParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderParameter.swift; sourceTree = "<group>"; };
 		056AC3A6228BB3E9005018DA /* SourceParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceParser.swift; sourceTree = "<group>"; };
 		056AC3A8228BD73F005018DA /* NSScanner+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScanner+Extensions.swift"; sourceTree = "<group>"; };
+		058278DC22AB1DE7003040CD /* Renderer.private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = Renderer.private.modulemap; sourceTree = "<group>"; };
+		058278DE22AB1F85003040CD /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		05EEE338227CC35D007D011B /* OpenEmuShaders.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OpenEmuShaders.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EEE33B227CC35D007D011B /* OpenEmuShaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenEmuShaders.h; sourceTree = "<group>"; };
 		05EEE33C227CC35D007D011B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -300,8 +302,8 @@
 		05F54950229BBA8800561C14 /* RendererCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RendererCommon.m; sourceTree = "<group>"; };
 		05F54951229BBA8800561C14 /* ShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 		05F54953229BBA8800561C14 /* RendererCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RendererCommon.h; sourceTree = "<group>"; };
-		05F54954229BBA8800561C14 /* FrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameView.h; sourceTree = "<group>"; };
-		05F54955229BBA8800561C14 /* FrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameView.m; sourceTree = "<group>"; };
+		05F54954229BBA8800561C14 /* OEFilterChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEFilterChain.h; sourceTree = "<group>"; };
+		05F54955229BBA8800561C14 /* OEFilterChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEFilterChain.m; sourceTree = "<group>"; };
 		05F5BB1022875C0B004D713C /* OpenEmuShadersTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenEmuShadersTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		05FB7D7B229F765A0070633C /* OEMTLPixelConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEMTLPixelConverter.h; sourceTree = "<group>"; };
 		05FB7D7C229F765A0070633C /* OEMTLPixelConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEMTLPixelConverter.m; sourceTree = "<group>"; };
@@ -564,6 +566,14 @@
 			name = "SPIRV-Cross";
 			sourceTree = "<group>";
 		};
+		058278DD22AB1F5E003040CD /* RendererPrivate */ = {
+			isa = PBXGroup;
+			children = (
+				058278DE22AB1F85003040CD /* module.modulemap */,
+			);
+			path = RendererPrivate;
+			sourceTree = "<group>";
+		};
 		05EEE32E227CC35C007D011B = {
 			isa = PBXGroup;
 			children = (
@@ -660,18 +670,20 @@
 		05F5494D229BBA7600561C14 /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				058278DD22AB1F5E003040CD /* RendererPrivate */,
+				058278DC22AB1DE7003040CD /* Renderer.private.modulemap */,
+				A9020FD6E09797E3851BD2F2 /* MTLPixelConverter.swift */,
 				05FB7D7B229F765A0070633C /* OEMTLPixelConverter.h */,
 				05FB7D7C229F765A0070633C /* OEMTLPixelConverter.m */,
 				052A2B8C22A475D300483370 /* OEPixelBuffer.h */,
 				052A2B9022A476FE00483370 /* OEPixelBuffer+Internal.h */,
 				052A2B8D22A475D300483370 /* OEPixelBuffer.m */,
-				05F54954229BBA8800561C14 /* FrameView.h */,
-				05F54955229BBA8800561C14 /* FrameView.m */,
+				05F54954229BBA8800561C14 /* OEFilterChain.h */,
+				05F54955229BBA8800561C14 /* OEFilterChain.m */,
 				05F54953229BBA8800561C14 /* RendererCommon.h */,
 				05F54950229BBA8800561C14 /* RendererCommon.m */,
 				05F5494F229BBA8800561C14 /* Shaders.metal */,
 				05F54951229BBA8800561C14 /* ShaderTypes.h */,
-				A9020FD6E09797E3851BD2F2 /* MTLPixelConverter.swift */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -703,7 +715,7 @@
 				052A2B8622A438F800483370 /* spirv_common.hpp in Headers */,
 				052A2B4E22A420CC00483370 /* GLSL.ext.EXT.h in Headers */,
 				052A2B5222A420CC00483370 /* GLSL.ext.NV.h in Headers */,
-				05F5495C229BBA8800561C14 /* FrameView.h in Headers */,
+				05F5495C229BBA8800561C14 /* OEFilterChain.h in Headers */,
 				052A2B7022A438D900483370 /* spirv_glsl.hpp in Headers */,
 				052A2B8322A438F800483370 /* spirv_cfg.hpp in Headers */,
 				05EEE3A1227D5DF4007D011B /* SlangShader.h in Headers */,
@@ -906,7 +918,7 @@
 				052A2ACD22A41FEA00483370 /* Scan.cpp in Sources */,
 				052A2B7822A438EF00483370 /* spirv_cross_parsed_ir.cpp in Sources */,
 				052A2B3722A420C000483370 /* Logger.cpp in Sources */,
-				05F5495D229BBA8800561C14 /* FrameView.m in Sources */,
+				05F5495D229BBA8800561C14 /* OEFilterChain.m in Sources */,
 				056AC379228BA8D9005018DA /* ShaderParameter.swift in Sources */,
 				052A2B3C22A420C000483370 /* doc.cpp in Sources */,
 				052A2B7922A438EF00483370 /* spirv_cfg.cpp in Sources */,
