@@ -23,7 +23,6 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "OEPixelBuffer+Internal.h"
-#import "OEMTLPixelConverter.h"
 #import <OpenEmuShaders/OpenEmuShaders-Swift.h>
 
 typedef NS_OPTIONS(NSUInteger, BufferOption)

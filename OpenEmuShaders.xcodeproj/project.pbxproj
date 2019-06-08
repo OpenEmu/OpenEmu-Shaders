@@ -134,8 +134,6 @@
 		05F5495B229BBA8800561C14 /* RendererCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 05F54953229BBA8800561C14 /* RendererCommon.h */; };
 		05F5495C229BBA8800561C14 /* OEFilterChain.h in Headers */ = {isa = PBXBuildFile; fileRef = 05F54954229BBA8800561C14 /* OEFilterChain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05F5495D229BBA8800561C14 /* OEFilterChain.m in Sources */ = {isa = PBXBuildFile; fileRef = 05F54955229BBA8800561C14 /* OEFilterChain.m */; };
-		05FB7D7D229F765A0070633C /* OEMTLPixelConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 05FB7D7B229F765A0070633C /* OEMTLPixelConverter.h */; };
-		05FB7D7E229F765A0070633C /* OEMTLPixelConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 05FB7D7C229F765A0070633C /* OEMTLPixelConverter.m */; };
 		A9020051FEB9717E8F2ABA14 /* ConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9020E619BC7ACEF5904D318 /* ConfigTests.swift */; };
 		A902009F295CE6ED5C8FC8CA /* ShaderReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = A9020B45B7562A79B4BCF645 /* ShaderReflection.h */; };
 		A90203772A0E044990C034EA /* NSScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A902023035423BDAFACA21E6 /* NSScannerTests.swift */; };
@@ -305,8 +303,6 @@
 		05F54954229BBA8800561C14 /* OEFilterChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEFilterChain.h; sourceTree = "<group>"; };
 		05F54955229BBA8800561C14 /* OEFilterChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEFilterChain.m; sourceTree = "<group>"; };
 		05F5BB1022875C0B004D713C /* OpenEmuShadersTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenEmuShadersTests-Bridging-Header.h"; sourceTree = "<group>"; };
-		05FB7D7B229F765A0070633C /* OEMTLPixelConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEMTLPixelConverter.h; sourceTree = "<group>"; };
-		05FB7D7C229F765A0070633C /* OEMTLPixelConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEMTLPixelConverter.m; sourceTree = "<group>"; };
 		A90200FD5FAAA6164A305470 /* OESourceParser+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OESourceParser+Private.h"; sourceTree = "<group>"; };
 		A902023035423BDAFACA21E6 /* NSScannerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSScannerTests.swift; sourceTree = "<group>"; };
 		A90202C8B35052F56549FB38 /* SlangCompiler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SlangCompiler.mm; sourceTree = "<group>"; };
@@ -673,8 +669,6 @@
 				058278DD22AB1F5E003040CD /* RendererPrivate */,
 				058278DC22AB1DE7003040CD /* Renderer.private.modulemap */,
 				A9020FD6E09797E3851BD2F2 /* MTLPixelConverter.swift */,
-				05FB7D7B229F765A0070633C /* OEMTLPixelConverter.h */,
-				05FB7D7C229F765A0070633C /* OEMTLPixelConverter.m */,
 				052A2B8C22A475D300483370 /* OEPixelBuffer.h */,
 				052A2B9022A476FE00483370 /* OEPixelBuffer+Internal.h */,
 				052A2B8D22A475D300483370 /* OEPixelBuffer.m */,
@@ -742,7 +736,6 @@
 				052A2B0C22A41FFD00483370 /* ShHandle.h in Headers */,
 				052A2B0022A41FFD00483370 /* LiveTraverser.h in Headers */,
 				052A2B0B22A41FFD00483370 /* intermediate.h in Headers */,
-				05FB7D7D229F765A0070633C /* OEMTLPixelConverter.h in Headers */,
 				052A2B8522A438F800483370 /* GLSL.std.450.h in Headers */,
 				052A2AFE22A41FFD00483370 /* ParseHelper.h in Headers */,
 				052A2B0222A41FFD00483370 /* PpTokens.h in Headers */,
@@ -881,7 +874,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				052A2AC922A41FEA00483370 /* Link.cpp in Sources */,
-				05FB7D7E229F765A0070633C /* OEMTLPixelConverter.m in Sources */,
 				052A2AC122A41FEA00483370 /* ShaderLang.cpp in Sources */,
 				052A2ACE22A41FEA00483370 /* PpContext.cpp in Sources */,
 				05F54957229BBA8800561C14 /* Shaders.metal in Sources */,

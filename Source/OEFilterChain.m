@@ -27,7 +27,6 @@
 #import "OEFilterChain.h"
 #import "OEPixelBuffer+Internal.h"
 #import "RendererCommon.h"
-#import "OEMTLPixelConverter.h"
 #import <OpenEmuShaders/OpenEmuShaders.h>
 #import <CoreImage/CoreImage.h>
 #import <OpenEmuShaders/OpenEmuShaders-Swift.h>
