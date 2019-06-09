@@ -98,6 +98,7 @@ public class MTLPixelConverter: NSObject {
         
         (.fromBuffer, .bgra4Unorm, "convert_bgra4444_to_bgra8888_buf"),
         (.fromBuffer, .b5g6r5Unorm, "convert_rgb565_to_bgra8888_buf"),
+        (.fromBuffer, .r5g5b5a1Unorm, "convert_bgra5551_to_bgra8888_buf"),
         (.fromBuffer, .rgba8Unorm, "convert_rgba8888_to_bgra8888_buf"),
         (.fromBuffer, .abgr8Unorm, "convert_abgr8888_to_bgra8888_buf"),
     ]
