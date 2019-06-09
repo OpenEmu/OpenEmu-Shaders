@@ -12,6 +12,7 @@
 #import "ShaderPassSemantics.h"
 #import <OpenEmuShaders/OpenEmuShaders-Swift.h>
 #import "OESourceParser+Private.h"
+#import "logging.h"
 
 @implementation OEShaderPassCompiler
 {
@@ -189,7 +190,7 @@ void error_callback(void *userdata, const char *error)
     
     if (![self reflectWith:ref withVertexCompiler:vsCompiler fragmentCompiler:fsCompiler vertexResources:vsResources fragmentResources:fsResources]) {
         // TODO(sgc): unable to reflect SPIR-V program data
-        NSLog(@"reflect failed");
+        os_log_error(OE_LOG_DEFAULT, "reflect failed");
         return NO;
     }
     
@@ -296,7 +297,7 @@ void error_callback(void *userdata, const char *error)
 #define CHECK_EMPTY(RES, TYPE) list_size = 0; \
     spvc_resources_get_resource_list_for_type(RES, TYPE, &list, &list_size); \
     if (list_size > 0) { \
-        NSLog(@"unexpected resource type in shader %@", @#TYPE); \
+os_log_error(OE_LOG_DEFAULT, "unexpected resource type in shader %{public}@", @#TYPE); \
         return NO; \
     }
     CHECK_EMPTY(vsResources, SPVC_RESOURCE_TYPE_SAMPLED_IMAGE);
@@ -314,7 +315,7 @@ void error_callback(void *userdata, const char *error)
     list_size = 0;
     spvc_resources_get_resource_list_for_type(vsResources, SPVC_RESOURCE_TYPE_STAGE_INPUT, &list, &list_size);
     if (list_size != 2) {
-        NSLog(@"vertex shader input must have two attributes");
+        os_log_error(OE_LOG_DEFAULT, "vertex shader input must have two attributes");
         return NO;
     }
     
@@ -322,7 +323,7 @@ void error_callback(void *userdata, const char *error)
     mask |= 1 << spvc_compiler_get_decoration(vsCompiler, list[0].id, SpvDecorationLocation);
     mask |= 1 << spvc_compiler_get_decoration(vsCompiler, list[1].id, SpvDecorationLocation);
     if (mask != 0x03) {
-        NSLog(@"vertex shader input attributes must use (location = 0) and (location = 1)");
+        os_log_error(OE_LOG_DEFAULT, "vertex shader input attributes must use (location = 0) and (location = 1)");
         return NO;
     }
     
@@ -330,39 +331,39 @@ void error_callback(void *userdata, const char *error)
     list_size = 0;
     spvc_resources_get_resource_list_for_type(fsResources, SPVC_RESOURCE_TYPE_STAGE_OUTPUT, &list, &list_size);
     if (list_size != 1) {
-        NSLog(@"fragment shader must have a single output");
+        os_log_error(OE_LOG_DEFAULT, "fragment shader must have a single output");
         return NO;
     }
     
     if (spvc_compiler_get_decoration(fsCompiler, list[0].id, SpvDecorationLocation) != 0) {
-        NSLog(@"fragment shader output must use (location = 0)");
+        os_log_error(OE_LOG_DEFAULT, "fragment shader output must use (location = 0)");
         return NO;
     }
 
 #define CHECK_SIZE(RES, TYPE, ERR) list_size = 0; \
     spvc_resources_get_resource_list_for_type(RES, TYPE, &list, &list_size); \
     if (list_size > 1) { \
-        NSLog(ERR); \
+        os_log_error(OE_LOG_DEFAULT, ERR); \
         return NO; \
     }
     
-    CHECK_SIZE(vsResources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, @"vertex shader must use zero or one uniform buffer")
+    CHECK_SIZE(vsResources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, "vertex shader must use zero or one uniform buffer")
     spvc_reflected_resource const *vertexUBO = list_size == 0 ? nil : &list[0];
-    CHECK_SIZE(vsResources, SPVC_RESOURCE_TYPE_PUSH_CONSTANT, @"vertex shader must use zero or one push constant buffer")
+    CHECK_SIZE(vsResources, SPVC_RESOURCE_TYPE_PUSH_CONSTANT, "vertex shader must use zero or one push constant buffer")
     spvc_reflected_resource const *vertexPush = list_size == 0 ? nil : &list[0];
-    CHECK_SIZE(fsResources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, @"fragment shader must use zero or one uniform buffer")
+    CHECK_SIZE(fsResources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, "fragment shader must use zero or one uniform buffer")
     spvc_reflected_resource const *fragmentUBO = list_size == 0 ? nil : &list[0];
-    CHECK_SIZE(fsResources, SPVC_RESOURCE_TYPE_PUSH_CONSTANT, @"fragment shader must use zero or one push constant buffer")
+    CHECK_SIZE(fsResources, SPVC_RESOURCE_TYPE_PUSH_CONSTANT, "fragment shader must use zero or one push constant buffer")
     spvc_reflected_resource const *fragmentPush = list_size == 0 ? nil : &list[0];
 
 #undef CHECK_SIZE
     
     if (vertexUBO && spvc_compiler_get_decoration(vsCompiler, vertexUBO->id, SpvDecorationDescriptorSet) != 0) {
-        NSLog(@"vertex shader resources must use descriptor set #0");
+        os_log_error(OE_LOG_DEFAULT, "vertex shader resources must use descriptor set #0");
         return NO;
     }
     if (fragmentUBO && spvc_compiler_get_decoration(fsCompiler, fragmentUBO->id, SpvDecorationDescriptorSet) != 0) {
-        NSLog(@"fragment shader resources must use descriptor set #0");
+        os_log_error(OE_LOG_DEFAULT, "fragment shader resources must use descriptor set #0");
         return NO;
     }
     
@@ -371,7 +372,7 @@ void error_callback(void *userdata, const char *error)
     if (vertexUBOBinding != -1u &&
             fragmentUBOBinding != -1u &&
             vertexUBOBinding != fragmentUBOBinding) {
-        NSLog(@"vertex and fragment shader uniform buffers must have same binding");
+        os_log_error(OE_LOG_DEFAULT, "vertex and fragment shader uniform buffers must have same binding");
         return NO;
     }
     
@@ -379,7 +380,7 @@ void error_callback(void *userdata, const char *error)
     
     bool hasUBO = vertexUBO || fragmentUBO;
     if (hasUBO && uboBinding >= kMaxShaderBindings) {
-        NSLog(@"%u bindings exceeds max of %d", uboBinding, kMaxShaderBindings);
+        os_log_error(OE_LOG_DEFAULT, "%u bindings exceeds max of %d", uboBinding, kMaxShaderBindings);
         return NO;
     }
     
@@ -429,18 +430,18 @@ void error_callback(void *userdata, const char *error)
         spvc_reflected_resource const *tex = &list[i];
         
         if (spvc_compiler_get_decoration(fsCompiler, tex->id, SpvDecorationDescriptorSet) != 0) {
-            NSLog(@"fragment shader texture must use descriptor set #0");
+            os_log_error(OE_LOG_DEFAULT, "fragment shader texture must use descriptor set #0");
             return NO;
         }
         
         NSUInteger binding = spvc_compiler_get_decoration(fsCompiler, tex->id, SpvDecorationBinding);
         if (binding >= kMaxShaderBindings) {
-            NSLog(@"fragment shader texture binding exceeds %d", kMaxShaderBindings);
+            os_log_error(OE_LOG_DEFAULT, "fragment shader texture binding exceeds %d", kMaxShaderBindings);
             return NO;
         }
         
         if (bindings & (1u << binding)) {
-            NSLog(@"fragment shader texture binding %lu already in use", binding);
+            os_log_error(OE_LOG_DEFAULT, "fragment shader texture binding %lu already in use", binding);
             return NO;
         }
         
@@ -448,7 +449,7 @@ void error_callback(void *userdata, const char *error)
         
         ShaderTextureSemanticMap *sem = [ref textureSemanticForName:[NSString stringWithUTF8String:tex->name]];
         if (sem == nil) {
-            NSLog(@"invalid texture");
+            os_log_error(OE_LOG_DEFAULT, "invalid texture");
         }
         
         [ref setBinding:binding forTextureSemantic:sem.semantic atIndex:sem.index];
@@ -456,7 +457,7 @@ void error_callback(void *userdata, const char *error)
     
     // print out some debug info
     
-    NSLog(@"%@", ref.debugDescription);
+    os_log_debug(OE_LOG_DEFAULT, "%{public}@", ref.debugDescription);
     
     return YES;
 }
@@ -517,7 +518,7 @@ void error_callback(void *userdata, const char *error)
         ShaderTextureSemanticMap *texSem    = [ref textureSemanticForUniformName:[NSString stringWithUTF8String:name]];
         
         if (texSem.semantic == OEShaderTextureSemanticPassOutput && texSem.index >= ref.passNumber) {
-            NSLog(@"shader pass #%lu is attempting to use output from self or later pass #%lu", ref.passNumber, texSem.index);
+            os_log_error(OE_LOG_DEFAULT, "shader pass #%lu is attempting to use output from self or later pass #%lu", ref.passNumber, texSem.index);
             return NO;
         }
         
@@ -526,7 +527,7 @@ void error_callback(void *userdata, const char *error)
         
         if (bufferSem) {
             if (![self validateType:type forSemantic:bufferSem.semantic]) {
-                NSLog(@"invalid type for %s", name);
+                os_log_error(OE_LOG_DEFAULT, "invalid type for %{public}s", name);
                 return NO;
             }
             
@@ -541,7 +542,7 @@ void error_callback(void *userdata, const char *error)
             }
         } else if (texSem) {
             if (![self validateType:type forTextureSemantic:texSem.semantic]) {
-                NSLog(@"invalid type for %s; expected a vec4", name);
+                os_log_error(OE_LOG_DEFAULT, "invalid type for %{public}s; expected a vec4", name);
                 return NO;
             }
             

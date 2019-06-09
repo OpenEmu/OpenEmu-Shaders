@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "OEEnums.h"
+#import "logging.h"
 
 OEShaderTextureSemantic const OEShaderTextureSemanticOriginal        = @"Original";
 OEShaderTextureSemantic const OEShaderTextureSemanticSource          = @"Source";
@@ -112,7 +113,7 @@ NSUInteger OEMTLPixelFormatToBPP(OEMTLPixelFormat format)
             return 2;
         
         default:
-            NSLog(@"RPixelFormatToBPP: unknown RPixel format: %lu", format);
+            os_log_error(OE_LOG_DEFAULT, "RPixelFormatToBPP: unknown RPixel format: %lu", format);
             return 4;
     }
 }

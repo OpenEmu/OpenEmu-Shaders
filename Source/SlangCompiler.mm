@@ -25,6 +25,7 @@
 #import "SlangCompiler.h"
 #include "glslang/Public/ShaderLang.h"
 #include "SPIRV/GlslangToSpv.h"
+#include "logging.h"
 
 using namespace glslang;
 using namespace std;
@@ -166,13 +167,13 @@ static TBuiltInResource resources;
     string msg;
     auto   forbid_include = glslang::TShader::ForbidIncluder();
     if (!shader.preprocess(&resources, 100, ENoProfile, false, false, messages, &msg, forbid_include)) {
-        NSLog(@"%s", msg.c_str());
+        os_log_error(OE_LOG_DEFAULT, "error preprocessing shader: %{public}s", msg.c_str());
         return nil;
     }
     
     if (!shader.parse(&resources, 100, false, messages)) {
-        NSLog(@"%s", shader.getInfoLog());
-        NSLog(@"%s", shader.getInfoDebugLog());
+        os_log_error(OE_LOG_DEFAULT, "error parsing shader info log: %{public}s", shader.getInfoLog());
+        os_log_error(OE_LOG_DEFAULT, "error parsing shader info debug log: %{public}s", shader.getInfoDebugLog());
         return nil;
     }
     
@@ -180,8 +181,8 @@ static TBuiltInResource resources;
     program.addShader(&shader);
     
     if (!program.link(messages)) {
-        NSLog(@"%s", program.getInfoLog());
-        NSLog(@"%s", program.getInfoDebugLog());
+        os_log_error(OE_LOG_DEFAULT, "error linking shader info log: %{public}s", program.getInfoLog());
+        os_log_error(OE_LOG_DEFAULT, "error linking shader info debug log: %{public}s", program.getInfoDebugLog());
         return nil;
     }
     

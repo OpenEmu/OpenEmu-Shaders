@@ -26,6 +26,7 @@
 #import <OpenEmuShaders/OpenEmuShaders-Swift.h>
 #import "OEShaderPassCompiler.h"
 #import "OESourceParser+Private.h"
+#import "logging.h"
 
 static NSString *IDToNSString(id obj)
 {
@@ -48,7 +49,7 @@ static OEShaderPassWrap OEShaderPassWrapFromNSString(NSString *wrapMode)
     else if ([wrapMode isEqualToString:@"mirrored_repeat"])
         return OEShaderPassWrapMirroredRepeat;
     
-    NSLog(@"invalid wrap mode %@. Choose from clamp_to_border, clamp_to_edge, repeat or mirrored_repeat", wrapMode);
+    os_log_debug(OE_LOG_DEFAULT, "invalid wrap mode %{public}@. Choose from clamp_to_border, clamp_to_edge, repeat or mirrored_repeat", wrapMode);
     
     return OEShaderPassWrapDefault;
 }

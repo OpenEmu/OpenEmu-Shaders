@@ -24,6 +24,7 @@
 
 #import "ShaderReflection.h"
 #import <OpenEmuShaders/OpenEmuShaders-Swift.h>
+#import "logging.h"
 
 @implementation ShaderTextureSemanticMeta
 @end
@@ -166,7 +167,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
 {
     ShaderTextureSemanticMap *e = _textureSemanticMap[name];
     if (e != nil) {
-        NSLog(@"alias %@ already exists for texture semantic %@", name, semantic);
+        os_log_error(OE_LOG_DEFAULT, "pass %lu: alias %{public}@ already exists for texture semantic %{public}@", i, name, semantic);
         return NO;
     }
     e = [ShaderTextureSemanticMap new];
@@ -180,7 +181,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
 {
     ShaderTextureSemanticMap *e = _textureUniformSemanticMap[name];
     if (e != nil) {
-        NSLog(@"alias %@ already exists for texture semantic %@", name, semantic);
+        os_log_error(OE_LOG_DEFAULT, "pass %lu: alias %{public}@ already exists for texture buffer semantic %{public}@", i, name, semantic);
         return NO;
     }
     e = [ShaderTextureSemanticMap new];
@@ -194,7 +195,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
 {
     ShaderSemanticMap *e = _semanticMap[name];
     if (e != nil) {
-        NSLog(@"alias %@ already exists for buffer semantic %@", name, semantic);
+        os_log_error(OE_LOG_DEFAULT, "pass %lu: alias %{public}@ already exists for buffer semantic %{public}@", i, name, semantic);
         return NO;
     }
     e = [ShaderSemanticMap new];
@@ -326,14 +327,13 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
     }
     
     if (sem.numberOfComponents != vecSize && (sem.uboActive || sem.pushActive)) {
-        NSLog(@"vertex and fragment shaders have different data type sizes for same parameter #%lu (%lu / %lu)",
-                index, sem.numberOfComponents, (size_t)vecSize);
+        os_log_error(OE_LOG_DEFAULT, "vertex and fragment shaders have different data type sizes for same parameter #%lu (%lu / %lu)", index, sem.numberOfComponents, (size_t)vecSize);
         return NO;
     }
     
     if (ubo) {
         if (sem.uboActive && sem.uboOffset != offset) {
-            NSLog(@"vertex and fragment shaders have different offsets for same parameter #%lu (%lu / %lu)",
+            os_log_error(OE_LOG_DEFAULT, "vertex and fragment shaders have different offsets for same parameter #%lu (%lu / %lu)",
                     index, sem.uboOffset, offset);
             return NO;
         }
@@ -341,7 +341,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
         sem.uboOffset = offset;
     } else {
         if (sem.pushActive && sem.pushOffset != offset) {
-            NSLog(@"vertex and fragment shaders have different offsets for same parameter #%lu (%lu / %lu)",
+            os_log_error(OE_LOG_DEFAULT, "vertex and fragment shaders have different offsets for same parameter #%lu (%lu / %lu)",
                     index, sem.pushOffset, offset);
             return NO;
         }
@@ -358,14 +358,14 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
     ShaderSemanticMeta *sem = _semantics[semantic];
     
     if (sem.numberOfComponents != vecSize && (sem.uboActive || sem.pushActive)) {
-        NSLog(@"vertex and fragment shaders have different data type sizes for same semantic %@ (%lu / %lu)",
+        os_log_error(OE_LOG_DEFAULT, "vertex and fragment shaders have different data type sizes for same semantic %@ (%lu / %lu)",
                 semantic, sem.numberOfComponents, (size_t)vecSize);
         return NO;
     }
     
     if (ubo) {
         if (sem.uboActive && sem.uboOffset != offset) {
-            NSLog(@"vertex and fragment shaders have different offsets for same semantic %@ (%lu / %lu)",
+            os_log_error(OE_LOG_DEFAULT, "vertex and fragment shaders have different offsets for same semantic %@ (%lu / %lu)",
                     semantic, sem.uboOffset, offset);
             return NO;
         }
@@ -373,7 +373,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
         sem.uboOffset = offset;
     } else {
         if (sem.pushActive && sem.pushOffset != offset) {
-            NSLog(@"vertex and fragment shaders have different offsets for same semantic %@ (%lu / %lu)",
+            os_log_error(OE_LOG_DEFAULT, "vertex and fragment shaders have different offsets for same semantic %@ (%lu / %lu)",
                     semantic, sem.pushOffset, offset);
             return NO;
         }
@@ -397,7 +397,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
     
     if (ubo) {
         if (sem.uboActive && sem.uboOffset != offset) {
-            NSLog(@"vertex and fragment shaders have different offsets for same semantic %@ #%lu (%lu / %lu)",
+            os_log_error(OE_LOG_DEFAULT, "vertex and fragment shaders have different offsets for same semantic %@ #%lu (%lu / %lu)",
                     semantic, index, sem.uboOffset, offset);
             return NO;
         }
@@ -405,7 +405,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
         sem.uboOffset = offset;
     } else {
         if (sem.pushActive && sem.pushOffset != offset) {
-            NSLog(@"vertex and fragment shaders have different offsets for same semantic %@ #%lu (%lu / %lu)",
+            os_log_error(OE_LOG_DEFAULT, "vertex and fragment shaders have different offsets for same semantic %@ #%lu (%lu / %lu)",
                     semantic, index, sem.pushOffset, offset);
             return NO;
         }

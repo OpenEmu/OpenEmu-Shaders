@@ -123,6 +123,8 @@
 		056AC379228BA8D9005018DA /* ShaderParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC378228BA8D9005018DA /* ShaderParameter.swift */; };
 		056AC3A7228BB3E9005018DA /* SourceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC3A6228BB3E9005018DA /* SourceParser.swift */; };
 		056AC3A9228BD73F005018DA /* NSScanner+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC3A8228BD73F005018DA /* NSScanner+Extensions.swift */; };
+		059258A022AD71500064273D /* logging.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592589E22AD71500064273D /* logging.m */; };
+		059258A122AD71500064273D /* logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 0592589F22AD71500064273D /* logging.h */; };
 		05EEE342227CC35D007D011B /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; };
 		05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE33B227CC35D007D011B /* OpenEmuShaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05EEE3A1227D5DF4007D011B /* SlangShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE39F227D5DF4007D011B /* SlangShader.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -280,6 +282,8 @@
 		056AC3A8228BD73F005018DA /* NSScanner+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSScanner+Extensions.swift"; sourceTree = "<group>"; };
 		058278DC22AB1DE7003040CD /* Renderer.private.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = Renderer.private.modulemap; sourceTree = "<group>"; };
 		058278DE22AB1F85003040CD /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		0592589E22AD71500064273D /* logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = logging.m; sourceTree = "<group>"; };
+		0592589F22AD71500064273D /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logging.h; sourceTree = "<group>"; };
 		05EEE338227CC35D007D011B /* OpenEmuShaders.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OpenEmuShaders.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EEE33B227CC35D007D011B /* OpenEmuShaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenEmuShaders.h; sourceTree = "<group>"; };
 		05EEE33C227CC35D007D011B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -570,6 +574,15 @@
 			path = RendererPrivate;
 			sourceTree = "<group>";
 		};
+		0592589D22AD71350064273D /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				0592589F22AD71500064273D /* logging.h */,
+				0592589E22AD71500064273D /* logging.m */,
+			);
+			name = Logging;
+			sourceTree = "<group>";
+		};
 		05EEE32E227CC35C007D011B = {
 			isa = PBXGroup;
 			children = (
@@ -618,6 +631,7 @@
 		05EEE388227CDA8F007D011B /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				0592589D22AD71350064273D /* Logging */,
 				05F5494D229BBA7600561C14 /* Renderer */,
 				05F5494C229BBA6500561C14 /* Shader Reader */,
 			);
@@ -714,6 +728,7 @@
 				052A2B8322A438F800483370 /* spirv_cfg.hpp in Headers */,
 				05EEE3A1227D5DF4007D011B /* SlangShader.h in Headers */,
 				052A2B0422A41FFD00483370 /* Versions.h in Headers */,
+				059258A122AD71500064273D /* logging.h in Headers */,
 				052A2B5822A420CC00483370 /* SpvBuilder.h in Headers */,
 				056AC35B228BA11E005018DA /* OEEnums.h in Headers */,
 				052A2B1222A41FFD00483370 /* iomapper.h in Headers */,
@@ -922,6 +937,7 @@
 				A9020CDAE9B375337B23CB35 /* SlangCompiler.mm in Sources */,
 				052A2AC822A41FEA00483370 /* attribute.cpp in Sources */,
 				A90206302FA906B0B42F2CF2 /* ShaderPassSemantics.m in Sources */,
+				059258A022AD71500064273D /* logging.m in Sources */,
 				052A2ACC22A41FEA00483370 /* RemoveTree.cpp in Sources */,
 				A90205F1433179AFFF015F07 /* ShaderReflection.m in Sources */,
 				A9020AE1BBCE1F965F5F8436 /* Config.swift in Sources */,

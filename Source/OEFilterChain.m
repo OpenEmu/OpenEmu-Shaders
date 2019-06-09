@@ -25,6 +25,7 @@
 @import MetalKit;
 
 #import "OEFilterChain.h"
+#import "logging.h"
 #import "OEPixelBuffer+Internal.h"
 #import "RendererCommon.h"
 #import <OpenEmuShaders/OpenEmuShaders.h>
@@ -128,7 +129,7 @@ typedef struct texture
     _device    = device;
     _library   = [_device newDefaultLibraryWithBundle:[NSBundle bundleForClass:self.class] error:&err];
     if (err != nil) {
-        NSLog(@"error initializing Metal library: %@", err.localizedDescription);
+        os_log_error(OE_LOG_DEFAULT, "error initializing Metal library: %{public}@", err.localizedDescription);
     }
     assert(err == nil);
     _loader    = [[MTKTextureLoader alloc] initWithDevice:device];
@@ -136,7 +137,7 @@ typedef struct texture
                                                      library:_library
                                                        error:&err];
     if (err != nil) {
-        NSLog(@"error initializing pixel converter: %@", err.localizedDescription);
+        os_log_error(OE_LOG_DEFAULT, "error initializing pixel converter: %{public}@", err.localizedDescription);
     }
     assert(err == nil);
     
@@ -195,7 +196,7 @@ typedef struct texture
         NSError *err;
         _pipelineState = [_device newRenderPipelineStateWithDescriptor:psd error:&err];
         if (err != nil) {
-            NSLog(@"error creating pipeline state: %@", err.localizedDescription);
+            os_log_error(OE_LOG_DEFAULT, "error creating pipeline state: %{public}@", err.localizedDescription);
             return NO;
         }
     }
@@ -838,7 +839,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             height = size.height;
         }
         
-        NSLog(@"pass %d, render target size %lu x %lu", i, width, height);
+        os_log_debug(OE_LOG_DEFAULT, "pass %d, render target size %lu x %lu", i, width, height);
         
         MTLPixelFormat fmt = _pass[i].bindings.format;
         if ((i != (_passCount - 1)) ||
@@ -1002,7 +1003,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 if (err != nil) {
                     if (lib == nil) {
                         save_msl = YES;
-                        NSLog(@"unable to compile vertex shader: %@", err.localizedDescription);
+                        os_log_error(OE_LOG_DEFAULT, "unable to compile vertex shader: %{public}@", err.localizedDescription);
                         return NO;
                     }
 #if DEBUG_SHADER
@@ -1016,7 +1017,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 if (err != nil) {
                     if (lib == nil) {
                         save_msl = YES;
-                        NSLog(@"unable to compile fragment shader: %@", err.localizedDescription);
+                        os_log_error(OE_LOG_DEFAULT, "unable to compile fragment shader: %{public}@", err.localizedDescription);
                         return NO;
                     }
 #if DEBUG_SHADER
@@ -1028,7 +1029,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 _pass[i].state = [_device newRenderPipelineStateWithDescriptor:psd error:&err];
                 if (err != nil) {
                     save_msl = YES;
-                    NSLog(@"error creating pipeline state for pass %d: %@", i, err.localizedDescription);
+                    os_log_error(OE_LOG_DEFAULT, "error creating pipeline state for pass %d: %{public}@", i, err.localizedDescription);
                     return NO;
                 }
                 
@@ -1046,7 +1047,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 if (save_msl) {
                     NSString *basePath = [pass.url.absoluteString stringByDeletingPathExtension];
                     
-                    NSLog(@"saving metal shader files to %@", basePath);
+                    os_log_debug(OE_LOG_DEFAULT, "saving metal shader files to %{public}@", basePath);
                     
                     NSError *err = nil;
                     [vs_src writeToFile:[basePath stringByAppendingPathExtension:@"vs.metal"]
@@ -1054,7 +1055,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                                encoding:NSStringEncodingConversionAllowLossy
                                   error:&err];
                     if (err != nil) {
-                        NSLog(@"unable to save vertex shader source: %d: %@", i, err.localizedDescription);
+                        os_log_error(OE_LOG_DEFAULT, "unable to save vertex shader source for pass %d: %{public}@", i, err.localizedDescription);
                     }
                     
                     err = nil;
@@ -1063,7 +1064,8 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                                encoding:NSStringEncodingConversionAllowLossy
                                   error:&err];
                     if (err != nil) {
-                        NSLog(@"unable to save fragment shader source: %d: %@", i, err.localizedDescription);
+                        os_log_error(OE_LOG_DEFAULT, "unable to save fragment shader source for pass %d: %{public}@", i, err.localizedDescription);
+
                     }
                 }
             }
@@ -1103,7 +1105,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         NSError        *err;
         id<MTLTexture> t = [_loader newTextureWithContentsOfURL:lut.url options:opts error:&err];
         if (err != nil) {
-            NSLog(@"unable to load LUT texture at path '%@': %@", lut.url, err);
+            os_log_error(OE_LOG_DEFAULT, "unable to load LUT texture at path '%{public}@: %{public}@", lut.url, err.localizedDescription);
             continue;
         }
         
