@@ -55,7 +55,7 @@ typedef struct texture
     id<MTLDevice>       _device;
     id<MTLLibrary>      _library;
     MTKTextureLoader    *_loader;
-    MTLPixelConverter *_converter;
+    MTLPixelConverter   *_converter;
     Vertex              _vertex[4];
     Vertex              _vertexFlipped[4];
     

@@ -32,9 +32,14 @@ public class MTLPixelConverter: NSObject {
         case missingFunction(String)
     }
     
-    struct Filter {
+    class Filter {
         let kernel:        MTLComputePipelineState
         let bytesPerPixel: UInt
+        
+        init(kernel: MTLComputePipelineState, bytesPerPixel: UInt) {
+            self.kernel = kernel
+            self.bytesPerPixel = bytesPerPixel
+        }
         
         func convert(fromBuffer src: MTLBuffer, sourceOrigin:MTLOrigin, sourceBytesPerRow: UInt,
                      toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
