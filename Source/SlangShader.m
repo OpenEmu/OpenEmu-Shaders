@@ -91,7 +91,12 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
     if (self = [super init]) {
         _url    = url;
         _index  = index;
-        _source = [[OESourceParser alloc] initFromURL:url error:nil];
+        NSError *err;
+        _source = [[OESourceParser alloc] initFromURL:url error:&err];
+        if (err != nil) {
+            os_log_error(OE_LOG_DEFAULT, "error reading source '%@': %@", url.absoluteString, err.localizedDescription);
+            return nil;
+        }
         
         self.filter   = OEShaderPassFilterFromObject(d[@"filterLinear"]);
         self.wrapMode = OEShaderPassWrapFromNSString(IDToNSString(d[@"wrapMode"]));

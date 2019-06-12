@@ -31,6 +31,7 @@ enum SourceParserError: LocalizedError {
     case multipleNamePragma
     case duplicateParameterPragma
     case includeNotFound
+    case includeFileNotFound(String)
     case invalidParameterPragma
     case invalidFormatPragma
     
@@ -46,6 +47,8 @@ enum SourceParserError: LocalizedError {
             return NSLocalizedString("duplicate #pragma parameter", comment: "The slang file contains duplicate #pragma parameter directives")
         case .includeNotFound:
             return NSLocalizedString("#include not found", comment: "The slang file has an invalid #include directive")
+        case .includeFileNotFound(let filename):
+            return String(format: NSLocalizedString("#include file not found: %@", comment: "The slang file has an invalid #include directive"), filename)
         case .invalidParameterPragma:
             return NSLocalizedString("invalid #pragma parameter declaration", comment: "The slang file contains an invalid parameter directive")
         case .invalidFormatPragma:
@@ -161,6 +164,9 @@ class SourceParser: NSObject {
                     throw SourceParserError.includeNotFound
                 }
                 let file = URL(string: filepath, relativeTo: url.deletingLastPathComponent())!
+                if !FileManager.default.fileExists(atPath: file.path) {
+                    throw SourceParserError.includeFileNotFound(file.path)
+                }
                 try self.load(file, isRoot: false)
                 buffer.append("#line \(lno) \"\(filename)\"")
             } else {
@@ -230,7 +236,7 @@ class SourceParser: NSObject {
                 param.maximum = maximum;
                 param.step = step;
                 
-                if let existing = parameters[name], param == existing {
+                if let existing = parameters[name], param != existing {
                     throw SourceParserError.duplicateParameterPragma
                 }
                 
