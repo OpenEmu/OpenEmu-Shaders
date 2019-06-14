@@ -88,7 +88,7 @@ typedef struct texture
     
     struct
     {
-        id<MTLBuffer>              buffers[2];
+        id<MTLBuffer>              buffers[kMaxConstantBuffers];
         texture_t                  renderTarget;
         texture_t                  feedbackTarget;
         uint32_t                   frameCount;
@@ -118,6 +118,7 @@ typedef struct texture
     unsigned                   _rotation;
     Uniforms                   _uniforms;
     Uniforms                   _uniformsNoRotate;
+    id<MTLTexture>             _checkers;
 }
 
 - (instancetype)initWithDevice:(id<MTLDevice>)device
@@ -924,8 +925,6 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         texture_t     *source = &_sourceTextures[0];
         for (unsigned i       = 0; i < _passCount; source = &_pass[i++].renderTarget) {
             ShaderPass *pass = ss.passes[i];
-            _pass[i].hasFeedback   = pass.isFeedback;
-            _pass[i].frameCountMod = (uint32_t)pass.frameCountMod;
             
             matrix_float4x4 *mvp = (i == _passCount - 1) ? &_uniforms.projectionMatrix : &_uniformsNoRotate.projectionMatrix;
             
@@ -965,6 +964,9 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                       fragment:&fs_src]) {
                 return NO;
             }
+            
+            _pass[i].hasFeedback   = pass.isFeedback;
+            _pass[i].frameCountMod = (uint32_t)pass.frameCountMod;
 
 #ifdef DEBUG
             BOOL save_msl = NO;
@@ -1105,8 +1107,33 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         NSError        *err;
         id<MTLTexture> t = [_loader newTextureWithContentsOfURL:lut.url options:opts error:&err];
         if (err != nil) {
-            os_log_error(OE_LOG_DEFAULT, "unable to load LUT texture at path '%{public}@: %{public}@", lut.url, err.localizedDescription);
-            continue;
+            // TODO: load a default texture so it is visually obvious
+            os_log_error(OE_LOG_DEFAULT, "unable to load LUT texture, using default. path '%{public}@: %{public}@", lut.url, err.localizedDescription);
+            
+            if (_checkers == nil) {
+                /* Create a dummy texture instead. */
+                const uint32_t T0 = 0xff000000u;
+                const uint32_t T1 = 0xffffffffu;
+                static const uint32_t checkerboard[] = {
+                    T0, T1, T0, T1, T0, T1, T0, T1,
+                    T1, T0, T1, T0, T1, T0, T1, T0,
+                    T0, T1, T0, T1, T0, T1, T0, T1,
+                    T1, T0, T1, T0, T1, T0, T1, T0,
+                    T0, T1, T0, T1, T0, T1, T0, T1,
+                    T1, T0, T1, T0, T1, T0, T1, T0,
+                    T0, T1, T0, T1, T0, T1, T0, T1,
+                    T1, T0, T1, T0, T1, T0, T1, T0,
+                };
+                
+                CGContextRef ctx = CGBitmapContextCreate((void *)checkerboard, 8, 8, 8, 32, NSColorSpace.deviceRGBColorSpace.CGColorSpace, kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast);
+                CGImageRef img = CGBitmapContextCreateImage(ctx);
+                
+                _checkers = [_loader newTextureWithCGImage:img options:opts error:&err];
+                CGImageRelease(img);
+                CGContextRelease(ctx);
+            }
+            
+            t = _checkers;
         }
         
         [self OE_initTexture:&_luts[i] withTexture:t];

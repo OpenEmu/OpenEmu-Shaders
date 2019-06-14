@@ -253,10 +253,15 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
         NSUInteger        i = 0;
         for (NSDictionary *spec in passes) {
             NSString *path = spec[@"shader"];
-            _passes[i] = [[ShaderPass alloc] initWithURL:[NSURL URLWithString:path
-                                                                relativeToURL:base]
-                                                   index:i
-                                              dictionary:spec];
+            ShaderPass *pass = [[ShaderPass alloc] initWithURL:[NSURL URLWithString:path
+                                                                      relativeToURL:base]
+                                                         index:i
+                                                    dictionary:spec];
+            if (!pass) {
+                return nil;
+            }
+            
+            _passes[i] = pass;
             i++;
         }
         

@@ -48,92 +48,115 @@ void error_callback(void *userdata, const char *error)
            vertex:(NSString **)vsrc
          fragment:(NSString **)fsrc
 {
-    
     ShaderPass *pass = _shader.passes[passNumber];
     passBindings.format = pass.format;
     
     
     spvc_context ctx;
     spvc_context_create(&ctx);
-    
     spvc_context_set_error_callback(ctx, error_callback, (__bridge void *)self);
-    
-    // vertex shader
-    SlangCompiler *c  = [SlangCompiler new];
-    ShaderProgram *vs = [c compileVertex:pass.source.vertexSource error:nil];
-    
-    spvc_parsed_ir vs_ir = nil;
-    spvc_context_parse_spirv(ctx, vs.spirv, vs.spirvLength, &vs_ir);
-    
-    spvc_compiler vs_compiler;
-    spvc_context_create_compiler(ctx, SPVC_BACKEND_MSL, vs_ir, SPVC_CAPTURE_MODE_TAKE_OWNERSHIP, &vs_compiler);
-    
-    spvc_resources vs_resources = nil;
-    spvc_compiler_create_shader_resources(vs_compiler, &vs_resources);
-    
-    spvc_reflected_resource const *resource = nil;
-    size_t                        resource_size;
-    
-    spvc_resources_get_resource_list_for_type(vs_resources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, &resource, &resource_size);
-    if (resource_size > 0) {
-        spvc_compiler_set_decoration(vs_compiler, resource[0].id, SpvDecorationBinding, 0);
+
+    @try {
+        // vertex shader
+        SlangCompiler *c  = [SlangCompiler new];
+        NSError *err;
+        ShaderProgram *vs = [c compileVertex:pass.source.vertexSource error:&err];
+        if (err != nil) {
+            os_log_error(OE_LOG_DEFAULT, "error compiling vertex shader program '%@': %@", pass.url.absoluteString, err.localizedDescription);
+            return NO;
+        }
+        
+        spvc_parsed_ir vs_ir = nil;
+        spvc_context_parse_spirv(ctx, vs.spirv, vs.spirvLength, &vs_ir);
+        if (vs_ir == nil) {
+            os_log_error(OE_LOG_DEFAULT, "error parsing vertex spirv '%@'", pass.url.absoluteString);
+            return NO;
+        }
+        
+        spvc_compiler vs_compiler;
+        spvc_context_create_compiler(ctx, SPVC_BACKEND_MSL, vs_ir, SPVC_CAPTURE_MODE_TAKE_OWNERSHIP, &vs_compiler);
+        if (vs_compiler == nil) {
+            os_log_error(OE_LOG_DEFAULT, "error creating vertex compiler '%@'", pass.url.absoluteString);
+            return NO;
+        }
+        
+        spvc_resources vs_resources = nil;
+        spvc_compiler_create_shader_resources(vs_compiler, &vs_resources);
+        
+        spvc_reflected_resource const *resource = nil;
+        size_t                        resource_size;
+        
+        spvc_resources_get_resource_list_for_type(vs_resources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, &resource, &resource_size);
+        if (resource_size > 0) {
+            spvc_compiler_set_decoration(vs_compiler, resource[0].id, SpvDecorationBinding, 0);
+        }
+        spvc_resources_get_resource_list_for_type(vs_resources, SPVC_RESOURCE_TYPE_PUSH_CONSTANT, &resource, &resource_size);
+        if (resource_size > 0) {
+            spvc_compiler_set_decoration(vs_compiler, resource[0].id, SpvDecorationBinding, 1);
+        }
+        
+        // vertex compile
+        spvc_compiler_options vs_options;
+        spvc_compiler_create_compiler_options(vs_compiler, &vs_options);
+        spvc_compiler_options_set_uint(vs_options, SPVC_COMPILER_OPTION_MSL_VERSION, (unsigned int)version);
+        spvc_compiler_install_compiler_options(vs_compiler, vs_options);
+        char const *vs_code;
+        spvc_compiler_compile(vs_compiler, &vs_code);
+        *vsrc = [NSString stringWithUTF8String:vs_code];
+        
+        // fragment shader
+        c = [SlangCompiler new];
+        ShaderProgram *fs = [c compileFragment:pass.source.fragmentSource error:nil];
+        if (err != nil) {
+            os_log_error(OE_LOG_DEFAULT, "error compiling fragment shader program '%@': %@", pass.url.absoluteString, err.localizedDescription);
+            return NO;
+        }
+        
+        spvc_parsed_ir fs_ir = nil;
+        spvc_context_parse_spirv(ctx, fs.spirv, fs.spirvLength, &fs_ir);
+        if (fs_ir == nil) {
+            os_log_error(OE_LOG_DEFAULT, "error parsing fragment spirv '%@'", pass.url.absoluteString);
+            return NO;
+        }
+        
+        spvc_compiler fs_compiler;
+        spvc_context_create_compiler(ctx, SPVC_BACKEND_MSL, fs_ir, SPVC_CAPTURE_MODE_TAKE_OWNERSHIP, &fs_compiler);
+        if (fs_compiler == nil) {
+            os_log_error(OE_LOG_DEFAULT, "error creating fragment compiler '%@'", pass.url.absoluteString);
+            return NO;
+        }
+        
+        spvc_resources fs_resources = nil;
+        spvc_compiler_create_shader_resources(fs_compiler, &fs_resources);
+        
+        spvc_resources_get_resource_list_for_type(fs_resources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, &resource, &resource_size);
+        if (resource_size > 0) {
+            spvc_compiler_set_decoration(fs_compiler, resource[0].id, SpvDecorationBinding, 0);
+        }
+        spvc_resources_get_resource_list_for_type(fs_resources, SPVC_RESOURCE_TYPE_PUSH_CONSTANT, &resource, &resource_size);
+        if (resource_size > 0) {
+            spvc_compiler_set_decoration(fs_compiler, resource[0].id, SpvDecorationBinding, 1);
+        }
+        
+        // fragment compile
+        spvc_compiler_options fs_options;
+        spvc_compiler_create_compiler_options(fs_compiler, &fs_options);
+        spvc_compiler_options_set_uint(fs_options, SPVC_COMPILER_OPTION_MSL_VERSION, (unsigned int)version);
+        spvc_compiler_install_compiler_options(fs_compiler, fs_options);
+        char const *fs_code;
+        spvc_compiler_compile(fs_compiler, &fs_code);
+        *fsrc = [NSString stringWithUTF8String:fs_code];
+        
+        return [self processPass:passNumber
+                  withVertexCompiler:vs_compiler
+                    fragmentCompiler:fs_compiler
+                     vertexResources:vs_resources
+                   fragmentResources:fs_resources
+                       passSemantics:passSemantics
+                        passBindings:passBindings];
+    } @finally {
+        spvc_context_destroy(ctx);
     }
-    spvc_resources_get_resource_list_for_type(vs_resources, SPVC_RESOURCE_TYPE_PUSH_CONSTANT, &resource, &resource_size);
-    if (resource_size > 0) {
-        spvc_compiler_set_decoration(vs_compiler, resource[0].id, SpvDecorationBinding, 1);
-    }
-    
-    // vertex compile
-    spvc_compiler_options vs_options;
-    spvc_compiler_create_compiler_options(vs_compiler, &vs_options);
-    spvc_compiler_options_set_uint(vs_options, SPVC_COMPILER_OPTION_MSL_VERSION, (unsigned int)version);
-    spvc_compiler_install_compiler_options(vs_compiler, vs_options);
-    char const *vs_code;
-    spvc_compiler_compile(vs_compiler, &vs_code);
-    *vsrc = [NSString stringWithUTF8String:vs_code];
-    
-    // fragment shader
-    c = [SlangCompiler new];
-    ShaderProgram *fs = [c compileFragment:pass.source.fragmentSource error:nil];
-    
-    spvc_parsed_ir fs_ir = nil;
-    spvc_context_parse_spirv(ctx, fs.spirv, fs.spirvLength, &fs_ir);
-    
-    spvc_compiler fs_compiler;
-    spvc_context_create_compiler(ctx, SPVC_BACKEND_MSL, fs_ir, SPVC_CAPTURE_MODE_TAKE_OWNERSHIP, &fs_compiler);
-    
-    spvc_resources fs_resources = nil;
-    spvc_compiler_create_shader_resources(fs_compiler, &fs_resources);
-    
-    spvc_resources_get_resource_list_for_type(fs_resources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, &resource, &resource_size);
-    if (resource_size > 0) {
-        spvc_compiler_set_decoration(fs_compiler, resource[0].id, SpvDecorationBinding, 0);
-    }
-    spvc_resources_get_resource_list_for_type(fs_resources, SPVC_RESOURCE_TYPE_PUSH_CONSTANT, &resource, &resource_size);
-    if (resource_size > 0) {
-        spvc_compiler_set_decoration(fs_compiler, resource[0].id, SpvDecorationBinding, 1);
-    }
-    
-    // fragment compile
-    spvc_compiler_options fs_options;
-    spvc_compiler_create_compiler_options(fs_compiler, &fs_options);
-    spvc_compiler_options_set_uint(fs_options, SPVC_COMPILER_OPTION_MSL_VERSION, (unsigned int)version);
-    spvc_compiler_install_compiler_options(fs_compiler, fs_options);
-    char const *fs_code;
-    spvc_compiler_compile(fs_compiler, &fs_code);
-    *fsrc = [NSString stringWithUTF8String:fs_code];
-    
-    BOOL res = [self processPass:passNumber
-              withVertexCompiler:vs_compiler
-                fragmentCompiler:fs_compiler
-                 vertexResources:vs_resources
-               fragmentResources:fs_resources
-                   passSemantics:passSemantics
-                    passBindings:passBindings];
-    
-    spvc_context_destroy(ctx);
-    
-    return res;
 }
 
 - (BOOL)processPass:(NSUInteger)passNumber
