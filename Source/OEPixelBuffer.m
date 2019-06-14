@@ -127,15 +127,16 @@ BufferOption BufferOptionMustCopy(BufferOption o) {
     _srcBytesPerRow = bytesPerRow;
     _sourceSize = CGSizeMake(bytesPerRow / OEMTLPixelFormatToBPP(format), height);
     [self setFormat:format];
-    
-    if ((uintptr_t)pointer % 4096 == 0) {
+  
+    NSUInteger length = height * bytesPerRow;
+    if (((uintptr_t)pointer % 4096 == 0) && (length % 4096 == 0)) {
         _options |= BufferOptionNoCopy;
-        _srcBuffer = [_device newBufferWithBytesNoCopy:pointer length:height * bytesPerRow options:MTLResourceStorageModeShared deallocator:nil];
+        _srcBuffer = [_device newBufferWithBytesNoCopy:pointer length:length options:MTLResourceStorageModeShared deallocator:nil];
     } else {
         _options &= ~BufferOptionNoCopy;
         _buffer = pointer;
-        _bufferLenBytes = bytesPerRow * height;
-        _srcBuffer = [_device newBufferWithLength:height * bytesPerRow options:MTLResourceStorageModeShared];
+        _bufferLenBytes = length;
+        _srcBuffer = [_device newBufferWithLength:length options:MTLResourceStorageModeShared];
     }
 
     
