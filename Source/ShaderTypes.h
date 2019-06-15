@@ -44,8 +44,8 @@
 
 typedef NS_ENUM(NSInteger, BufferIndex)
 {
-    BufferIndexPositions = 0,
-    BufferIndexUniforms = 1
+    BufferIndexUniforms  = 1,
+    BufferIndexPositions = 4,
 };
 
 typedef NS_ENUM(NSInteger, VertexAttribute)

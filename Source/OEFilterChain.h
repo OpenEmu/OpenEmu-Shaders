@@ -33,7 +33,6 @@ typedef MTLRenderPassDescriptor * __nullable (^OEGetDescriptorBlock)(void);
 
 @interface OEFilterChain : NSObject
 
-@property (nonatomic, readonly) OEMTLPixelFormat    format;
 @property (nonatomic, readonly) CGRect              sourceRect;
 @property (nonatomic, readonly) CGSize              sourceAspectSize;
 @property (nonatomic)           id<MTLTexture>      sourceTexture;
@@ -49,12 +48,10 @@ typedef MTLRenderPassDescriptor * __nullable (^OEGetDescriptorBlock)(void);
 - (OEPixelBuffer *)newBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow;
 - (OEPixelBuffer *)newBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow bytes:(void *)pointer;
 
-- (id<MTLBuffer>)allocateBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow;
-- (id<MTLBuffer>)allocateBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow bytes:(void *)pointer;
+- (void)renderOffscreenPassesWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer;
+- (void)renderFinalPassWithCommandEncoder:(id<MTLRenderCommandEncoder>)commandEncoder;
 
 - (void)renderWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer renderPassDescriptor:(MTLRenderPassDescriptor *)renderPassDescriptor;
-- (void)renderWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
-      renderPassDescriptorBlock:(NS_NOESCAPE OEGetDescriptorBlock)block;
 
 /*! @brief returns an image of the last rendered source image */
 - (NSBitmapImageRep *)captureSourceImage;
