@@ -24,13 +24,21 @@
 
 #import "OEPixelBuffer.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class MTLPixelConverter;
+@class MTLPixelFormatConverter;
 
 @interface OEPixelBuffer()
 
-- (instancetype)initWithDevice:(id<MTLDevice>)device converter:(MTLPixelConverter *)converter;
++ (instancetype)bufferWithDevice:(id<MTLDevice>)device converter:(MTLPixelConverter *)converter
+                          format:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow;
++ (instancetype)bufferWithDevice:(id<MTLDevice>)device converter:(MTLPixelConverter *)converter
+                          format:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow
+                           bytes:(void *_Nullable)pointer;
+
 - (void)prepareWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer texture:(id<MTLTexture>)texture;
-- (id<MTLBuffer>)allocateBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow;
-- (id<MTLBuffer>)allocateBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow bytes:(void *)pointer;
 
 @end
+
+NS_ASSUME_NONNULL_END

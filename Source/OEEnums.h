@@ -174,8 +174,9 @@ typedef NS_ENUM(NSUInteger, OEMTLPixelFormat)
     OEMTLPixelFormatCount,
 };
 
-extern NSUInteger OEMTLPixelFormatToBPP(OEMTLPixelFormat format);
-extern NSString *NSStringFromOEMTLPixelFormat(OEMTLPixelFormat format);
+extern NSUInteger   OEMTLPixelFormatToBPP(OEMTLPixelFormat format);
+extern NSString     *NSStringFromOEMTLPixelFormat(OEMTLPixelFormat format);
+extern BOOL         OEMTLPixelFormatIsNative(OEMTLPixelFormat format);
 
 
 typedef NS_OPTIONS(NSUInteger, OEStageUsage)

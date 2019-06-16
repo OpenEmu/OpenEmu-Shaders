@@ -32,7 +32,8 @@ public class MTLPixelConverter: NSObject {
         case missingFunction(String)
     }
     
-    class Filter {
+    @objc(MTLPixelFormatConverter)
+    public class Filter: NSObject {
         let kernel:        MTLComputePipelineState
         let bytesPerPixel: UInt
         
@@ -41,8 +42,9 @@ public class MTLPixelConverter: NSObject {
             self.bytesPerPixel = bytesPerPixel
         }
         
-        func convert(fromBuffer src: MTLBuffer, sourceOrigin:MTLOrigin, sourceBytesPerRow: UInt,
-                     toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
+        @objc
+        public func convert(fromBuffer src: MTLBuffer, sourceOrigin:MTLOrigin, sourceBytesPerRow: UInt,
+                            toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
             let ce = commandBuffer.makeComputeCommandEncoder()!
             ce.label = "filter encoder"
             ce.setComputePipelineState(kernel)
@@ -138,6 +140,11 @@ public class MTLPixelConverter: NSObject {
         }
         filter.convert(fromBuffer: src, sourceOrigin: sourceOrigin, sourceBytesPerRow: sourceBytesPerRow,
                        toTexture: dst, commandBuffer: commandBuffer)
+    }
+    
+    @objc
+    public func bufferConverter(withFormat sourceFormat: OEMTLPixelFormat) -> Filter? {
+        return bufToTex[Int(sourceFormat.rawValue)]
     }
     
     @objc

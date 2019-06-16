@@ -29,9 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface OEPixelBuffer : NSObject
 
-@property (nonatomic, readonly) CGSize sourceSize;
-@property (nonatomic)           CGRect outputRect;
-@property (nonatomic, readonly) void   *contents;
+@property (nonatomic, readonly) OEMTLPixelFormat format;
+@property (nonatomic, readonly) CGSize           sourceSize;
+@property (nonatomic)           CGRect           outputRect;
+@property (nonatomic, readonly) void             *contents;
 
 @end
 

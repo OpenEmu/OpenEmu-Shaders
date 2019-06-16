@@ -145,3 +145,24 @@ NSString *NSStringFromOEMTLPixelFormat(OEMTLPixelFormat format)
     
     return OEMTLPixelStrings[format];
 }
+
+BOOL OEMTLPixelFormatIsNative(OEMTLPixelFormat format)
+{
+    switch (format) {
+        case OEMTLPixelFormatRGBA8Unorm:
+        case OEMTLPixelFormatR5G5B5A1Unorm:
+        case OEMTLPixelFormatB5G6R5Unorm:
+        case OEMTLPixelFormatBGRA4Unorm:
+            return NO;
+            
+        case OEMTLPixelFormatBGRA8Unorm:
+        case OEMTLPixelFormatBGRX8Unorm:
+            return YES;
+            
+        default:
+            break;
+    }
+    
+    NSCAssert1(false, @"unsupported format: %lu", format);
+    return NO;
+}

@@ -413,11 +413,9 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 
 - (OEPixelBuffer *)newBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow
 {
-    if (!_pixelBuffer) {
-        _pixelBuffer = [[OEPixelBuffer alloc] initWithDevice:_device converter:_converter];
-    }
-    
-    [_pixelBuffer allocateBufferWithFormat:format height:height bytesPerRow:bytesPerRow];
+    _pixelBuffer = [OEPixelBuffer bufferWithDevice:_device converter:_converter
+                                            format:format
+                                            height:height bytesPerRow:bytesPerRow];
     _pixelBuffer.outputRect = _sourceRect;
     
     return _pixelBuffer;
@@ -425,11 +423,10 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 
 - (OEPixelBuffer *)newBufferWithFormat:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow bytes:(void *)pointer
 {
-    if (!_pixelBuffer) {
-        _pixelBuffer = [[OEPixelBuffer alloc] initWithDevice:_device converter:_converter];
-    }
-    
-    [_pixelBuffer allocateBufferWithFormat:format height:height bytesPerRow:bytesPerRow bytes:pointer];
+    _pixelBuffer = [OEPixelBuffer bufferWithDevice:_device converter:_converter
+                                            format:format
+                                            height:height bytesPerRow:bytesPerRow
+                                             bytes:pointer];
     _pixelBuffer.outputRect = _sourceRect;
     
     return _pixelBuffer;
