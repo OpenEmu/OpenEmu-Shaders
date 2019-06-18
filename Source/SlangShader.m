@@ -87,6 +87,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
 - (instancetype)initWithURL:(NSURL *)url
                       index:(NSUInteger)index
                  dictionary:(NSDictionary *)d
+                      error:(NSError **)error
 {
     if (self = [super init]) {
         _url    = url;
@@ -94,6 +95,9 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
         NSError *err;
         _source = [[OESourceParser alloc] initFromURL:url error:&err];
         if (err != nil) {
+            if (error != nil) {
+                *error = err;
+            }
             os_log_error(OE_LOG_DEFAULT, "error reading source '%@': %@", url.absoluteString, err.localizedDescription);
             return nil;
         }
@@ -256,8 +260,12 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
             ShaderPass *pass = [[ShaderPass alloc] initWithURL:[NSURL URLWithString:path
                                                                       relativeToURL:base]
                                                          index:i
-                                                    dictionary:spec];
-            if (!pass) {
+                                                    dictionary:spec
+                                                         error:&err];
+            if (err != nil) {
+                if (error != nil) {
+                    *error = err;
+                }
                 return nil;
             }
             
@@ -289,7 +297,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
                 OEShaderParameter *existing = _parametersMap[param.name];
                 if (existing != nil) {
                     if (![param isEqual:existing]) {
-                        // TODO(SGC) conflicting parameters
+                        // TODO: return error
                         assert("conflicting parameters");
                     }
                     // it is a value duplicate, so skip

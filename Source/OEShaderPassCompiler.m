@@ -505,7 +505,11 @@ os_log_error(OE_LOG_DEFAULT, "unexpected resource type in shader %{public}@", @#
     if ([semantic isEqualToString:OEShaderBufferSemanticFrameCount]) {
         return bt == SPVC_BASETYPE_UINT32 && vecsz == 1 && cols == 1;
     }
-    
+
+    if ([semantic isEqualToString:OEShaderBufferSemanticFrameDirection]) {
+        return bt == SPVC_BASETYPE_INT32 && vecsz == 1 && cols == 1;
+    }
+
     if ([semantic isEqualToString:OEShaderBufferSemanticFloatParameter]) {
         return bt == SPVC_BASETYPE_FP32 && vecsz == 1 && cols == 1;
     }

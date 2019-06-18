@@ -132,6 +132,13 @@ FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticFinalViewpo
 FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticFrameCount;
 
 /*!
+ * Identifies the int containing the frame direction; 1 is forward, -1 is backwards.
+ *
+ * @details Shaders refer to the frame direction constant via the @c FrameDirection symbol.
+ */
+FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticFrameDirection;
+
+/*!
  * Identifies a float parameter buffer.
  *
  * @details Shaders refer to float parameters by name.

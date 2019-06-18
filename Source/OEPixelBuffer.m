@@ -27,21 +27,20 @@
 
 typedef NS_OPTIONS(NSUInteger, BufferOption)
 {
-    BufferOptionNone        = (0 << 0),
-    BufferOptionNoCopy      = (1 << 0), // buffer memory
-    
-    BufferOptionCopy        = BufferOptionNone,
+    BufferOptionNone        = 0,
+    BufferOptionCopy        = (1 << 0),
+    BufferOptionNoCopy      = (1 << 1), // buffer memory
 };
 
-BufferOption BufferOptionMustCopy(BufferOption o) {
-    return (o & BufferOptionNoCopy) == BufferOptionNone;
+BOOL BufferOptionMustCopy(BufferOption o) {
+    return (o & BufferOptionCopy) == BufferOptionCopy;
 }
 
 @interface OENativePixelBuffer: OEPixelBuffer
 @end
 
 @interface OEIntermediatePixelBuffer: OEPixelBuffer
-- (instancetype)initWithDevice:(id<MTLDevice>)device converter:(MTLPixelFormatConverter *)converter format:(OEMTLPixelFormat)format
+- (instancetype)initWithDevice:(id<MTLDevice>)device converter:(MTLBufferFormatConverter *)converter format:(OEMTLPixelFormat)format
                         height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow
                          bytes:(void * _Nullable)pointer;
 @end
@@ -51,6 +50,7 @@ BufferOption BufferOptionMustCopy(BufferOption o) {
     id<MTLDevice>       _device;
     OEMTLPixelFormat    _format;
     
+    id<MTLBuffer>       _intermediate;
     NSUInteger          _sourceBytesPerRow;
     id<MTLBuffer>       _sourceBuffer;
     CGSize              _sourceSize;
@@ -84,14 +84,16 @@ BufferOption BufferOptionMustCopy(BufferOption o) {
         if (((uintptr_t)pointer % 4096 == 0) && (length % 4096 == 0)) {
             _sourceBuffer = [_device newBufferWithBytesNoCopy:pointer length:length options:MTLResourceStorageModeShared deallocator:nil];
         } else {
-            _options = BufferOptionCopy;
-            _buffer = pointer;
+            _options        = BufferOptionCopy;
+            _buffer         = pointer;
             _bufferLenBytes = length;
-            _sourceBuffer = [_device newBufferWithLength:length options:MTLResourceStorageModeShared];
+            _sourceBuffer   = [_device newBufferWithLength:length options:MTLResourceStorageModeShared];
         }
     } else {
         _sourceBuffer = [_device newBufferWithLength:length options:MTLResourceStorageModeShared];
     }
+    
+    //_intermediate = [_device newBufferWithLength:length options:MTLResourceStorageModeShared];
     
     _contents = _buffer ?: _sourceBuffer.contents;
     
@@ -119,7 +121,7 @@ BufferOption BufferOptionMustCopy(BufferOption o) {
                                                      bytes:pointer];
     }
     
-    MTLPixelFormatConverter *conv = [converter bufferConverterWithFormat:format];
+    MTLBufferFormatConverter *conv = [converter bufferConverterWithFormat:format];
     
     return [[OEIntermediatePixelBuffer alloc] initWithDevice:device converter:conv format:format
                                                       height:height bytesPerRow:bytesPerRow
@@ -157,7 +159,7 @@ BufferOption BufferOptionMustCopy(BufferOption o) {
     MTLSize                   size = {.width = (NSUInteger)_outputRect.size.width, .height = (NSUInteger)_outputRect.size.height, .depth = 1};
     MTLOrigin                 zero = {0};
     id<MTLBlitCommandEncoder> bce  = [commandBuffer blitCommandEncoder];
-    
+
     NSUInteger offset = (_outputRect.origin.y * _sourceBytesPerRow) + _outputRect.origin.x * 4 /* 4 bpp */;
     NSUInteger len    = _sourceBuffer.length - (_outputRect.origin.y * _sourceBytesPerRow);
     [bce copyFromBuffer:_sourceBuffer sourceOffset:offset sourceBytesPerRow:_sourceBytesPerRow sourceBytesPerImage:len sourceSize:size
@@ -168,10 +170,10 @@ BufferOption BufferOptionMustCopy(BufferOption o) {
 @end
 
 @implementation OEIntermediatePixelBuffer {
-    MTLPixelFormatConverter *_converter;
+    MTLBufferFormatConverter *_converter;
 }
 
-- (instancetype)initWithDevice:(id<MTLDevice>)device converter:(MTLPixelFormatConverter *)converter format:(OEMTLPixelFormat)format
+- (instancetype)initWithDevice:(id<MTLDevice>)device converter:(MTLBufferFormatConverter *)converter format:(OEMTLPixelFormat)format
                         height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow
                          bytes:(void * _Nullable)pointer
 {
@@ -187,12 +189,23 @@ BufferOption BufferOptionMustCopy(BufferOption o) {
 
 - (void)prepareWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer texture:(id<MTLTexture>)texture
 {
-    if (BufferOptionMustCopy(_options)) {
-        memcpy(_sourceBuffer.contents, _buffer, _bufferLenBytes);
+    id<MTLBuffer> source;
+    if (_intermediate != nil) {
+        if (BufferOptionMustCopy(_options)) {
+            memcpy(_intermediate.contents, _buffer, _bufferLenBytes);
+        } else {
+            memcpy(_intermediate.contents, _sourceBuffer.contents, _sourceBuffer.length);
+        }
+        source = _intermediate;
+    } else {
+        if (BufferOptionMustCopy(_options)) {
+            memcpy(_sourceBuffer.contents, _buffer, _bufferLenBytes);
+        }
+        source = _sourceBuffer;
     }
     
     MTLOrigin orig = {.x = _outputRect.origin.x, .y = _outputRect.origin.y};
-    [_converter convertFromBuffer:_sourceBuffer sourceOrigin:orig sourceBytesPerRow:_sourceBytesPerRow
+    [_converter convertFromBuffer:source sourceOrigin:orig sourceBytesPerRow:_sourceBytesPerRow
                         toTexture:texture commandBuffer:commandBuffer];
 }
 

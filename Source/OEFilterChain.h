@@ -38,7 +38,15 @@ typedef MTLRenderPassDescriptor * __nullable (^OEGetDescriptorBlock)(void);
 @property (nonatomic)           id<MTLTexture>      sourceTexture;
 @property (nonatomic)           BOOL                sourceTextureIsFlipped;
 @property (nonatomic, readonly) SlangShader         *shader;
-@property (nonatomic) CGSize                        drawableSize;
+@property (nonatomic)           CGSize              drawableSize;
+
+/*! Indicates the direction frames are progressing
+ *
+ * @remarks
+ * Maps to the @c FrameDirection uniform in shaders.
+ */
+@property (nonatomic)           NSInteger           frameDirection;
+
 
 - (instancetype)initWithDevice:(id<MTLDevice>)device;
 

@@ -85,10 +85,13 @@ typedef struct texture
     struct
     {
         id<MTLBuffer>              buffers[kMaxConstantBuffers];
+        id<MTLBuffer>              vBuffers[kMaxConstantBuffers]; // array used for vertex binding
+        id<MTLBuffer>              fBuffers[kMaxConstantBuffers]; // array used for fragment binding
         texture_t                  renderTarget;
         texture_t                  feedbackTarget;
         uint32_t                   frameCount;
         uint32_t                   frameCountMod;
+        int32_t                    frameDirection;
         ShaderPassBindings         *bindings;
         MTLViewport                viewport;
         id<MTLRenderPipelineState> state;
@@ -159,6 +162,7 @@ typedef struct texture
     [self setRotation:0];
     
     _renderTargetsNeedResize = YES;
+    _frameDirection          = 1;
     
     return self;
 }
@@ -169,9 +173,12 @@ typedef struct texture
         MTLVertexDescriptor *vd = [MTLVertexDescriptor new];
         vd.attributes[0].offset = offsetof(Vertex, position);
         vd.attributes[0].format = MTLVertexFormatFloat4;
+        vd.attributes[0].bufferIndex = BufferIndexPositions;
         vd.attributes[1].offset = offsetof(Vertex, texCoord);
         vd.attributes[1].format = MTLVertexFormatFloat2;
-        vd.layouts[0].stride    = sizeof(Vertex);
+        vd.attributes[1].bufferIndex = BufferIndexPositions;
+        vd.layouts[4].stride         = sizeof(Vertex);
+        vd.layouts[4].stepFunction   = MTLVertexStepFunctionPerVertex;
         
         MTLRenderPipelineDescriptor *psd = [MTLRenderPipelineDescriptor new];
         psd.label = @"Pipeline+No Alpha";
@@ -291,6 +298,17 @@ typedef struct texture
 
 - (void)setSourceTextureIsFlipped:(BOOL)sourceTextureIsFlipped {
     _sourceTextureIsFlipped = sourceTextureIsFlipped;
+}
+
+- (void)setFrameDirection:(NSInteger)frameDirection {
+    frameDirection = MAX(MIN(1, frameDirection), -1);
+    if (frameDirection == _frameDirection) {
+        return;
+    }
+    
+    [self willChangeValueForKey:@"frameDirection"];
+    _frameDirection = frameDirection;
+    [self didChangeValueForKey:@"frameDirection"];
 }
 
 - (void)OE_updateHistory
@@ -618,6 +636,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 - (void)renderOffscreenPassesWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
 {
     [self OE_prepareNextFrameWithCommandBuffer:commandBuffer];
+    [self OE_updateBuffersForPasses];
     
     if (!_shader || _passCount == 0) {
         return;
@@ -646,43 +665,35 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         [self OE_renderPassIndex:i renderCommandEncoder:rce];
         [rce endEncoding];
     }
-    
+}
+
+- (void)OE_updateBuffersForPasses {
+    for (int i = 0; i < _passCount; i++) {
+        _pass[i].frameDirection = (int32_t)_frameDirection;
+        _pass[i].frameCount     = (uint32_t)_frameCount;
+        if (_pass[i].frameCountMod) {
+            _pass[i].frameCount %= _pass[i].frameCountMod;
+        }
+        
+        for (unsigned j = 0; j < kMaxConstantBuffers; j++) {
+            ShaderPassBufferBinding *sem = _pass[i].bindings.buffers[j];
+            
+            if (sem.stageUsage && sem.uniforms.count > 0) {
+                id<MTLBuffer> buffer = _pass[i].buffers[j];
+                void          *data  = buffer.contents;
+                
+                for (ShaderPassUniformBinding *uniform in sem.uniforms) {
+                    memcpy((uint8_t *)data + uniform.offset, uniform.data, uniform.size);
+                }
+                
+                [buffer didModifyRange:NSMakeRange(0, buffer.length)];
+            }
+        }
+    }
 }
 
 - (void)OE_renderPassIndex:(NSUInteger)i renderCommandEncoder:(id<MTLRenderCommandEncoder>)rce
 {
-    _pass[i].frameCount = (uint32_t)_frameCount;
-    if (_pass[i].frameCountMod) {
-        _pass[i].frameCount %= _pass[i].frameCountMod;
-    }
-    
-    id<MTLBuffer> vBuffers[kMaxConstantBuffers] = {NULL};
-    id<MTLBuffer> fBuffers[kMaxConstantBuffers] = {NULL};
-    const NSUInteger bOffsets[kMaxConstantBuffers] = { 0 };
-    
-    for (unsigned j = 0; j < kMaxConstantBuffers; j++) {
-        ShaderPassBufferBinding *buffer_sem = _pass[i].bindings.buffers[j];
-        
-        if (buffer_sem.stageUsage && buffer_sem.uniforms.count > 0) {
-            id<MTLBuffer> buffer = _pass[i].buffers[j];
-            void          *data  = buffer.contents;
-            
-            for (ShaderPassUniformBinding *uniform in buffer_sem.uniforms) {
-                memcpy((uint8_t *)data + uniform.offset, uniform.data, uniform.size);
-            }
-            
-            assert(buffer_sem.binding < kMaxConstantBuffers);
-            
-            if (buffer_sem.stageUsage & OEStageUsageVertex) {
-                vBuffers[buffer_sem.binding] = buffer;
-            }
-            if (buffer_sem.stageUsage & OEStageUsageFragment) {
-                fBuffers[buffer_sem.binding] = buffer;
-            }
-            [buffer didModifyRange:NSMakeRange(0, buffer.length)];
-        }
-    }
-    
     __unsafe_unretained id<MTLTexture> textures[kMaxShaderBindings] = {NULL};
     id<MTLSamplerState>           samplers[kMaxShaderBindings]      = {NULL};
     for (ShaderPassTextureBinding *bind in _pass[i].bindings.textures) {
@@ -694,9 +705,11 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     // enqueue commands
     [rce setRenderPipelineState:_pass[i].state];
     rce.label = _pass[i].state.label;
+
+    const NSUInteger bOffsets[kMaxConstantBuffers] = { 0 };
     
-    [rce setVertexBuffers:vBuffers offsets:bOffsets withRange:NSMakeRange(0, kMaxConstantBuffers)];
-    [rce setFragmentBuffers:fBuffers offsets:bOffsets withRange:NSMakeRange(0, kMaxConstantBuffers)];
+    [rce setVertexBuffers:_pass[i].vBuffers offsets:bOffsets withRange:NSMakeRange(0, kMaxConstantBuffers)];
+    [rce setFragmentBuffers:_pass[i].fBuffers offsets:bOffsets withRange:NSMakeRange(0, kMaxConstantBuffers)];
     [rce setFragmentTextures:textures withRange:NSMakeRange(0, kMaxShaderBindings)];
     [rce setFragmentSamplerStates:samplers withRange:NSMakeRange(0, kMaxShaderBindings)];
     [rce drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
@@ -861,6 +874,11 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     
     NSError     *err;
     SlangShader *ss = [[SlangShader alloc] initFromURL:url error:&err];
+    if (err != nil) {
+        os_log_error(OE_LOG_DEFAULT, "unable to load shader '%{public}s: %{public}@", url.fileSystemRepresentation, err.localizedDescription);
+        return NO;
+    }
+    
     if (ss == nil) {
         return NO;
     }
@@ -903,6 +921,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             [sem addUniformData:&_pass[i].renderTarget.viewSize semantic:OEShaderBufferSemanticOutput];
             [sem addUniformData:&_outputFrame.outputSize semantic:OEShaderBufferSemanticFinalViewportSize];
             [sem addUniformData:&_pass[i].frameCount semantic:OEShaderBufferSemanticFrameCount];
+            [sem addUniformData:&_pass[i].frameDirection semantic:OEShaderBufferSemanticFrameDirection];
             
             NSString *vs_src = nil;
             NSString *fs_src = nil;
@@ -987,13 +1006,23 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 }
                 
                 for (unsigned j = 0; j < kMaxConstantBuffers; j++) {
-                    size_t size = _pass[i].bindings.buffers[j].size;
+                    ShaderPassBufferBinding *sem = _pass[i].bindings.buffers[j];
+                    assert(sem.binding < kMaxConstantBuffers);
+                    
+                    size_t size = sem.size;
                     if (size == 0) {
                         continue;
                     }
                     
                     id<MTLBuffer> buf = [_device newBufferWithLength:size options:MTLResourceStorageModeManaged];
                     _pass[i].buffers[j] = buf;
+                    
+                    if (sem.stageUsage & OEStageUsageVertex) {
+                        _pass[i].vBuffers[sem.binding] = buf;
+                    }
+                    if (sem.stageUsage & OEStageUsageFragment) {
+                        _pass[i].fBuffers[sem.binding] = buf;
+                    }
                 }
             }
             @finally {

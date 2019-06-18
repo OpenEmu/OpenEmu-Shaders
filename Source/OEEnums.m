@@ -21,6 +21,7 @@ OEShaderBufferSemantic const OEShaderBufferSemanticMVP               = @"MVP";
 OEShaderBufferSemantic const OEShaderBufferSemanticOutput            = @"Output";
 OEShaderBufferSemantic const OEShaderBufferSemanticFinalViewportSize = @"FinalViewportSize";
 OEShaderBufferSemantic const OEShaderBufferSemanticFrameCount        = @"FrameCount";
+OEShaderBufferSemantic const OEShaderBufferSemanticFrameDirection    = @"FrameDirection";
 OEShaderBufferSemantic const OEShaderBufferSemanticFloatParameter    = @"FloatParameter";
 
 @implementation OEShaderConstants
@@ -51,6 +52,7 @@ OEShaderBufferSemantic const OEShaderBufferSemanticFloatParameter    = @"FloatPa
                 OEShaderBufferSemanticOutput,
                 OEShaderBufferSemanticFinalViewportSize,
                 OEShaderBufferSemanticFrameCount,
+                OEShaderBufferSemanticFrameDirection,
                 OEShaderBufferSemanticFloatParameter,
         ];
     });
