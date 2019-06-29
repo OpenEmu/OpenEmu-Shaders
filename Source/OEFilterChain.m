@@ -1007,7 +1007,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 
                 for (unsigned j = 0; j < kMaxConstantBuffers; j++) {
                     ShaderPassBufferBinding *sem = _pass[i].bindings.buffers[j];
-                    assert(sem.binding < kMaxConstantBuffers);
+                    assert(sem.bindingVert < kMaxConstantBuffers);
                     
                     size_t size = sem.size;
                     if (size == 0) {
@@ -1018,10 +1018,10 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                     _pass[i].buffers[j] = buf;
                     
                     if (sem.stageUsage & OEStageUsageVertex) {
-                        _pass[i].vBuffers[sem.binding] = buf;
+                        _pass[i].vBuffers[sem.bindingVert] = buf;
                     }
                     if (sem.stageUsage & OEStageUsageFragment) {
-                        _pass[i].fBuffers[sem.binding] = buf;
+                        _pass[i].fBuffers[sem.bindingFrag] = buf;
                     }
                 }
             }

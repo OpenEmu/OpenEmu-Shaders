@@ -59,7 +59,10 @@
 @property (nonatomic) NSUInteger                                                                                     passNumber;
 @property (nonatomic) size_t                                                                                         uboSize;
 @property (nonatomic) size_t                                                                                         pushSize;
-@property (nonatomic) NSUInteger                                                                                     uboBinding;
+@property (nonatomic) NSUInteger                                                                                     uboBindingVert;
+@property (nonatomic) NSUInteger                                                                                     uboBindingFrag;
+@property (nonatomic) NSUInteger                                                                                     pushBindingVert;
+@property (nonatomic) NSUInteger                                                                                     pushBindingFrag;
 @property (nonatomic) OEStageUsage                                                                                   uboStageUsage;
 @property (nonatomic) OEStageUsage                                                                                   pushStageUsage;
 @property (nonatomic, readonly) NSDictionary<OEShaderTextureSemantic, NSMutableArray<ShaderTextureSemanticMeta *> *> *textures;

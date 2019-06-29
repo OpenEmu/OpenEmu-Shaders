@@ -83,18 +83,6 @@ void error_callback(void *userdata, const char *error)
         spvc_resources vs_resources = nil;
         spvc_compiler_create_shader_resources(vs_compiler, &vs_resources);
         
-        spvc_reflected_resource const *resource = nil;
-        size_t                        resource_size;
-        
-        spvc_resources_get_resource_list_for_type(vs_resources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, &resource, &resource_size);
-        if (resource_size > 0) {
-            spvc_compiler_set_decoration(vs_compiler, resource[0].id, SpvDecorationBinding, 0);
-        }
-        spvc_resources_get_resource_list_for_type(vs_resources, SPVC_RESOURCE_TYPE_PUSH_CONSTANT, &resource, &resource_size);
-        if (resource_size > 0) {
-            spvc_compiler_set_decoration(vs_compiler, resource[0].id, SpvDecorationBinding, 1);
-        }
-        
         // vertex compile
         spvc_compiler_options vs_options;
         spvc_compiler_create_compiler_options(vs_compiler, &vs_options);
@@ -128,15 +116,6 @@ void error_callback(void *userdata, const char *error)
         
         spvc_resources fs_resources = nil;
         spvc_compiler_create_shader_resources(fs_compiler, &fs_resources);
-        
-        spvc_resources_get_resource_list_for_type(fs_resources, SPVC_RESOURCE_TYPE_UNIFORM_BUFFER, &resource, &resource_size);
-        if (resource_size > 0) {
-            spvc_compiler_set_decoration(fs_compiler, resource[0].id, SpvDecorationBinding, 0);
-        }
-        spvc_resources_get_resource_list_for_type(fs_resources, SPVC_RESOURCE_TYPE_PUSH_CONSTANT, &resource, &resource_size);
-        if (resource_size > 0) {
-            spvc_compiler_set_decoration(fs_compiler, resource[0].id, SpvDecorationBinding, 1);
-        }
         
         // fragment compile
         spvc_compiler_options fs_options;
@@ -219,15 +198,17 @@ void error_callback(void *userdata, const char *error)
     
     // UBO
     ShaderPassBufferBinding *uboB = passBindings.buffers[0];
-    uboB.stageUsage = ref.uboStageUsage;
-    uboB.binding    = ref.uboBinding;
-    uboB.size       = (ref.uboSize + 0xf) & ~0xf; // round up to nearest 16 bytes
+    uboB.stageUsage  = ref.uboStageUsage;
+    uboB.bindingVert = ref.uboBindingVert;
+    uboB.bindingFrag = ref.uboBindingFrag;
+    uboB.size        = (ref.uboSize + 0xf) & ~0xf; // round up to nearest 16 bytes
     
     // push constants
     ShaderPassBufferBinding *pshB = passBindings.buffers[1];
-    pshB.stageUsage = ref.pushStageUsage;
-    pshB.binding    = ref.uboBinding ? 0 : 1; // if there is a UBO, this should be binding 0
-    pshB.size       = (ref.pushSize + 0xf) & ~0xf; // round up to nearest 16 bytes
+    pshB.stageUsage  = ref.pushStageUsage;
+    pshB.bindingVert = ref.pushBindingVert;
+    pshB.bindingFrag = ref.pushBindingFrag;
+    pshB.size        = (ref.pushSize + 0xf) & ~0xf; // round up to nearest 16 bytes
     
     for (OEShaderBufferSemantic sem in ref.semantics) {
         ShaderSemanticMeta *meta = ref.semantics[sem];
@@ -389,48 +370,44 @@ os_log_error(OE_LOG_DEFAULT, "unexpected resource type in shader %{public}@", @#
         os_log_error(OE_LOG_DEFAULT, "fragment shader resources must use descriptor set #0");
         return NO;
     }
+
+    unsigned vertexUBOBinding   = vertexUBO   ? spvc_compiler_msl_get_automatic_resource_binding(vsCompiler, vertexUBO->id)   : -1u;
+    unsigned fragmentUBOBinding = fragmentUBO ? spvc_compiler_msl_get_automatic_resource_binding(fsCompiler, fragmentUBO->id) : -1u;
+    bool hasVertUBO  = vertexUBO   && (vertexUBOBinding   != -1u);
+    bool hasFragUBO  = fragmentUBO && (fragmentUBOBinding != -1u);
+    ref.uboBindingVert = hasVertUBO ? vertexUBOBinding   : 0;
+    ref.uboBindingFrag = hasFragUBO ? fragmentUBOBinding : 0;
+
+    unsigned vertexPushBinding   = vertexPush   ? spvc_compiler_msl_get_automatic_resource_binding(vsCompiler, vertexPush->id)   : -1u;
+    unsigned fragmentPushBinding = fragmentPush ? spvc_compiler_msl_get_automatic_resource_binding(fsCompiler, fragmentPush->id) : -1u;
+    bool hasVertPush = vertexPush   && (vertexPushBinding   != -1u);
+    bool hasFragPush = fragmentPush && (fragmentPushBinding != -1u);
+    ref.pushBindingVert = hasVertPush ? vertexPushBinding   : 0;
+    ref.pushBindingFrag = hasFragPush ? fragmentPushBinding : 0;
+
     
-    unsigned vertexUBOBinding   = vertexUBO ? spvc_compiler_get_decoration(vsCompiler, vertexUBO->id, SpvDecorationBinding) : -1u;
-    unsigned fragmentUBOBinding = fragmentUBO ? spvc_compiler_get_decoration(fsCompiler, fragmentUBO->id, SpvDecorationBinding) : -1u;
-    if (vertexUBOBinding != -1u &&
-            fragmentUBOBinding != -1u &&
-            vertexUBOBinding != fragmentUBOBinding) {
-        os_log_error(OE_LOG_DEFAULT, "vertex and fragment shader uniform buffers must have same binding");
-        return NO;
-    }
-    
-    unsigned uboBinding = vertexUBOBinding != -1u ? vertexUBOBinding : fragmentUBOBinding;
-    
-    bool hasUBO = vertexUBO || fragmentUBO;
-    if (hasUBO && uboBinding >= kMaxShaderBindings) {
-        os_log_error(OE_LOG_DEFAULT, "%u bindings exceeds max of %d", uboBinding, kMaxShaderBindings);
-        return NO;
-    }
-    
-    ref.uboBinding = hasUBO ? uboBinding : 0;
-    
-    if (vertexUBO) {
+    if (hasVertUBO) {
         ref.uboStageUsage = OEStageUsageVertex;
         size_t sz = 0;
         spvc_compiler_get_declared_struct_size(vsCompiler, spvc_compiler_get_type_handle(vsCompiler, vertexUBO->base_type_id), &sz);
         ref.uboSize = sz;
     }
     
-    if (vertexPush) {
+    if (hasVertPush) {
         ref.pushStageUsage = OEStageUsageVertex;
         size_t sz = 0;
         spvc_compiler_get_declared_struct_size(vsCompiler, spvc_compiler_get_type_handle(vsCompiler, vertexPush->base_type_id), &sz);
         ref.pushSize = sz;
     }
     
-    if (fragmentUBO) {
+    if (hasFragUBO) {
         ref.uboStageUsage |= OEStageUsageFragment;
         size_t sz = 0;
         spvc_compiler_get_declared_struct_size(fsCompiler, spvc_compiler_get_type_handle(fsCompiler, fragmentUBO->base_type_id), &sz);
         ref.uboSize = MAX(ref.uboSize, sz);
     }
     
-    if (fragmentPush) {
+    if (hasFragPush) {
         ref.pushStageUsage |= OEStageUsageFragment;
         size_t sz = 0;
         spvc_compiler_get_declared_struct_size(fsCompiler, spvc_compiler_get_type_handle(fsCompiler, fragmentPush->base_type_id), &sz);
@@ -438,16 +415,17 @@ os_log_error(OE_LOG_DEFAULT, "unexpected resource type in shader %{public}@", @#
     }
     
     /* Find all relevant uniforms and push constants. */
-    if (vertexUBO && ![self addActiveBufferRanges:ref compiler:vsCompiler resource:vertexUBO ubo:YES])
+    if (hasVertUBO && ![self addActiveBufferRanges:ref compiler:vsCompiler resource:vertexUBO ubo:YES])
         return NO;
-    if (fragmentUBO && ![self addActiveBufferRanges:ref compiler:fsCompiler resource:fragmentUBO ubo:YES])
+    if (hasFragUBO && ![self addActiveBufferRanges:ref compiler:fsCompiler resource:fragmentUBO ubo:YES])
         return NO;
-    if (vertexPush && ![self addActiveBufferRanges:ref compiler:vsCompiler resource:vertexPush ubo:NO])
+    if (hasVertPush && ![self addActiveBufferRanges:ref compiler:vsCompiler resource:vertexPush ubo:NO])
         return NO;
-    if (fragmentPush && ![self addActiveBufferRanges:ref compiler:fsCompiler resource:fragmentPush ubo:NO])
+    if (hasFragPush && ![self addActiveBufferRanges:ref compiler:fsCompiler resource:fragmentPush ubo:NO])
         return NO;
     
-    NSUInteger bindings = hasUBO ? (1u << uboBinding) : 0;
+    //NSUInteger bindings = hasUBO ? (1u << uboBinding) : 0;
+    NSUInteger bindings = 0;
     spvc_resources_get_resource_list_for_type(fsResources, SPVC_RESOURCE_TYPE_SAMPLED_IMAGE, &list, &list_size);
     for (NSUInteger i = 0; i < list_size; i++) {
         spvc_reflected_resource const *tex = &list[i];
@@ -457,7 +435,12 @@ os_log_error(OE_LOG_DEFAULT, "unexpected resource type in shader %{public}@", @#
             return NO;
         }
         
-        NSUInteger binding = spvc_compiler_get_decoration(fsCompiler, tex->id, SpvDecorationBinding);
+        NSUInteger binding = spvc_compiler_msl_get_automatic_resource_binding(fsCompiler, tex->id);
+        if (binding == -1u) {
+            // no binding
+            continue;
+        }
+        
         if (binding >= kMaxShaderBindings) {
             os_log_error(OE_LOG_DEFAULT, "fragment shader texture binding exceeds %d", kMaxShaderBindings);
             return NO;

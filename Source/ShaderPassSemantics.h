@@ -36,7 +36,8 @@
 
 @interface ShaderPassBufferBinding : NSObject
 @property (nonatomic) OEStageUsage                                  stageUsage;
-@property (nonatomic) NSUInteger                                    binding;
+@property (nonatomic) NSUInteger                                    bindingVert;
+@property (nonatomic) NSUInteger                                    bindingFrag;
 @property (nonatomic) size_t                                        size;
 @property (nonatomic, readonly) NSArray<ShaderPassUniformBinding *> *uniforms;
 
