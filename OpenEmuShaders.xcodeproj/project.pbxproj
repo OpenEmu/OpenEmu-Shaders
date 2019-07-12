@@ -835,7 +835,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1020;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = OpenEmu;
 				TargetAttributes = {
 					05EEE337227CC35C007D011B = {
@@ -854,6 +854,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 05EEE32E227CC35C007D011B;
 			productRefGroup = 05EEE339227CC35D007D011B /* Products */;
@@ -1094,6 +1095,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SOURCE_ROOT)/3rdparty/glslang\"",
 					"\"$(SOURCE_ROOT)/3rdparty/SPIRV-Cross\"",
