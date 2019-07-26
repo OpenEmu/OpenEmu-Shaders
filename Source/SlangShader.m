@@ -292,8 +292,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
         // collect parameters
         i = 0;
         for (ShaderPass *pass in _passes) {
-            NSDictionary < NSString *, OEShaderParameter * > *params = pass.source.parameters;
-            for (OEShaderParameter                           *param in params.objectEnumerator) {
+            for (OEShaderParameter *param in pass.source.parameters) {
                 OEShaderParameter *existing = _parametersMap[param.name];
                 if (existing != nil) {
                     if (![param isEqual:existing]) {

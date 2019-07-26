@@ -66,10 +66,11 @@ enum SourceParserError: LocalizedError {
 class SourceParser: NSObject {
     
     private var buffer: [String]
+    var parametersMap: [String: ShaderParameter]
     
     @objc private(set) var name: String?
     
-    @objc var parameters: [String: ShaderParameter]
+    @objc var parameters: [ShaderParameter]
     
     @objc var format: MTLPixelFormat
     
@@ -90,7 +91,8 @@ class SourceParser: NSObject {
     @objc
     init(fromURL url: URL) throws {
         buffer = []
-        parameters = [:]
+        parametersMap = [:]
+        parameters = []
         format = .invalid
         super.init()
         
@@ -236,11 +238,12 @@ class SourceParser: NSObject {
                 param.maximum = maximum;
                 param.step = step;
                 
-                if let existing = parameters[name], param != existing {
+                if let existing = parametersMap[name], param != existing {
                     throw SourceParserError.duplicateParameterPragma
                 }
                 
-                parameters[name] = param
+                parametersMap[name] = param
+                parameters.append(param)
             } else {
                 throw SourceParserError.invalidParameterPragma
             }
