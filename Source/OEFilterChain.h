@@ -76,7 +76,7 @@ typedef MTLRenderPassDescriptor * __nullable (^OEGetDescriptorBlock)(void);
  * @param linear YES to use linear filtering
  */
 - (void)setDefaultFilteringLinear:(BOOL)linear;
-- (BOOL)setShaderFromURL:(NSURL *)url;
+- (BOOL)setShaderFromURL:(NSURL *)url error:(NSError **)error;
 
 @end
 

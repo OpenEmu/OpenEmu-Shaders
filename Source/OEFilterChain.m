@@ -868,7 +868,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     _lutCount      = 0;
 }
 
-- (BOOL)setShaderFromURL:(NSURL *)url
+- (BOOL)setShaderFromURL:(NSURL *)url error:(NSError **)error
 {
     [self OE_freeShaderResources];
     
@@ -876,6 +876,9 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     SlangShader *ss = [[SlangShader alloc] initFromURL:url error:&err];
     if (err != nil) {
         os_log_error(OE_LOG_DEFAULT, "unable to load shader '%{public}s: %{public}@", url.fileSystemRepresentation, err.localizedDescription);
+        if (error) {
+            *error = err;
+        }
         return NO;
     }
     
@@ -1087,7 +1090,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         NSError        *err;
         id<MTLTexture> t = [_loader newTextureWithContentsOfURL:lut.url options:opts error:&err];
         if (err != nil) {
-            // TODO: load a default texture so it is visually obvious
+            // load a default texture so the failure is visibly obvious
             os_log_error(OE_LOG_DEFAULT, "unable to load LUT texture, using default. path '%{public}@: %{public}@", lut.url, err.localizedDescription);
             
             if (_checkers == nil) {
