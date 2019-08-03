@@ -219,6 +219,22 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
     return self;
 }
 
+@end
+
+@implementation ParameterGroup
+{
+    
+}
+
+- (instancetype)initWithName:(NSString *)name desc:(NSString *)desc
+{
+    if (self = [super init])
+    {
+        _name = name;
+        _desc = desc;
+    }
+    return self;
+}
 
 @end
 
@@ -229,6 +245,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
     NSMutableArray<ShaderLUT *>                          *_luts;
     NSMutableArray<OEShaderParameter *>                  *_parameters;
     NSMutableDictionary<NSString *, OEShaderParameter *> *_parametersMap;
+    NSMutableArray<ParameterGroup *>                     *_parameterGroups;
     OEShaderPassCompiler                                 *_compiler;
     NSUInteger                                           _historyCount;
 }
@@ -236,11 +253,10 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
 - (instancetype)initFromURL:(NSURL *)url error:(NSError **)error
 {
     if (self = [super init]) {
-        _url           = url;
-        _parameters    = [NSMutableArray new];
-        _parametersMap = [NSMutableDictionary new];
-        
-        NSURL *base                     = [url URLByDeletingLastPathComponent];
+        _url             = url;
+        _parameters      = [NSMutableArray new];
+        _parametersMap   = [NSMutableDictionary new];
+        _parameterGroups = [NSMutableArray new];
         
         NSError                      *err;
         NSDictionary<NSString *, id> *d = [ShaderConfigSerialization configFromURL:url error:&err];
@@ -251,6 +267,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
             return nil;
         }
         
+        NSURL *base     = [url URLByDeletingLastPathComponent];
         NSArray *passes = d[@"passes"];
         _passes = [NSMutableArray arrayWithCapacity:passes.count];
         
@@ -308,7 +325,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
             i++;
         }
         
-        // resolve overrides from .plist
+        // resolve overrides from config
         NSDictionary < NSString *, NSNumber * > *params = d[@"parameters"];
         if (params != nil) {
             for (NSString *name in params) {
@@ -318,6 +335,80 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
                     existing.value   = [params[name] floatValue];
                 }
             }
+        }
+        
+        // resolve override groups from config
+        NSDictionary<NSString *, NSDictionary<NSString *, id> *> *groups = d[@"parameterGroups"];
+
+        // create empty group
+        ParameterGroup *global = [[ParameterGroup alloc] initWithName:@"default" desc:@""];
+        id obj;
+        BOOL hasDefault = NO;
+        if ((obj = groups[@"hasDefault"]) != nil) {
+            hasDefault = [obj boolValue];
+        }
+        
+        if (!hasDefault)
+        {
+            // default group comes first if not overridden
+            [_parameterGroups addObject:global];
+        }
+        
+        for (NSString *name in groups[@"names"]) {
+            NSDictionary<NSString *, id> *group = groups[name];
+            
+            if (hasDefault && [name isEqualToString:@"default"])
+            {
+                [_parameterGroups addObject:global];
+                if (![group[@"desc"] isEqualToString:@"default"])
+                {
+                    // user specifed a custom description default_group_desc = "..."
+                    global.desc = group[@"desc"];
+                }
+                
+                continue;
+            }
+
+            
+            ParameterGroup *pg = [[ParameterGroup alloc] initWithName:name desc:group[@"desc"]];
+            NSMutableArray<OEShaderParameter *> *params = [NSMutableArray new];
+            
+            for (NSString *param in group[@"parameters"]) {
+                OEShaderParameter *p = _parametersMap[param];
+                if (p) {
+                    p.group = pg.desc;
+                    [params addObject:p];
+                }
+            }
+            if (params.count > 0)
+            {
+                pg.parameters = params;
+                [_parameterGroups addObject:pg];
+            }
+        }
+        
+        if (_parameterGroups.count > 1)
+        {
+            // collect remaining parameters into the global group
+            NSMutableArray<OEShaderParameter *> *gparams = [NSMutableArray new];
+            for (OEShaderParameter *param in _parameters) {
+                if ([param.group isEqualToString:@""])
+                {
+                    param.group = global.desc; // it may have been given a new description
+                    [gparams addObject:param];
+                }
+            }
+            global.parameters = gparams;
+            
+            // sort the primary list of parameters into groups
+            _parameters = [NSMutableArray new];
+            for (ParameterGroup *g in _parameterGroups) {
+                [_parameters addObjectsFromArray:g.parameters];
+            }
+        }
+        else
+        {
+            global.parameters = _parameters;
         }
         
         _compiler = [[OEShaderPassCompiler alloc] initWithShaderModel:self];

@@ -88,8 +88,10 @@ class SourceParserTests: XCTestCase {
 
                   #pragma stage vertex
                   // vertex
+
                   #pragma stage fragment
                   // fragment
+
                   """
 
         InMemProtocol.requests["mem://foo.slang"] = src
@@ -99,7 +101,7 @@ class SourceParserTests: XCTestCase {
             let p   = try SourceParser(fromURL: url)
             XCTAssertEqual(p.name, "this_is_the_name")
             XCTAssertEqual(p.format, MTLPixelFormat.r8Unorm)
-            let pp = p.parameters["FrameColor_R"]
+            let pp = p.parametersMap["FrameColor_R"]
             XCTAssertNotNil(pp)
 
             let p1 = pp!

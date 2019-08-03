@@ -24,6 +24,8 @@
 
 import Foundation
 
+@testable import OpenEmuShaders
+
 class TestSetup: NSObject {
     override init() {
         URLProtocol.registerClass(InMemProtocol.self)
@@ -67,3 +69,24 @@ class InMemProtocol: URLProtocol {
     }
 }
 
+struct Param {
+    var name: String
+    var desc: String = ""
+    var group: String = ""
+    var value: Float = 0.5
+    var initial: Float = 0.5
+    var minimum: Float = 0.0
+    var maximum: Float = 1.0
+    var step:    Float = 0.01
+}
+
+extension ShaderParameter {
+    static func list(_ items: Param...) -> [ShaderParameter] {
+        return items.map { d in
+            let p = ShaderParameter(name: d.name, desc: d.desc)
+            p.group   = d.group
+            p.initial = d.initial
+            return p
+        }
+    }
+}

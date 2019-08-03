@@ -24,11 +24,13 @@
 
 #import "ShaderPassSemantics.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class OEShaderParameter;
 
 @interface ShaderPass : NSObject
 
-@property (nonatomic, readwrite) NSURL              *url;
+@property (nonatomic, readwrite) NSURL     *url;
 @property (nonatomic, readwrite) NSUInteger         frameCountMod;
 @property (nonatomic, readwrite) OEShaderPassScale  scaleX;
 @property (nonatomic, readwrite) OEShaderPassScale  scaleY;
@@ -56,21 +58,32 @@
 
 @end
 
+@interface ParameterGroup : NSObject
+
+@property (nonatomic, readwrite) NSString                     *name;
+@property (nonatomic, readwrite) NSString                     *desc;
+@property (nonatomic, readwrite) NSArray<OEShaderParameter *> *parameters;
+
+@end
+
 @interface SlangShader : NSObject
 
-- (instancetype)initFromURL:(NSURL *)url error:(NSError **)error;
+- (nullable instancetype)initFromURL:(NSURL *)url error:(NSError **)error;
 
-@property (nonatomic, readonly) NSArray<ShaderPass *>        *passes;
-@property (nonatomic, readonly) NSArray<OEShaderParameter *> *parameters;
-@property (nonatomic, readonly) NSArray<ShaderLUT *>         *luts;
+@property (nonatomic, readonly, nonnull) NSArray<ShaderPass *>        *passes;
+@property (nonatomic, readonly, nonnull) NSArray<OEShaderParameter *> *parameters;
+@property (nonatomic, readonly, nonnull) NSArray<ParameterGroup *>    *parameterGroups;
+@property (nonatomic, readonly, nonnull) NSArray<ShaderLUT *>         *luts;
 @property (nonatomic, readonly) NSUInteger                   historyCount;
 
 - (BOOL)buildPass:(NSUInteger)passNumber
      metalVersion:(NSUInteger)version
     passSemantics:(ShaderPassSemantics *)passSemantics
      passBindings:(ShaderPassBindings *)passBindings
-           vertex:(NSString **)vsrc
-         fragment:(NSString **)fsrc;
+           vertex:(NSString * _Nonnull * _Nonnull)vsrc
+         fragment:(NSString * _Nonnull * _Nonnull)fsrc;
 
 
 @end
+
+NS_ASSUME_NONNULL_END

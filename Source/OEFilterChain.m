@@ -959,7 +959,15 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 vd.layouts[4].stepFunction   = MTLVertexStepFunctionPerVertex;
                 
                 MTLRenderPipelineDescriptor *psd = [MTLRenderPipelineDescriptor new];
-                psd.label = [NSString stringWithFormat:@"pass %d", i];
+                if (pass.alias.length > 0)
+                {
+                    psd.label = [NSString stringWithFormat:@"pass %d (%@)", i, pass.alias];
+                }
+                else
+                {
+                    psd.label = [NSString stringWithFormat:@"pass %d", i];
+                }
+                
                 
                 MTLRenderPipelineColorAttachmentDescriptor *ca = psd.colorAttachments[0];
                 

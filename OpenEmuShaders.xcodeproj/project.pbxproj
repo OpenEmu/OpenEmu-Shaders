@@ -118,6 +118,7 @@
 		052A2B8F22A475D300483370 /* OEPixelBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 052A2B8D22A475D300483370 /* OEPixelBuffer.m */; };
 		052BE009228D184600942C12 /* SourceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE008228D184600942C12 /* SourceParserTests.swift */; };
 		052BE020228D187E00942C12 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE01F228D187E00942C12 /* TestHelpers.swift */; };
+		05410EDE22F5FF7400303424 /* SlangShaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05410EDD22F5FF7400303424 /* SlangShaderTests.swift */; };
 		056AC35B228BA11E005018DA /* OEEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 056AC35A228BA11E005018DA /* OEEnums.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		056AC372228BA144005018DA /* OEEnums.m in Sources */ = {isa = PBXBuildFile; fileRef = 056AC371228BA144005018DA /* OEEnums.m */; };
 		056AC379228BA8D9005018DA /* ShaderParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC378228BA8D9005018DA /* ShaderParameter.swift */; };
@@ -129,7 +130,6 @@
 		05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE33B227CC35D007D011B /* OpenEmuShaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05EEE3A1227D5DF4007D011B /* SlangShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE39F227D5DF4007D011B /* SlangShader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05EEE3AA227D625F007D011B /* SlangShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 05EEE3A0227D5DF4007D011B /* SlangShader.m */; };
-		05EEE3AC227D6904007D011B /* SlangShaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 05EEE3AB227D6904007D011B /* SlangShaderTests.m */; };
 		05F54957229BBA8800561C14 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 05F5494F229BBA8800561C14 /* Shaders.metal */; };
 		05F54958229BBA8800561C14 /* RendererCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 05F54950229BBA8800561C14 /* RendererCommon.m */; };
 		05F54959229BBA8800561C14 /* ShaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 05F54951229BBA8800561C14 /* ShaderTypes.h */; };
@@ -275,6 +275,7 @@
 		052A2B9022A476FE00483370 /* OEPixelBuffer+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OEPixelBuffer+Internal.h"; sourceTree = "<group>"; };
 		052BE008228D184600942C12 /* SourceParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceParserTests.swift; sourceTree = "<group>"; };
 		052BE01F228D187E00942C12 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
+		05410EDD22F5FF7400303424 /* SlangShaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlangShaderTests.swift; sourceTree = "<group>"; };
 		056AC35A228BA11E005018DA /* OEEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OEEnums.h; sourceTree = "<group>"; };
 		056AC371228BA144005018DA /* OEEnums.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OEEnums.m; sourceTree = "<group>"; };
 		056AC378228BA8D9005018DA /* ShaderParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderParameter.swift; sourceTree = "<group>"; };
@@ -291,7 +292,6 @@
 		05EEE348227CC35D007D011B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05EEE39F227D5DF4007D011B /* SlangShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlangShader.h; sourceTree = "<group>"; };
 		05EEE3A0227D5DF4007D011B /* SlangShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlangShader.m; sourceTree = "<group>"; };
-		05EEE3AB227D6904007D011B /* SlangShaderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlangShaderTests.m; sourceTree = "<group>"; };
 		05EEE3B7227E9766007D011B /* libglslang.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libglslang.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EEE3B9227E9766007D011B /* libOGLCompiler.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOGLCompiler.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EEE3BB227E9766007D011B /* libOSDependent.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOSDependent.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -617,13 +617,13 @@
 		05EEE345227CC35D007D011B /* OpenEmuShadersTests */ = {
 			isa = PBXGroup;
 			children = (
-				05EEE3AB227D6904007D011B /* SlangShaderTests.m */,
 				05EEE348227CC35D007D011B /* Info.plist */,
 				052BE008228D184600942C12 /* SourceParserTests.swift */,
 				052BE01F228D187E00942C12 /* TestHelpers.swift */,
 				05F5BB1022875C0B004D713C /* OpenEmuShadersTests-Bridging-Header.h */,
 				A902023035423BDAFACA21E6 /* NSScannerTests.swift */,
 				A9020E619BC7ACEF5904D318 /* ConfigTests.swift */,
+				05410EDD22F5FF7400303424 /* SlangShaderTests.swift */,
 			);
 			path = OpenEmuShadersTests;
 			sourceTree = "<group>";
@@ -958,7 +958,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05EEE3AC227D6904007D011B /* SlangShaderTests.m in Sources */,
+				05410EDE22F5FF7400303424 /* SlangShaderTests.swift in Sources */,
 				052BE020228D187E00942C12 /* TestHelpers.swift in Sources */,
 				052BE009228D184600942C12 /* SourceParserTests.swift in Sources */,
 				A90203772A0E044990C034EA /* NSScannerTests.swift in Sources */,

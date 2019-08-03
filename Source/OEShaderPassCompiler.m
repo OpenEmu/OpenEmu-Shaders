@@ -51,7 +51,7 @@ void error_callback(void *userdata, const char *error)
     [NSFileManager.defaultManager createDirectoryAtURL:cacheDir withIntermediateDirectories:YES attributes:nil error:nil];
     
     NSString *ext   = type == ShaderTypeVertex ? @"vert_ir" : @"frag_ir";
-    NSString *file  = [NSString stringWithFormat:@"%@.%@.%@", pass.source.name, pass.source.sha1, ext];
+    NSString *file  = [NSString stringWithFormat:@"%@.%@.%@", pass.source.basename, pass.source.sha1, ext];
     NSURL *filename = [cacheDir URLByAppendingPathComponent:file];
     NSData *data    = [NSData dataWithContentsOfURL:filename];
     

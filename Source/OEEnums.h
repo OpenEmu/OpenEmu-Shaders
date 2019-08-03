@@ -152,7 +152,7 @@ FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticFloatParame
 
 #define kMaxShaderPasses    26
 #define kMaxTextures        8
-#define kMaxParameters      128
+#define kMaxParameters      256
 #define kMaxFrameHistory    128
 #define kMaxConstantBuffers 2
 #define kMaxShaderBindings  16

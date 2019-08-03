@@ -69,7 +69,9 @@ class SourceParser: NSObject {
     private var buffer: [String]
     var parametersMap: [String: ShaderParameter]
     
-    @objc private(set) var name: String
+    @objc private(set) var name: String?
+    
+    @objc let basename: String
     
     @objc var parameters: [ShaderParameter]
     
@@ -105,7 +107,7 @@ class SourceParser: NSObject {
         parametersMap = [:]
         parameters = []
         format = .invalid
-        name = (url.lastPathComponent as NSString).deletingPathExtension
+        basename = (url.lastPathComponent as NSString).deletingPathExtension
         super.init()
         
         try autoreleasepool {
@@ -137,14 +139,15 @@ class SourceParser: NSObject {
     }
     
     struct Prefixes {
-        static let version      = "#version "
-        static let include      = "#include "
-        static let endif        = "#endif"
-        static let pragma       = "#pragma "
-        static let pragmaName   = "#pragma name "
-        static let pragmaParam  = "#pragma parameter "
-        static let pragmaFormat = "#pragma format "
-        static let pragmaStage  = "#pragma stage "
+        static let version          = "#version "
+        static let include          = "#include "
+        static let endif            = "#endif"
+        static let pragma           = "#pragma "
+        static let pragmaName       = "#pragma name "
+        static let pragmaParam      = "#pragma parameter "
+        static let pragmaParamGroup = "#pragma parameter_group "
+        static let pragmaFormat     = "#pragma format "
+        static let pragmaStage      = "#pragma stage "
     }
     
     
@@ -179,7 +182,7 @@ class SourceParser: NSObject {
                     throw SourceParserError.includeNotFound
                 }
                 let file = URL(string: filepath, relativeTo: url.deletingLastPathComponent())!
-                if !FileManager.default.fileExists(atPath: file.path) {
+                if file.isFileURL && !FileManager.default.fileExists(atPath: file.path) {
                     throw SourceParserError.includeFileNotFound(file.path)
                 }
                 try self.load(file, isRoot: false)

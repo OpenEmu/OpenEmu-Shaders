@@ -107,6 +107,38 @@ class ConfigScannerTests: XCTestCase {
 }
 
 class ShaderConfigSerializationTests: XCTestCase {
+    func testParameterGroups() {
+        let script =
+        """
+        shaders = 0
+        parameter_groups = "foo;bar"
+        foo_group_desc = "Foo Desc"
+        foo_group_parameters = "a;b;c"
+
+        bar_group_parameters = "d;e"
+        """
+        do {
+            let res = try ShaderConfigSerialization.parseConfig(script)
+            guard let groups = res["parameterGroups"] as? [String:AnyObject] else {
+                return XCTFail("expected parameterGroups")
+            }
+            
+            let checkGroup = { (name: String, desc: String, params: [String]) -> Void in
+                guard let group = groups[name] as? [String:AnyObject] else {
+                    return XCTFail("missing foo group")
+                }
+                
+                XCTAssertEqual(group["desc"] as? String, desc)
+                XCTAssertEqual(group["parameters"] as? [String], params)
+            }
+            
+            checkGroup("foo", "Foo Desc", ["a", "b", "c"])
+            checkGroup("bar", "bar", ["d", "e"])
+        } catch {
+            XCTFail("unexpected error: \(error.localizedDescription)")
+        }
+    }
+    
     func testSlangFromString() {
         do {
             let res = try ShaderConfigSerialization.parseConfig(ShaderConfigSerializationTests.phosphorlut)

@@ -95,6 +95,10 @@ public class ShaderConfigSerialization: NSObject {
             res["parameters"] = parameters as AnyObject
         }
         
+        if let groups = ParameterGroups.parse(d: d) {
+            res["parameterGroups"] = groups as AnyObject
+        }
+        
         return res
     }
     
@@ -158,6 +162,63 @@ public class ShaderConfigSerialization: NSObject {
                     res[name] = dv as AnyObject
                 }
             }
+            
+            return res
+        }
+    }
+    
+    struct ParameterGroups {
+        static func parse(d: [String: String]) -> [String: AnyObject]? {
+            var hasDefault = false
+            
+            guard let pg = d["parameter_groups"] else {
+                return nil
+            }
+            
+            let groups = pg.split(separator: ";")
+            if groups.count == 0 {
+                return nil
+            }
+            
+            var res   = [String: AnyObject]()
+            var order = [String]()
+            
+            for g in groups {
+                let name = String(g)
+                if name == "default" {
+                    hasDefault = true
+                }
+                
+                var group = [String: AnyObject]()
+                
+                if let v = d["\(name)_group_desc"] {
+                    group["desc"] = v as AnyObject
+                } else {
+                    // default to name if there is no description
+                    group["desc"] = name as AnyObject
+                }
+                
+                if name != "default" {
+                    guard let params = d["\(name)_group_parameters"] else {
+                        continue
+                    }
+                    
+                    let param_names = params.split(separator: ";")
+                    if param_names.count == 0 {
+                        continue
+                    }
+                    
+                    group["parameters"] = param_names as AnyObject
+                }
+                
+                res[name] = group as AnyObject
+                order.append(name)
+            }
+            
+            // indicates a default group was specified
+            res["hasDefault"] = hasDefault as AnyObject
+            // used to preserve order of parameter_groups
+            res["names"] = order as AnyObject
             
             return res
         }
