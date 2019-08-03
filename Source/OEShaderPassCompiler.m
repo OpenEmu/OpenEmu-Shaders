@@ -41,6 +41,41 @@ void error_callback(void *userdata, const char *error)
     // TODO(sgc): handle callback errors
 }
 
+- (NSData *)irForPass:(ShaderPass *)pass ofType:(ShaderType)type error:(NSError **)error
+{
+    NSURL *cacheDir = [NSFileManager.defaultManager URLForDirectory:NSCachesDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+    
+    cacheDir = [cacheDir URLByAppendingPathComponent:@"OpenEmu" isDirectory:YES];
+    cacheDir = [cacheDir URLByAppendingPathComponent:@"Shaders" isDirectory:YES];
+    
+    [NSFileManager.defaultManager createDirectoryAtURL:cacheDir withIntermediateDirectories:YES attributes:nil error:nil];
+    
+    NSString *ext   = type == ShaderTypeVertex ? @"vert_ir" : @"frag_ir";
+    NSString *file  = [NSString stringWithFormat:@"%@.%@.%@", pass.source.name, pass.source.sha1, ext];
+    NSURL *filename = [cacheDir URLByAppendingPathComponent:file];
+    NSData *data    = [NSData dataWithContentsOfURL:filename];
+    
+    if (data == nil)
+    {
+        NSString *source = type == ShaderTypeVertex ? pass.source.vertexSource : pass.source.fragmentSource;
+        SlangCompiler *c = [SlangCompiler new];
+        NSError *err;
+        ShaderProgram *prog = [c compileSource:source ofType:type error:&err];
+        if (err != nil) {
+            if (error != nil)
+            {
+                *error = err;
+            }
+            return nil;
+        }
+        
+        data = [NSData dataWithBytes:(void *)prog.spirv length:prog.spirvLengthBytes];
+        [data writeToURL:filename atomically:YES];
+    }
+    
+    return data;
+}
+
 - (BOOL)buildPass:(NSUInteger)passNumber
      metalVersion:(NSUInteger)version
     passSemantics:(ShaderPassSemantics *)passSemantics
@@ -51,23 +86,22 @@ void error_callback(void *userdata, const char *error)
     ShaderPass *pass = _shader.passes[passNumber];
     passBindings.format = pass.format;
     
-    
     spvc_context ctx;
     spvc_context_create(&ctx);
     spvc_context_set_error_callback(ctx, error_callback, (__bridge void *)self);
 
     @try {
-        // vertex shader
-        SlangCompiler *c  = [SlangCompiler new];
+        
         NSError *err;
-        ShaderProgram *vs = [c compileVertex:pass.source.vertexSource error:&err];
-        if (err != nil) {
+        NSData *data = [self irForPass:pass ofType:ShaderTypeVertex error:&err];
+        if (err != nil)
+        {
             os_log_error(OE_LOG_DEFAULT, "error compiling vertex shader program '%@': %@", pass.url.absoluteString, err.localizedDescription);
             return NO;
         }
         
         spvc_parsed_ir vs_ir = nil;
-        spvc_context_parse_spirv(ctx, vs.spirv, vs.spirvLength, &vs_ir);
+        spvc_context_parse_spirv(ctx, data.bytes, data.length / sizeof(SpvId), &vs_ir);
         if (vs_ir == nil) {
             os_log_error(OE_LOG_DEFAULT, "error parsing vertex spirv '%@'", pass.url.absoluteString);
             return NO;
@@ -93,15 +127,15 @@ void error_callback(void *userdata, const char *error)
         *vsrc = [NSString stringWithUTF8String:vs_code];
         
         // fragment shader
-        c = [SlangCompiler new];
-        ShaderProgram *fs = [c compileFragment:pass.source.fragmentSource error:nil];
-        if (err != nil) {
+        data = [self irForPass:pass ofType:ShaderTypeFragment error:&err];
+        if (err != nil)
+        {
             os_log_error(OE_LOG_DEFAULT, "error compiling fragment shader program '%@': %@", pass.url.absoluteString, err.localizedDescription);
             return NO;
         }
         
         spvc_parsed_ir fs_ir = nil;
-        spvc_context_parse_spirv(ctx, fs.spirv, fs.spirvLength, &fs_ir);
+        spvc_context_parse_spirv(ctx, data.bytes, data.length / sizeof(SpvId), &fs_ir);
         if (fs_ir == nil) {
             os_log_error(OE_LOG_DEFAULT, "error parsing fragment spirv '%@'", pass.url.absoluteString);
             return NO;

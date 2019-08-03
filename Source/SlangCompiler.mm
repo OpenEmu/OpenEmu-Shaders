@@ -146,14 +146,15 @@ static TBuiltInResource resources;
     return self;
 }
 
-- (ShaderProgram *)compileVertex:(NSString *)src error:(NSError **)error
+- (ShaderProgram *)compileSource:(NSString *)source ofType:(ShaderType)type error:(NSError **)error
 {
-    return [self compileSPIRV:src language:EShLangVertex error:error];
-}
-
-- (ShaderProgram *)compileFragment:(NSString *)src error:(NSError **)error
-{
-    return [self compileSPIRV:src language:EShLangFragment error:error];
+    switch (type)
+    {
+        case ShaderTypeVertex:
+            return [self compileSPIRV:source language:EShLangVertex error:error];
+        case ShaderTypeFragment:
+            return [self compileSPIRV:source language:EShLangFragment error:error];
+    }
 }
 
 - (ShaderProgram *)compileSPIRV:(NSString *)src language:(EShLanguage)language error:(NSError **)error
@@ -215,6 +216,11 @@ static TBuiltInResource resources;
 - (size_t)spirvLength
 {
     return _spirv->size();
+}
+
+- (size_t)spirvLengthBytes
+{
+    return _spirv->size() * sizeof(SpvId);
 }
 
 @end

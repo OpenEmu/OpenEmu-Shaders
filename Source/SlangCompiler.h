@@ -25,10 +25,17 @@
 #import <Foundation/Foundation.h>
 #import "spirv.h"
 
+typedef NS_ENUM(NSUInteger, ShaderType)
+{
+    ShaderTypeVertex,
+    ShaderTypeFragment,
+};
+
 @interface ShaderProgram : NSObject
 
 @property (nonatomic, readonly) SpvId const *spirv;
 @property (nonatomic, readonly) size_t      spirvLength;
+@property (nonatomic, readonly) size_t      spirvLengthBytes;
 
 @end
 
@@ -37,7 +44,6 @@
  */
 @interface SlangCompiler : NSObject
 
-- (ShaderProgram *)compileVertex:(NSString *)src error:(NSError **)error;
-- (ShaderProgram *)compileFragment:(NSString *)src error:(NSError **)error;
+- (ShaderProgram *)compileSource:(NSString *)source ofType:(ShaderType)type error:(NSError **)error;
 
 @end

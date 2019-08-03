@@ -24,6 +24,7 @@
 
 import Foundation
 import Metal
+import CommonCrypto
 
 enum SourceParserError: LocalizedError {
     case missingVersion
@@ -68,11 +69,21 @@ class SourceParser: NSObject {
     private var buffer: [String]
     var parametersMap: [String: ShaderParameter]
     
-    @objc private(set) var name: String?
+    @objc private(set) var name: String
     
     @objc var parameters: [ShaderParameter]
     
     @objc var format: MTLPixelFormat
+    
+    @objc lazy var sha1: String = {
+        let data = Data(buffer.joined().utf8)
+        var digest = [UInt8](repeating: 0, count:Int(CC_SHA1_DIGEST_LENGTH))
+        data.withUnsafeBytes {
+            _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &digest)
+        }
+        let hexBytes = digest.map { String(format: "%02hhx", $0) }
+        return hexBytes.joined()
+    }()
     
     /**
      Returns the vertex shader portion of the slang file
@@ -94,6 +105,7 @@ class SourceParser: NSObject {
         parametersMap = [:]
         parameters = []
         format = .invalid
+        name = (url.lastPathComponent as NSString).deletingPathExtension
         super.init()
         
         try autoreleasepool {
@@ -138,9 +150,10 @@ class SourceParser: NSObject {
     
     fileprivate func load(_ url: URL, isRoot: Bool) throws {
         let f        = try String(contentsOf: url)
-        let lines    = f.split(omittingEmptySubsequences: false) { $0.isNewline }.map(String.init)
         let filename = url.lastPathComponent
-        
+        var lines    = [String]()
+        f.enumerateLines { line, _ in lines.append(line) }
+
         var lno = 1
         
         var oe = lines.makeIterator()
