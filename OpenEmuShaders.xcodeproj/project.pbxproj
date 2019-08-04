@@ -119,6 +119,7 @@
 		052BE009228D184600942C12 /* SourceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE008228D184600942C12 /* SourceParserTests.swift */; };
 		052BE020228D187E00942C12 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE01F228D187E00942C12 /* TestHelpers.swift */; };
 		05410EDE22F5FF7400303424 /* SlangShaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05410EDD22F5FF7400303424 /* SlangShaderTests.swift */; };
+		05410EEE22F718D200303424 /* ShaderParamGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05410EED22F718D200303424 /* ShaderParamGroup.swift */; };
 		056AC35B228BA11E005018DA /* OEEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 056AC35A228BA11E005018DA /* OEEnums.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		056AC372228BA144005018DA /* OEEnums.m in Sources */ = {isa = PBXBuildFile; fileRef = 056AC371228BA144005018DA /* OEEnums.m */; };
 		056AC379228BA8D9005018DA /* ShaderParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC378228BA8D9005018DA /* ShaderParameter.swift */; };
@@ -276,6 +277,7 @@
 		052BE008228D184600942C12 /* SourceParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceParserTests.swift; sourceTree = "<group>"; };
 		052BE01F228D187E00942C12 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		05410EDD22F5FF7400303424 /* SlangShaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlangShaderTests.swift; sourceTree = "<group>"; };
+		05410EED22F718D200303424 /* ShaderParamGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderParamGroup.swift; sourceTree = "<group>"; };
 		056AC35A228BA11E005018DA /* OEEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OEEnums.h; sourceTree = "<group>"; };
 		056AC371228BA144005018DA /* OEEnums.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OEEnums.m; sourceTree = "<group>"; };
 		056AC378228BA8D9005018DA /* ShaderParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderParameter.swift; sourceTree = "<group>"; };
@@ -658,6 +660,7 @@
 			children = (
 				05EEE39F227D5DF4007D011B /* SlangShader.h */,
 				05EEE3A0227D5DF4007D011B /* SlangShader.m */,
+				05410EED22F718D200303424 /* ShaderParamGroup.swift */,
 				056AC378228BA8D9005018DA /* ShaderParameter.swift */,
 				056AC3A6228BB3E9005018DA /* SourceParser.swift */,
 				056AC3A8228BD73F005018DA /* NSScanner+Extensions.swift */,
@@ -938,6 +941,7 @@
 				A9020CDAE9B375337B23CB35 /* SlangCompiler.mm in Sources */,
 				052A2AC822A41FEA00483370 /* attribute.cpp in Sources */,
 				A90206302FA906B0B42F2CF2 /* ShaderPassSemantics.m in Sources */,
+				05410EEE22F718D200303424 /* ShaderParamGroup.swift in Sources */,
 				059258A022AD71500064273D /* logging.m in Sources */,
 				052A2ACC22A41FEA00483370 /* RemoveTree.cpp in Sources */,
 				A90205F1433179AFFF015F07 /* ShaderReflection.m in Sources */,

@@ -26,7 +26,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class OEShaderParameter;
+@class OEShaderParameter, OEShaderParamGroup;
 
 @interface ShaderPass : NSObject
 
@@ -58,23 +58,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface ParameterGroup : NSObject
-
-@property (nonatomic, readwrite) NSString                     *name;
-@property (nonatomic, readwrite) NSString                     *desc;
-@property (nonatomic, readwrite) NSArray<OEShaderParameter *> *parameters;
-
-@end
-
 @interface SlangShader : NSObject
 
 - (nullable instancetype)initFromURL:(NSURL *)url error:(NSError **)error;
 
-@property (nonatomic, readonly, nonnull) NSArray<ShaderPass *>        *passes;
-@property (nonatomic, readonly, nonnull) NSArray<OEShaderParameter *> *parameters;
-@property (nonatomic, readonly, nonnull) NSArray<ParameterGroup *>    *parameterGroups;
-@property (nonatomic, readonly, nonnull) NSArray<ShaderLUT *>         *luts;
-@property (nonatomic, readonly) NSUInteger                   historyCount;
+@property (nonatomic, readonly, nonnull) NSArray<ShaderPass *>         *passes;
+@property (nonatomic, readonly, nonnull) NSArray<OEShaderParameter *>  *parameters;
+@property (nonatomic, readonly, nonnull) NSArray<OEShaderParamGroup *> *parameterGroups;
+@property (nonatomic, readonly, nonnull) NSArray<ShaderLUT *>          *luts;
+@property (nonatomic, readonly) NSUInteger                             historyCount;
 
 - (BOOL)buildPass:(NSUInteger)passNumber
      metalVersion:(NSUInteger)version

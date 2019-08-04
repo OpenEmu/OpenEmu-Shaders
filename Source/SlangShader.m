@@ -221,23 +221,6 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
 
 @end
 
-@implementation ParameterGroup
-{
-    
-}
-
-- (instancetype)initWithName:(NSString *)name desc:(NSString *)desc
-{
-    if (self = [super init])
-    {
-        _name = name;
-        _desc = desc;
-    }
-    return self;
-}
-
-@end
-
 @implementation SlangShader
 {
     NSURL                                                *_url;
@@ -245,7 +228,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
     NSMutableArray<ShaderLUT *>                          *_luts;
     NSMutableArray<OEShaderParameter *>                  *_parameters;
     NSMutableDictionary<NSString *, OEShaderParameter *> *_parametersMap;
-    NSMutableArray<ParameterGroup *>                     *_parameterGroups;
+    NSMutableArray<OEShaderParamGroup *>                 *_parameterGroups;
     OEShaderPassCompiler                                 *_compiler;
     NSUInteger                                           _historyCount;
 }
@@ -341,7 +324,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
         NSDictionary<NSString *, NSDictionary<NSString *, id> *> *groups = d[@"parameterGroups"];
 
         // create empty group
-        ParameterGroup *global = [[ParameterGroup alloc] initWithName:@"default" desc:@""];
+        OEShaderParamGroup *global = [[OEShaderParamGroup alloc] initWithName:@"default" desc:@""];
         id obj;
         BOOL hasDefault = NO;
         if ((obj = groups[@"hasDefault"]) != nil) {
@@ -370,7 +353,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
             }
 
             
-            ParameterGroup *pg = [[ParameterGroup alloc] initWithName:name desc:group[@"desc"]];
+            OEShaderParamGroup *pg = [[OEShaderParamGroup alloc] initWithName:name desc:group[@"desc"]];
             NSMutableArray<OEShaderParameter *> *params = [NSMutableArray new];
             
             for (NSString *param in group[@"parameters"]) {
@@ -402,7 +385,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
             
             // sort the primary list of parameters into groups
             _parameters = [NSMutableArray new];
-            for (ParameterGroup *g in _parameterGroups) {
+            for (OEShaderParamGroup *g in _parameterGroups) {
                 [_parameters addObjectsFromArray:g.parameters];
             }
         }
