@@ -324,7 +324,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
         NSDictionary<NSString *, NSDictionary<NSString *, id> *> *groups = d[@"parameterGroups"];
 
         // create empty group
-        OEShaderParamGroup *global = [[OEShaderParamGroup alloc] initWithName:@"default" desc:@""];
+        OEShaderParamGroup *global = [[OEShaderParamGroup alloc] initWithName:@"default" desc:@"" hidden:NO];
         id obj;
         BOOL hasDefault = NO;
         if ((obj = groups[@"hasDefault"]) != nil) {
@@ -348,12 +348,13 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
                     // user specifed a custom description default_group_desc = "..."
                     global.desc = group[@"desc"];
                 }
+                global.hidden   = [group[@"hidden"] boolValue];
                 
                 continue;
             }
 
             
-            OEShaderParamGroup *pg = [[OEShaderParamGroup alloc] initWithName:name desc:group[@"desc"]];
+            OEShaderParamGroup *pg = [[OEShaderParamGroup alloc] initWithName:name desc:group[@"desc"] hidden:[group[@"hidden"] boolValue]];
             NSMutableArray<OEShaderParameter *> *params = [NSMutableArray new];
             
             for (NSString *param in group[@"parameters"]) {

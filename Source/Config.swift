@@ -198,6 +198,12 @@ public class ShaderConfigSerialization: NSObject {
                     group["desc"] = name as AnyObject
                 }
                 
+                if let v = d["\(name)_group_hidden"], let bv = Bool(v) {
+                    group["hidden"] = bv as AnyObject
+                } else {
+                    group["hidden"] = false as AnyObject
+                }
+                
                 if name != "default" {
                     guard let params = d["\(name)_group_parameters"] else {
                         continue

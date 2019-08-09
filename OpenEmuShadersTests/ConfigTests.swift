@@ -116,6 +116,7 @@ class ShaderConfigSerializationTests: XCTestCase {
         foo_group_parameters = "a;b;c"
 
         bar_group_parameters = "d;e"
+        bar_group_hidden = true
         """
         do {
             let res = try ShaderConfigSerialization.parseConfig(script)
@@ -123,17 +124,18 @@ class ShaderConfigSerializationTests: XCTestCase {
                 return XCTFail("expected parameterGroups")
             }
             
-            let checkGroup = { (name: String, desc: String, params: [String]) -> Void in
+            let checkGroup = { (name: String, desc: String, hidden: Bool, params: [String]) -> Void in
                 guard let group = groups[name] as? [String:AnyObject] else {
                     return XCTFail("missing foo group")
                 }
                 
                 XCTAssertEqual(group["desc"] as? String, desc)
+                XCTAssertEqual(group["hidden"] as? Bool, hidden)
                 XCTAssertEqual(group["parameters"] as? [String], params)
             }
             
-            checkGroup("foo", "Foo Desc", ["a", "b", "c"])
-            checkGroup("bar", "bar", ["d", "e"])
+            checkGroup("foo", "Foo Desc", false, ["a", "b", "c"])
+            checkGroup("bar", "bar", true, ["d", "e"])
         } catch {
             XCTFail("unexpected error: \(error.localizedDescription)")
         }

@@ -29,10 +29,12 @@ import Foundation
 public class ShaderParamGroup: NSObject {
     public var name:    String
     public var desc:    String
+    public var hidden:  Bool
     public var parameters: [ShaderParameter] = []
     
-    public init(name: String, desc: String) {
-        self.name = name
-        self.desc = desc
+    public init(name: String, desc: String, hidden: Bool) {
+        self.name   = name
+        self.desc   = desc
+        self.hidden = hidden
     }
 }
