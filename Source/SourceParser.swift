@@ -68,6 +68,7 @@ class SourceParser: NSObject {
     
     private var buffer: [String]
     var parametersMap: [String: ShaderParameter]
+    var included: Set<String> = Set()
     
     @objc private(set) var name: String?
     
@@ -185,8 +186,13 @@ class SourceParser: NSObject {
                 if file.isFileURL && !FileManager.default.fileExists(atPath: file.path) {
                     throw SourceParserError.includeFileNotFound(file.path)
                 }
-                try self.load(file, isRoot: false)
-                buffer.append("#line \(lno) \"\(filename)\"")
+                if !included.contains(file.absoluteString) {
+                    try self.load(file, isRoot: false)
+                    buffer.append("#line \(lno) \"\(filename)\"")
+                    included.insert(file.absoluteString)
+                } else {
+                    print("already include \(file)")
+                }
             } else {
                 buffer.append(line)
                 

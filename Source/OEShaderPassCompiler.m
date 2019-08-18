@@ -39,6 +39,7 @@ void error_callback(void *userdata, const char *error)
 - (void)compileError:(char const *)error
 {
     // TODO(sgc): handle callback errors
+    NSLog(@"error from SPIR-V compiler: %s", error);
 }
 
 - (NSData *)irForPass:(ShaderPass *)pass ofType:(ShaderType)type error:(NSError **)error
