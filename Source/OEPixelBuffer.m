@@ -25,17 +25,6 @@
 #import "OEPixelBuffer+Internal.h"
 #import <OpenEmuShaders/OpenEmuShaders-Swift.h>
 
-typedef NS_OPTIONS(NSUInteger, BufferOption)
-{
-    BufferOptionNone        = 0,
-    BufferOptionCopy        = (1 << 0),
-    BufferOptionNoCopy      = (1 << 1), // buffer memory
-};
-
-BOOL BufferOptionMustCopy(BufferOption o) {
-    return (o & BufferOptionCopy) == BufferOptionCopy;
-}
-
 @interface OENativePixelBuffer: OEPixelBuffer
 @end
 
@@ -49,18 +38,20 @@ BOOL BufferOptionMustCopy(BufferOption o) {
 @public
     id<MTLDevice>       _device;
     OEMTLPixelFormat    _format;
+    NSUInteger          _bpp; // bytes per pixel
     
     id<MTLBuffer>       _intermediate;
     NSUInteger          _sourceBytesPerRow;
     id<MTLBuffer>       _sourceBuffer;
     CGSize              _sourceSize;
     CGRect              _outputRect;
-    BufferOption        _options;
     void               *_contents;
     
     // for unaligned buffers
     void               *_buffer;
     size_t              _bufferLenBytes;
+    BOOL                _bufferFree;
+    BOOL                _shortCopy;
 }
 
 #pragma mark - initializers
@@ -72,32 +63,38 @@ BOOL BufferOptionMustCopy(BufferOption o) {
     if (!(self = [super init])) {
         return nil;
     }
-    
+    NSUInteger length = height * bytesPerRow;
+
     _device             = device;
     _format             = format;
+    _bpp                = OEMTLPixelFormatToBPP(format);
     _sourceBytesPerRow  = bytesPerRow;
-    _sourceSize         = CGSizeMake(bytesPerRow / OEMTLPixelFormatToBPP(format), height);
-    _options            = BufferOptionNoCopy;
+    _sourceSize         = CGSizeMake(bytesPerRow / _bpp, height);
+    _bufferLenBytes     = length;
+    _sourceBuffer       = [_device newBufferWithLength:length options:MTLResourceStorageModeShared];
 
-    NSUInteger length = height * bytesPerRow;
-    if (pointer) {
-        if (((uintptr_t)pointer % 4096 == 0) && (length % 4096 == 0)) {
-            _sourceBuffer = [_device newBufferWithBytesNoCopy:pointer length:length options:MTLResourceStorageModeShared deallocator:nil];
-        } else {
-            _options        = BufferOptionCopy;
-            _buffer         = pointer;
-            _bufferLenBytes = length;
-            _sourceBuffer   = [_device newBufferWithLength:length options:MTLResourceStorageModeShared];
-        }
-    } else {
-        _sourceBuffer = [_device newBufferWithLength:length options:MTLResourceStorageModeShared];
+    if (pointer)
+    {
+        _buffer = pointer;
+    }
+    else
+    {
+        _buffer     = malloc(length);
+        _bufferFree = YES;
     }
     
-    //_intermediate = [_device newBufferWithLength:length options:MTLResourceStorageModeShared];
-    
-    _contents = _buffer ?: _sourceBuffer.contents;
+    _contents = _buffer;
     
     return self;
+}
+
+- (void)dealloc
+{
+    if (_bufferFree)
+    {
+        free(_buffer);
+        _buffer = nil;
+    }
 }
 
 #pragma mark - static initializers
@@ -128,6 +125,36 @@ BOOL BufferOptionMustCopy(BufferOption o) {
                                                        bytes:pointer];
 }
 
+- (void)setOutputRect:(CGRect)outputRect
+{
+    if (CGRectEqualToRect(_outputRect, outputRect))
+    {
+        return;
+    }
+    
+    _outputRect    = outputRect;
+    _shortCopy     = _outputRect.size.width * _bpp * _outputRect.size.height <= _bufferLenBytes / 2;
+}
+
+- (void)_copyBuffer
+{
+    if (_shortCopy)
+    {
+        void     *src = _buffer;
+        void     *dst = _sourceBuffer.contents;
+        size_t rowLen = _outputRect.size.width*_bpp;
+        for (int y = 0; y < _outputRect.size.height; y++)
+        {
+            memcpy(dst, src, rowLen);
+            src += _sourceBytesPerRow;
+            dst += _sourceBytesPerRow;
+        }
+    }
+    else
+    {
+        memcpy(_sourceBuffer.contents, _buffer, _bufferLenBytes);
+    }
+}
 
 #pragma mark - internal APIs
 
@@ -144,17 +171,15 @@ BOOL BufferOptionMustCopy(BufferOption o) {
 
 - (void)prepareWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer texture:(id<MTLTexture>)texture
 {
-    if (BufferOptionMustCopy(_options)) {
-        if (texture.storageMode != MTLStorageModePrivate) {
-            [texture replaceRegion:MTLRegionMake2D(_outputRect.origin.x, _outputRect.origin.y, _outputRect.size.width, _outputRect.size.height)
-                       mipmapLevel:0
-                         withBytes:_buffer
-                       bytesPerRow:_sourceBytesPerRow];
-            return;
-        }
-        // replaceRegion not supported for private storage mode; fallback to blit
-        memcpy(_sourceBuffer.contents, _buffer, _bufferLenBytes);
+    if (texture.storageMode != MTLStorageModePrivate) {
+        [texture replaceRegion:MTLRegionMake2D(_outputRect.origin.x, _outputRect.origin.y, _outputRect.size.width, _outputRect.size.height)
+                   mipmapLevel:0
+                     withBytes:_buffer
+                   bytesPerRow:_sourceBytesPerRow];
+        return;
     }
+
+    [self _copyBuffer];
     
     MTLSize                   size = {.width = (NSUInteger)_outputRect.size.width, .height = (NSUInteger)_outputRect.size.height, .depth = 1};
     MTLOrigin                 zero = {0};
@@ -162,8 +187,7 @@ BOOL BufferOptionMustCopy(BufferOption o) {
 
     NSUInteger offset = (_outputRect.origin.y * _sourceBytesPerRow) + _outputRect.origin.x * 4 /* 4 bpp */;
     NSUInteger len    = _sourceBuffer.length - (_outputRect.origin.y * _sourceBytesPerRow);
-    [bce copyFromBuffer:_sourceBuffer sourceOffset:offset sourceBytesPerRow:_sourceBytesPerRow sourceBytesPerImage:len sourceSize:size
-              toTexture:texture destinationSlice:0 destinationLevel:0 destinationOrigin:zero];
+    [bce copyFromBuffer:_sourceBuffer sourceOffset:offset sourceBytesPerRow:_sourceBytesPerRow sourceBytesPerImage:len sourceSize:size toTexture:texture destinationSlice:0 destinationLevel:0 destinationOrigin:zero];
     [bce endEncoding];
 }
 
@@ -189,23 +213,10 @@ BOOL BufferOptionMustCopy(BufferOption o) {
 
 - (void)prepareWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer texture:(id<MTLTexture>)texture
 {
-    id<MTLBuffer> source;
-    if (_intermediate != nil) {
-        if (BufferOptionMustCopy(_options)) {
-            memcpy(_intermediate.contents, _buffer, _bufferLenBytes);
-        } else {
-            memcpy(_intermediate.contents, _sourceBuffer.contents, _sourceBuffer.length);
-        }
-        source = _intermediate;
-    } else {
-        if (BufferOptionMustCopy(_options)) {
-            memcpy(_sourceBuffer.contents, _buffer, _bufferLenBytes);
-        }
-        source = _sourceBuffer;
-    }
+    [self _copyBuffer];
     
     MTLOrigin orig = {.x = _outputRect.origin.x, .y = _outputRect.origin.y};
-    [_converter convertFromBuffer:source sourceOrigin:orig sourceBytesPerRow:_sourceBytesPerRow
+    [_converter convertFromBuffer:_sourceBuffer sourceOrigin:orig sourceBytesPerRow:_sourceBytesPerRow
                         toTexture:texture commandBuffer:commandBuffer];
 }
 
