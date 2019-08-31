@@ -151,6 +151,7 @@ NSString *NSStringFromOEMTLPixelFormat(OEMTLPixelFormat format)
 BOOL OEMTLPixelFormatIsNative(OEMTLPixelFormat format)
 {
     switch (format) {
+        case OEMTLPixelFormatABGR8Unorm:
         case OEMTLPixelFormatRGBA8Unorm:
         case OEMTLPixelFormatR5G5B5A1Unorm:
         case OEMTLPixelFormatB5G6R5Unorm:
