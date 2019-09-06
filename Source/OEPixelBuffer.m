@@ -133,7 +133,8 @@
     }
     
     _outputRect    = outputRect;
-    _shortCopy     = _outputRect.size.width * _bpp * _outputRect.size.height <= _bufferLenBytes / 2;
+    // short copy if the buffer > 1MB and were copying < 50% of the buffer.
+    _shortCopy     = _bufferLenBytes > 1e6 && _outputRect.size.width * _bpp * _outputRect.size.height <= _bufferLenBytes / 2;
 }
 
 - (void)_copyBuffer
@@ -143,6 +144,14 @@
         void     *src = _buffer;
         void     *dst = _sourceBuffer.contents;
         size_t rowLen = _outputRect.size.width*_bpp;
+
+        if (!CGPointEqualToPoint(_outputRect.origin, CGPointZero))
+        {
+            size_t offset = (size_t)((_outputRect.origin.y * _sourceBytesPerRow) + (_outputRect.origin.x * _bpp));
+            src += offset;
+            dst += offset;
+        }
+
         for (int y = 0; y < _outputRect.size.height; y++)
         {
             memcpy(dst, src, rowLen);
