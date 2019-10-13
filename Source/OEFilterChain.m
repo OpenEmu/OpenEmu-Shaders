@@ -502,8 +502,10 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 
 - (NSBitmapImageRep *)captureSourceImage
 {
+    // TODO: use same color space as OEGameHelperMetalLayer
     NSDictionary<CIImageOption, id> *opts = @{
                                               kCIImageNearestSampling: @YES,
+                                              kCIImageColorSpace: CFBridgingRelease(CGColorSpaceCreateWithName(kCGColorSpaceSRGB))
                                               };
     CIContext *ctx  = [self OE_ciContext];
     CIImage   *img  = [[CIImage alloc] initWithMTLTexture:_texture options:opts];
@@ -539,8 +541,10 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     [commandBuffer waitUntilCompleted];
     
     // copy to an NSBitmap
+    // TODO: use same color space as OEGameHelperMetalLayer
     NSDictionary<CIImageOption, id> *opts = @{
                                               kCIImageNearestSampling: @YES,
+                                              kCIImageColorSpace: CFBridgingRelease(CGColorSpaceCreateWithName(kCGColorSpaceSRGB))
                                               };
     CIContext *ctx = [self OE_ciContext];
     CIImage   *img = [[CIImage alloc] initWithMTLTexture:tex options:opts];
