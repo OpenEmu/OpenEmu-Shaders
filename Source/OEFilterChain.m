@@ -482,30 +482,11 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     return _screenshotTexture;
 }
 
-- (NSBitmapImageRep *)OE_imageFromTexture:(id<MTLTexture>)tex
-{
-    NSDictionary<CIImageOption, id> *opts = @{
-            kCIImageNearestSampling: @YES,
-    };
-    CIContext                       *ctx  = [self OE_ciContext];
-    CIImage                         *img  = [[CIImage alloc] initWithMTLTexture:tex options:opts];
-    img = [img imageBySettingAlphaOneInExtent:img.extent];
-    if (!_sourceTexture || !_sourceTextureIsFlipped) {
-        img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
-    }
-    CGImageRef cgImg = [ctx createCGImage:img fromRect:img.extent];
-    NSBitmapImageRep *result = [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
-    CGImageRelease(cgImg);
-
-    return result;
-}
-
 - (NSBitmapImageRep *)captureSourceImage
 {
     // TODO: use same color space as OEGameHelperMetalLayer
     NSDictionary<CIImageOption, id> *opts = @{
                                               kCIImageNearestSampling: @YES,
-                                              kCIImageColorSpace: CFBridgingRelease(CGColorSpaceCreateWithName(kCGColorSpaceSRGB))
                                               };
     CIContext *ctx  = [self OE_ciContext];
     CIImage   *img  = [[CIImage alloc] initWithMTLTexture:_texture options:opts];
@@ -520,7 +501,10 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
     }
     
-    CGImageRef cgImg = [ctx createCGImage:img fromRect:img.extent];
+    CGColorSpaceRef cs = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+    CGImageRef cgImg = [ctx createCGImage:img fromRect:img.extent format:kCIFormatBGRA8 colorSpace:cs];
+    CGColorSpaceRelease(cs);
+
     NSBitmapImageRep *result = [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
     CGImageRelease(cgImg);
     
@@ -544,13 +528,14 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     // TODO: use same color space as OEGameHelperMetalLayer
     NSDictionary<CIImageOption, id> *opts = @{
                                               kCIImageNearestSampling: @YES,
-                                              kCIImageColorSpace: CFBridgingRelease(CGColorSpaceCreateWithName(kCGColorSpaceSRGB))
                                               };
     CIContext *ctx = [self OE_ciContext];
     CIImage   *img = [[CIImage alloc] initWithMTLTexture:tex options:opts];
     img = [img imageBySettingAlphaOneInExtent:img.extent];
     img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
-    CGImageRef cgImg = [ctx createCGImage:img fromRect:img.extent];
+    CGColorSpaceRef cs = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+    CGImageRef cgImg = [ctx createCGImage:img fromRect:img.extent format:kCIFormatBGRA8 colorSpace:cs];
+    CGColorSpaceRelease(cs);
     NSBitmapImageRep *result = [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
     CGImageRelease(cgImg);
     
