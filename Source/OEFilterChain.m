@@ -482,6 +482,22 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     return _screenshotTexture;
 }
 
+static NSSize CorrectScreenSizeForAspectSize(CGSize screenSize, CGSize aspectSize)
+{
+    // calculate aspect ratio
+    CGFloat wr = (CGFloat) aspectSize.width / screenSize.width;
+    CGFloat hr = (CGFloat) aspectSize.height / screenSize.height;
+    CGFloat ratio = MAX(hr, wr);
+    NSSize scaled = NSMakeSize((wr / ratio), (hr / ratio));
+    
+    CGFloat halfw = scaled.width;
+    CGFloat halfh = scaled.height;
+    
+    return screenSize.width <= aspectSize.width ?
+        NSMakeSize(screenSize.width / halfh, screenSize.height / halfw) :
+        NSMakeSize(screenSize.width * halfw, screenSize.height * halfh);
+}
+
 - (NSBitmapImageRep *)captureSourceImage
 {
     NSDictionary<CIImageOption, id> *opts = @{
@@ -499,6 +515,9 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     if (!_sourceTexture || !_sourceTextureIsFlipped) {
         img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
     }
+    
+    NSSize correct = CorrectScreenSizeForAspectSize(_sourceRect.size, _aspectSize);
+    img = [img imageByApplyingTransform:CGAffineTransformMakeScale(correct.width/_sourceRect.size.width, correct.height/_sourceRect.size.height)];
     
     // TODO: use same color space as OEGameHelperMetalLayer
     CGColorSpaceRef cs = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
