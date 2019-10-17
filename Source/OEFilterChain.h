@@ -61,10 +61,14 @@ typedef MTLRenderPassDescriptor * __nullable (^OEGetDescriptorBlock)(void);
 
 - (void)renderWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer renderPassDescriptor:(MTLRenderPassDescriptor *)renderPassDescriptor;
 
-/*! @brief returns an image of the last rendered source image */
+/*! @brief Returns an raw image of the last rendered source pixel buffer.
+ *
+ * @remarks
+ * The image dimensions are equal to the source pixel buffer and therefore not aspect corrected.
+ */
 - (NSBitmapImageRep *)captureSourceImage;
 
-/*! @brief returns an image of the last source image after all shaders have been applied */
+/*! @brief Returns an image of the last source image after all shaders have been applied */
 - (NSBitmapImageRep *)captureOutputImage;
 
 /*! @brief The default filtering mode when a shader pass leaves the value unspecified
