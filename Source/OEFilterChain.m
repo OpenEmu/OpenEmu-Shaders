@@ -490,11 +490,6 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     CIContext *ctx  = [self OE_ciContext];
     CIImage   *img  = [[CIImage alloc] initWithMTLTexture:_texture options:opts];
     
-    // only take the current screen rect
-    if (!CGRectEqualToRect(img.extent, _sourceRect)) {
-        img = [img imageByCroppingToRect:_sourceRect];
-    }
-    
     img = [img imageBySettingAlphaOneInExtent:img.extent];
     if (!_sourceTexture || !_sourceTextureIsFlipped) {
         img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
