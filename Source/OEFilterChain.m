@@ -482,33 +482,66 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     return _screenshotTexture;
 }
 
+- (NSBitmapImageRep *)blackImage {
+    NSBitmapImageRep *img = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil
+                                                                    pixelsWide:32
+                                                                    pixelsHigh:32
+                                                                 bitsPerSample:8
+                                                               samplesPerPixel:4
+                                                                      hasAlpha:YES
+                                                                      isPlanar:NO
+                                                                colorSpaceName:NSDeviceRGBColorSpace
+                                                                   bytesPerRow:32 * 4
+                                                                  bitsPerPixel:32];
+    
+    NSGraphicsContext *ctx = [NSGraphicsContext graphicsContextWithBitmapImageRep:img];
+    [NSGraphicsContext saveGraphicsState];
+    NSGraphicsContext.currentContext = ctx;
+    [NSColor.blackColor drawSwatchInRect:NSMakeRect(0, 0, 32, 32)];
+    [ctx flushGraphics];
+    [NSGraphicsContext restoreGraphicsState];
+
+    return img;
+}
+
+- (NSBitmapImageRep *)imageWithCIImage:(CIImage *)img {
+    CGColorSpaceRef cs  = nil;
+    CGImageRef cgImgTmp = nil;
+    CGImageRef cgImg    = nil;
+    @try {
+        // TODO: use same color space as OEGameHelperMetalLayer
+        cs = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+
+        CIContext *ctx = [self OE_ciContext];
+        // Specify the same color space as the original CIImage to preserve the original
+        // pixel values of the MTLTexture
+        cgImgTmp = [ctx createCGImage:img fromRect:img.extent format:kCIFormatBGRA8 colorSpace:img.colorSpace];
+        // Override the original color space and set the correct one
+        cgImg = CGImageCreateCopyWithColorSpace(cgImgTmp, cs);
+        if (cgImg) {
+            return [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
+        }
+        
+        return [self blackImage];
+    } @finally {
+        if (cgImgTmp)   CGImageRelease(cgImgTmp);
+        if (cgImg)      CGImageRelease(cgImg);
+        if (cs)         CGColorSpaceRelease(cs);
+    }
+}
+
 - (NSBitmapImageRep *)captureSourceImage
 {
     NSDictionary<CIImageOption, id> *opts = @{
                                               kCIImageNearestSampling: @YES,
                                               };
-    CIContext *ctx  = [self OE_ciContext];
-    CIImage   *img  = [[CIImage alloc] initWithMTLTexture:_texture options:opts];
-    
+    CIImage *img  = [[CIImage alloc] initWithMTLTexture:_texture options:opts];
     img = [img imageBySettingAlphaOneInExtent:img.extent];
     if (!_sourceTexture || !_sourceTextureIsFlipped) {
         img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
     }
     
-    // TODO: use same color space as OEGameHelperMetalLayer
-    CGColorSpaceRef cs = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-    // Specify the same color space as the original CIImage to preserve the original
-    // pixel values of the MTLTexture
-    CGImageRef cgImgTmp = [ctx createCGImage:img fromRect:img.extent format:kCIFormatBGRA8 colorSpace:img.colorSpace];
-    // Override the original color space and set the correct one
-    CGImageRef cgImg = CGImageCreateCopyWithColorSpace(cgImgTmp, cs);
-    CGImageRelease(cgImgTmp);
-    CGColorSpaceRelease(cs);
-
-    NSBitmapImageRep *result = [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
-    CGImageRelease(cgImg);
-    
-    return result;
+    return [self imageWithCIImage:img];
 }
 
 - (NSBitmapImageRep *)captureOutputImage
@@ -528,25 +561,11 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     NSDictionary<CIImageOption, id> *opts = @{
                                               kCIImageNearestSampling: @YES,
                                               };
-    CIContext *ctx = [self OE_ciContext];
-    CIImage   *img = [[CIImage alloc] initWithMTLTexture:tex options:opts];
+    CIImage *img = [[CIImage alloc] initWithMTLTexture:tex options:opts];
     img = [img imageBySettingAlphaOneInExtent:img.extent];
     img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
     
-    // TODO: use same color space as OEGameHelperMetalLayer
-    CGColorSpaceRef cs = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-    // Specify the same color space as the original CIImage to preserve the original
-    // pixel values of the MTLTexture
-    CGImageRef cgImgTmp = [ctx createCGImage:img fromRect:img.extent format:kCIFormatBGRA8 colorSpace:img.colorSpace];
-    // Override the original color space and set the correct one
-    CGImageRef cgImg = CGImageCreateCopyWithColorSpace(cgImgTmp, cs);
-    CGImageRelease(cgImgTmp);
-    CGColorSpaceRelease(cs);
-    
-    NSBitmapImageRep *result = [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
-    CGImageRelease(cgImg);
-    
-    return result;
+    return [self imageWithCIImage:img];
 }
 
 - (void)OE_prepareNextFrameWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
