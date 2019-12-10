@@ -62,7 +62,7 @@ void error_callback(void *userdata, const char *error)
         SlangCompiler *c = [SlangCompiler new];
         NSError *err;
         ShaderProgram *prog = [c compileSource:source ofType:type error:&err];
-        if (err != nil) {
+        if (prog == nil || err != nil) {
             if (error != nil)
             {
                 *error = err;

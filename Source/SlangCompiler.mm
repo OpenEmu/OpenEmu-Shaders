@@ -22,6 +22,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#import "OEEnums.h"
 #import "SlangCompiler.h"
 #include "glslang/Public/ShaderLang.h"
 #include "SPIRV/GlslangToSpv.h"
@@ -165,14 +166,40 @@ static TBuiltInResource resources;
     
     EShMessages messages  = static_cast<EShMessages>(EShMsgDefault | EShMsgVulkanRules | EShMsgSpvRules);
     
+    const int DEFAULT_VERSION = 110;
+    
     string msg;
-    auto   forbid_include = glslang::TShader::ForbidIncluder();
-    if (!shader.preprocess(&resources, 100, ENoProfile, false, false, messages, &msg, forbid_include)) {
+    auto forbid_include = glslang::TShader::ForbidIncluder();
+    if (!shader.preprocess(&resources, DEFAULT_VERSION, ENoProfile, false, false, messages, &msg, forbid_include)) {
+        if (error != nil)
+        {
+            // skipped modern syntax here as it was breaking Xcode
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      NSLocalizedString(@"Failed to preprocess shader", @"Shader failed to compile"), NSLocalizedDescriptionKey,
+                                      @(msg.c_str()), NSLocalizedFailureReasonErrorKey,
+                                      nil];
+            *error = [NSError errorWithDomain:OEShaderErrorDomain
+                                         code:OEShaderCompilePreprocessError
+                                     userInfo:userInfo];
+        }
+    
         os_log_error(OE_LOG_DEFAULT, "error preprocessing shader: %{public}s", msg.c_str());
         return nil;
     }
     
-    if (!shader.parse(&resources, 100, false, messages)) {
+    if (!shader.parse(&resources, DEFAULT_VERSION, false, messages, forbid_include)) {
+        if (error != nil)
+        {
+            // skipped modern syntax here as it was breaking Xcode
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      NSLocalizedString(@"Failed to parse shader", @"Shader failed to compile"), NSLocalizedDescriptionKey,
+                                      @(shader.getInfoLog()), NSLocalizedFailureReasonErrorKey,
+                                      nil];
+            *error = [NSError errorWithDomain:OEShaderErrorDomain
+                                         code:OEShaderCompileParseError
+                                     userInfo:userInfo];
+        }
+        
         os_log_error(OE_LOG_DEFAULT, "error parsing shader info log: %{public}s", shader.getInfoLog());
         os_log_error(OE_LOG_DEFAULT, "error parsing shader info debug log: %{public}s", shader.getInfoDebugLog());
         return nil;
@@ -182,6 +209,18 @@ static TBuiltInResource resources;
     program.addShader(&shader);
     
     if (!program.link(messages)) {
+        if (error != nil)
+        {
+            // skipped modern syntax here as it was breaking Xcode
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      NSLocalizedString(@"Failed to link shader", @"Shader failed to compile"), NSLocalizedDescriptionKey,
+                                      @(program.getInfoLog()), NSLocalizedFailureReasonErrorKey,
+                                      nil];
+            *error = [NSError errorWithDomain:OEShaderErrorDomain
+                                         code:OEShaderCompileLinkError
+                                     userInfo:userInfo];
+        }
+        
         os_log_error(OE_LOG_DEFAULT, "error linking shader info log: %{public}s", program.getInfoLog());
         os_log_error(OE_LOG_DEFAULT, "error linking shader info debug log: %{public}s", program.getInfoDebugLog());
         return nil;

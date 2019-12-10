@@ -23,7 +23,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
-@import Metal;
+#import <Metal/Metal.h>
 
 typedef NSString *OEShaderTextureSemantic NS_TYPED_ENUM;
 
@@ -218,3 +218,14 @@ typedef NS_ENUM(NSUInteger, OEShaderPassWrap)
     OEShaderPassWrapMirroredRepeat,
     OEShaderPassWrapCount,
 };
+
+#pragma mark - Errors
+
+extern NSErrorDomain const OEShaderErrorDomain;
+
+NS_ERROR_ENUM(OEShaderErrorDomain) {
+    OEShaderCompilePreprocessError  = -1,
+    OEShaderCompileParseError       = -2,
+    OEShaderCompileLinkError        = -3,
+};
+
