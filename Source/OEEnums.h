@@ -171,6 +171,7 @@ typedef NS_ENUM(NSUInteger, OEMTLPixelFormat)
     OEMTLPixelFormatB5G6R5Unorm NS_SWIFT_NAME(b5g6r5Unorm),
     OEMTLPixelFormatR5G5B5A1Unorm NS_SWIFT_NAME(r5g5b5a1Unorm),
     
+    // 32-bit formats, 8 bits per pixel
     OEMTLPixelFormatRGBA8Unorm NS_SWIFT_NAME(rgba8Unorm),
     OEMTLPixelFormatABGR8Unorm NS_SWIFT_NAME(abgr8Unorm),
 
