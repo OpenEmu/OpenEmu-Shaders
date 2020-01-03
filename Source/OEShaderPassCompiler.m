@@ -78,7 +78,7 @@ void error_callback(void *userdata, const char *error)
 }
 
 - (BOOL)buildPass:(NSUInteger)passNumber
-     metalVersion:(NSUInteger)version
+     metalVersion:(MTLLanguageVersion)metalVersion
     passSemantics:(ShaderPassSemantics *)passSemantics
      passBindings:(ShaderPassBindings *)passBindings
            vertex:(NSString **)vsrc
@@ -90,6 +90,19 @@ void error_callback(void *userdata, const char *error)
     spvc_context ctx;
     spvc_context_create(&ctx);
     spvc_context_set_error_callback(ctx, error_callback, (__bridge void *)self);
+    
+    unsigned int version = 0;
+    switch (metalVersion) {
+        case MTLLanguageVersion2_2:
+            version = SPVC_MAKE_MSL_VERSION(2, 2, 0);
+            break;
+
+        // default to Metal Version 2.1
+        case MTLLanguageVersion2_1:
+        default:
+            version = SPVC_MAKE_MSL_VERSION(2, 1, 0);
+            break;
+    }
 
     @try {
         

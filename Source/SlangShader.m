@@ -401,7 +401,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
 }
 
 - (BOOL)buildPass:(NSUInteger)passNumber
-     metalVersion:(NSUInteger)version
+     metalVersion:(MTLLanguageVersion)version
     passSemantics:(ShaderPassSemantics *)passSemantics
      passBindings:(ShaderPassBindings *)passBindings
            vertex:(NSString **)vsrc

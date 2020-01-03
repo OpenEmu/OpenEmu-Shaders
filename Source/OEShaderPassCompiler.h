@@ -4,6 +4,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Metal/Metal.h>
 
 @class SlangShader;
 @class ShaderPassSemantics;
@@ -13,7 +14,7 @@
 - (instancetype)initWithShaderModel:(SlangShader *)shader;
 
 - (BOOL)buildPass:(NSUInteger)passNumber
-     metalVersion:(NSUInteger)version
+     metalVersion:(MTLLanguageVersion)metalVersion
     passSemantics:(ShaderPassSemantics *)passSemantics
      passBindings:(ShaderPassBindings *)passBindings
            vertex:(NSString **)vsrc

@@ -945,7 +945,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             NSString *fs_src = nil;
             _pass[i].bindings = [ShaderPassBindings new];
             if (![ss buildPass:i
-                  metalVersion:20000
+                  metalVersion:options.languageVersion
                  passSemantics:sem
                   passBindings:_pass[i].bindings
                         vertex:&vs_src

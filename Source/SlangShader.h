@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSUInteger                             historyCount;
 
 - (BOOL)buildPass:(NSUInteger)passNumber
-     metalVersion:(NSUInteger)version
+     metalVersion:(MTLLanguageVersion)version
     passSemantics:(ShaderPassSemantics *)passSemantics
      passBindings:(ShaderPassBindings *)passBindings
            vertex:(NSString * _Nonnull * _Nonnull)vsrc
