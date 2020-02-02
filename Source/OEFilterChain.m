@@ -563,6 +563,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                                               };
     CIImage *img = [[CIImage alloc] initWithMTLTexture:tex options:opts];
     img = [img imageBySettingAlphaOneInExtent:img.extent];
+    img = [img imageByCroppingToRect:CGRectMake(_outputBounds.origin.x, _outputBounds.origin.y, _outputBounds.size.width, _outputBounds.size.height)];
     img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
     
     return [self imageWithCIImage:img];
