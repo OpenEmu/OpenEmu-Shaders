@@ -64,7 +64,7 @@ public class ShaderConfigSerialization: NSObject {
         var d: [String: String] = [:]
         scanning: while true {
             switch scanner.scan() {
-            case .keyval(let (key, val)):
+            case .keyval(let key, let val):
                 d[key] = val
             case .eof:
                 break scanning
