@@ -406,6 +406,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
      passBindings:(ShaderPassBindings *)passBindings
            vertex:(NSString **)vsrc
          fragment:(NSString **)fsrc
+            error:(NSError * _Nullable *)error
 {
     
     return [_compiler buildPass:passNumber
@@ -413,7 +414,8 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
                   passSemantics:passSemantics
                    passBindings:passBindings
                          vertex:vsrc
-                       fragment:fsrc];
+                       fragment:fsrc
+                          error:error];
 }
 
 - (void)setHistoryCount:(NSUInteger)historyCount {

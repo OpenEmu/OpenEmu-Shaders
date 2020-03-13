@@ -201,7 +201,6 @@ static TBuiltInResource resources;
         }
         
         os_log_error(OE_LOG_DEFAULT, "error parsing shader info log: %{public}s", shader.getInfoLog());
-        os_log_error(OE_LOG_DEFAULT, "error parsing shader info debug log: %{public}s", shader.getInfoDebugLog());
         return nil;
     }
     

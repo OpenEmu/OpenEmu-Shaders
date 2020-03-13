@@ -83,6 +83,7 @@ void error_callback(void *userdata, const char *error)
      passBindings:(ShaderPassBindings *)passBindings
            vertex:(NSString **)vsrc
          fragment:(NSString **)fsrc
+            error:(NSError **)error
 {
     ShaderPass *pass = _shader.passes[passNumber];
     passBindings.format = pass.format;
@@ -110,6 +111,11 @@ void error_callback(void *userdata, const char *error)
         NSData *data = [self irForPass:pass ofType:ShaderTypeVertex error:&err];
         if (err != nil)
         {
+            if (error != nil)
+            {
+                *error = err;
+            }
+            
             os_log_error(OE_LOG_DEFAULT, "error compiling vertex shader program '%@': %@", pass.url.absoluteString, err.localizedDescription);
             return NO;
         }
@@ -144,7 +150,11 @@ void error_callback(void *userdata, const char *error)
         data = [self irForPass:pass ofType:ShaderTypeFragment error:&err];
         if (err != nil)
         {
-            os_log_error(OE_LOG_DEFAULT, "error compiling fragment shader program '%@': %@", pass.url.absoluteString, err.localizedDescription);
+            if (error != nil)
+            {
+                *error = err;
+            }
+            os_log_error(OE_LOG_DEFAULT, "error compiling fragment shader program '%@': %@", pass.url.absoluteString, err.localizedFailureReason);
             return NO;
         }
         

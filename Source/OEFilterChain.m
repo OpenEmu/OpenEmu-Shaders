@@ -950,7 +950,12 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                  passSemantics:sem
                   passBindings:_pass[i].bindings
                         vertex:&vs_src
-                      fragment:&fs_src]) {
+                      fragment:&fs_src
+                         error:&err])
+            {
+                if (error) {
+                    *error = err;
+                }
                 return NO;
             }
             

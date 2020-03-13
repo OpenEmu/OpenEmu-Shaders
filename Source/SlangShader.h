@@ -73,7 +73,8 @@ NS_ASSUME_NONNULL_BEGIN
     passSemantics:(ShaderPassSemantics *)passSemantics
      passBindings:(ShaderPassBindings *)passBindings
            vertex:(NSString * _Nonnull * _Nonnull)vsrc
-         fragment:(NSString * _Nonnull * _Nonnull)fsrc;
+         fragment:(NSString * _Nonnull * _Nonnull)fsrc
+            error:(NSError * _Nullable *)error;
 
 
 @end

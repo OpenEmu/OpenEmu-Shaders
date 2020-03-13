@@ -6,6 +6,8 @@
 #import <Foundation/Foundation.h>
 #import <Metal/Metal.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class SlangShader;
 @class ShaderPassSemantics;
 @class ShaderPassBindings;
@@ -17,7 +19,10 @@
      metalVersion:(MTLLanguageVersion)metalVersion
     passSemantics:(ShaderPassSemantics *)passSemantics
      passBindings:(ShaderPassBindings *)passBindings
-           vertex:(NSString **)vsrc
-         fragment:(NSString **)fsrc;
+           vertex:(NSString * _Nullable * _Nonnull)vsrc
+         fragment:(NSString * _Nullable * _Nonnull)fsrc
+            error:(NSError * _Nullable *)error;
 
 @end
+
+NS_ASSUME_NONNULL_END
