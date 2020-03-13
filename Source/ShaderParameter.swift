@@ -27,22 +27,28 @@ import Foundation
 @objc(OEShaderParameter)
 @objcMembers
 public class ShaderParameter: NSObject {
-    public var name:    String
-    public var desc:    String
-    public var group:   String = ""
-    public var value:   Float = 0.0
-    public var initial: Float = 0.0
-    public var minimum: Float = 0.0
-    public var maximum: Float = 1.0
-    public var step:    Float = 0.01
-    
-    public var valuePtr: UnsafeMutablePointer<Float> {
-        return UnsafeMutablePointer<Float>(&value)
+    public var name:     String
+    public var desc:     String
+    public var group:    String = ""
+    public var initial:  Float = 0.0
+    public var minimum:  Float = 0.0
+    public var maximum:  Float = 1.0
+    public var step:     Float = 0.01
+    public var valuePtr: UnsafeMutablePointer<Float>
+    public var value:    Float {
+        get { valuePtr.pointee }
+        set { valuePtr.pointee = newValue }
     }
-    
+
     public init(name: String, desc: String) {
         self.name = name
         self.desc = desc
+        self.valuePtr = UnsafeMutablePointer<Float>.allocate(capacity: 1)
+        self.valuePtr.initialize(to: 0.0)
+    }
+    
+    deinit {
+        valuePtr.deallocate()
     }
     
     public override func isEqual(_ object: Any?) -> Bool {
