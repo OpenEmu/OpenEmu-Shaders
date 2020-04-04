@@ -27,6 +27,9 @@
 #include "glslang/Public/ShaderLang.h"
 #include "SPIRV/GlslangToSpv.h"
 #include "logging.h"
+#include "spirv-tools/libspirv.hpp"
+#include "spirv-tools/optimizer.hpp"
+
 
 using namespace glslang;
 using namespace std;
@@ -227,6 +230,11 @@ static TBuiltInResource resources;
     
     shared_ptr<vector<uint32_t>> spirv(new vector<uint32_t>());
     GlslangToSpv(*program.getIntermediate(language), *spirv.get());
+    
+    spvtools::Optimizer opt(SPV_ENV_UNIVERSAL_1_5);
+    opt.RegisterPerformancePasses();
+    bool ok = opt.Run(spirv->data(), spirv->size(), spirv.get());
+    
     return [[ShaderProgram alloc] initWithVector:spirv];
 }
 

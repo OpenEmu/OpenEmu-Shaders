@@ -120,6 +120,19 @@
 		052BE020228D187E00942C12 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE01F228D187E00942C12 /* TestHelpers.swift */; };
 		05410EDE22F5FF7400303424 /* SlangShaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05410EDD22F5FF7400303424 /* SlangShaderTests.swift */; };
 		05410EEE22F718D200303424 /* ShaderParamGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05410EED22F718D200303424 /* ShaderParamGroup.swift */; };
+		05647CAB24381A9B00BF00A9 /* libspirv.h in Headers */ = {isa = PBXBuildFile; fileRef = 05647CA624381A9B00BF00A9 /* libspirv.h */; };
+		05647EA924381DC700BF00A9 /* spirv.h in Headers */ = {isa = PBXBuildFile; fileRef = 05647E6624381DC700BF00A9 /* spirv.h */; };
+		05647EB524381DC700BF00A9 /* spirv.h in Headers */ = {isa = PBXBuildFile; fileRef = 05647E7324381DC700BF00A9 /* spirv.h */; };
+		05647EC124381DC700BF00A9 /* spirv.h in Headers */ = {isa = PBXBuildFile; fileRef = 05647E8024381DC700BF00A9 /* spirv.h */; };
+		05647EDC24381DC700BF00A9 /* spirv.h in Headers */ = {isa = PBXBuildFile; fileRef = 05647E9C24381DC700BF00A9 /* spirv.h */; };
+		05647EEC24383C4000BF00A9 /* OpenCLDebugInfo100.h in Headers */ = {isa = PBXBuildFile; fileRef = 05647EEA24383C4000BF00A9 /* OpenCLDebugInfo100.h */; };
+		05647EED24383C4000BF00A9 /* DebugInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 05647EEB24383C4000BF00A9 /* DebugInfo.h */; };
+		05647FBC2438D8A600BF00A9 /* libspirv.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 05647FB82438D8A600BF00A9 /* libspirv.hpp */; };
+		05647FBD2438D8A600BF00A9 /* linker.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 05647FB92438D8A600BF00A9 /* linker.hpp */; };
+		05647FBE2438D8A600BF00A9 /* optimizer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 05647FBA2438D8A600BF00A9 /* optimizer.hpp */; };
+		05647FBF2438D8A600BF00A9 /* instrument.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 05647FBB2438D8A600BF00A9 /* instrument.hpp */; };
+		05647FC12438DBB300BF00A9 /* libSPIRV-Tools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05647FC02438DBB300BF00A9 /* libSPIRV-Tools.a */; };
+		05647FC32438DBC900BF00A9 /* libSPIRV-Tools-opt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05647FC22438DBC900BF00A9 /* libSPIRV-Tools-opt.a */; };
 		056AC35B228BA11E005018DA /* OEEnums.h in Headers */ = {isa = PBXBuildFile; fileRef = 056AC35A228BA11E005018DA /* OEEnums.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		056AC372228BA144005018DA /* OEEnums.m in Sources */ = {isa = PBXBuildFile; fileRef = 056AC371228BA144005018DA /* OEEnums.m */; };
 		056AC379228BA8D9005018DA /* ShaderParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC378228BA8D9005018DA /* ShaderParameter.swift */; };
@@ -127,6 +140,7 @@
 		056AC3A9228BD73F005018DA /* NSScanner+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC3A8228BD73F005018DA /* NSScanner+Extensions.swift */; };
 		059258A022AD71500064273D /* logging.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592589E22AD71500064273D /* logging.m */; };
 		059258A122AD71500064273D /* logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 0592589F22AD71500064273D /* logging.h */; };
+		05D043542439043E00B6BDBF /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D043532439043E00B6BDBF /* Version.swift */; };
 		05EEE342227CC35D007D011B /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; };
 		05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE33B227CC35D007D011B /* OpenEmuShaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05EEE3A1227D5DF4007D011B /* SlangShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE39F227D5DF4007D011B /* SlangShader.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -153,6 +167,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		05647EE8243839C900BF00A9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05EEE32F227CC35C007D011B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 05647EE4243836DF00BF00A9;
+			remoteInfo = ToolDependencies;
+		};
 		05EEE343227CC35D007D011B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 05EEE32F227CC35C007D011B /* Project object */;
@@ -278,6 +299,19 @@
 		052BE01F228D187E00942C12 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		05410EDD22F5FF7400303424 /* SlangShaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlangShaderTests.swift; sourceTree = "<group>"; };
 		05410EED22F718D200303424 /* ShaderParamGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderParamGroup.swift; sourceTree = "<group>"; };
+		05647CA624381A9B00BF00A9 /* libspirv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libspirv.h; sourceTree = "<group>"; };
+		05647E6624381DC700BF00A9 /* spirv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spirv.h; sourceTree = "<group>"; };
+		05647E7324381DC700BF00A9 /* spirv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spirv.h; sourceTree = "<group>"; };
+		05647E8024381DC700BF00A9 /* spirv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spirv.h; sourceTree = "<group>"; };
+		05647E9C24381DC700BF00A9 /* spirv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spirv.h; sourceTree = "<group>"; };
+		05647EEA24383C4000BF00A9 /* OpenCLDebugInfo100.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenCLDebugInfo100.h; sourceTree = "<group>"; };
+		05647EEB24383C4000BF00A9 /* DebugInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugInfo.h; sourceTree = "<group>"; };
+		05647FB82438D8A600BF00A9 /* libspirv.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = libspirv.hpp; sourceTree = "<group>"; };
+		05647FB92438D8A600BF00A9 /* linker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = linker.hpp; sourceTree = "<group>"; };
+		05647FBA2438D8A600BF00A9 /* optimizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = optimizer.hpp; sourceTree = "<group>"; };
+		05647FBB2438D8A600BF00A9 /* instrument.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = instrument.hpp; sourceTree = "<group>"; };
+		05647FC02438DBB300BF00A9 /* libSPIRV-Tools.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSPIRV-Tools.a"; path = "3rdparty/SPIRV-Tools/build/source/libSPIRV-Tools.a"; sourceTree = "<group>"; };
+		05647FC22438DBC900BF00A9 /* libSPIRV-Tools-opt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSPIRV-Tools-opt.a"; path = "3rdparty/SPIRV-Tools/build/source/opt/libSPIRV-Tools-opt.a"; sourceTree = "<group>"; };
 		056AC35A228BA11E005018DA /* OEEnums.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OEEnums.h; sourceTree = "<group>"; };
 		056AC371228BA144005018DA /* OEEnums.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OEEnums.m; sourceTree = "<group>"; };
 		056AC378228BA8D9005018DA /* ShaderParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderParameter.swift; sourceTree = "<group>"; };
@@ -287,6 +321,7 @@
 		058278DE22AB1F85003040CD /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		0592589E22AD71500064273D /* logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = logging.m; sourceTree = "<group>"; };
 		0592589F22AD71500064273D /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logging.h; sourceTree = "<group>"; };
+		05D043532439043E00B6BDBF /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		05EEE338227CC35D007D011B /* OpenEmuShaders.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OpenEmuShaders.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EEE33B227CC35D007D011B /* OpenEmuShaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenEmuShaders.h; sourceTree = "<group>"; };
 		05EEE33C227CC35D007D011B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -294,14 +329,6 @@
 		05EEE348227CC35D007D011B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05EEE39F227D5DF4007D011B /* SlangShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlangShader.h; sourceTree = "<group>"; };
 		05EEE3A0227D5DF4007D011B /* SlangShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlangShader.m; sourceTree = "<group>"; };
-		05EEE3B7227E9766007D011B /* libglslang.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libglslang.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		05EEE3B9227E9766007D011B /* libOGLCompiler.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOGLCompiler.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		05EEE3BB227E9766007D011B /* libOSDependent.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libOSDependent.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		05EEE3BD227E9766007D011B /* libspirv-cross-c.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-c.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		05EEE3BF227E9766007D011B /* libspirv-cross-core.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-core.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		05EEE3C1227E9766007D011B /* libspirv-cross-glsl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-glsl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		05EEE3C3227E9766007D011B /* libspirv-cross-msl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-msl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		05EEE3C5227E9766007D011B /* libSPIRV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSPIRV.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		05F5494F229BBA8800561C14 /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		05F54950229BBA8800561C14 /* RendererCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RendererCommon.m; sourceTree = "<group>"; };
 		05F54951229BBA8800561C14 /* ShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
@@ -329,6 +356,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05647FC32438DBC900BF00A9 /* libSPIRV-Tools-opt.a in Frameworks */,
+				05647FC12438DBB300BF00A9 /* libSPIRV-Tools.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -568,6 +597,97 @@
 			name = "SPIRV-Cross";
 			sourceTree = "<group>";
 		};
+		05647AF224381A1F00BF00A9 /* SPIRV-Tools */ = {
+			isa = PBXGroup;
+			children = (
+				05647CA024381A9B00BF00A9 /* include */,
+			);
+			name = "SPIRV-Tools";
+			path = "3rdparty/SPIRV-Tools";
+			sourceTree = "<group>";
+		};
+		05647CA024381A9B00BF00A9 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				05647CA124381A9B00BF00A9 /* spirv-tools */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		05647CA124381A9B00BF00A9 /* spirv-tools */ = {
+			isa = PBXGroup;
+			children = (
+				05647FBB2438D8A600BF00A9 /* instrument.hpp */,
+				05647FB82438D8A600BF00A9 /* libspirv.hpp */,
+				05647FB92438D8A600BF00A9 /* linker.hpp */,
+				05647FBA2438D8A600BF00A9 /* optimizer.hpp */,
+				05647CA624381A9B00BF00A9 /* libspirv.h */,
+			);
+			path = "spirv-tools";
+			sourceTree = "<group>";
+		};
+		05647E5A24381DA500BF00A9 /* SPIRV-Headers */ = {
+			isa = PBXGroup;
+			children = (
+				05647E5B24381DC700BF00A9 /* include */,
+			);
+			name = "SPIRV-Headers";
+			path = "3rdparty/SPIRV-Headers";
+			sourceTree = "<group>";
+		};
+		05647E5B24381DC700BF00A9 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				05647E5C24381DC700BF00A9 /* spirv */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		05647E5C24381DC700BF00A9 /* spirv */ = {
+			isa = PBXGroup;
+			children = (
+				05647E5D24381DC700BF00A9 /* 1.0 */,
+				05647E6A24381DC700BF00A9 /* 1.1 */,
+				05647E7724381DC700BF00A9 /* 1.2 */,
+				05647E8424381DC700BF00A9 /* unified1 */,
+			);
+			path = spirv;
+			sourceTree = "<group>";
+		};
+		05647E5D24381DC700BF00A9 /* 1.0 */ = {
+			isa = PBXGroup;
+			children = (
+				05647E6624381DC700BF00A9 /* spirv.h */,
+			);
+			path = 1.0;
+			sourceTree = "<group>";
+		};
+		05647E6A24381DC700BF00A9 /* 1.1 */ = {
+			isa = PBXGroup;
+			children = (
+				05647E7324381DC700BF00A9 /* spirv.h */,
+			);
+			path = 1.1;
+			sourceTree = "<group>";
+		};
+		05647E7724381DC700BF00A9 /* 1.2 */ = {
+			isa = PBXGroup;
+			children = (
+				05647E8024381DC700BF00A9 /* spirv.h */,
+			);
+			path = 1.2;
+			sourceTree = "<group>";
+		};
+		05647E8424381DC700BF00A9 /* unified1 */ = {
+			isa = PBXGroup;
+			children = (
+				05647EEB24383C4000BF00A9 /* DebugInfo.h */,
+				05647EEA24383C4000BF00A9 /* OpenCLDebugInfo100.h */,
+				05647E9C24381DC700BF00A9 /* spirv.h */,
+			);
+			path = unified1;
+			sourceTree = "<group>";
+		};
 		058278DD22AB1F5E003040CD /* RendererPrivate */ = {
 			isa = PBXGroup;
 			children = (
@@ -643,14 +763,8 @@
 		05EEE3B6227E9766007D011B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				05EEE3B7227E9766007D011B /* libglslang.a */,
-				05EEE3B9227E9766007D011B /* libOGLCompiler.a */,
-				05EEE3BB227E9766007D011B /* libOSDependent.a */,
-				05EEE3BD227E9766007D011B /* libspirv-cross-c.a */,
-				05EEE3BF227E9766007D011B /* libspirv-cross-core.a */,
-				05EEE3C1227E9766007D011B /* libspirv-cross-glsl.a */,
-				05EEE3C3227E9766007D011B /* libspirv-cross-msl.a */,
-				05EEE3C5227E9766007D011B /* libSPIRV.a */,
+				05647FC22438DBC900BF00A9 /* libSPIRV-Tools-opt.a */,
+				05647FC02438DBB300BF00A9 /* libSPIRV-Tools.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -676,6 +790,7 @@
 				A902093DEC93994FE062176F /* OEShaderPassCompiler.m */,
 				A90209158C7B9B4C8306CD0D /* OEShaderPassCompiler.h */,
 				A90200FD5FAAA6164A305470 /* OESourceParser+Private.h */,
+				05D043532439043E00B6BDBF /* Version.swift */,
 			);
 			name = "Shader Reader";
 			sourceTree = "<group>";
@@ -704,6 +819,8 @@
 			children = (
 				052AE83822A418EA00483370 /* glslang */,
 				052AE84922A41D7E00483370 /* SPIRV-Cross */,
+				05647E5A24381DA500BF00A9 /* SPIRV-Headers */,
+				05647AF224381A1F00BF00A9 /* SPIRV-Tools */,
 			);
 			name = "3rd Party";
 			sourceTree = "<group>";
@@ -724,8 +841,10 @@
 				05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */,
 				052A2B8A22A438F800483370 /* spirv_parser.hpp in Headers */,
 				052A2B8622A438F800483370 /* spirv_common.hpp in Headers */,
+				05647EC124381DC700BF00A9 /* spirv.h in Headers */,
 				052A2B4E22A420CC00483370 /* GLSL.ext.EXT.h in Headers */,
 				052A2B5222A420CC00483370 /* GLSL.ext.NV.h in Headers */,
+				05647EED24383C4000BF00A9 /* DebugInfo.h in Headers */,
 				05F5495C229BBA8800561C14 /* OEFilterChain.h in Headers */,
 				052A2B7022A438D900483370 /* spirv_glsl.hpp in Headers */,
 				052A2B8322A438F800483370 /* spirv_cfg.hpp in Headers */,
@@ -734,14 +853,18 @@
 				059258A122AD71500064273D /* logging.h in Headers */,
 				052A2B5822A420CC00483370 /* SpvBuilder.h in Headers */,
 				056AC35B228BA11E005018DA /* OEEnums.h in Headers */,
+				05647FBC2438D8A600BF00A9 /* libspirv.hpp in Headers */,
 				052A2B1222A41FFD00483370 /* iomapper.h in Headers */,
 				052A2B1422A41FFD00483370 /* InitializeGlobals.h in Headers */,
+				05647EB524381DC700BF00A9 /* spirv.h in Headers */,
 				052A2B0522A41FFD00483370 /* revision.h in Headers */,
 				052A2B1022A41FFD00483370 /* attribute.h in Headers */,
 				052A2B8722A438F800483370 /* spirv_cross_containers.hpp in Headers */,
 				052A2B0122A41FFD00483370 /* Types.h in Headers */,
 				052A2B5522A420CC00483370 /* GLSL.ext.KHR.h in Headers */,
+				05647FBE2438D8A600BF00A9 /* optimizer.hpp in Headers */,
 				052A2B8E22A475D300483370 /* OEPixelBuffer.h in Headers */,
+				05647EA924381DC700BF00A9 /* spirv.h in Headers */,
 				052A2B0E22A41FFD00483370 /* reflection.h in Headers */,
 				052A2AFD22A41FFD00483370 /* PoolAlloc.h in Headers */,
 				052A2B5622A420CC00483370 /* hex_float.h in Headers */,
@@ -753,16 +876,19 @@
 				052A2B0322A41FFD00483370 /* ConstantUnion.h in Headers */,
 				052A2B0C22A41FFD00483370 /* ShHandle.h in Headers */,
 				052A2B0022A41FFD00483370 /* LiveTraverser.h in Headers */,
+				05647FBD2438D8A600BF00A9 /* linker.hpp in Headers */,
 				052A2B0B22A41FFD00483370 /* intermediate.h in Headers */,
 				052A2B8522A438F800483370 /* GLSL.std.450.h in Headers */,
 				052A2AFE22A41FFD00483370 /* ParseHelper.h in Headers */,
 				052A2B0222A41FFD00483370 /* PpTokens.h in Headers */,
 				052A2B0D22A41FFD00483370 /* Initialize.h in Headers */,
+				05647EDC24381DC700BF00A9 /* spirv.h in Headers */,
 				052A2B1622A41FFD00483370 /* ScanContext.h in Headers */,
 				052A2B0922A41FFD00483370 /* Scan.h in Headers */,
 				052A2B4C22A420CC00483370 /* spirv.hpp in Headers */,
 				052A2B5922A420CC00483370 /* Logger.h in Headers */,
 				052A2B6522A438A800483370 /* spirv.h in Headers */,
+				05647CAB24381A9B00BF00A9 /* libspirv.h in Headers */,
 				052A2B5022A420CC00483370 /* GLSL.ext.AMD.h in Headers */,
 				052A2B6622A438A800483370 /* spirv_cross_c.h in Headers */,
 				052A2B0722A41FFD00483370 /* BaseTypes.h in Headers */,
@@ -774,6 +900,8 @@
 				052A2AFC22A41FFD00483370 /* ShaderLang.h in Headers */,
 				052A2B4F22A420CC00483370 /* bitutils.h in Headers */,
 				052A2B1722A41FFD00483370 /* SymbolTable.h in Headers */,
+				05647FBF2438D8A600BF00A9 /* instrument.hpp in Headers */,
+				05647EEC24383C4000BF00A9 /* OpenCLDebugInfo100.h in Headers */,
 				052A2B2822A4209B00483370 /* InitializeDll.h in Headers */,
 				052A2B8822A438F800483370 /* spirv_cross_error_handling.hpp in Headers */,
 				052A2B6B22A438C200483370 /* spirv_msl.hpp in Headers */,
@@ -794,6 +922,23 @@
 		};
 /* End PBXHeadersBuildPhase section */
 
+/* Begin PBXLegacyTarget section */
+		05647EE4243836DF00BF00A9 /* ToolDependencies */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 05647EE5243836DF00BF00A9 /* Build configuration list for PBXLegacyTarget "ToolDependencies" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty";
+			dependencies = (
+			);
+			name = ToolDependencies;
+			passBuildSettingsInEnvironment = 1;
+			productName = ToolDependencies;
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXNativeTarget section */
 		05EEE337227CC35C007D011B /* OpenEmuShaders */ = {
 			isa = PBXNativeTarget;
@@ -807,6 +952,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				05647EE9243839C900BF00A9 /* PBXTargetDependency */,
 			);
 			name = OpenEmuShaders;
 			productName = OpenEmuShaders;
@@ -841,6 +987,9 @@
 				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = OpenEmu;
 				TargetAttributes = {
+					05647EE4243836DF00BF00A9 = {
+						CreatedOnToolsVersion = 11.4;
+					};
 					05EEE337227CC35C007D011B = {
 						CreatedOnToolsVersion = 10.2.1;
 						LastSwiftMigration = 1020;
@@ -866,6 +1015,7 @@
 			targets = (
 				05EEE337227CC35C007D011B /* OpenEmuShaders */,
 				05EEE340227CC35D007D011B /* OpenEmuShadersTests */,
+				05647EE4243836DF00BF00A9 /* ToolDependencies */,
 			);
 		};
 /* End PBXProject section */
@@ -918,6 +1068,7 @@
 				056AC3A7228BB3E9005018DA /* SourceParser.swift in Sources */,
 				052A2B3B22A420C000483370 /* GlslangToSpv.cpp in Sources */,
 				052A2B8F22A475D300483370 /* OEPixelBuffer.m in Sources */,
+				05D043542439043E00B6BDBF /* Version.swift in Sources */,
 				052A2B3822A420C000483370 /* SpvPostProcess.cpp in Sources */,
 				052A2AD422A41FEA00483370 /* ParseHelper.cpp in Sources */,
 				052A2AC322A41FEA00483370 /* PpAtom.cpp in Sources */,
@@ -973,6 +1124,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		05647EE9243839C900BF00A9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 05647EE4243836DF00BF00A9 /* ToolDependencies */;
+			targetProxy = 05647EE8243839C900BF00A9 /* PBXContainerItemProxy */;
+		};
 		05EEE344227CC35D007D011B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 05EEE337227CC35C007D011B /* OpenEmuShaders */;
@@ -981,6 +1137,31 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		05647EE6243836DF00BF00A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		05647EE7243836DF00BF00A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		05EEE34A227CC35D007D011B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 052A2B5D22A421CB00483370 /* Config.xcconfig */;
@@ -1039,10 +1220,6 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = (
-					"\"$(SOURCE_ROOT)/3rdparty/glslang\"",
-					"\"$(SOURCE_ROOT)/3rdparty/SPIRV-Cross\"",
-				);
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1100,10 +1277,6 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				USER_HEADER_SEARCH_PATHS = (
-					"\"$(SOURCE_ROOT)/3rdparty/glslang\"",
-					"\"$(SOURCE_ROOT)/3rdparty/SPIRV-Cross\"",
-				);
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1129,6 +1302,12 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source",
+					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source/opt",
+				);
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShaders;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -1157,6 +1336,12 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source",
+					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source/opt",
+				);
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShaders;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -1210,6 +1395,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		05647EE5243836DF00BF00A9 /* Build configuration list for PBXLegacyTarget "ToolDependencies" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05647EE6243836DF00BF00A9 /* Debug */,
+				05647EE7243836DF00BF00A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		05EEE332227CC35C007D011B /* Build configuration list for PBXProject "OpenEmuShaders" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -190,8 +190,6 @@ class SourceParser: NSObject {
                     try self.load(file, isRoot: false)
                     buffer.append("#line \(lno) \"\(filename)\"")
                     included.insert(file.absoluteString)
-                } else {
-                    print("already include \(file)")
                 }
             } else {
                 buffer.append(line)

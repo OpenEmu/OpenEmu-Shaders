@@ -51,8 +51,10 @@ void error_callback(void *userdata, const char *error)
     
     [NSFileManager.defaultManager createDirectoryAtURL:cacheDir withIntermediateDirectories:YES attributes:nil error:nil];
     
-    NSString *ext   = type == ShaderTypeVertex ? @"vert_ir" : @"frag_ir";
-    NSString *file  = [NSString stringWithFormat:@"%@.%@.%@", pass.source.basename, pass.source.sha1, ext];
+    NSString *version = [[NSBundle bundleForClass:self.class].infoDictionary objectForKey:@"CFBundleShortVersionString"];
+    
+    NSString *vorf  = type == ShaderTypeVertex ? @"vert" : @"frag";
+    NSString *file  = [NSString stringWithFormat:@"%@.%@.%@.%@.spirv", pass.source.basename, pass.source.sha1, version.versionValue, vorf];
     NSURL *filename = [cacheDir URLByAppendingPathComponent:file];
     NSData *data    = [NSData dataWithContentsOfURL:filename];
     

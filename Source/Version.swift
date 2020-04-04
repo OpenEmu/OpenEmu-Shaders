@@ -1,4 +1,4 @@
-// Copyright (c) 2019, OpenEmu Team
+// Copyright (c) 2020, OpenEmu Team
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -22,29 +22,15 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// Configuration settings file format documentation can be found at:
-// https://help.apple.com/xcode/#/dev745c5c974
+import Foundation
 
-BASE_DIR=$(PROJECT_DIR)
-THIRD_DIR=$(BASE_DIR)/3rdparty
-
-GLSLANG_BASE=$(THIRD_DIR)/glslang
-GLSLANG_PREPROCESSOR=NV_EXTENSIONS GLSLANG_OSINCLUDE_UNIX 'ENABLE_OPT=0'
-GLSLANG_HEADERS=$(GLSLANG_BASE)
-
-SPIRV_BASE=$(THIRD_DIR)/SPIRV-Cross
-SPIRV_PREPROCESSOR='SPIRV_CROSS_C_API_GLSL=1' 'SPIRV_CROSS_C_API_MSL=1'
-SPIRV_HEADERS=$(SPIRV_BASE)
-
-SPIRV_TOOLS_BASE=$(THIRD_DIR)/SPIRV-Tools
-SPIRV_TOOLS_PREPROCESSOR=$(inherited)
-SPIRV_TOOLS_HEADERS=$(SPIRV_TOOLS_BASE) $(SPIRV_TOOLS_BASE)/include
-
-// overrides
-
-USER_HEADER_SEARCH_PATHS=$(inherited) $(GLSLANG_HEADERS) $(SPIRV_HEADERS) $(SPIRV_TOOLS_HEADERS)
-GCC_PREPROCESSOR_DEFINITIONS=$(inherited) $(GLSLANG_PREPROCESSOR) $(SPIRV_PREPROCESSOR) $(SPIRV_TOOLS_PREPROCESSOR)
-
-// modules
-MODULEMAP_PRIVATE_FILE = $(SRCROOT)/Source/Renderer.private.modulemap
-SWIFT_INCLUDE_PATHS = $(SRCROOT)/Source
+@objc
+public extension NSString {
+    @objc
+    var versionValue: String {
+        let parts = components(separatedBy: ".").compactMap(Int.init)
+        let ints = parts.count < 3 ? parts + [Int](repeating: 0, count: 3 - parts.count) : parts
+        let fmt = ["%03d", "%03d", "%04d"]
+        return zip(fmt, ints).map { String(format: $0, $1) }.joined()
+    }
+}

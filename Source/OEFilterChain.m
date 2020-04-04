@@ -886,8 +886,12 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 
 - (BOOL)setShaderFromURL:(NSURL *)url error:(NSError **)error
 {
-    [self OE_freeShaderResources];
+    os_log_debug(OE_LOG_DEFAULT, "loading shader from '%{public}s'", url.fileSystemRepresentation);
     
+    [self OE_freeShaderResources];
+
+    CFTimeInterval start = CACurrentMediaTime();
+
     NSError     *err;
     SlangShader *ss = [[SlangShader alloc] initFromURL:url error:&err];
     if (err != nil) {
@@ -1094,6 +1098,9 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         if (ss) {
             [self OE_freeShaderResources];
         }
+        
+        CFTimeInterval end = CACurrentMediaTime() - start;
+        os_log_debug(OE_LOG_DEFAULT, "Shader compilation completed in %{xcode:interval}f seconds", end);
     }
     
     _renderTargetsNeedResize = YES;
