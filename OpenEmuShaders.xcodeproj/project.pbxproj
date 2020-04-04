@@ -1307,7 +1307,7 @@
 					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source",
 					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source/opt",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShaders;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -1341,7 +1341,7 @@
 					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source",
 					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source/opt",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShaders;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
