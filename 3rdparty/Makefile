@@ -24,6 +24,9 @@ TARGET_ARCHITECTURES := $(shell ./version_gte.sh $(MACOS_SDK_VERSION) 11.0 || ./
 
 all: libSPIRV-Tools-opt.a build_info.h
 
+install: all
+.PHONY: install
+
 clean: clean-spirv clean-glslang
 .PHONY: clean
 
