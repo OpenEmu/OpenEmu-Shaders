@@ -929,8 +929,8 @@
 			buildConfigurationList = 05647EE5243836DF00BF00A9 /* Build configuration list for PBXLegacyTarget "ToolDependencies" */;
 			buildPhases = (
 			);
-			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = "/Volumes/Data/projects/macos/OpenEmu/OpenEmu-Shaders/3rdparty";
+			buildToolPath = "$(DEVELOPER_BIN_DIR)/make";
+			buildWorkingDirectory = 3rdparty;
 			dependencies = (
 			);
 			name = ToolDependencies;
