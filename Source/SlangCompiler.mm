@@ -232,7 +232,10 @@ static TBuiltInResource resources;
     GlslangToSpv(*program.getIntermediate(language), *spirv.get());
     
     spvtools::Optimizer opt(SPV_ENV_UNIVERSAL_1_5);
-    opt.RegisterPerformancePasses();
+    opt.RegisterPassFromFlag("--ccp"); // conditional constant propagation
+    opt.RegisterPassFromFlag("--eliminate-dead-branches");
+    opt.RegisterPassFromFlag("--eliminate-dead-code-aggressive");
+    //opt.RegisterPerformancePasses();
     bool ok = opt.Run(spirv->data(), spirv->size(), spirv.get());
     
     return [[ShaderProgram alloc] initWithVector:spirv];
