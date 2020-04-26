@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ShaderPass : NSObject
 
-@property (nonatomic, readwrite) NSURL     *url;
+@property (nonatomic, readwrite) NSURL              *url;
 @property (nonatomic, readwrite) NSUInteger         frameCountMod;
 @property (nonatomic, readwrite) OEShaderPassScale  scaleX;
 @property (nonatomic, readwrite) OEShaderPassScale  scaleY;
@@ -67,15 +67,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nonnull) NSArray<OEShaderParamGroup *> *parameterGroups;
 @property (nonatomic, readonly, nonnull) NSArray<ShaderLUT *>          *luts;
 @property (nonatomic, readonly) NSUInteger                             historyCount;
-
-- (BOOL)buildPass:(NSUInteger)passNumber
-     metalVersion:(MTLLanguageVersion)version
-    passSemantics:(ShaderPassSemantics *)passSemantics
-     passBindings:(ShaderPassBindings *)passBindings
-           vertex:(NSString * _Nonnull * _Nonnull)vsrc
-         fragment:(NSString * _Nonnull * _Nonnull)fsrc
-            error:(NSError * _Nullable *)error;
-
 
 @end
 

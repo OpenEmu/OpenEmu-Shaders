@@ -24,7 +24,6 @@
 
 #import "SlangShader.h"
 #import <OpenEmuShaders/OpenEmuShaders-Swift.h>
-#import "OEShaderPassCompiler.h"
 #import "OESourceParser+Private.h"
 #import "logging.h"
 
@@ -229,7 +228,6 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
     NSMutableArray<OEShaderParameter *>                  *_parameters;
     NSMutableDictionary<NSString *, OEShaderParameter *> *_parametersMap;
     NSMutableArray<OEShaderParamGroup *>                 *_parameterGroups;
-    OEShaderPassCompiler                                 *_compiler;
     NSUInteger                                           _historyCount;
 }
 
@@ -394,28 +392,8 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
         {
             global.parameters = _parameters;
         }
-        
-        _compiler = [[OEShaderPassCompiler alloc] initWithShaderModel:self];
     }
     return self;
-}
-
-- (BOOL)buildPass:(NSUInteger)passNumber
-     metalVersion:(MTLLanguageVersion)version
-    passSemantics:(ShaderPassSemantics *)passSemantics
-     passBindings:(ShaderPassBindings *)passBindings
-           vertex:(NSString **)vsrc
-         fragment:(NSString **)fsrc
-            error:(NSError * _Nullable *)error
-{
-    
-    return [_compiler buildPass:passNumber
-                   metalVersion:version
-                  passSemantics:passSemantics
-                   passBindings:passBindings
-                         vertex:vsrc
-                       fragment:fsrc
-                          error:error];
 }
 
 - (void)setHistoryCount:(NSUInteger)historyCount {

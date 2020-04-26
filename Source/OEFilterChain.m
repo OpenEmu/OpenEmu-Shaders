@@ -25,6 +25,7 @@
 @import MetalKit;
 
 #import "OEFilterChain.h"
+#import "OEShaderPassCompiler.h"
 #import "logging.h"
 #import "OEPixelBuffer+Internal.h"
 #import "RendererCommon.h"
@@ -910,6 +911,8 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     _lastPassIndex = _passCount - 1;
     _lutCount      = ss.luts.count;
     
+    OEShaderPassCompiler *compiler = [[OEShaderPassCompiler alloc] initWithShaderModel:ss];
+    
     MTLCompileOptions *options = [MTLCompileOptions new];
     options.fastMathEnabled = YES;
     
@@ -949,14 +952,13 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             NSString *vs_src = nil;
             NSString *fs_src = nil;
             _pass[i].bindings = [ShaderPassBindings new];
-            if (![ss buildPass:i
-                  metalVersion:options.languageVersion
-                 passSemantics:sem
-                  passBindings:_pass[i].bindings
-                        vertex:&vs_src
-                      fragment:&fs_src
-                         error:&err])
-            {
+            if (![compiler buildPass:i
+                        metalVersion:options.languageVersion
+                       passSemantics:sem
+                        passBindings:_pass[i].bindings
+                              vertex:&vs_src
+                            fragment:&fs_src
+                               error:&err]) {
                 if (error) {
                     *error = err;
                 }
