@@ -62,7 +62,7 @@ class ConfigScannerTests: XCTestCase {
         scanning:
         for (expKey, expVal) in expected {
             switch c.scan() {
-            case .keyval(let (key, val)):
+            case .keyval(let key, let val):
                 XCTAssertEqual(key, expKey, "unexpected key")
                 XCTAssertEqual(val, expVal, "unexpected value")
             case .eof:

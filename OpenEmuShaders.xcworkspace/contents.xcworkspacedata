@@ -4,14 +4,4 @@
    <FileRef
       location = "container:OpenEmuShaders.xcodeproj">
    </FileRef>
-   <Group
-      location = "container:"
-      name = "Dependencies">
-      <FileRef
-         location = "group:build/SPIRV-Cross/SPIRV-Cross.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:build/glslang/glslang.xcodeproj">
-      </FileRef>
-   </Group>
 </Workspace>

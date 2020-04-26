@@ -278,6 +278,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
         ShaderTextureSemanticMap *sem = names[key];
         if ([self textureSemanticIsArray:sem.semantic]) {
             if ([name hasPrefix:key]) {
+                // For a name like PassOutput2, index == 2
                 NSUInteger index = (NSUInteger)[[name substringFromIndex:key.length] integerValue];
                 return [ShaderTextureSemanticMap mapWithSemantic:sem.semantic index:index];
             }

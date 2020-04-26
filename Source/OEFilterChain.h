@@ -29,8 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class SlangShader;
 @class OEPixelBuffer;
 
-typedef MTLRenderPassDescriptor * __nullable (^OEGetDescriptorBlock)(void);
-
 @interface OEFilterChain : NSObject
 
 @property (nonatomic, readonly) CGRect              sourceRect;
