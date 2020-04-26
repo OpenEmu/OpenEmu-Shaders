@@ -54,7 +54,7 @@ void error_callback(void *userdata, const char *error)
     NSString *version = [[NSBundle bundleForClass:self.class].infoDictionary objectForKey:@"CFBundleShortVersionString"];
     
     NSString *vorf  = type == ShaderTypeVertex ? @"vert" : @"frag";
-    NSString *file  = [NSString stringWithFormat:@"%@.%@.%@.%@.spirv", pass.source.basename, pass.source.sha1, version.versionValue, vorf];
+    NSString *file  = [NSString stringWithFormat:@"%@.%@.%@.%@.spirv", pass.source.basename, pass.source.sha256, version.versionValue, vorf];
     NSURL *filename = [cacheDir URLByAppendingPathComponent:file];
     NSData *data    = [NSData dataWithContentsOfURL:filename];
     

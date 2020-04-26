@@ -25,6 +25,7 @@
 import Foundation
 import Metal
 import CommonCrypto
+import CryptoKit
 
 enum SourceParserError: LocalizedError {
     case missingVersion
@@ -58,6 +59,28 @@ enum SourceParserError: LocalizedError {
     }
 }
 
+extension String {
+    mutating func replaceOccurrences(of target: String, with replacement: String, options: String.CompareOptions = [], locale: Locale? = nil) {
+        var range: Range<String.Index>?
+        repeat {
+            range = self.range(of: target, options: options, range: range.map { $0.lowerBound..<self.endIndex }, locale: locale)
+            if let range = range {
+                self.replaceSubrange(range, with: replacement)
+            }
+        } while range != nil
+    }
+}
+
+extension Sequence where Self.Element == UInt8 {
+    var base64: String {
+        var res = Data(self).base64EncodedString()
+        res.replaceOccurrences(of: "+", with: "-")
+        res.replaceOccurrences(of: "/", with: "_")
+        res.replaceOccurrences(of: "=", with: "")
+        return res
+    }
+}
+
 /**
  * OESourceParser is responsible for parsing the .slang source file from the provided url.
  *
@@ -78,14 +101,17 @@ class SourceParser: NSObject {
     
     @objc var format: MTLPixelFormat
     
-    @objc lazy var sha1: String = {
-        let data = Data(buffer.joined().utf8)
-        var digest = [UInt8](repeating: 0, count:Int(CC_SHA1_DIGEST_LENGTH))
-        data.withUnsafeBytes {
-            _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &digest)
+    @objc lazy var sha256: String = {
+        let data = Array(buffer.joined().utf8)
+        if #available(OSX 10.15, *) {
+            let digest = SHA256.hash(data: data)
+            return digest.base64
         }
-        let hexBytes = digest.map { String(format: "%02hhx", $0) }
-        return hexBytes.joined()
+        var digest = [UInt8](repeating: 0, count:Int(CC_SHA256_DIGEST_LENGTH))
+        data.withUnsafeBytes {
+            _ = CC_SHA256($0.baseAddress, CC_LONG(data.count), &digest)
+        }
+        return digest.base64
     }()
     
     /**
