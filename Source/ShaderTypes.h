@@ -67,20 +67,20 @@ typedef NS_ENUM(NSInteger, SamplerIndex)
 
 typedef struct
 {
-    vector_float4 position METAL_ATTRIBUTE(VertexAttributePosition);
-    vector_float2 texCoord METAL_ATTRIBUTE(VertexAttributeTexcoord);
+    simd_float4 position METAL_ATTRIBUTE(VertexAttributePosition);
+    simd_float2 texCoord METAL_ATTRIBUTE(VertexAttributeTexcoord);
 } Vertex;
 
 typedef struct
 {
-    vector_float4 position METAL_POSITION;
-    vector_float2 texCoord;
+    simd_float4 position METAL_POSITION;
+    simd_float2 texCoord;
 } ColorInOut;
 
 typedef struct
 {
-    matrix_float4x4 projectionMatrix;
-    vector_float2 outputSize;
+    simd_float4x4   projectionMatrix;
+    simd_float2     outputSize;
     float time;
 } Uniforms;
 
@@ -88,8 +88,8 @@ typedef struct
 
 typedef struct
 {
-    vector_uint2    origin;
-    uint            stride;
+    simd_uint2  origin;
+    uint        stride;
 } BufferUniforms;
 
 #endif /* ShaderTypes_h */

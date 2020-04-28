@@ -24,7 +24,7 @@
 
 #import "RendererCommon.h"
 
-matrix_float4x4 make_matrix_float4x4(const float *v)
+simd_float4x4 make_matrix_float4x4(const float *v)
 {
     simd_float4 P = simd_make_float4(v[0], v[1], v[2], v[3]);
     v += 4;
@@ -34,11 +34,11 @@ matrix_float4x4 make_matrix_float4x4(const float *v)
     v += 4;
     simd_float4 S = simd_make_float4(v[0], v[1], v[2], v[3]);
     
-    matrix_float4x4 mat = {P, Q, R, S};
+    simd_float4x4 mat = {P, Q, R, S};
     return mat;
 }
 
-matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bottom)
+simd_float4x4 matrix_proj_ortho(float left, float right, float top, float bottom)
 {
     float near = 0;
     float far = 1;
@@ -55,11 +55,11 @@ matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bott
     simd_float4 R = simd_make_float4(0, 0, sz, 0);
     simd_float4 S = simd_make_float4(tx, ty, tz, 1);
     
-    matrix_float4x4 mat = {P, Q, R, S};
+    simd_float4x4 mat = {P, Q, R, S};
     return mat;
 }
 
-matrix_float4x4 matrix_rotate_z(float rot)
+simd_float4x4 matrix_rotate_z(float rot)
 {
     float cz, sz;
     __sincosf(rot, &sz, &cz);
@@ -69,6 +69,6 @@ matrix_float4x4 matrix_rotate_z(float rot)
     simd_float4 R = simd_make_float4( 0,   0, 1, 0);
     simd_float4 S = simd_make_float4( 0,   0, 0, 1);
     
-    matrix_float4x4 mat = {P, Q, R, S};
+    simd_float4x4 mat = {P, Q, R, S};
     return mat;
 }

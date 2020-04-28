@@ -273,7 +273,7 @@ typedef struct texture
     /* Calculate projection. */
     _uniformsNoRotate.projectionMatrix = matrix_proj_ortho(0, 1, 0, 1);
     
-    matrix_float4x4 rot = matrix_rotate_z((float)(M_PI * _rotation / 180.0f));
+    simd_float4x4 rot = matrix_rotate_z((float)(M_PI * _rotation / 180.0f));
     _uniforms.projectionMatrix = simd_mul(rot, _uniformsNoRotate.projectionMatrix);
 }
 
@@ -766,6 +766,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         memset(&_pass[i].feedbackTarget.viewSize, 0, sizeof(_pass[i].feedbackTarget.viewSize));
     }
     
+    // width and height represent the size of the previous pass
     NSInteger width = _sourceRect.size.width, height = _sourceRect.size.height;
     
     CGSize size = CGSizeMake(_outputFrame.viewport.width, _outputFrame.viewport.height);
@@ -917,18 +918,16 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     options.fastMathEnabled = YES;
     
     @try {
-        texture_t     *source = &_sourceTextures[0];
-        for (unsigned i       = 0; i < _passCount; source = &_pass[i++].renderTarget) {
+        texture_t *source = &_sourceTextures[0];
+        for (unsigned i = 0; i < _passCount; source = &_pass[i++].renderTarget) {
             ShaderPass *pass = ss.passes[i];
             
-            matrix_float4x4 *mvp = (i == _lastPassIndex) ? &_uniforms.projectionMatrix : &_uniformsNoRotate.projectionMatrix;
-            
             ShaderPassSemantics *sem = [ShaderPassSemantics new];
-            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_sourceTextures[0].view stride:0
-                       size:&_sourceTextures[0].viewSize stride:0
+            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_sourceTextures[0].view
+                       size:&_sourceTextures[0].viewSize
                    semantic:OEShaderTextureSemanticOriginal];
-            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&source->view stride:0
-                       size:&source->viewSize stride:0
+            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&source->view
+                       size:&source->viewSize
                    semantic:OEShaderTextureSemanticSource];
             [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_sourceTextures[0].view stride:sizeof(*_sourceTextures)
                        size:&_sourceTextures[0].viewSize stride:sizeof(*_sourceTextures)
@@ -943,6 +942,8 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                        size:&_luts[0].viewSize stride:sizeof(*_luts)
                    semantic:OEShaderTextureSemanticUser];
             
+            simd_float4x4 *mvp = (i == _lastPassIndex) ? &_uniforms.projectionMatrix : &_uniformsNoRotate.projectionMatrix;
+           
             [sem addUniformData:mvp semantic:OEShaderBufferSemanticMVP];
             [sem addUniformData:&_pass[i].renderTarget.viewSize semantic:OEShaderBufferSemanticOutput];
             [sem addUniformData:&_outputFrame.outputSize semantic:OEShaderBufferSemanticFinalViewportSize];

@@ -34,6 +34,6 @@
 
 #define MTL_ALIGN_BUFFER(size) ((size + kMetalBufferAlignment - 1) & (~(kMetalBufferAlignment - 1)))
 
-extern matrix_float4x4 matrix_proj_ortho(float left, float right, float top, float bottom);
-extern matrix_float4x4 matrix_rotate_z(float rot);
-extern matrix_float4x4 make_matrix_float4x4(const float *v);
+extern simd_float4x4 matrix_proj_ortho(float left, float right, float top, float bottom);
+extern simd_float4x4 matrix_rotate_z(float rot);
+extern simd_float4x4 make_matrix_float4x4(const float *v);

@@ -80,6 +80,10 @@
 @property (nonatomic, readonly) NSDictionary<OEShaderBufferSemantic, ShaderPassBufferSemantics *>   *uniforms;
 
 - (void)addTexture:(id<MTLTexture> __unsafe_unretained *)texture
+              size:(void *)size
+          semantic:(OEShaderTextureSemantic)semantic;
+
+- (void)addTexture:(id<MTLTexture> __unsafe_unretained *)texture
             stride:(size_t)ts
               size:(void *)size
             stride:(size_t)ss

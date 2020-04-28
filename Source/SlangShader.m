@@ -307,7 +307,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
         }
         
         // resolve overrides from config
-        NSDictionary < NSString *, NSNumber * > *params = d[@"parameters"];
+        NSDictionary<NSString *, NSNumber *> *params = d[@"parameters"];
         if (params != nil) {
             for (NSString *name in params) {
                 OEShaderParameter *existing = _parametersMap[name];

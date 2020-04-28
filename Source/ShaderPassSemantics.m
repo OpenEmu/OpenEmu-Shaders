@@ -134,6 +134,13 @@
 }
 
 - (void)addTexture:(id<MTLTexture> __unsafe_unretained *)texture
+              size:(void *)size
+          semantic:(OEShaderTextureSemantic)semantic
+{
+    _textures[semantic] = [ShaderPassTextureSemantics makeWithTexture:texture stride:0 size:size stride:0];
+}
+
+- (void)addTexture:(id<MTLTexture> __unsafe_unretained *)texture
             stride:(size_t)ts
               size:(void *)size
             stride:(size_t)ss

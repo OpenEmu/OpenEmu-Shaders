@@ -25,7 +25,6 @@
 import Foundation
 import Metal
 import CommonCrypto
-import CryptoKit
 
 enum SourceParserError: LocalizedError {
     case missingVersion
@@ -103,11 +102,7 @@ class SourceParser: NSObject {
     
     @objc lazy var sha256: String = {
         let data = Array(buffer.joined().utf8)
-        if #available(OSX 10.15, *) {
-            let digest = SHA256.hash(data: data)
-            return digest.base64
-        }
-        var digest = [UInt8](repeating: 0, count:Int(CC_SHA256_DIGEST_LENGTH))
+        var digest = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
         data.withUnsafeBytes {
             _ = CC_SHA256($0.baseAddress, CC_LONG(data.count), &digest)
         }

@@ -49,7 +49,7 @@ public class MTLPixelConverter: NSObject {
             ce.label = "pixel conversion"
             ce.setComputePipelineState(kernel)
             
-            var unif = BufferUniforms(origin: vector2(UInt32(sourceOrigin.x), UInt32(sourceOrigin.y)), stride: UInt32(sourceBytesPerRow / bytesPerPixel))
+            var unif = BufferUniforms(origin: SIMD2(x: UInt32(sourceOrigin.x), y: UInt32(sourceOrigin.y)), stride: UInt32(sourceBytesPerRow / bytesPerPixel))
             
             ce.setBuffer(src, offset: 0, index: 0)
             ce.setBytes(&unif, length: MemoryLayout.size(ofValue: unif), index: 1)
