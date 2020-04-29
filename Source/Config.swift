@@ -250,8 +250,8 @@ public class ShaderConfigSerialization: NSObject {
                     pass[to] = bv as AnyObject
                 }
             }
-            for (from, to) in ints {
-                if let v = d["\(from)\(i)"], let iv = Int(v) {
+            for (from, to) in uints {
+                if let v = d["\(from)\(i)"], let iv = UInt(v) {
                     pass[to] = iv as AnyObject
                 }
             }
@@ -279,7 +279,7 @@ public class ShaderConfigSerialization: NSObject {
             ("mipmap_input", "mipmapInput"),
         ]
         
-        static let ints = [
+        static let uints = [
             ("frame_count_mod", "frameCountMod"),
         ]
         

@@ -766,22 +766,23 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         memset(&_pass[i].feedbackTarget.viewSize, 0, sizeof(_pass[i].feedbackTarget.viewSize));
     }
     
-    // width and height represent the size of the previous pass
+    // width and height represent the size of the Source image to the current
+    // pass
     NSInteger width = _sourceRect.size.width, height = _sourceRect.size.height;
     
-    CGSize size = CGSizeMake(_outputFrame.viewport.width, _outputFrame.viewport.height);
+    CGSize viewportSize = CGSizeMake(_outputFrame.viewport.width, _outputFrame.viewport.height);
     
     for (unsigned i = 0; i < _passCount; i++) {
         ShaderPass *pass = _shader.passes[i];
         
-        if (pass.valid) {
+        if (pass.isScaled) {
             switch (pass.scaleX) {
                 case OEShaderPassScaleInput:
                     width *= pass.scale.width;
                     break;
                 
                 case OEShaderPassScaleViewport:
-                    width = (NSInteger)(size.width * pass.scale.width);
+                    width = (NSInteger)(viewportSize.width * pass.scale.width);
                     break;
                 
                 case OEShaderPassScaleAbsolute:
@@ -793,7 +794,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             }
             
             if (!width)
-                width = size.width;
+                width = viewportSize.width;
             
             switch (pass.scaleY) {
                 case OEShaderPassScaleInput:
@@ -801,7 +802,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                     break;
                 
                 case OEShaderPassScaleViewport:
-                    height = (NSInteger)(size.height * pass.scale.height);
+                    height = (NSInteger)(viewportSize.height * pass.scale.height);
                     break;
                 
                 case OEShaderPassScaleAbsolute:
@@ -813,17 +814,17 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             }
             
             if (!height)
-                height = size.height;
+                height = viewportSize.height;
         } else if (i == _lastPassIndex) {
-            width  = size.width;
-            height = size.height;
+            width  = viewportSize.width;
+            height = viewportSize.height;
         }
         
         os_log_debug(OE_LOG_DEFAULT, "pass %d, render target size %lu x %lu", i, width, height);
         
         MTLPixelFormat fmt = _pass[i].bindings.format;
         if ((i != _lastPassIndex) ||
-                (width != size.width) || (height != size.height) ||
+                (width != viewportSize.width) || (height != viewportSize.height) ||
                 fmt != MTLPixelFormatBGRA8Unorm) {
             _pass[i].viewport.width  = width;
             _pass[i].viewport.height = height;

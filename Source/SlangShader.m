@@ -129,7 +129,7 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
         
         if (d[@"scaleType"] != nil || d[@"scaleTypeX"] != nil || d[@"scaleTypeY"] != nil) {
             // scale
-            self.valid  = YES;
+            self.isScaled = YES;
             self.scaleX = OEShaderPassScaleInput;
             self.scaleY = OEShaderPassScaleInput;
             CGSize size  = {0};
