@@ -197,7 +197,7 @@ typedef NS_OPTIONS(NSUInteger, OEStageUsage)
 typedef NS_ENUM(NSUInteger, OEShaderPassScale)
 {
     OEShaderPassScaleInvalid = 0,
-    OEShaderPassScaleInput,
+    OEShaderPassScaleSource,
     OEShaderPassScaleAbsolute,
     OEShaderPassScaleViewport,
 };

@@ -57,7 +57,7 @@ public class ShaderConfigSerialization: NSObject {
         
         throw Errors.invalidPathExtension(url.pathExtension)
     }
-    
+
     class func parseConfig(_ from: String) throws -> [String: AnyObject] {
         var scanner = ConfigScanner(from)
         
@@ -414,3 +414,4 @@ struct ConfigScanner {
         return String(scalars[startIndex..<pos])
     }
 }
+

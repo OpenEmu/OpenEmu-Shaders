@@ -484,7 +484,6 @@ os_log_error(OE_LOG_DEFAULT, "unexpected resource type in shader %{public}@", @#
     if (hasFragPush && ![self addActiveBufferRanges:ref compiler:fsCompiler resource:fragmentPush ubo:NO])
         return NO;
     
-    //NSUInteger bindings = hasUBO ? (1u << uboBinding) : 0;
     NSUInteger bindings = 0;
     spvc_resources_get_resource_list_for_type(fsResources, SPVC_RESOURCE_TYPE_SAMPLED_IMAGE, &list, &list_size);
     for (NSUInteger i = 0; i < list_size; i++) {

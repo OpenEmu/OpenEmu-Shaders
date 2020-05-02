@@ -71,8 +71,9 @@ class ConfigScannerTests: XCTestCase {
         }
     }
 
+    @available(OSX 10.15, *)
     func testPerformanceExample() {
-        self.measure {
+        self.measure(metrics:[XCTCPUMetric(limitingToCurrentThread: true), XCTClockMetric()]) {
             var c = ConfigScanner(
                 """
                 shaders = 5
@@ -89,17 +90,13 @@ class ConfigScannerTests: XCTestCase {
                 type2   = "hello #ignore this there" # remaining comment
                 """)
 
-            for _ in 0..<1000 {
-                c.reset()
-
-                scanning:
-                while true {
-                    switch c.scan() {
-                    case .keyval:
-                        break;
-                    case .eof:
-                        break scanning
-                    }
+            scanning:
+            while true {
+                switch c.scan() {
+                case .keyval:
+                    continue
+                case .eof:
+                    break scanning
                 }
             }
         }

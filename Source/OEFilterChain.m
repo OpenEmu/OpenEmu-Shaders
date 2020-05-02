@@ -777,7 +777,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         
         if (pass.isScaled) {
             switch (pass.scaleX) {
-                case OEShaderPassScaleInput:
+                case OEShaderPassScaleSource:
                     width *= pass.scale.width;
                     break;
                 
@@ -797,7 +797,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 width = viewportSize.width;
             
             switch (pass.scaleY) {
-                case OEShaderPassScaleInput:
+                case OEShaderPassScaleSource:
                     height *= pass.scale.height;
                     break;
                 

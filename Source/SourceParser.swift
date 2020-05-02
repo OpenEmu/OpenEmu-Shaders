@@ -61,12 +61,10 @@ enum SourceParserError: LocalizedError {
 extension String {
     mutating func replaceOccurrences(of target: String, with replacement: String, options: String.CompareOptions = [], locale: Locale? = nil) {
         var range: Range<String.Index>?
-        repeat {
-            range = self.range(of: target, options: options, range: range.map { $0.lowerBound..<self.endIndex }, locale: locale)
-            if let range = range {
-                self.replaceSubrange(range, with: replacement)
-            }
-        } while range != nil
+        while let r = self.range(of: target, options: options, range: range.map { $0.lowerBound..<self.endIndex }, locale: locale) {
+            self.replaceSubrange(r, with: replacement)
+            range = r
+        }
     }
 }
 

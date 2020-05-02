@@ -56,7 +56,7 @@ static OEShaderPassWrap OEShaderPassWrapFromNSString(NSString *wrapMode)
 static OEShaderPassScale OEShaderPassScaleFromNSString(NSString *scale)
 {
     if ([scale isEqualToString:@"source"])
-        return OEShaderPassScaleInput;
+        return OEShaderPassScaleSource;
     if ([scale isEqualToString:@"viewport"])
         return OEShaderPassScaleViewport;
     if ([scale isEqualToString:@"absolute"])
@@ -130,8 +130,8 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
         if (d[@"scaleType"] != nil || d[@"scaleTypeX"] != nil || d[@"scaleTypeY"] != nil) {
             // scale
             self.isScaled = YES;
-            self.scaleX = OEShaderPassScaleInput;
-            self.scaleY = OEShaderPassScaleInput;
+            self.scaleX = OEShaderPassScaleSource;
+            self.scaleY = OEShaderPassScaleSource;
             CGSize size  = {0};
             CGSize scale = CGSizeMake(1.0, 1.0);
             
