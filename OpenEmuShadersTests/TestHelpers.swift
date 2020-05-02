@@ -77,7 +77,7 @@ struct Param {
     var initial: Float = 0.5
     var minimum: Float = 0.0
     var maximum: Float = 1.0
-    var step:    Float = 0.01
+    var step: Float = 0.01
 }
 
 extension ShaderParameter {

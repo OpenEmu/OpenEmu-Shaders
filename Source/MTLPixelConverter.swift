@@ -34,7 +34,7 @@ public class MTLPixelConverter: NSObject {
     
     @objc(MTLBufferFormatConverter)
     public class BufferConverter: NSObject {
-        let kernel:        MTLComputePipelineState
+        let kernel: MTLComputePipelineState
         let bytesPerPixel: UInt
         
         init(kernel: MTLComputePipelineState, bytesPerPixel: UInt) {
@@ -43,13 +43,14 @@ public class MTLPixelConverter: NSObject {
         }
         
         @objc
-        public func convert(fromBuffer src: MTLBuffer, sourceOrigin:MTLOrigin, sourceBytesPerRow: UInt,
+        public func convert(fromBuffer src: MTLBuffer, sourceOrigin: MTLOrigin, sourceBytesPerRow: UInt,
                             toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
             let ce = commandBuffer.makeComputeCommandEncoder()!
             ce.label = "pixel conversion"
             ce.setComputePipelineState(kernel)
             
-            var unif = BufferUniforms(origin: SIMD2(x: UInt32(sourceOrigin.x), y: UInt32(sourceOrigin.y)), stride: UInt32(sourceBytesPerRow / bytesPerPixel))
+            var unif = BufferUniforms(origin: SIMD2(x: UInt32(sourceOrigin.x), y: UInt32(sourceOrigin.y)),
+                                      stride: UInt32(sourceBytesPerRow / bytesPerPixel))
             
             ce.setBuffer(src, offset: 0, index: 0)
             ce.setBytes(&unif, length: MemoryLayout.size(ofValue: unif), index: 1)
@@ -67,7 +68,7 @@ public class MTLPixelConverter: NSObject {
     
     @objc(MTLTextureFormatConverter)
     public class TextureConverter: NSObject {
-        let kernel:        MTLComputePipelineState
+        let kernel: MTLComputePipelineState
         
         init(kernel: MTLComputePipelineState) {
             self.kernel = kernel
@@ -90,8 +91,8 @@ public class MTLPixelConverter: NSObject {
         }
     }
 
-    let device:   MTLDevice
-    let library:  MTLLibrary
+    let device: MTLDevice
+    let library: MTLLibrary
     let texToTex: [TextureConverter?]
     let bufToTex: [BufferConverter?]
     
@@ -138,7 +139,7 @@ public class MTLPixelConverter: NSObject {
     }
     
     @objc
-    public func convert(fromBuffer src: MTLBuffer, sourceFormat: OEMTLPixelFormat, sourceOrigin:MTLOrigin, sourceBytesPerRow: UInt,
+    public func convert(fromBuffer src: MTLBuffer, sourceFormat: OEMTLPixelFormat, sourceOrigin: MTLOrigin, sourceBytesPerRow: UInt,
                         toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
         guard let filter = bufToTex[Int(sourceFormat.rawValue)] else {
             return

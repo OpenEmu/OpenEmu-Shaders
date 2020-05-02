@@ -27,18 +27,21 @@ import Foundation
 @objc(OEShaderParameter)
 @objcMembers
 public class ShaderParameter: NSObject {
-    public var name:     String
-    public var desc:     String
-    public var group:    String = ""
-    public var initial:  Float = 0.0
-    public var minimum:  Float = 0.0
-    public var maximum:  Float = 1.0
-    public var step:     Float = 0.01
+    public var name: String
+    public var desc: String
+    public var group: String = ""
+    public var initial: Float = 0.0
+    public var minimum: Float = 0.0
+    public var maximum: Float = 1.0
+    public var step: Float = 0.01
     public var valuePtr: UnsafeMutablePointer<Float>
-    public var value:    Float {
+    public var value: Float {
         get { valuePtr.pointee }
         set { valuePtr.pointee = newValue }
     }
+    
+    /// bindCount returns the number of passes which bind to this parameter
+    public var bindCount: Int = 0
 
     public init(name: String, desc: String) {
         self.name = name
@@ -64,12 +67,12 @@ public class ShaderParameter: NSObject {
 }
 
 extension ShaderParameter {
-    static func ==(lhs: ShaderParameter, rhs: ShaderParameter) -> Bool {
+    static func == (lhs: ShaderParameter, rhs: ShaderParameter) -> Bool {
         return lhs.name == rhs.name &&
                 lhs.desc == rhs.desc &&
                 lhs.initial == rhs.initial &&
                 lhs.minimum == rhs.minimum &&
                 lhs.maximum == rhs.maximum &&
-                lhs.step == rhs.step;
+                lhs.step == rhs.step
     }
 }

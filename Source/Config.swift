@@ -48,7 +48,7 @@ public class ShaderConfigSerialization: NSObject {
         if url.pathExtension == "plist" {
             let data = try Data(contentsOf: url)
             var fmt  = PropertyListSerialization.PropertyListFormat.xml
-            return try PropertyListSerialization.propertyList(from: data, format: &fmt) as! [String: AnyObject]
+            return try PropertyListSerialization.propertyList(from: data, format: &fmt) as? [String: AnyObject] ?? [:]
         }
         
         if url.pathExtension == "slangp" {
@@ -79,7 +79,7 @@ public class ShaderConfigSerialization: NSObject {
             throw Errors.zeroShaders
         }
         
-        var res    = Dictionary<String, AnyObject>()
+        var res    = [String: AnyObject]()
         var passes = [[String: AnyObject]]()
         for i in 0..<shaders {
             passes.append(try Pass.parse(pass: i, d: d))
@@ -109,7 +109,7 @@ public class ShaderConfigSerialization: NSObject {
             }
             
             let textures = tv.split(separator: ";")
-            if textures.count == 0 {
+            if textures.isEmpty {
                 return nil
             }
             
@@ -150,7 +150,7 @@ public class ShaderConfigSerialization: NSObject {
             }
             
             let parameters = pv.split(separator: ";")
-            if parameters.count == 0 {
+            if parameters.isEmpty {
                 return nil
             }
             
@@ -176,7 +176,7 @@ public class ShaderConfigSerialization: NSObject {
             }
             
             let groups = pg.split(separator: ";")
-            if groups.count == 0 {
+            if groups.isEmpty {
                 return nil
             }
             
@@ -209,12 +209,12 @@ public class ShaderConfigSerialization: NSObject {
                         continue
                     }
                     
-                    let param_names = params.split(separator: ";")
-                    if param_names.count == 0 {
+                    let paramNames = params.split(separator: ";")
+                    if paramNames.isEmpty {
                         continue
                     }
                     
-                    group["parameters"] = param_names as AnyObject
+                    group["parameters"] = paramNames as AnyObject
                 }
                 
                 res[name] = group as AnyObject
@@ -298,8 +298,8 @@ enum ConfigKeyValue {
 
 struct ConfigScanner {
     private let lines: [String]
-    private var line:  Int
-    private var pos:   String.Index
+    private var line: Int
+    private var pos: String.Index
     
     init(_ text: String) {
         var lines = [String]()
@@ -414,4 +414,3 @@ struct ConfigScanner {
         return String(scalars[startIndex..<pos])
     }
 }
-

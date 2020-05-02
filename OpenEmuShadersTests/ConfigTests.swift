@@ -27,7 +27,7 @@ import XCTest
 @testable import OpenEmuShaders
 
 class ConfigScannerTests: XCTestCase {
-
+    
     func testConfigScan() {
         var c = ConfigScanner(
             """
@@ -46,7 +46,7 @@ class ConfigScannerTests: XCTestCase {
 
             shadow_linear = clamp_to_border
             """)
-
+        
         let expected = [
             ("shaders", "5"),
             ("shader0", "foo"),
@@ -58,8 +58,7 @@ class ConfigScannerTests: XCTestCase {
             ("type2", "hello #ignore this there"),
             ("shadow_linear", "clamp_to_border"),
         ]
-
-        scanning:
+        
         for (expKey, expVal) in expected {
             switch c.scan() {
             case .keyval(let key, let val):
@@ -70,10 +69,10 @@ class ConfigScannerTests: XCTestCase {
             }
         }
     }
-
+    
     @available(OSX 10.15, *)
     func testPerformanceExample() {
-        self.measure(metrics:[XCTCPUMetric(limitingToCurrentThread: true), XCTClockMetric()]) {
+        self.measure(metrics: [XCTCPUMetric(limitingToCurrentThread: true), XCTClockMetric()]) {
             var c = ConfigScanner(
                 """
                 shaders = 5
@@ -89,15 +88,15 @@ class ConfigScannerTests: XCTestCase {
 
                 type2   = "hello #ignore this there" # remaining comment
                 """)
-
+            
             scanning:
-            while true {
-                switch c.scan() {
-                case .keyval:
-                    continue
-                case .eof:
-                    break scanning
-                }
+                while true {
+                    switch c.scan() {
+                    case .keyval:
+                        continue
+                    case .eof:
+                        break scanning
+                    }
             }
         }
     }
@@ -117,12 +116,12 @@ class ShaderConfigSerializationTests: XCTestCase {
         """
         do {
             let res = try ShaderConfigSerialization.parseConfig(script)
-            guard let groups = res["parameterGroups"] as? [String:AnyObject] else {
+            guard let groups = res["parameterGroups"] as? [String: AnyObject] else {
                 return XCTFail("expected parameterGroups")
             }
             
             let checkGroup = { (name: String, desc: String, hidden: Bool, params: [String]) -> Void in
-                guard let group = groups[name] as? [String:AnyObject] else {
+                guard let group = groups[name] as? [String: AnyObject] else {
                     return XCTFail("missing foo group")
                 }
                 
@@ -146,9 +145,10 @@ class ShaderConfigSerializationTests: XCTestCase {
             XCTFail("unexpected error: \(error.localizedDescription)")
         }
     }
-
+    
+    // swiftlint:disable line_length
     static let phosphorlut =
-        """
+    """
         shaders = 5
 
         shader0 = shaders/phosphorlut/scanlines-interlace-linearize.slang

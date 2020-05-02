@@ -27,9 +27,9 @@ import Foundation
 @objc(OEShaderParamGroup)
 @objcMembers
 public class ShaderParamGroup: NSObject {
-    public var name:    String
-    public var desc:    String
-    public var hidden:  Bool
+    public var name: String
+    public var desc: String
+    public var hidden: Bool
     public var parameters: [ShaderParameter] = []
     
     public init(name: String, desc: String, hidden: Bool) {

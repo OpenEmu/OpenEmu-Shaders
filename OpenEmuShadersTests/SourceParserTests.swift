@@ -177,7 +177,7 @@ class SourceParserTests: XCTestCase {
             // this is
             // file three
             #line 12 "foo.slang"
-            """
+            """,
         ]
 
         do {

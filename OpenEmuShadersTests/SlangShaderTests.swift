@@ -255,7 +255,6 @@ scale_x9      = 2.5
         }
     }
     
-    
     func testShaderPassWrap() {
         let cfg =
 """
@@ -441,7 +440,7 @@ PARAM1 = 0.75
             XCTAssertEqual(params.map(\.initial), [0.75, 1.00])
             XCTAssertEqual(params.map(\.minimum), [0.25, 0.00])
             XCTAssertEqual(params.map(\.maximum), [1.00, 3.00])
-            XCTAssertEqual(params.map(\.step),    [0.01, 1.00])
+            XCTAssertEqual(params.map(\.step), [0.01, 1.00])
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -503,7 +502,6 @@ bar_group_parameters = "bar2;bar1"
             XCTFail(error.localizedDescription)
         }
     }
-    
     
     func testOneFileParametersGroupsInConfigWithDefaultOverride() {
         let cfg =
