@@ -32,7 +32,8 @@ class SlangShaderTests: XCTestCase {
     }
     
     func testEmpty() {
-        let cfg = """
+        let cfg =
+"""
 shaders = 0
 """
         InMemProtocol.requests = [
@@ -51,14 +52,13 @@ shaders = 0
     
     func testOneFile() {
         let cfg =
-        """
+"""
 shaders = 1
 shader0 = mem:///root/foo.slang
-frame_count_mod0 = 2
 """
         
         let src =
-        """
+"""
 #version 450
 
 #pragma name this_is_the_name
@@ -78,7 +78,6 @@ frame_count_mod0 = 2
             let ss = try SlangShader(from: url)
             XCTAssertEqual(ss.passes.count, 1)
             XCTAssertEqual(ss.passes[0].alias, "this_is_the_name")
-            XCTAssertEqual(ss.passes[0].frameCountMod, 2)
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -86,7 +85,7 @@ frame_count_mod0 = 2
     
     func testShaderPassDefaultProperties() {
         let cfg =
-        """
+"""
 shaders = 1
 
 # shader zero verifies defaults
@@ -126,7 +125,7 @@ shader0 = mem:///root/foo.slang
     
     func testShaderPassFrameCountMod() {
         let cfg =
-        """
+"""
 shaders = 3
 
 # shader zero verifies defaults
@@ -153,10 +152,10 @@ frame_count_mod2 = 100
             XCTFail(error.localizedDescription)
         }
     }
-
+    
     func testShaderPassScale() {
         let cfg =
-        """
+"""
 shaders = 10
 
 # shader zero verifies defaults
@@ -250,7 +249,7 @@ scale_x9      = 2.5
                 XCTAssertEqual(passes.map(\.scale), [.one, CGSize(width: 0.25, height: 0.55), CGSize(width: 2.5, height: 1)])
                 XCTAssertEqual(passes.map(\.size), [.zero, .zero, .zero])
             }
-
+            
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -259,7 +258,7 @@ scale_x9      = 2.5
     
     func testShaderPassWrap() {
         let cfg =
-        """
+"""
 shaders = 5
 
 # shader zero verifies defaults
@@ -292,9 +291,165 @@ wrap_mode4 = repeat
         }
     }
     
+    func testShaderPassFormat() {
+        let cfg =
+"""
+shaders = 5
+
+# shader zero verifies defaults
+shader0 = mem:///root/foo.slang
+
+shader1 = mem:///root/foo.slang
+float_framebuffer1 = true
+
+shader2 = mem:///root/foo.slang
+srgb_framebuffer2 = true
+
+shader3 = mem:///root/bar.slang
+
+# verifies #pragma format takes precedence
+shader4 = mem:///root/cat.slang
+srgb_framebuffer4 = true
+"""
+        
+        InMemProtocol.requests = [
+            "mem:///root/foo.slangp": cfg,
+            "mem:///root/foo.slang": "#version 450",
+            "mem:///root/bar.slang": "#version 450\n#pragma format R32_UINT",
+            "mem:///root/cat.slang": "#version 450\n#pragma format R16_SINT",
+        ]
+        
+        let url = URL(string: "mem:///root/foo.slangp")!
+        do {
+            let ss = try SlangShader(from: url)
+            XCTAssertEqual(ss.passes.map(\.format), [.bgra8Unorm, .rgba16Float, .bgra8Unorm_srgb, .r32Uint, .r16Sint])
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testShaderPassFilter() {
+        let cfg =
+"""
+shaders = 3
+
+# shader zero verifies defaults
+shader0 = mem:///root/foo.slang
+
+shader1 = mem:///root/foo.slang
+filter_linear1 = false
+
+shader2 = mem:///root/foo.slang
+filter_linear2 = true
+"""
+        
+        InMemProtocol.requests = [
+            "mem:///root/foo.slangp": cfg,
+            "mem:///root/foo.slang": "#version 450",
+        ]
+        
+        let url = URL(string: "mem:///root/foo.slangp")!
+        do {
+            let ss = try SlangShader(from: url)
+            XCTAssertEqual(ss.passes.map(\.filter), [.unspecified, .nearest, .linear])
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testShaderLUT() {
+        let cfg =
+"""
+shaders = 1
+
+shader0 = mem:///root/foo.slang
+
+textures = "a;b;c;d;e"
+# defaults
+a = "image_a.png"
+
+b = "image_b.png"
+b_wrap_mode = "clamp_to_border"
+b_linear    = false
+b_mipmap    = false
+
+c = "image_c.png"
+c_wrap_mode = "clamp_to_edge"
+c_linear    = true
+c_mipmap    = false
+
+d = "image_d.png"
+d_wrap_mode = "mirrored_repeat"
+d_linear    = false
+d_mipmap    = true
+
+e = "image_e.png"
+e_wrap_mode = "repeat"
+e_linear    = true
+e_mipmap    = true
+"""
+        
+        InMemProtocol.requests = [
+            "mem:///root/foo.slangp": cfg,
+            "mem:///root/foo.slang": "#version 450",
+        ]
+        
+        let url = URL(string: "mem:///root/foo.slangp")!
+        do {
+            let ss = try SlangShader(from: url)
+            let luts = ss.luts.sorted { $0.name < $1.name }
+            XCTAssertEqual(luts.map(\.url.lastPathComponent), ["a", "b", "c", "d", "e"].map({ "image_\($0).png" }))
+            XCTAssertEqual(luts.map(\.name), ["a", "b", "c", "d", "e"])
+            XCTAssertEqual(luts.map(\.wrapMode), [.default, .border, .edge, .mirroredRepeat, .repeat])
+            XCTAssertEqual(luts.map(\.isMipmap), [false, false, false, true, true])
+            XCTAssertEqual(luts.map(\.filter), [.unspecified, .nearest, .linear, .nearest, .linear])
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
+    func testShaderParameter() {
+        let cfg =
+"""
+shaders = 1
+
+shader0 = mem:///root/foo.slang
+
+parameters = "PARAM1"
+
+PARAM1 = 0.75
+
+"""
+        
+        let src =
+"""
+#version 450
+#pragma parameter PARAM1 "Param 1" 0.50 0.25 1.00 0.01
+#pragma parameter PARAM2 "Param 2" 1.00 0.00 3.00 1.00
+"""
+        
+        InMemProtocol.requests = [
+            "mem:///root/foo.slangp": cfg,
+            "mem:///root/foo.slang": src,
+        ]
+        
+        let url = URL(string: "mem:///root/foo.slangp")!
+        do {
+            let ss = try SlangShader(from: url)
+            let params = ss.parameters.sorted { $0.name < $1.name }
+            XCTAssertEqual(params.map(\.name), ["PARAM1", "PARAM2"])
+            XCTAssertEqual(params.map(\.initial), [0.75, 1.00])
+            XCTAssertEqual(params.map(\.minimum), [0.25, 0.00])
+            XCTAssertEqual(params.map(\.maximum), [1.00, 3.00])
+            XCTAssertEqual(params.map(\.step),    [0.01, 1.00])
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+    
     func testOneFileParametersGroupsInConfig() {
         let cfg =
-        """
+"""
 shaders = 1
 shader0 = mem:///root/foo.slang
 
@@ -306,7 +461,7 @@ bar_group_parameters = "bar2;bar1"
 """
         
         let src =
-        """
+"""
 #version 450
 
 #pragma name this_is_the_name
@@ -352,7 +507,7 @@ bar_group_parameters = "bar2;bar1"
     
     func testOneFileParametersGroupsInConfigWithDefaultOverride() {
         let cfg =
-        """
+"""
 shaders = 1
 shader0 = mem:///root/foo.slang
 
@@ -363,7 +518,7 @@ default_group_desc = "Other parameters"
 """
         
         let src =
-        """
+"""
 #version 450
 
 #pragma name this_is_the_name
@@ -408,6 +563,6 @@ default_group_desc = "Other parameters"
     
 }
 
-extension CGSize {
+fileprivate extension CGSize {
     static let one = CGSize(width: 1, height: 1)
 }
