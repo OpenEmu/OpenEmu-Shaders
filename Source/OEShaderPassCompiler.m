@@ -327,8 +327,8 @@ void error_callback(void *userdata, const char *error)
                 
                 if (sem == OEShaderTextureSemanticPassFeedback) {
                     _shader.passes[index].isFeedback = YES;
-                } else if (sem == OEShaderTextureSemanticOriginalHistory && _shader.historyCount < index) {
-                    _shader.historyCount = index;
+                } else if (sem == OEShaderTextureSemanticOriginalHistory && _historyCount < index) {
+                    _historyCount = index;
                 }
             }
             

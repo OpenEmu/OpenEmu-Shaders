@@ -139,7 +139,7 @@ class ShaderConfigSerializationTests: XCTestCase {
     
     func testSlangFromString() {
         do {
-            let res = try ShaderConfigSerialization.parseConfig(ShaderConfigSerializationTests.phosphorlut)
+            let res = try ShaderConfigSerialization.parseConfig(Self.phosphorlut)
             print(res)
         } catch {
             XCTFail("unexpected error: \(error.localizedDescription)")

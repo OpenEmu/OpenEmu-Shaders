@@ -42,7 +42,3 @@
 @interface ShaderPass(Private)
 @property (nonatomic, readonly) OESourceParser *source;
 @end
-
-@interface SlangShader(Private)
-@property (nonatomic) NSUInteger historyCount;
-@end

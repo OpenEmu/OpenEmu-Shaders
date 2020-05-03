@@ -127,13 +127,14 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
             self.alias = _source.name;
         }
         
+        CGSize size  = {0};
+        CGSize scale = CGSizeMake(1.0, 1.0);
+
         if (d[@"scaleType"] != nil || d[@"scaleTypeX"] != nil || d[@"scaleTypeY"] != nil) {
             // scale
             self.isScaled = YES;
             self.scaleX = OEShaderPassScaleSource;
             self.scaleY = OEShaderPassScaleSource;
-            CGSize size  = {0};
-            CGSize scale = CGSizeMake(1.0, 1.0);
             
             NSString *str = nil;
             if ((str = IDToNSString(d[@"scaleType"])) != nil) {
@@ -165,10 +166,10 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
                     scale.height = [obj doubleValue];
                 }
             }
-            
-            self.size  = size;
-            self.scale = scale;
         }
+
+        self.size  = size;
+        self.scale = scale;
     }
     return self;
 }
@@ -394,10 +395,6 @@ static OEShaderPassFilter OEShaderPassFilterFromObject(id obj)
         }
     }
     return self;
-}
-
-- (void)setHistoryCount:(NSUInteger)historyCount {
-    _historyCount = historyCount;
 }
 
 @end

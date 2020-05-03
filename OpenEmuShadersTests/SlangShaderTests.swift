@@ -110,14 +110,14 @@ shader0 = mem:///root/foo.slang
             XCTAssertEqual(pass.format, .bgra8Unorm)
             XCTAssertEqual(pass.filter, .unspecified)
             XCTAssertEqual(pass.wrapMode, .default)
-            XCTAssertEqual(pass.scale, .zero)
+            XCTAssertEqual(pass.scale, .one)
             XCTAssertEqual(pass.size, .zero)
             XCTAssertFalse(pass.isScaled)
             XCTAssertFalse(pass.isFloat)
             XCTAssertFalse(pass.issRGB)
             XCTAssertFalse(pass.isMipmap)
             XCTAssertFalse(pass.isFeedback)
-            XCTAssertTrue(pass.alias.isEmpty)
+            XCTAssertNil(pass.alias)
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -156,7 +156,7 @@ frame_count_mod2 = 100
     func testShaderPassScale() {
         let cfg =
 """
-shaders = 10
+shaders = 13
 
 # shader zero verifies defaults
 shader0 = mem:///root/foo.slang
@@ -203,6 +203,20 @@ shader9 = mem:///root/foo.slang
 scale_type_x9 = viewport
 scale_x9      = 2.5
 
+# scale
+
+shader10 = mem:///root/foo.slang
+scale_type10 = absolute
+scale10      = 150
+
+shader11 = mem:///root/foo.slang
+scale_type11 = source
+scale11      = 0.75
+
+shader12 = mem:///root/foo.slang
+scale_type12 = viewport
+scale12      = 1.50
+
 """
         
         InMemProtocol.requests = [
@@ -219,7 +233,7 @@ scale_x9      = 2.5
                 let passes = ss.passes[0...0]
                 XCTAssertEqual(passes.map(\.scaleX), [.invalid])
                 XCTAssertEqual(passes.map(\.scaleY), [.invalid])
-                XCTAssertEqual(passes.map(\.scale), [.zero])
+                XCTAssertEqual(passes.map(\.scale), [.one])
                 XCTAssertEqual(passes.map(\.size), [.zero])
             }
             
@@ -249,7 +263,16 @@ scale_x9      = 2.5
                 XCTAssertEqual(passes.map(\.scale), [.one, CGSize(width: 0.25, height: 0.55), CGSize(width: 2.5, height: 1)])
                 XCTAssertEqual(passes.map(\.size), [.zero, .zero, .zero])
             }
-            
+
+            do {
+                // test passes using single scale scalar
+                let passes = ss.passes[10...12]
+                XCTAssertEqual(passes.map(\.scaleX), [.absolute, .source, .viewport])
+                XCTAssertEqual(passes.map(\.scaleY), [.absolute, .source, .viewport])
+                XCTAssertEqual(passes.map(\.scale), [.one, CGSize(width: 0.75, height: 0.75), CGSize(width: 1.50, height: 1.50)])
+                XCTAssertEqual(passes.map(\.size), [CGSize(width: 150, height: 150), .zero, .zero])
+            }
+
         } catch {
             XCTFail(error.localizedDescription)
         }

@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readwrite) BOOL               issRGB;
 @property (nonatomic, readwrite) BOOL               isMipmap;
 @property (nonatomic, readwrite) BOOL               isFeedback;
-@property (nonatomic, readwrite) NSString           *alias;
+@property (nonatomic, readwrite, nullable) NSString *alias;
 
 @end
 
@@ -66,7 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nonnull) NSArray<OEShaderParameter *>  *parameters;
 @property (nonatomic, readonly, nonnull) NSArray<OEShaderParamGroup *> *parameterGroups;
 @property (nonatomic, readonly, nonnull) NSArray<ShaderLUT *>          *luts;
-@property (nonatomic, readonly) NSUInteger                             historyCount;
 
 @end
 

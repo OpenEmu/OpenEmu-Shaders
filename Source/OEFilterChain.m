@@ -1093,7 +1093,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             }
         }
 
-        _historyCount = ss.historyCount;
+        _historyCount = compiler.historyCount;
         _shader       = ss;
         ss      = nil;
         [self loadLuts];

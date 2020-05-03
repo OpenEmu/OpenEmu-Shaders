@@ -40,9 +40,6 @@ public class ShaderParameter: NSObject {
         set { valuePtr.pointee = newValue }
     }
     
-    /// bindCount returns the number of passes which bind to this parameter
-    public var bindCount: Int = 0
-
     public init(name: String, desc: String) {
         self.name = name
         self.desc = desc

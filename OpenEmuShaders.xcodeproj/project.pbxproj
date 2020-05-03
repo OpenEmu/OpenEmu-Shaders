@@ -1051,6 +1051,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 05EEE34C227CC35D007D011B /* Build configuration list for PBXNativeTarget "OpenEmuShaders" */;
 			buildPhases = (
+				05915A75245DF13F00C3DBAC /* ShellScript */,
 				05EEE333227CC35C007D011B /* Headers */,
 				05EEE334227CC35C007D011B /* Sources */,
 				05EEE335227CC35C007D011B /* Frameworks */,

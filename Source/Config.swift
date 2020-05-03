@@ -154,12 +154,12 @@ public class ShaderConfigSerialization: NSObject {
                 return nil
             }
             
-            var res = [String: AnyObject]()
+            var res = [String: NSNumber]()
             
             for t in parameters {
                 let name = String(t)
                 if let v = d[name], let dv = Double(v) {
-                    res[name] = dv as AnyObject
+                    res[name] = dv as NSNumber
                 }
             }
             
