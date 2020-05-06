@@ -23,7 +23,6 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @import Foundation;
-#import "SlangShader.h"
 #import "ShaderPassSemantics.h"
 
 @interface ShaderTextureSemanticMeta : NSObject

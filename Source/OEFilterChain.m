@@ -895,7 +895,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 
     CFTimeInterval start = CACurrentMediaTime();
 
-    NSError     *err;
+    NSError     *err = nil;
     SlangShader *ss = [[SlangShader alloc] initFromURL:url error:&err];
     if (err != nil) {
         os_log_error(OE_LOG_DEFAULT, "unable to load shader '%{public}s: %{public}@", url.fileSystemRepresentation, err.localizedDescription);

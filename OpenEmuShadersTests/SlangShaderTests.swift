@@ -42,7 +42,7 @@ shaders = 0
         
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
-            let ss = try SlangShader(from: url)
+            let ss = try SlangShader(fromURL: url)
             XCTAssertEqual(ss.passes.count, 0)
         } catch {
             XCTFail(error.localizedDescription)
@@ -75,7 +75,7 @@ shader0 = mem:///root/foo.slang
         
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
-            let ss = try SlangShader(from: url)
+            let ss = try SlangShader(fromURL: url)
             XCTAssertEqual(ss.passes.count, 1)
             XCTAssertEqual(ss.passes[0].alias, "this_is_the_name")
         } catch {
@@ -99,7 +99,7 @@ shader0 = mem:///root/foo.slang
         
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
-            let ss = try SlangShader(from: url)
+            let ss = try SlangShader(fromURL: url)
             XCTAssertEqual(ss.passes.count, 1)
             
             let pass = ss.passes[0]
@@ -146,7 +146,7 @@ frame_count_mod2 = 100
         
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
-            let ss = try SlangShader(from: url)
+            let ss = try SlangShader(fromURL: url)
             XCTAssertEqual(ss.passes.map(\.frameCountMod), [0, 1, 100])
         } catch {
             XCTFail(error.localizedDescription)
@@ -226,7 +226,7 @@ scale12      = 1.50
         
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
-            let ss = try SlangShader(from: url)
+            let ss = try SlangShader(fromURL: url)
             
             do {
                 // test default
@@ -306,7 +306,7 @@ wrap_mode4 = repeat
         
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
-            let ss = try SlangShader(from: url)
+            let ss = try SlangShader(fromURL: url)
             XCTAssertEqual(ss.passes.map(\.wrapMode), [.default, .border, .edge, .mirroredRepeat, .repeat])
         } catch {
             XCTFail(error.localizedDescription)
@@ -343,7 +343,7 @@ srgb_framebuffer4 = true
         
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
-            let ss = try SlangShader(from: url)
+            let ss = try SlangShader(fromURL: url)
             XCTAssertEqual(ss.passes.map(\.format), [.bgra8Unorm, .rgba16Float, .bgra8Unorm_srgb, .r32Uint, .r16Sint])
         } catch {
             XCTFail(error.localizedDescription)
@@ -372,7 +372,7 @@ filter_linear2 = true
         
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
-            let ss = try SlangShader(from: url)
+            let ss = try SlangShader(fromURL: url)
             XCTAssertEqual(ss.passes.map(\.filter), [.unspecified, .nearest, .linear])
         } catch {
             XCTFail(error.localizedDescription)
@@ -418,7 +418,7 @@ e_mipmap    = true
         
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
-            let ss = try SlangShader(from: url)
+            let ss = try SlangShader(fromURL: url)
             let luts = ss.luts.sorted { $0.name < $1.name }
             XCTAssertEqual(luts.map(\.url.lastPathComponent), ["a", "b", "c", "d", "e"].map({ "image_\($0).png" }))
             XCTAssertEqual(luts.map(\.name), ["a", "b", "c", "d", "e"])
@@ -457,7 +457,7 @@ PARAM1 = 0.75
         
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
-            let ss = try SlangShader(from: url)
+            let ss = try SlangShader(fromURL: url)
             let params = ss.parameters.sorted { $0.name < $1.name }
             XCTAssertEqual(params.map(\.name), ["PARAM1", "PARAM2"])
             XCTAssertEqual(params.map(\.initial), [0.75, 1.00])
@@ -504,7 +504,7 @@ bar_group_parameters = "bar2;bar1"
         
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
-            let ss = try SlangShader(from: url)
+            let ss = try SlangShader(fromURL: url)
             XCTAssertEqual(ss.passes.count, 1)
             let pass = ss.passes[0]
             XCTAssertEqual(pass.alias, "this_is_the_name")
@@ -560,7 +560,7 @@ default_group_desc = "Other parameters"
         
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
-            let ss = try SlangShader(from: url)
+            let ss = try SlangShader(fromURL: url)
             XCTAssertEqual(ss.passes.count, 1)
             let pass = ss.passes[0]
             XCTAssertEqual(pass.alias, "this_is_the_name")
@@ -581,7 +581,6 @@ default_group_desc = "Other parameters"
             XCTFail(error.localizedDescription)
         }
     }
-    
 }
 
 fileprivate extension CGSize {

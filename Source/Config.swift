@@ -168,9 +168,7 @@ public class ShaderConfigSerialization: NSObject {
     }
     
     struct ParameterGroups {
-        static func parse(d: [String: String]) -> [String: AnyObject]? {
-            var hasDefault = false
-            
+        static func parse(d: [String: String]) -> [[String: AnyObject]]? {
             guard let pg = d["parameter_groups"] else {
                 return nil
             }
@@ -180,16 +178,12 @@ public class ShaderConfigSerialization: NSObject {
                 return nil
             }
             
-            var res   = [String: AnyObject]()
-            var order = [String]()
+            var res   = [[String: AnyObject]]()
             
             for g in groups {
-                let name = String(g)
-                if name == "default" {
-                    hasDefault = true
-                }
-                
+                let name  = String(g)
                 var group = [String: AnyObject]()
+                group["name"] = name as AnyObject
                 
                 if let v = d["\(name)_group_desc"] {
                     group["desc"] = v as AnyObject
@@ -217,14 +211,8 @@ public class ShaderConfigSerialization: NSObject {
                     group["parameters"] = paramNames as AnyObject
                 }
                 
-                res[name] = group as AnyObject
-                order.append(name)
+                res.append(group)
             }
-            
-            // indicates a default group was specified
-            res["hasDefault"] = hasDefault as AnyObject
-            // used to preserve order of parameter_groups
-            res["names"] = order as AnyObject
             
             return res
         }

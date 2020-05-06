@@ -6,7 +6,6 @@
 #import "OEShaderPassCompiler.h"
 #import "spirv.h"
 #import "spirv_cross_c.h"
-#import "SlangShader.h"
 #import "SlangCompiler.h"
 #import "ShaderReflection.h"
 #import "ShaderPassSemantics.h"

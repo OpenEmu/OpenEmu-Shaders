@@ -39,9 +39,11 @@
 				<key>com.apple.dt.XCTMetric_Clock.time.monotonic</key>
 				<dict>
 					<key>baselineAverage</key>
-					<real>6.75e-05</real>
+					<real>8.37e-05</real>
 					<key>baselineIntegrationDisplayName</key>
 					<string>Local Baseline</string>
+					<key>maxPercentRelativeStandardDeviation</key>
+					<real>30</real>
 				</dict>
 			</dict>
 		</dict>

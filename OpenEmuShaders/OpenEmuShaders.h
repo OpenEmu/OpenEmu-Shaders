@@ -34,6 +34,5 @@ FOUNDATION_EXPORT const unsigned char OpenEmuShadersVersionString[];
 
 #import "OEEnums.h"
 #import "ShaderPassSemantics.h"
-#import "SlangShader.h"
 #import "OEPixelBuffer.h"
 #import "OEFilterChain.h"
