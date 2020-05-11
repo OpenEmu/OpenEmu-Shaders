@@ -28,17 +28,16 @@ import XCTest
 
 class NSScannerTests: XCTestCase {
 
+    @available(macOS 10.16, *)
     func testScanQuotedString() {
-        let scan      = Scanner(string: "3.0 \"hello there\" YES")
-        var f: Double = 0
-        XCTAssertTrue(scan.scanDouble(&f))
+        let scan      = Scanner(string: #"3.0 "hello there" YES"#)
+        let f = scan.scanDouble() ?? 0
         XCTAssertEqual(f, 3.0)
 
         let s = scan.scanQuotedString()
         XCTAssertEqual(s, "hello there")
 
-        var tmp: NSString?
-        XCTAssertTrue(scan.scanCharacters(from: .alphanumerics, into: &tmp))
-        XCTAssertEqual(tmp as String?, "YES")
+        let tmp = scan.scanCharacters(from: .alphanumerics)
+        XCTAssertEqual(tmp, "YES")
     }
 }
