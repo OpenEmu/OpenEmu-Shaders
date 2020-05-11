@@ -478,7 +478,6 @@ shader0 = mem:///root/foo.slang
 parameter_groups = "foo;bar"
 foo_group_desc = "Foo group"
 foo_group_parameters = "foo1;foo2"
-bar_group_desc = "Bar group"
 bar_group_parameters = "bar2;bar1"
 """
         
@@ -513,14 +512,17 @@ bar_group_parameters = "bar2;bar1"
             XCTAssertEqual(groups.count, 3)
             
             let exp = ShaderParameter.list(
-                Param(name: "foo1", desc: "Foo 1 param", group: "Foo Group"),
-                Param(name: "foo2", desc: "Foo 2 param", group: "Foo Group"),
-                Param(name: "bar2", desc: "Bar 2 param", group: "Bar Group"),
-                Param(name: "bar1", desc: "Bar 1 param", group: "Bar Group")
+                Param(name: "foo1", desc: "Foo 1 param", group: "Foo group"),
+                Param(name: "foo2", desc: "Foo 2 param", group: "Foo group"),
+                Param(name: "bar2", desc: "Bar 2 param", group: "bar"),
+                Param(name: "bar1", desc: "Bar 1 param", group: "bar")
             )
             
             let params = ss.parameters
             XCTAssertEqual(params, exp)
+            
+            let groupNames = params.map(\.group)
+            XCTAssertEqual(groupNames, ["Foo group", "Foo group", "bar", "bar"])
         } catch {
             XCTFail(error.localizedDescription)
         }

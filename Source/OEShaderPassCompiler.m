@@ -15,7 +15,7 @@
 
 @implementation OEShaderPassCompiler
 {
-    SlangShader __weak *_shader;
+    SlangShader *_shader;
 }
 
 - (instancetype)initWithShaderModel:(SlangShader *)shader

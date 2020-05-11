@@ -75,6 +75,9 @@ public final class SlangShader: NSObject {
             }
         }
         
+        // NOTE: using lazy.flatMap SIGABRTs the XPC process in DEBUG builds:
+        // for param in passes.lazy.flatMap({ $0.source.parameters }) {
+        
         // collect #pragma parameter declarations from passes
         for pass in passes {
             for param in pass.source.parameters {
@@ -106,7 +109,7 @@ public final class SlangShader: NSObject {
             for group in groups {
                 guard let name = group["name"] as? String else { continue }
                 
-                let desc   = group["desc"] as? String ?? ""
+                let desc   = group["desc"] as? String ?? name
                 let hidden = group["hidden"] as? Bool ?? false
                 
                 if name == "default" {

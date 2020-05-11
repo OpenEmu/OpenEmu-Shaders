@@ -187,9 +187,6 @@ public class ShaderConfigSerialization: NSObject {
                 
                 if let v = d["\(name)_group_desc"] {
                     group["desc"] = v as AnyObject
-                } else {
-                    // default to name if there is no description
-                    group["desc"] = name as AnyObject
                 }
                 
                 if let v = d["\(name)_group_hidden"], let bv = Bool(v) {
