@@ -294,7 +294,8 @@ void error_callback(void *userdata, const char *error)
                             size:meta.numberOfComponents * sizeof(float)
                           offset:meta.uboOffset
                             name:name];
-        } else if (meta.pushActive) {
+        }
+        if (meta.pushActive) {
             [pshB addUniformData:param.valuePtr
                             size:meta.numberOfComponents * sizeof(float)
                           offset:meta.pushOffset
@@ -337,7 +338,8 @@ void error_callback(void *userdata, const char *error)
                                 size:4 * sizeof(float)
                               offset:meta.uboOffset
                                 name:name];
-            } else if (meta.pushActive) {
+            }
+            if (meta.pushActive) {
                 [pshB addUniformData:(void *)((uintptr_t)tex.textureSize + index * tex.sizeStride)
                                 size:4 * sizeof(float)
                               offset:meta.pushOffset
