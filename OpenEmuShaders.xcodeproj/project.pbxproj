@@ -151,6 +151,8 @@
 		05B822B2243D87AB009909D3 /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; };
 		05B822B3243D87AB009909D3 /* OpenEmuShaders.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		05D043542439043E00B6BDBF /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D043532439043E00B6BDBF /* Version.swift */; };
+		05E3ED2A248C749B0017BCF6 /* ResourceLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05E3ED28248C749B0017BCF6 /* ResourceLimits.cpp */; };
+		05E3ED2E248C75460017BCF6 /* ResourceLimits.h in Headers */ = {isa = PBXBuildFile; fileRef = 05E3ED2D248C75460017BCF6 /* ResourceLimits.h */; };
 		05EEE342227CC35D007D011B /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; };
 		05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE33B227CC35D007D011B /* OpenEmuShaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05F54957229BBA8800561C14 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 05F5494F229BBA8800561C14 /* Shaders.metal */; };
@@ -365,6 +367,8 @@
 		05B822AB243D877C009909D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05B822AC243D877C009909D3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		05D043532439043E00B6BDBF /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
+		05E3ED28248C749B0017BCF6 /* ResourceLimits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceLimits.cpp; path = 3rdparty/glslang/StandAlone/ResourceLimits.cpp; sourceTree = "<group>"; };
+		05E3ED2D248C75460017BCF6 /* ResourceLimits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceLimits.h; path = 3rdparty/glslang/StandAlone/ResourceLimits.h; sourceTree = "<group>"; };
 		05EEE338227CC35D007D011B /* OpenEmuShaders.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OpenEmuShaders.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EEE33B227CC35D007D011B /* OpenEmuShaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenEmuShaders.h; sourceTree = "<group>"; };
 		05EEE33C227CC35D007D011B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -433,28 +437,23 @@
 		052A2A8222A41F7D00483370 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
+				052A2AAB22A41FE800483370 /* attribute.cpp */,
 				052A2AA222A41FE700483370 /* CodeGen.cpp */,
-				052A2AAC22A41FE800483370 /* Link.cpp */,
 				052A2AA522A41FE800483370 /* Constant.cpp */,
+				052A2AAA22A41FE800483370 /* glslang_tab.cpp */,
 				052A2AA922A41FE800483370 /* InfoSink.cpp */,
 				052A2AAE22A41FE800483370 /* Initialize.cpp */,
-				052A2AB922A41FE900483370 /* IntermTraverse.cpp */,
 				052A2AB322A41FE900483370 /* Intermediate.cpp */,
+				052A2AA722A41FE800483370 /* intermOut.cpp */,
+				052A2AB922A41FE900483370 /* IntermTraverse.cpp */,
+				052A2AB522A41FE900483370 /* iomapper.cpp */,
+				052A2AAD22A41FE800483370 /* limits.cpp */,
+				052A2AAC22A41FE800483370 /* Link.cpp */,
+				052A2AA122A41FE700483370 /* linkValidate.cpp */,
+				052A2AB822A41FE900483370 /* parseConst.cpp */,
 				052A2ABD22A41FEA00483370 /* ParseContextBase.cpp */,
 				052A2AB722A41FE900483370 /* ParseHelper.cpp */,
 				052A2AB622A41FE900483370 /* PoolAlloc.cpp */,
-				052A2AAF22A41FE800483370 /* RemoveTree.cpp */,
-				052A2AB022A41FE900483370 /* Scan.cpp */,
-				052A2AA422A41FE800483370 /* ShaderLang.cpp */,
-				052A2ABA22A41FE900483370 /* SymbolTable.cpp */,
-				052A2AB222A41FE900483370 /* Versions.cpp */,
-				052A2AAB22A41FE800483370 /* attribute.cpp */,
-				052A2AAA22A41FE800483370 /* glslang_tab.cpp */,
-				052A2AA722A41FE800483370 /* intermOut.cpp */,
-				052A2AB522A41FE900483370 /* iomapper.cpp */,
-				052A2AAD22A41FE800483370 /* limits.cpp */,
-				052A2AA122A41FE700483370 /* linkValidate.cpp */,
-				052A2AB822A41FE900483370 /* parseConst.cpp */,
 				052A2ABC22A41FE900483370 /* Pp.cpp */,
 				052A2AA622A41FE800483370 /* PpAtom.cpp */,
 				052A2AB122A41FE900483370 /* PpContext.cpp */,
@@ -462,6 +461,11 @@
 				052A2ABB22A41FE900483370 /* PpTokens.cpp */,
 				052A2AB422A41FE900483370 /* propagateNoContraction.cpp */,
 				052A2AA822A41FE800483370 /* reflection.cpp */,
+				052A2AAF22A41FE800483370 /* RemoveTree.cpp */,
+				052A2AB022A41FE900483370 /* Scan.cpp */,
+				052A2AA422A41FE800483370 /* ShaderLang.cpp */,
+				052A2ABA22A41FE900483370 /* SymbolTable.cpp */,
+				052A2AB222A41FE900483370 /* Versions.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -534,14 +538,14 @@
 		052A2B2B22A420AC00483370 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
+				052A2B2D22A420BF00483370 /* disassemble.cpp */,
+				052A2B3422A420C000483370 /* doc.cpp */,
 				052A2B3322A420C000483370 /* GlslangToSpv.cpp */,
 				052A2B3222A420C000483370 /* InReadableOrder.cpp */,
 				052A2B2F22A420C000483370 /* Logger.cpp */,
 				052A2B2E22A420BF00483370 /* SpvBuilder.cpp */,
 				052A2B3022A420C000483370 /* SpvPostProcess.cpp */,
 				052A2B3122A420C000483370 /* SpvTools.cpp */,
-				052A2B2D22A420BF00483370 /* disassemble.cpp */,
-				052A2B3422A420C000483370 /* doc.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -631,6 +635,7 @@
 				052A2B1922A4200A00483370 /* OSDependent */,
 				052A2B2522A4209000483370 /* OGLCompiler */,
 				052A2B2A22A420A500483370 /* SPIRV */,
+				05E3ED25248C74490017BCF6 /* StandAlone */,
 			);
 			name = glslang;
 			sourceTree = "<group>";
@@ -795,6 +800,31 @@
 			path = "Shader Studio";
 			sourceTree = "<group>";
 		};
+		05E3ED25248C74490017BCF6 /* StandAlone */ = {
+			isa = PBXGroup;
+			children = (
+				05E3ED26248C74590017BCF6 /* Source Files */,
+				05E3ED27248C74630017BCF6 /* Header Files */,
+			);
+			name = StandAlone;
+			sourceTree = "<group>";
+		};
+		05E3ED26248C74590017BCF6 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				05E3ED28248C749B0017BCF6 /* ResourceLimits.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		05E3ED27248C74630017BCF6 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				05E3ED2D248C75460017BCF6 /* ResourceLimits.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
 		05EEE32E227CC35C007D011B = {
 			isa = PBXGroup;
 			children = (
@@ -949,6 +979,7 @@
 				05647FBE2438D8A600BF00A9 /* optimizer.hpp in Headers */,
 				052A2B8E22A475D300483370 /* OEPixelBuffer.h in Headers */,
 				05647EA924381DC700BF00A9 /* spirv.h in Headers */,
+				05E3ED2E248C75460017BCF6 /* ResourceLimits.h in Headers */,
 				052A2B0E22A41FFD00483370 /* reflection.h in Headers */,
 				052A2AFD22A41FFD00483370 /* PoolAlloc.h in Headers */,
 				052A2B5622A420CC00483370 /* hex_float.h in Headers */,
@@ -1247,6 +1278,7 @@
 				052A2ACC22A41FEA00483370 /* RemoveTree.cpp in Sources */,
 				A90205F1433179AFFF015F07 /* ShaderReflection.m in Sources */,
 				A9020AE1BBCE1F965F5F8436 /* Config.swift in Sources */,
+				05E3ED2A248C749B0017BCF6 /* ResourceLimits.cpp in Sources */,
 				052A2B2922A4209B00483370 /* InitializeDll.cpp in Sources */,
 				052A2ACF22A41FEA00483370 /* Versions.cpp in Sources */,
 				052A2AD722A41FEA00483370 /* SymbolTable.cpp in Sources */,
