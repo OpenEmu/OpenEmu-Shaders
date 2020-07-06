@@ -119,6 +119,9 @@ typedef struct texture
     Uniforms                   _uniforms;
     Uniforms                   _uniformsNoRotate;
     id<MTLTexture>             _checkers;
+    
+    // device behavior
+    BOOL _deviceUnifiedMemory;
 }
 
 - (instancetype)initWithDevice:(id<MTLDevice>)device
@@ -127,6 +130,18 @@ typedef struct texture
     
     NSError *err = nil;
     _device    = device;
+    
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_15
+    // gather capabilities
+    if (@available(macOS 10.15, ios 11, *)) {
+        _deviceUnifiedMemory = _device.hasUnifiedMemory;
+    } else {
+        _deviceUnifiedMemory = NO;
+    }
+#else
+    _deviceUnifiedMemory = NO;
+#endif
+    
     _library   = [_device newDefaultLibraryWithBundle:[NSBundle bundleForClass:self.class] error:&err];
     if (err != nil) {
         os_log_error(OE_LOG_DEFAULT, "error initializing Metal library: %{public}@", err.localizedDescription);
@@ -226,6 +241,15 @@ typedef struct texture
         NSString *label = nil;
         switch (i) {
             case OEShaderPassWrapBorder:
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_15
+                if (@available(macOS 10.15, iOS 11, *)) {
+                    if ([_device supportsFamily:MTLGPUFamilyApple1]) {
+                        label = @"clamp_to_zero";
+                        sd.sAddressMode = MTLSamplerAddressModeClampToZero;
+                        break;
+                    }
+                }
+#endif
                 label = @"clamp_to_border";
                 sd.sAddressMode = MTLSamplerAddressModeClampToBorderColor;
                 break;
@@ -703,7 +727,9 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                     memcpy((uint8_t *)data + uniform.offset, uniform.data, uniform.size);
                 }
                 
-                [buffer didModifyRange:NSMakeRange(0, buffer.length)];
+                if (!_deviceUnifiedMemory) {
+                    [buffer didModifyRange:NSMakeRange(0, buffer.length)];
+                }
             }
         }
     }
@@ -1053,8 +1079,10 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                     if (size == 0) {
                         continue;
                     }
-                    
-                    id<MTLBuffer> buf = [_device newBufferWithLength:size options:MTLResourceStorageModeManaged];
+                    MTLResourceOptions opts = _deviceUnifiedMemory
+                        ? MTLResourceStorageModeShared
+                        : MTLResourceStorageModeManaged;
+                    id<MTLBuffer> buf = [_device newBufferWithLength:size options:opts];
                     _pass[i].buffers[j] = buf;
                     
                     if (sem.stageUsage & OEStageUsageVertex) {

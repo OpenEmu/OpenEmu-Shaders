@@ -57,7 +57,7 @@ static const size_t kAlignedUniformsSize = (sizeof(Uniforms) & ~0xFF) + 0x100;
         _inFlightSemaphore = dispatch_semaphore_create(kMaxBuffersInFlight);
         _filter = [[OEFilterChain alloc] initWithDevice:_device];
         [_filter setDefaultFilteringLinear:NO];
-        [_filter setShaderFromURL:[NSURL fileURLWithPath:@"/Volumes/Data/projects/libretro/slang-shaders/crt/crt-aperture.slangp"] error:nil];
+        [_filter setShaderFromURL:[NSURL fileURLWithPath:@"/Volumes/Data/projects/libretro/slang-shaders/crt/crt-royale.slangp"] error:nil];
         [self _loadMetalWithView:view];
         [self _loadAssets];
     }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0521355C246E3A240085A598 /* CompiledShader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0521355B246E3A240085A598 /* CompiledShader.swift */; };
 		052A2ABE22A41FEA00483370 /* linkValidate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 052A2AA122A41FE700483370 /* linkValidate.cpp */; };
 		052A2ABF22A41FEA00483370 /* CodeGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 052A2AA222A41FE700483370 /* CodeGen.cpp */; };
 		052A2AC022A41FEA00483370 /* PpScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 052A2AA322A41FE800483370 /* PpScanner.cpp */; };
@@ -135,6 +136,8 @@
 		056AC3A9228BD73F005018DA /* NSScanner+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC3A8228BD73F005018DA /* NSScanner+Extensions.swift */; };
 		059258A022AD71500064273D /* logging.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592589E22AD71500064273D /* logging.m */; };
 		059258A122AD71500064273D /* logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 0592589F22AD71500064273D /* logging.h */; };
+		05AA59F7246625A20031B73E /* ShaderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0524FF892459E6C7005C5E83 /* ShaderModel.swift */; };
+		05AA59F9246702410031B73E /* ShaderModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA59F8246702410031B73E /* ShaderModelTests.swift */; };
 		05B8229C243D877B009909D3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B8229B243D877B009909D3 /* AppDelegate.m */; };
 		05B8229F243D877B009909D3 /* Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B8229E243D877B009909D3 /* Renderer.m */; };
 		05B822A2243D877B009909D3 /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B822A1243D877B009909D3 /* GameViewController.m */; };
@@ -209,7 +212,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0521355B246E3A240085A598 /* CompiledShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompiledShader.swift; sourceTree = "<group>"; };
 		0524FF842458B798005C5E83 /* SlangShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlangShader.swift; sourceTree = "<group>"; };
+		0524FF892459E6C7005C5E83 /* ShaderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderModel.swift; sourceTree = "<group>"; };
 		052A2AA122A41FE700483370 /* linkValidate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = linkValidate.cpp; path = 3rdparty/glslang/glslang/MachineIndependent/linkValidate.cpp; sourceTree = "<group>"; };
 		052A2AA222A41FE700483370 /* CodeGen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeGen.cpp; path = 3rdparty/glslang/glslang/GenericCodeGen/CodeGen.cpp; sourceTree = "<group>"; };
 		052A2AA322A41FE800483370 /* PpScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PpScanner.cpp; path = 3rdparty/glslang/glslang/MachineIndependent/preprocessor/PpScanner.cpp; sourceTree = "<group>"; };
@@ -341,6 +346,7 @@
 		058278DE22AB1F85003040CD /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		0592589E22AD71500064273D /* logging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = logging.m; sourceTree = "<group>"; };
 		0592589F22AD71500064273D /* logging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logging.h; sourceTree = "<group>"; };
+		05AA59F8246702410031B73E /* ShaderModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderModelTests.swift; sourceTree = "<group>"; };
 		05B82298243D877B009909D3 /* Shader Studio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Shader Studio.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		05B8229A243D877B009909D3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		05B8229B243D877B009909D3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -671,6 +677,7 @@
 		0578144A243EA2390093CDF3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				0524FF892459E6C7005C5E83 /* ShaderModel.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -678,6 +685,7 @@
 		057987DE2456281C00CCF3C7 /* Compiler */ = {
 			isa = PBXGroup;
 			children = (
+				0521355B246E3A240085A598 /* CompiledShader.swift */,
 				A90209158C7B9B4C8306CD0D /* OEShaderPassCompiler.h */,
 				A902093DEC93994FE062176F /* OEShaderPassCompiler.m */,
 				A9020B45B7562A79B4BCF645 /* ShaderReflection.h */,
@@ -791,6 +799,7 @@
 				05F5BB1022875C0B004D713C /* OpenEmuShadersTests-Bridging-Header.h */,
 				A9020E619BC7ACEF5904D318 /* ConfigTests.swift */,
 				A902023035423BDAFACA21E6 /* NSScannerTests.swift */,
+				05AA59F8246702410031B73E /* ShaderModelTests.swift */,
 				05410EDD22F5FF7400303424 /* SlangShaderTests.swift */,
 				052BE008228D184600942C12 /* SourceParserTests.swift */,
 				052BE01F228D187E00942C12 /* TestHelpers.swift */,
@@ -1159,11 +1168,13 @@
 				052A2ACA22A41FEA00483370 /* limits.cpp in Sources */,
 				052A2B7722A438EF00483370 /* spirv_parser.cpp in Sources */,
 				052A2AC222A41FEA00483370 /* Constant.cpp in Sources */,
+				0521355C246E3A240085A598 /* CompiledShader.swift in Sources */,
 				052A2AC022A41FEA00483370 /* PpScanner.cpp in Sources */,
 				052A2AD022A41FEA00483370 /* Intermediate.cpp in Sources */,
 				056AC3A9228BD73F005018DA /* NSScanner+Extensions.swift in Sources */,
 				052A2AD922A41FEA00483370 /* Pp.cpp in Sources */,
 				052A2AD322A41FEA00483370 /* PoolAlloc.cpp in Sources */,
+				05AA59F7246625A20031B73E /* ShaderModel.swift in Sources */,
 				056696F02460EF5D000A5BE3 /* SlangShader.swift in Sources */,
 				056AC3A7228BB3E9005018DA /* SourceParser.swift in Sources */,
 				052A2B3B22A420C000483370 /* GlslangToSpv.cpp in Sources */,
@@ -1214,6 +1225,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05AA59F9246702410031B73E /* ShaderModelTests.swift in Sources */,
 				05410EDE22F5FF7400303424 /* SlangShaderTests.swift in Sources */,
 				052BE020228D187E00942C12 /* TestHelpers.swift in Sources */,
 				052BE009228D184600942C12 /* SourceParserTests.swift in Sources */,
@@ -1284,8 +1296,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "Shader Studio/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1294,6 +1307,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sgc.Shader-Studio";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -1302,8 +1316,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "Shader Studio/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1312,6 +1327,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sgc.Shader-Studio";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
