@@ -32,7 +32,7 @@ FOUNDATION_EXPORT const unsigned char OpenEmuShadersVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <OpenEmuShaders/PublicHeader.h>
 
-#import "OEEnums.h"
-#import "ShaderPassSemantics.h"
-#import "OEPixelBuffer.h"
-#import "OEFilterChain.h"
+#import <OpenEmuShaders/OEEnums.h>
+#import <OpenEmuShaders/ShaderPassSemantics.h>
+#import <OpenEmuShaders/OEPixelBuffer.h>
+#import <OpenEmuShaders/OEFilterChain.h>

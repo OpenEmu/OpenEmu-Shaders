@@ -23,7 +23,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
-#import "OEEnums.h"
+#import <OpenEmuShaders/OEEnums.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
