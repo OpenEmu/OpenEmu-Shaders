@@ -546,7 +546,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         if (cgImg) {
             return [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
         }
-        
+        NSLog(@"%s: conversion failed, returning black image", __FUNCTION__);
         return [self blackImage];
     } @finally {
         if (cgImgTmp)   CGImageRelease(cgImgTmp);
