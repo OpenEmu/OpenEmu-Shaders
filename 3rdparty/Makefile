@@ -20,7 +20,7 @@ NCPUS:=$(shell sysctl -n hw.ncpu)
 MACOS_SDK_VERSION := $(shell xcrun --sdk macosx --show-sdk-version)
 
 # need to check the current SDK is either >= 10.16 or 11.0
-TARGET_ARCHITECTURES := $(shell ./version_gte.sh $(MACOS_SDK_VERSION) 11.0 || ./version_gte.sh $(MACOS_SDK_VERSION) 10.16 && echo 'arm64;x86_64' || echo 'x86_64')
+TARGET_ARCHITECTURES ?= $(shell ./version_gte.sh $(MACOS_SDK_VERSION) 11.0 || ./version_gte.sh $(MACOS_SDK_VERSION) 10.16 && echo 'arm64;x86_64' || echo 'x86_64')
 
 all: libSPIRV-Tools-opt.a build_info.h
 
