@@ -11,7 +11,7 @@
 #import "ShaderPassSemantics.h"
 #import <OpenEmuShaders/OpenEmuShaders-Swift.h>
 #import "OESourceParser+Private.h"
-#import "logging.h"
+#import "OELogging.h"
 
 @implementation OEShaderPassCompiler
 {
@@ -38,7 +38,7 @@ void error_callback(void *userdata, const char *error)
 - (void)compileError:(char const *)error
 {
     // TODO(sgc): handle callback errors
-    NSLog(@"error from SPIR-V compiler: %s", error);
+    os_log_error(OE_LOG_DEFAULT, "error from SPIR-V compiler: %{public}s", error);
 }
 
 - (NSData *)irForPass:(ShaderPass *)pass ofType:(ShaderType)type error:(NSError **)error

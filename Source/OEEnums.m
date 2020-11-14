@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "OEEnums.h"
-#import "logging.h"
+#import "OELogging.h"
 
 OEShaderTextureSemantic const OEShaderTextureSemanticOriginal        = @"Original";
 OEShaderTextureSemantic const OEShaderTextureSemanticSource          = @"Source";

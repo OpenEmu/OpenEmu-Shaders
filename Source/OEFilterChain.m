@@ -26,7 +26,7 @@
 
 #import "OEFilterChain.h"
 #import "OEShaderPassCompiler.h"
-#import "logging.h"
+#import "OELogging.h"
 #import "OEPixelBuffer+Internal.h"
 #import "RendererCommon.h"
 #import <OpenEmuShaders/OpenEmuShaders.h>
@@ -546,7 +546,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         if (cgImg) {
             return [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
         }
-        NSLog(@"%s: conversion failed, returning black image", __FUNCTION__);
+        os_log_error(OE_LOG_DEFAULT, "%{public}s: conversion failed, returning black image", __FUNCTION__);
         return [self blackImage];
     } @finally {
         if (cgImgTmp)   CGImageRelease(cgImgTmp);
@@ -1045,7 +1045,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                         return NO;
                     }
 #if DEBUG_SHADER
-                    NSLog(@"warnings compiling vertex shader: %@", err.localizedDescription);
+                    os_log_debug(OE_LOG_DEFAULT, @"warnings compiling vertex shader: %@", err.localizedDescription);
 #endif
                 }
                 
@@ -1059,7 +1059,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                         return NO;
                     }
 #if DEBUG_SHADER
-                    NSLog(@"warnings compiling fragment shader: %@", err.localizedDescription);
+                    os_log_debug(OE_LOG_DEFAULT, "warnings compiling fragment shader: %{public}@", err.localizedDescription);
 #endif
                 }
                 psd.fragmentFunction = [lib newFunctionWithName:@"main0"];

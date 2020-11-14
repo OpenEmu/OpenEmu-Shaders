@@ -22,11 +22,11 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#import "logging.h"
+#import "OELogging.h"
 
 os_log_t OE_LOG_DEFAULT;
 
 __attribute__((constructor))
 static void InitializeLogging() {
-    OE_LOG_DEFAULT = os_log_create("com.openemu.shaders", "main");
+    OE_LOG_DEFAULT = os_log_create("org.openemu.OpenEmuShaders", "default");
 }

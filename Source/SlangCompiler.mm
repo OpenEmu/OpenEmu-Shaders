@@ -27,7 +27,7 @@
 #include "glslang/Public/ShaderLang.h"
 #include "StandAlone/ResourceLimits.h"
 #include "SPIRV/GlslangToSpv.h"
-#include "logging.h"
+#include "OELogging.h"
 #include "spirv-tools/libspirv.hpp"
 #include "spirv-tools/optimizer.hpp"
 

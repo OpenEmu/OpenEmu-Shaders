@@ -24,7 +24,7 @@
 
 #import "ShaderReflection.h"
 #import <OpenEmuShaders/OpenEmuShaders-Swift.h>
-#import "logging.h"
+#import "OELogging.h"
 
 @implementation ShaderTextureSemanticMeta
 @end
