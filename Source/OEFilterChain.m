@@ -486,14 +486,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 - (CIContext *)OE_ciContext
 {
     if (_ciContext == nil) {
-        if (@available(macOS 11.0, *))
-        {
-            _ciContext = [CIContext contextWithMTLDevice:_device];
-        }
-        else
-        {
-            _ciContext = [CIContext new];
-        }
+        _ciContext = [CIContext contextWithMTLDevice:_device];
     }
     return _ciContext;
 }
