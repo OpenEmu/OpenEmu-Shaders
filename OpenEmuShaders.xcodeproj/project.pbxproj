@@ -138,15 +138,6 @@
 		059258A122AD71500064273D /* OELogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 0592589F22AD71500064273D /* OELogging.h */; };
 		05AA59F7246625A20031B73E /* ShaderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0524FF892459E6C7005C5E83 /* ShaderModel.swift */; };
 		05AA59F9246702410031B73E /* ShaderModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA59F8246702410031B73E /* ShaderModelTests.swift */; };
-		05B8229C243D877B009909D3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B8229B243D877B009909D3 /* AppDelegate.m */; };
-		05B8229F243D877B009909D3 /* Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B8229E243D877B009909D3 /* Renderer.m */; };
-		05B822A2243D877B009909D3 /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B822A1243D877B009909D3 /* GameViewController.m */; };
-		05B822A4243D877B009909D3 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 05B822A3243D877B009909D3 /* Shaders.metal */; };
-		05B822A7243D877C009909D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 05B822A6243D877C009909D3 /* Assets.xcassets */; };
-		05B822AA243D877C009909D3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 05B822A8243D877C009909D3 /* Main.storyboard */; };
-		05B822AD243D877C009909D3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 05B822AC243D877C009909D3 /* main.m */; };
-		05B822B2243D87AB009909D3 /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; };
-		05B822B3243D87AB009909D3 /* OpenEmuShaders.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		05D043542439043E00B6BDBF /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D043532439043E00B6BDBF /* Version.swift */; };
 		05E3ED2A248C749B0017BCF6 /* ResourceLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05E3ED28248C749B0017BCF6 /* ResourceLimits.cpp */; };
 		05E3ED2E248C75460017BCF6 /* ResourceLimits.h in Headers */ = {isa = PBXBuildFile; fileRef = 05E3ED2D248C75460017BCF6 /* ResourceLimits.h */; };
@@ -181,13 +172,6 @@
 			remoteGlobalIDString = 05647EE4243836DF00BF00A9;
 			remoteInfo = ToolDependencies;
 		};
-		05B822B4243D87AB009909D3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 05EEE32F227CC35C007D011B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 05EEE337227CC35C007D011B;
-			remoteInfo = OpenEmuShaders;
-		};
 		05EEE343227CC35D007D011B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 05EEE32F227CC35C007D011B /* Project object */;
@@ -196,20 +180,6 @@
 			remoteInfo = OpenEmuShaders;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		05B822B6243D87AB009909D3 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				05B822B3243D87AB009909D3 /* OpenEmuShaders.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0521355B246E3A240085A598 /* CompiledShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompiledShader.swift; sourceTree = "<group>"; };
@@ -347,19 +317,6 @@
 		0592589E22AD71500064273D /* OELogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OELogging.m; sourceTree = "<group>"; };
 		0592589F22AD71500064273D /* OELogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OELogging.h; sourceTree = "<group>"; };
 		05AA59F8246702410031B73E /* ShaderModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderModelTests.swift; sourceTree = "<group>"; };
-		05B82298243D877B009909D3 /* Shader Studio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Shader Studio.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		05B8229A243D877B009909D3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		05B8229B243D877B009909D3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		05B8229D243D877B009909D3 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
-		05B8229E243D877B009909D3 /* Renderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Renderer.m; sourceTree = "<group>"; };
-		05B822A0243D877B009909D3 /* GameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
-		05B822A1243D877B009909D3 /* GameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GameViewController.m; sourceTree = "<group>"; };
-		05B822A3243D877B009909D3 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
-		05B822A5243D877B009909D3 /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
-		05B822A6243D877C009909D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		05B822A9243D877C009909D3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		05B822AB243D877C009909D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		05B822AC243D877C009909D3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		05D043532439043E00B6BDBF /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		05E3ED28248C749B0017BCF6 /* ResourceLimits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceLimits.cpp; path = 3rdparty/glslang/StandAlone/ResourceLimits.cpp; sourceTree = "<group>"; };
 		05E3ED2D248C75460017BCF6 /* ResourceLimits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceLimits.h; path = 3rdparty/glslang/StandAlone/ResourceLimits.h; sourceTree = "<group>"; };
@@ -391,14 +348,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		05B82295243D877B009909D3 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				05B822B2243D87AB009909D3 /* OpenEmuShaders.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		05EEE335227CC35C007D011B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -715,25 +664,6 @@
 			name = Logging;
 			sourceTree = "<group>";
 		};
-		05B82299243D877B009909D3 /* Shader Studio */ = {
-			isa = PBXGroup;
-			children = (
-				05B8229A243D877B009909D3 /* AppDelegate.h */,
-				05B8229B243D877B009909D3 /* AppDelegate.m */,
-				05B8229D243D877B009909D3 /* Renderer.h */,
-				05B8229E243D877B009909D3 /* Renderer.m */,
-				05B822A0243D877B009909D3 /* GameViewController.h */,
-				05B822A1243D877B009909D3 /* GameViewController.m */,
-				05B822A3243D877B009909D3 /* Shaders.metal */,
-				05B822A5243D877B009909D3 /* ShaderTypes.h */,
-				05B822A6243D877C009909D3 /* Assets.xcassets */,
-				05B822A8243D877C009909D3 /* Main.storyboard */,
-				05B822AB243D877C009909D3 /* Info.plist */,
-				05B822AC243D877C009909D3 /* main.m */,
-			);
-			path = "Shader Studio";
-			sourceTree = "<group>";
-		};
 		05E3ED25248C74490017BCF6 /* StandAlone */ = {
 			isa = PBXGroup;
 			children = (
@@ -767,7 +697,6 @@
 				05EEE388227CDA8F007D011B /* Source */,
 				05EEE33A227CC35D007D011B /* OpenEmuShaders */,
 				05EEE345227CC35D007D011B /* OpenEmuShadersTests */,
-				05B82299243D877B009909D3 /* Shader Studio */,
 				05EEE339227CC35D007D011B /* Products */,
 				05EEE3B6227E9766007D011B /* Frameworks */,
 			);
@@ -778,7 +707,6 @@
 			children = (
 				05EEE338227CC35D007D011B /* OpenEmuShaders.framework */,
 				05EEE341227CC35D007D011B /* OpenEmuShadersTests.xctest */,
-				05B82298243D877B009909D3 /* Shader Studio.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -983,25 +911,6 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
-		05B82297243D877B009909D3 /* Shader Studio */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 05B822AF243D877C009909D3 /* Build configuration list for PBXNativeTarget "Shader Studio" */;
-			buildPhases = (
-				05B82294243D877B009909D3 /* Sources */,
-				05B82295243D877B009909D3 /* Frameworks */,
-				05B82296243D877B009909D3 /* Resources */,
-				05B822B6243D87AB009909D3 /* Embed Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				05B822B5243D87AB009909D3 /* PBXTargetDependency */,
-			);
-			name = "Shader Studio";
-			productName = "Shader Studio";
-			productReference = 05B82298243D877B009909D3 /* Shader Studio.app */;
-			productType = "com.apple.product-type.application";
-		};
 		05EEE337227CC35C007D011B /* OpenEmuShaders */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 05EEE34C227CC35D007D011B /* Build configuration list for PBXNativeTarget "OpenEmuShaders" */;
@@ -1054,9 +963,6 @@
 					05647EE4243836DF00BF00A9 = {
 						CreatedOnToolsVersion = 11.4;
 					};
-					05B82297243D877B009909D3 = {
-						CreatedOnToolsVersion = 11.4;
-					};
 					05EEE337227CC35C007D011B = {
 						CreatedOnToolsVersion = 10.2.1;
 						LastSwiftMigration = 1020;
@@ -1083,21 +989,11 @@
 				05EEE337227CC35C007D011B /* OpenEmuShaders */,
 				05EEE340227CC35D007D011B /* OpenEmuShadersTests */,
 				05647EE4243836DF00BF00A9 /* ToolDependencies */,
-				05B82297243D877B009909D3 /* Shader Studio */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		05B82296243D877B009909D3 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				05B822A7243D877C009909D3 /* Assets.xcassets in Resources */,
-				05B822AA243D877C009909D3 /* Main.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		05EEE336227CC35C007D011B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1135,18 +1031,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		05B82294243D877B009909D3 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				05B822AD243D877C009909D3 /* main.m in Sources */,
-				05B822A4243D877B009909D3 /* Shaders.metal in Sources */,
-				05B8229F243D877B009909D3 /* Renderer.m in Sources */,
-				05B822A2243D877B009909D3 /* GameViewController.m in Sources */,
-				05B8229C243D877B009909D3 /* AppDelegate.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		05EEE334227CC35C007D011B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1242,28 +1126,12 @@
 			target = 05647EE4243836DF00BF00A9 /* ToolDependencies */;
 			targetProxy = 05647EE8243839C900BF00A9 /* PBXContainerItemProxy */;
 		};
-		05B822B5243D87AB009909D3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 05EEE337227CC35C007D011B /* OpenEmuShaders */;
-			targetProxy = 05B822B4243D87AB009909D3 /* PBXContainerItemProxy */;
-		};
 		05EEE344227CC35D007D011B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 05EEE337227CC35C007D011B /* OpenEmuShaders */;
 			targetProxy = 05EEE343227CC35D007D011B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		05B822A8243D877C009909D3 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				05B822A9243D877C009909D3 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		05647EE6243836DF00BF00A9 /* Debug */ = {
@@ -1288,46 +1156,6 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		05B822B0243D877C009909D3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = "Shader Studio/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.sgc.Shader-Studio";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-			};
-			name = Debug;
-		};
-		05B822B1243D877C009909D3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = "Shader Studio/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.sgc.Shader-Studio";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
@@ -1579,15 +1407,6 @@
 			buildConfigurations = (
 				05647EE6243836DF00BF00A9 /* Debug */,
 				05647EE7243836DF00BF00A9 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		05B822AF243D877C009909D3 /* Build configuration list for PBXNativeTarget "Shader Studio" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				05B822B0243D877C009909D3 /* Debug */,
-				05B822B1243D877C009909D3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
