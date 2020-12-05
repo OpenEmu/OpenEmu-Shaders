@@ -33,7 +33,7 @@ clean: clean-spirv clean-glslang
 # glslang
 
 clean-glslang:
-	$(MAKE) -C $(GLSLANG_BUILD_DIR) clean
+	if [[ -e $(GLSLANG_BUILD_DIR) ]]; then $(MAKE) -C $(GLSLANG_BUILD_DIR) clean; fi
 	rm -rf $(GLSLANG_BUILD_DIR)
 .PHONY: clean-glslang
 
@@ -50,7 +50,7 @@ $(GLSLANG_BUILD_DIR)/CMakeCache.txt: $(GLSLANG_DIR)/CMakeLists.txt
 # SPIRV-Tools
 
 clean-spirv:
-	$(MAKE) -C $(SPIRV_TOOLS_BUILD_DIR) clean
+	if [[ -e $(SPIRV_TOOLS_BUILD_DIR) ]]; then $(MAKE) -C $(SPIRV_TOOLS_BUILD_DIR) clean; fi
 	rm -rf $(SPIRV_TOOLS_BUILD_DIR)
 	rm -rf $(SPIRV_TOOLS_EXTERNAL_DIR)/SPIRV-Headers
 .PHONY : clean-spirv
