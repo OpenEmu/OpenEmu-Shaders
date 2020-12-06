@@ -66,11 +66,13 @@ $(SPIRV_TOOLS_BUILD_DIR)/CMakeCache.txt: $(SPIRV_TOOLS_DIR)/CMakeLists.txt $(SPI
 	mkdir -p $(SPIRV_TOOLS_BUILD_DIR)
 	$(CMAKE) -B $(SPIRV_TOOLS_BUILD_DIR) -S $(SPIRV_TOOLS_DIR) -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_OSX_ARCHITECTURES='$(TARGET_ARCHITECTURES)' -DSPIRV_WERROR=OFF
 
+# SHA for SPIRV-Headers comes from 
+# https://github.com/KhronosGroup/SPIRV-Tools/blob/21f7c5675da3a45c13024dc1169438eb4e8f7e0c/DEPS#L9
 $(SPIRV_TOOLS_EXTERNAL_DIR)/SPIRV-Headers:
 	pushd $(SPIRV_TOOLS_DIR); \
 	git clone https://github.com/KhronosGroup/SPIRV-Headers.git external/SPIRV-Headers; \
 	cd external/SPIRV-Headers; \
-	git checkout 1.5.4; \
+	git checkout f027d53ded7e230e008d37c8b47ede7cd308e19d; \
 	popd
 
 print:
