@@ -157,6 +157,13 @@ public final class SlangShader: NSObject {
             defaultGroup!.parameters = parameters
         }
     }
+    
+    @objc(setValue:forParameter:)
+    public func set(value: Double, forParameter name: String) {
+        if let param = parametersMap[name] {
+            param.value = Float(value)
+        }
+    }
 }
 
 @objc
