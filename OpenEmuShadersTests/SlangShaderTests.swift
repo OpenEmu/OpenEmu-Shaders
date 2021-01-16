@@ -469,16 +469,11 @@ PARAM1 = 0.75
         }
     }
     
-    func testOneFileParametersGroupsInConfig() {
+    func testOneFileParametersInConfig() {
         let cfg =
 """
 shaders = 1
 shader0 = mem:///root/foo.slang
-
-parameter_groups = "foo;bar"
-foo_group_desc = "Foo group"
-foo_group_parameters = "foo1;foo2"
-bar_group_parameters = "bar2;bar1"
 """
         
         let src =
@@ -508,73 +503,11 @@ bar_group_parameters = "bar2;bar1"
             let pass = ss.passes[0]
             XCTAssertEqual(pass.alias, "this_is_the_name")
             
-            let groups = ss.parameterGroups
-            XCTAssertEqual(groups.count, 3)
-            
             let exp = ShaderParameter.list(
-                Param(name: "foo1", desc: "Foo 1 param", group: "Foo group"),
-                Param(name: "foo2", desc: "Foo 2 param", group: "Foo group"),
-                Param(name: "bar2", desc: "Bar 2 param", group: "bar"),
-                Param(name: "bar1", desc: "Bar 1 param", group: "bar")
-            )
-            
-            let params = ss.parameters
-            XCTAssertEqual(params, exp)
-            
-            let groupNames = params.map(\.group)
-            XCTAssertEqual(groupNames, ["Foo group", "Foo group", "bar", "bar"])
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
-    }
-    
-    func testOneFileParametersGroupsInConfigWithDefaultOverride() {
-        let cfg =
-"""
-shaders = 1
-shader0 = mem:///root/foo.slang
-
-parameter_groups = "foo;default"
-foo_group_desc = "Foo group"
-foo_group_parameters = "foo1;foo2"
-default_group_desc = "Other parameters"
-"""
-        
-        let src =
-"""
-#version 450
-
-#pragma name this_is_the_name
-#pragma parameter foo1 "Foo 1 param" 0.5 0.0 1.0 0.01
-#pragma parameter bar1 "Bar 1 param" 0.5 0.0 1.0 0.01
-#pragma parameter foo2 "Foo 2 param" 0.5 0.0 1.0 0.01
-#pragma parameter bar2 "Bar 2 param" 0.5 0.0 1.0 0.01
-
-#pragma stage vertex
-// vertex
-#pragma stage fragment
-// fragment
-"""
-        InMemProtocol.requests = [
-            "mem:///root/foo.slangp": cfg,
-            "mem:///root/foo.slang": src,
-        ]
-        
-        let url = URL(string: "mem:///root/foo.slangp")!
-        do {
-            let ss = try SlangShader(fromURL: url)
-            XCTAssertEqual(ss.passes.count, 1)
-            let pass = ss.passes[0]
-            XCTAssertEqual(pass.alias, "this_is_the_name")
-            
-            let groups = ss.parameterGroups
-            XCTAssertEqual(groups.count, 2)
-            
-            let exp = ShaderParameter.list(
-                Param(name: "foo1", desc: "Foo 1 param", group: "Foo Group"),
-                Param(name: "foo2", desc: "Foo 2 param", group: "Foo Group"),
-                Param(name: "bar1", desc: "Bar 1 param", group: "Other parameters"),
-                Param(name: "bar2", desc: "Bar 2 param", group: "Other parameters")
+                Param(name: "foo1", desc: "Foo 1 param"),
+                Param(name: "foo2", desc: "Foo 2 param"),
+                Param(name: "bar2", desc: "Bar 2 param"),
+                Param(name: "bar1", desc: "Bar 1 param")
             )
             
             let params = ss.parameters

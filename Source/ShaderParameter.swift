@@ -29,7 +29,6 @@ import Foundation
 public class ShaderParameter: NSObject {
     public var name: String
     public var desc: String
-    public var group: String = ""
     public var initial: Float = 0.0
     public var minimum: Float = 0.0
     public var maximum: Float = 1.0

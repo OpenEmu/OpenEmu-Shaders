@@ -95,10 +95,6 @@ public class ShaderConfigSerialization: NSObject {
             res["parameters"] = parameters as AnyObject
         }
         
-        if let groups = ParameterGroups.parse(d: d) {
-            res["parameterGroups"] = groups as AnyObject
-        }
-        
         return res
     }
     
@@ -161,54 +157,6 @@ public class ShaderConfigSerialization: NSObject {
                 if let v = d[name], let dv = Double(v) {
                     res[name] = dv as NSNumber
                 }
-            }
-            
-            return res
-        }
-    }
-    
-    struct ParameterGroups {
-        static func parse(d: [String: String]) -> [[String: AnyObject]]? {
-            guard let pg = d["parameter_groups"] else {
-                return nil
-            }
-            
-            let groups = pg.split(separator: ";")
-            if groups.isEmpty {
-                return nil
-            }
-            
-            var res   = [[String: AnyObject]]()
-            
-            for g in groups {
-                let name  = String(g)
-                var group = [String: AnyObject]()
-                group["name"] = name as AnyObject
-                
-                if let v = d["\(name)_group_desc"] {
-                    group["desc"] = v as AnyObject
-                }
-                
-                if let v = d["\(name)_group_hidden"], let bv = Bool(v) {
-                    group["hidden"] = bv as AnyObject
-                } else {
-                    group["hidden"] = false as AnyObject
-                }
-                
-                if name != "default" {
-                    guard let params = d["\(name)_group_parameters"] else {
-                        continue
-                    }
-                    
-                    let paramNames = params.split(separator: ";")
-                    if paramNames.isEmpty {
-                        continue
-                    }
-                    
-                    group["parameters"] = paramNames as AnyObject
-                }
-                
-                res.append(group)
             }
             
             return res

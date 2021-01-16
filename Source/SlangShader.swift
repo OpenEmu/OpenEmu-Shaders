@@ -46,7 +46,6 @@ public final class SlangShader: NSObject {
     public var url: URL
     public var passes: [ShaderPass] = []
     public var parameters: [ShaderParameter] = []
-    public var parameterGroups: [ShaderParamGroup] = []
     public var luts: [ShaderLUT] = []
     
     private var parametersMap: [String: ShaderParameter] = [:]
@@ -101,60 +100,6 @@ public final class SlangShader: NSObject {
                     existing.value   = val.floatValue
                 }
             }
-        }
-        
-        // resolve groups
-        var defaultGroup: ShaderParamGroup?
-        if let groups = d["parameterGroups"] as? [[String: AnyObject]] {
-            for group in groups {
-                guard let name = group["name"] as? String else { continue }
-                
-                let desc   = group["desc"] as? String ?? name
-                let hidden = group["hidden"] as? Bool ?? false
-                
-                if name == "default" {
-                    let pg = ShaderParamGroup(name: name, desc: desc, hidden: hidden)
-                    parameterGroups.append(pg)
-                    defaultGroup = pg
-                    continue
-                }
-
-                if let groupParams = group["parameters"] as? [String] {
-                    let pm = parametersMap
-                    let params: [ShaderParameter] = groupParams.compactMap {
-                        guard let p = pm[$0] else { return nil }
-                        p.group = desc
-                        return p
-                    }
-                    
-                    if !params.isEmpty {
-                        let pg = ShaderParamGroup(name: name, desc: desc, hidden: hidden)
-                        pg.parameters = params
-                        parameterGroups.append(pg)
-                    }
-                }
-            }
-        }
-        
-        if defaultGroup == nil {
-            let pg = ShaderParamGroup(name: "default", desc: "", hidden: false)
-            parameterGroups.insert(pg, at: 0)
-            defaultGroup = pg
-        }
-        
-        if parameterGroups.count > 1 {
-            // collect the remaining parameters into the global group
-            defaultGroup!.parameters = parameters
-                .filter { $0.group.isEmpty }
-                .map {
-                    $0.group = defaultGroup!.desc
-                    return $0
-            }
-            
-            // sort the primary list of parameters based on the groups
-            parameters = parameterGroups.flatMap { $0.parameters }
-        } else {
-            defaultGroup!.parameters = parameters
         }
     }
     

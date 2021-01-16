@@ -120,7 +120,6 @@
 		052BE009228D184600942C12 /* SourceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE008228D184600942C12 /* SourceParserTests.swift */; };
 		052BE020228D187E00942C12 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE01F228D187E00942C12 /* TestHelpers.swift */; };
 		05410EDE22F5FF7400303424 /* SlangShaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05410EDD22F5FF7400303424 /* SlangShaderTests.swift */; };
-		05410EEE22F718D200303424 /* ShaderParamGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05410EED22F718D200303424 /* ShaderParamGroup.swift */; };
 		05647CAB24381A9B00BF00A9 /* libspirv.h in Headers */ = {isa = PBXBuildFile; fileRef = 05647CA624381A9B00BF00A9 /* libspirv.h */; };
 		05647FBC2438D8A600BF00A9 /* libspirv.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 05647FB82438D8A600BF00A9 /* libspirv.hpp */; };
 		05647FBD2438D8A600BF00A9 /* linker.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 05647FB92438D8A600BF00A9 /* linker.hpp */; };
@@ -299,7 +298,6 @@
 		052BE008228D184600942C12 /* SourceParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceParserTests.swift; sourceTree = "<group>"; };
 		052BE01F228D187E00942C12 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		05410EDD22F5FF7400303424 /* SlangShaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlangShaderTests.swift; sourceTree = "<group>"; };
-		05410EED22F718D200303424 /* ShaderParamGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderParamGroup.swift; sourceTree = "<group>"; };
 		05647CA624381A9B00BF00A9 /* libspirv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libspirv.h; sourceTree = "<group>"; };
 		05647FB82438D8A600BF00A9 /* libspirv.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = libspirv.hpp; sourceTree = "<group>"; };
 		05647FB92438D8A600BF00A9 /* linker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = linker.hpp; sourceTree = "<group>"; };
@@ -761,7 +759,6 @@
 			children = (
 				A90203E4FFF77BAF2B3ECC24 /* Config.swift */,
 				0524FF842458B798005C5E83 /* SlangShader.swift */,
-				05410EED22F718D200303424 /* ShaderParamGroup.swift */,
 				056AC378228BA8D9005018DA /* ShaderParameter.swift */,
 				056AC3A6228BB3E9005018DA /* SourceParser.swift */,
 				056AC3A8228BD73F005018DA /* NSScanner+Extensions.swift */,
@@ -1087,7 +1084,6 @@
 				A9020CDAE9B375337B23CB35 /* SlangCompiler.mm in Sources */,
 				052A2AC822A41FEA00483370 /* attribute.cpp in Sources */,
 				A90206302FA906B0B42F2CF2 /* ShaderPassSemantics.m in Sources */,
-				05410EEE22F718D200303424 /* ShaderParamGroup.swift in Sources */,
 				059258A022AD71500064273D /* OELogging.m in Sources */,
 				052A2ACC22A41FEA00483370 /* RemoveTree.cpp in Sources */,
 				A90205F1433179AFFF015F07 /* ShaderReflection.m in Sources */,

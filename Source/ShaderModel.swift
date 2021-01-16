@@ -49,9 +49,8 @@ extension ShaderConfigSerialization {
         let passes = try (0..<shaders).map { try makeShaderPassModel(pass: $0, from: d) }
         let textures = makeTextures(from: d)
         let parameters = makeParameters(from: d)
-        let groups = makeParameterGroups(from: d)
         
-        return ShaderModel(passes: passes, textures: textures, parameters: parameters, parameterGroups: groups)
+        return ShaderModel(passes: passes, textures: textures, parameters: parameters)
     }
     
     fileprivate static func makeShaderPassModel(pass i: Int, from d: [String: String]) throws -> ShaderPassModel {
@@ -137,46 +136,6 @@ extension ShaderConfigSerialization {
         return res
     }
     
-    fileprivate static func makeParameterGroups(from d: [String: String]) -> [ShaderGroupModel] {
-        guard let pg = d["parameter_groups"] else {
-            return []
-        }
-        
-        var res = [ShaderGroupModel]()
-        for g in pg.split(separator: ";") {
-            let name = String(g)
-            let desc = d["\(name)_group_desc"]
-            
-            let hidden: Bool
-            if let v = d["\(name)_group_hidden"], let bv = Bool(v) {
-                hidden = bv
-            } else {
-                hidden = false
-            }
-            
-            if name != "default" {
-                guard let paramList = d["\(name)_group_parameters"] else {
-                    continue
-                }
-                
-                let params = paramList.split(separator: ";")
-                if params.isEmpty {
-                    continue
-                }
-                
-                res.append(
-                    ShaderGroupModel(
-                        name: name, description: desc, parameters: params.map(String.init),
-                        hidden: hidden))
-            } else {
-                res.append(
-                    ShaderGroupModel(name: name, description: desc, parameters: [], hidden: hidden))
-            }
-        }
-        
-        return res
-    }
-    
     static let strings = [
         ("alias", \ShaderPassModel.alias),
         ("scale_type", \ShaderPassModel.scaleType),
@@ -210,17 +169,14 @@ public class ShaderModel {
     public var passes: [ShaderPassModel]
     public var textures: [ShaderTextureModel]
     public var parameters: [ShaderParameterModel]
-    public var parameterGroups: [ShaderGroupModel]
     
     init(
         passes: [ShaderPassModel], textures: [ShaderTextureModel],
-        parameters: [ShaderParameterModel],
-        parameterGroups: [ShaderGroupModel]
+        parameters: [ShaderParameterModel]
     ) {
         self.passes = passes
         self.textures = textures
         self.parameters = parameters
-        self.parameterGroups = parameterGroups
     }
 }
 
@@ -273,19 +229,5 @@ public class ShaderParameterModel {
     init(name: String, value: Decimal) {
         self.name = name
         self.value = value
-    }
-}
-
-public class ShaderGroupModel {
-    let name: String
-    let description: String?
-    let parameters: [String]
-    let hidden: Bool
-    
-    init(name: String, description: String?, parameters: [String], hidden: Bool) {
-        self.name = name
-        self.description = description
-        self.parameters = parameters
-        self.hidden = hidden
     }
 }
