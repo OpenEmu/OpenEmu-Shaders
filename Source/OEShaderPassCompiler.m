@@ -95,6 +95,10 @@ void error_callback(void *userdata, const char *error)
     
     unsigned int version = 0;
     switch (metalVersion) {
+        case MTLLanguageVersion2_3:
+            version = SPVC_MAKE_MSL_VERSION(2, 3, 0);
+            break;
+        
         case MTLLanguageVersion2_2:
             version = SPVC_MAKE_MSL_VERSION(2, 2, 0);
             break;
