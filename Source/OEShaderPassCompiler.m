@@ -519,7 +519,8 @@ os_log_error(OE_LOG_DEFAULT, "unexpected resource type in shader %{public}@", @#
         
         ShaderTextureSemanticMap *sem = [ref textureSemanticForName:[NSString stringWithUTF8String:tex->name]];
         if (sem == nil) {
-            os_log_error(OE_LOG_DEFAULT, "invalid texture");
+            os_log_error(OE_LOG_DEFAULT, "invalid texture %{public}s", tex->name);
+            return NO;
         }
         
         [ref setBinding:binding forTextureSemantic:sem.semantic atIndex:sem.index];
