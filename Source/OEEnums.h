@@ -108,7 +108,7 @@ FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticMVP;
  * The @c x and @c y fields refer to the size of the output in pixels
  * The @c z and @c w fields refer to the inverse; 1/x and 1/y
  */
-FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticOutput;
+FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticOutputSize;
 
 /*!
  * Identifies the vec4 float containing the final viewport output size.

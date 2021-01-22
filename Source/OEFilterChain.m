@@ -972,7 +972,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             simd_float4x4 *mvp = (i == _lastPassIndex) ? &_uniforms.projectionMatrix : &_uniformsNoRotate.projectionMatrix;
            
             [sem addUniformData:mvp semantic:OEShaderBufferSemanticMVP];
-            [sem addUniformData:&_pass[i].renderTarget.viewSize semantic:OEShaderBufferSemanticOutput];
+            [sem addUniformData:&_pass[i].renderTarget.viewSize semantic:OEShaderBufferSemanticOutputSize];
             [sem addUniformData:&_outputFrame.outputSize semantic:OEShaderBufferSemanticFinalViewportSize];
             [sem addUniformData:&_pass[i].frameCount semantic:OEShaderBufferSemanticFrameCount];
             [sem addUniformData:&_pass[i].frameDirection semantic:OEShaderBufferSemanticFrameDirection];

@@ -124,14 +124,14 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
         
         semanticUniformNames  = @{
                 @"MVP": [ShaderSemanticMap mapWithSemantic:OEShaderBufferSemanticMVP index:0],
-                @"OutputSize": [ShaderSemanticMap mapWithSemantic:OEShaderBufferSemanticOutput index:1],
+                @"OutputSize": [ShaderSemanticMap mapWithSemantic:OEShaderBufferSemanticOutputSize index:1],
                 @"FinalViewportSize": [ShaderSemanticMap mapWithSemantic:OEShaderBufferSemanticFinalViewportSize index:2],
                 @"FrameCount": [ShaderSemanticMap mapWithSemantic:OEShaderBufferSemanticFrameCount index:3],
                 @"FrameDirection": [ShaderSemanticMap mapWithSemantic:OEShaderBufferSemanticFrameDirection index:4],
         };
         semanticToUniformName = @{
                 OEShaderBufferSemanticMVP: @"MVP",
-                OEShaderBufferSemanticOutput: @"OutputSize",
+                OEShaderBufferSemanticOutputSize: @"OutputSize",
                 OEShaderBufferSemanticFinalViewportSize: @"FinalViewportSize",
                 OEShaderBufferSemanticFrameCount: @"FrameCount",
                 OEShaderBufferSemanticFrameDirection: @"FrameDirection",
@@ -153,7 +153,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
     
     _semantics = [NSMutableDictionary<OEShaderBufferSemantic, ShaderSemanticMeta *> dictionaryWithCapacity:5];
     _semantics[OEShaderBufferSemanticMVP]               = [ShaderSemanticMeta new];
-    _semantics[OEShaderBufferSemanticOutput]            = [ShaderSemanticMeta new];
+    _semantics[OEShaderBufferSemanticOutputSize]        = [ShaderSemanticMeta new];
     _semantics[OEShaderBufferSemanticFinalViewportSize] = [ShaderSemanticMeta new];
     _semantics[OEShaderBufferSemanticFrameCount]        = [ShaderSemanticMeta new];
     _semantics[OEShaderBufferSemanticFrameDirection]    = [ShaderSemanticMeta new];

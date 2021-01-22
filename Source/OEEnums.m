@@ -18,7 +18,7 @@ OEShaderTextureSemantic const OEShaderTextureSemanticPassFeedback    = @"PassFee
 OEShaderTextureSemantic const OEShaderTextureSemanticUser            = @"User";
 
 OEShaderBufferSemantic const OEShaderBufferSemanticMVP               = @"MVP";
-OEShaderBufferSemantic const OEShaderBufferSemanticOutput            = @"Output";
+OEShaderBufferSemantic const OEShaderBufferSemanticOutputSize        = @"OutputSize";
 OEShaderBufferSemantic const OEShaderBufferSemanticFinalViewportSize = @"FinalViewportSize";
 OEShaderBufferSemantic const OEShaderBufferSemanticFrameCount        = @"FrameCount";
 OEShaderBufferSemantic const OEShaderBufferSemanticFrameDirection    = @"FrameDirection";
@@ -51,7 +51,7 @@ NSErrorDomain const OEShaderErrorDomain = @"org.openemu.shaders.ErrorDomain";
     dispatch_once(&once, ^{
         res = @[
                 OEShaderBufferSemanticMVP,
-                OEShaderBufferSemanticOutput,
+                OEShaderBufferSemanticOutputSize,
                 OEShaderBufferSemanticFinalViewportSize,
                 OEShaderBufferSemanticFrameCount,
                 OEShaderBufferSemanticFrameDirection,
