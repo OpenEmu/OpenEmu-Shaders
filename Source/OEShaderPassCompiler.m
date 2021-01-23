@@ -292,7 +292,8 @@ void error_callback(void *userdata, const char *error)
                             size:meta.numberOfComponents * sizeof(float)
                           offset:meta.uboOffset
                             name:name];
-        } else if (meta.pushActive) {
+        }
+        if (meta.pushActive) {
             [pshB addUniformData:passSemantics.uniforms[sem].data
                             size:meta.numberOfComponents * sizeof(float)
                           offset:meta.pushOffset
