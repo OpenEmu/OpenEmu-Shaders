@@ -127,7 +127,6 @@ public final class ShaderPass: NSObject {
     public var isFloat: Bool
     public var issRGB: Bool
     public var isMipmap: Bool
-    public var isFeedback: Bool = false
     public var alias: String?
     
     public var format: MTLPixelFormat {

@@ -14,14 +14,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface OEShaderPassCompiler : NSObject
 
-@property (nonatomic, readonly) NSUInteger historyCount;
+@property (nonatomic, readonly) NSUInteger                      historyCount;
+@property (nonatomic, readonly) NSArray<ShaderPassBindings *>  *bindings;
 
 - (instancetype)initWithShaderModel:(SlangShader *)shader;
 
 - (BOOL)buildPass:(NSUInteger)passNumber
      metalVersion:(MTLLanguageVersion)metalVersion
     passSemantics:(ShaderPassSemantics *)passSemantics
-     passBindings:(ShaderPassBindings *)passBindings
            vertex:(NSString * _Nullable * _Nonnull)vsrc
          fragment:(NSString * _Nullable * _Nonnull)fsrc
             error:(NSError * _Nullable *)error;

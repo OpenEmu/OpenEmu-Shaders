@@ -56,6 +56,7 @@
 
 @interface ShaderPassBindings : NSObject
 @property (nonatomic) MTLPixelFormat                                format;
+@property (nonatomic) BOOL                                          isFeedback;
 @property (nonatomic, readonly) NSArray<ShaderPassBufferBinding *>  *buffers;
 @property (nonatomic, readonly) NSArray<ShaderPassTextureBinding *> *textures;
 

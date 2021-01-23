@@ -15,7 +15,8 @@
 
 @implementation OEShaderPassCompiler
 {
-    SlangShader *_shader;
+    SlangShader                     *_shader;
+    NSArray<ShaderPassBindings *>   *_bindings;
 }
 
 - (instancetype)initWithShaderModel:(SlangShader *)shader
@@ -23,6 +24,16 @@
     self = [super init];
     
     _shader = shader;
+    
+    NSUInteger c = shader.passes.count;
+    NSMutableArray<ShaderPassBindings *> *bindings = [NSMutableArray arrayWithCapacity:c];
+    while (c > 0)
+    {
+        [bindings addObject:[ShaderPassBindings new]];
+        c--;
+    }
+    
+    _bindings = bindings;
     
     return self;
 }
@@ -81,12 +92,12 @@ void error_callback(void *userdata, const char *error)
 - (BOOL)buildPass:(NSUInteger)passNumber
      metalVersion:(MTLLanguageVersion)metalVersion
     passSemantics:(ShaderPassSemantics *)passSemantics
-     passBindings:(ShaderPassBindings *)passBindings
            vertex:(NSString **)vsrc
          fragment:(NSString **)fsrc
             error:(NSError **)error
 {
     ShaderPass *pass = _shader.passes[passNumber];
+    ShaderPassBindings *passBindings = _bindings[passNumber];
     passBindings.format = pass.format;
     
     spvc_context ctx;
@@ -330,7 +341,7 @@ void error_callback(void *userdata, const char *error)
                 bind.name       = [ref nameForTextureSemantic:sem index:index];
                 
                 if (sem == OEShaderTextureSemanticPassFeedback) {
-                    _shader.passes[index].isFeedback = YES;
+                    _bindings[index].isFeedback = YES;
                 } else if (sem == OEShaderTextureSemanticOriginalHistory && _historyCount < index) {
                     _historyCount = index;
                 }

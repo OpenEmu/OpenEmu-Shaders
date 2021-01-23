@@ -866,7 +866,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             [self OE_initTexture:&_pass[i].renderTarget withDescriptor:td];
             NSString *label = [NSString stringWithFormat:@"Pass %02d Output", i];
             _pass[i].renderTarget.view.label = label;
-            if (pass.isFeedback) {
+            if (_pass[i].hasFeedback) {
                 [self OE_initTexture:&_pass[i].feedbackTarget withDescriptor:td];
                 _pass[i].feedbackTarget.view.label = label;
             }
@@ -979,11 +979,10 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             
             NSString *vs_src = nil;
             NSString *fs_src = nil;
-            _pass[i].bindings = [ShaderPassBindings new];
+            _pass[i].bindings = compiler.bindings[i];
             if (![compiler buildPass:i
                         metalVersion:options.languageVersion
                        passSemantics:sem
-                        passBindings:_pass[i].bindings
                               vertex:&vs_src
                             fragment:&fs_src
                                error:&err]) {
@@ -993,7 +992,6 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 return NO;
             }
             
-            _pass[i].hasFeedback   = pass.isFeedback;
             _pass[i].frameCountMod = (uint32_t)pass.frameCountMod;
 
 #ifdef DEBUG
@@ -1121,7 +1119,15 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             }
         }
 
+        // finalise remaining state
         _historyCount = compiler.historyCount;
+        int index = 0;
+        for (ShaderPassBindings *binding in compiler.bindings)
+        {
+            _pass[index].hasFeedback    = binding.isFeedback;
+            index++;
+        }
+        
         _shader       = ss;
         ss      = nil;
         [self loadLuts];

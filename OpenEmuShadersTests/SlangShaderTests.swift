@@ -116,7 +116,6 @@ shader0 = mem:///root/foo.slang
             XCTAssertFalse(pass.isFloat)
             XCTAssertFalse(pass.issRGB)
             XCTAssertFalse(pass.isMipmap)
-            XCTAssertFalse(pass.isFeedback)
             XCTAssertNil(pass.alias)
         } catch {
             XCTFail(error.localizedDescription)
