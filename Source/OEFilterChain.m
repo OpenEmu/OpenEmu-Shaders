@@ -298,6 +298,8 @@ typedef struct texture
         ss = [_device newSamplerStateWithDescriptor:sd];
         _samplers[OEShaderPassFilterNearest][i] = ss;
     }
+    
+    [self setDefaultFilteringLinear:NO];
 }
 
 - (void)setRotation:(unsigned)rotation
