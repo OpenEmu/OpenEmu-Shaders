@@ -43,6 +43,16 @@ typedef struct
     float w;
 } float4_t;
 
+float4_t MakeSize(float width, float height)
+{
+    return (float4_t){
+        .x = width,
+        .y = height,
+        .z = 1.0f / width,
+        .w = 1.0f / height
+    };
+}
+
 typedef struct texture
 {
     id<MTLTexture> view;
@@ -421,10 +431,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         .znear   = 0.0,
         .zfar    = 1.0,
     };
-    _outputFrame.outputSize.x     = size.width;
-    _outputFrame.outputSize.y     = size.height;
-    _outputFrame.outputSize.z     = 1.0f / size.width;
-    _outputFrame.outputSize.w     = 1.0f / size.height;
+    _outputFrame.outputSize = MakeSize(size.width, size.height);
     
     if (_shader) {
         _renderTargetsNeedResize = YES;
@@ -624,20 +631,14 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
 
 - (void)OE_initTexture:(texture_t *)t withDescriptor:(MTLTextureDescriptor *)td
 {
-    t->view       = [_device newTextureWithDescriptor:td];
-    t->viewSize.x = td.width;
-    t->viewSize.y = td.height;
-    t->viewSize.z = 1.0f / td.width;
-    t->viewSize.w = 1.0f / td.height;
+    t->view     = [_device newTextureWithDescriptor:td];
+    t->viewSize = MakeSize(td.width, td.height);
 }
 
 - (void)OE_initTexture:(texture_t *)t withTexture:(id<MTLTexture>)tex
 {
-    t->view       = tex;
-    t->viewSize.x = tex.width;
-    t->viewSize.y = tex.height;
-    t->viewSize.z = 1.0f / tex.width;
-    t->viewSize.w = 1.0f / tex.height;
+    t->view     = tex;
+    t->viewSize = MakeSize(tex.width, tex.height);
 }
 
 - (void)OE_initHistory
@@ -872,10 +873,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             }
         } else {
             // last pass can render directly to the output render target
-            _pass[i].renderTarget.viewSize.x = width;
-            _pass[i].renderTarget.viewSize.y = height;
-            _pass[i].renderTarget.viewSize.z = 1.0f / width;
-            _pass[i].renderTarget.viewSize.w = 1.0f / height;
+            _pass[i].renderTarget.viewSize = MakeSize(width, height);
         }
     }
     
