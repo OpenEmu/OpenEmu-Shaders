@@ -173,7 +173,6 @@ class SourceParser: NSObject {
         static let pragma           = "#pragma "
         static let pragmaName       = "#pragma name "
         static let pragmaParam      = "#pragma parameter "
-        static let pragmaParamGroup = "#pragma parameter_group "
         static let pragmaFormat     = "#pragma format "
         static let pragmaStage      = "#pragma stage "
     }
