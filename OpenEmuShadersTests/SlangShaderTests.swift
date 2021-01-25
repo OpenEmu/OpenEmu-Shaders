@@ -504,9 +504,9 @@ shader0 = mem:///root/foo.slang
             
             let exp = ShaderParameter.list(
                 Param(name: "foo1", desc: "Foo 1 param"),
+                Param(name: "bar1", desc: "Bar 1 param"),
                 Param(name: "foo2", desc: "Foo 2 param"),
-                Param(name: "bar2", desc: "Bar 2 param"),
-                Param(name: "bar1", desc: "Bar 1 param")
+                Param(name: "bar2", desc: "Bar 2 param")
             )
             
             let params = ss.parameters

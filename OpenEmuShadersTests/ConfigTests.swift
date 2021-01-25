@@ -103,67 +103,6 @@ class ConfigScannerTests: XCTestCase {
 }
 
 class ShaderConfigSerializationTests: XCTestCase {
-    func testParameterGroups() {
-        let script =
-        """
-        shaders = 0
-        parameter_groups = "foo;bar"
-        foo_group_desc = "Foo Desc"
-        foo_group_parameters = "a;b;c"
-
-        bar_group_parameters = "d;e"
-        bar_group_hidden = true
-        """
-        do {
-            let res = try ShaderConfigSerialization.parseConfig(script)
-            guard let groups = res["parameterGroups"] as? [[String: AnyObject]] else {
-                return XCTFail("expected parameterGroups")
-            }
-            
-            let checkGroup = { (group: [String: AnyObject], desc: String, hidden: Bool, params: [String]) -> Void in
-                XCTAssertEqual(group["desc"] as? String, desc)
-                XCTAssertEqual(group["hidden"] as? Bool, hidden)
-                XCTAssertEqual(group["parameters"] as? [String], params)
-            }
-            
-            checkGroup(groups[0], "Foo Desc", false, ["a", "b", "c"])
-            checkGroup(groups[1], "bar", true, ["d", "e"])
-        } catch {
-            XCTFail("unexpected error: \(error.localizedDescription)")
-        }
-    }
-    
-    func testParameterGroupsWithDefaultOverride() {
-        let script =
-        """
-shaders = 0
-parameter_groups = "foo;default;bar"
-foo_group_desc = "Foo Desc"
-foo_group_parameters = "a;b;c"
-
-default_group_desc = "Overridden"
-
-bar_group_parameters = "d;e"
-bar_group_hidden = true
-"""
-        do {
-            let res = try ShaderConfigSerialization.parseConfig(script)
-            guard let groups = res["parameterGroups"] as? [[String: AnyObject]] else {
-                return XCTFail("expected parameterGroups")
-            }
-            
-            let checkGroup = { (group: [String: AnyObject], desc: String, hidden: Bool, params: [String]) -> Void in
-                XCTAssertEqual(group["desc"] as? String, desc)
-                XCTAssertEqual(group["hidden"] as? Bool, hidden)
-                XCTAssertEqual(group["parameters"] as? [String], params)
-            }
-            
-            checkGroup(groups[0], "Foo Desc", false, ["a", "b", "c"])
-            checkGroup(groups[2], "bar", true, ["d", "e"])
-        } catch {
-            XCTFail("unexpected error: \(error.localizedDescription)")
-        }
-    }
     
     func testSlangFromString() {
         do {
