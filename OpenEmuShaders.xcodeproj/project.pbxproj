@@ -48,7 +48,6 @@
 		052A2B0222A41FFD00483370 /* PpTokens.h in Headers */ = {isa = PBXBuildFile; fileRef = 052A2AE322A41FFB00483370 /* PpTokens.h */; };
 		052A2B0322A41FFD00483370 /* ConstantUnion.h in Headers */ = {isa = PBXBuildFile; fileRef = 052A2AE422A41FFB00483370 /* ConstantUnion.h */; };
 		052A2B0422A41FFD00483370 /* Versions.h in Headers */ = {isa = PBXBuildFile; fileRef = 052A2AE522A41FFB00483370 /* Versions.h */; };
-		052A2B0522A41FFD00483370 /* revision.h in Headers */ = {isa = PBXBuildFile; fileRef = 052A2AE622A41FFB00483370 /* revision.h */; };
 		052A2B0622A41FFD00483370 /* localintermediate.h in Headers */ = {isa = PBXBuildFile; fileRef = 052A2AE722A41FFB00483370 /* localintermediate.h */; };
 		052A2B0722A41FFD00483370 /* BaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 052A2AE822A41FFB00483370 /* BaseTypes.h */; };
 		052A2B0822A41FFD00483370 /* gl_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 052A2AE922A41FFB00483370 /* gl_types.h */; };
@@ -224,7 +223,6 @@
 		052A2AE322A41FFB00483370 /* PpTokens.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PpTokens.h; path = 3rdparty/glslang/glslang/MachineIndependent/preprocessor/PpTokens.h; sourceTree = "<group>"; };
 		052A2AE422A41FFB00483370 /* ConstantUnion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConstantUnion.h; path = 3rdparty/glslang/glslang/Include/ConstantUnion.h; sourceTree = "<group>"; };
 		052A2AE522A41FFB00483370 /* Versions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Versions.h; path = 3rdparty/glslang/glslang/MachineIndependent/Versions.h; sourceTree = "<group>"; };
-		052A2AE622A41FFB00483370 /* revision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = revision.h; path = 3rdparty/glslang/glslang/Include/revision.h; sourceTree = "<group>"; };
 		052A2AE722A41FFB00483370 /* localintermediate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = localintermediate.h; path = 3rdparty/glslang/glslang/MachineIndependent/localintermediate.h; sourceTree = "<group>"; };
 		052A2AE822A41FFB00483370 /* BaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTypes.h; path = 3rdparty/glslang/glslang/Include/BaseTypes.h; sourceTree = "<group>"; };
 		052A2AE922A41FFB00483370 /* gl_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl_types.h; path = 3rdparty/glslang/glslang/MachineIndependent/gl_types.h; sourceTree = "<group>"; };
@@ -425,7 +423,6 @@
 				052A2AE222A41FFB00483370 /* Types.h */,
 				052A2AF922A41FFD00483370 /* arrays.h */,
 				052A2AEC22A41FFC00483370 /* intermediate.h */,
-				052A2AE622A41FFB00483370 /* revision.h */,
 				052A2AEE22A41FFC00483370 /* Initialize.h */,
 				052A2AE122A41FFB00483370 /* LiveTraverser.h */,
 				052A2ADF22A41FFB00483370 /* ParseHelper.h */,
@@ -827,7 +824,6 @@
 				05647FBC2438D8A600BF00A9 /* libspirv.hpp in Headers */,
 				052A2B1222A41FFD00483370 /* iomapper.h in Headers */,
 				052A2B1422A41FFD00483370 /* InitializeGlobals.h in Headers */,
-				052A2B0522A41FFD00483370 /* revision.h in Headers */,
 				052A2B1022A41FFD00483370 /* attribute.h in Headers */,
 				052A2B8722A438F800483370 /* spirv_cross_containers.hpp in Headers */,
 				052A2B0122A41FFD00483370 /* Types.h in Headers */,
