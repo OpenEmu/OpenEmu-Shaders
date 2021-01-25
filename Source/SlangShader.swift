@@ -97,16 +97,8 @@ public final class SlangShader: NSObject {
             for (key, val) in params {
                 if let existing = parametersMap[key] {
                     existing.initial = val.floatValue
-                    existing.value   = val.floatValue
                 }
             }
-        }
-    }
-    
-    @objc(setValue:forParameter:)
-    public func set(value: Double, forParameter name: String) {
-        if let param = parametersMap[name] {
-            param.value = Float(value)
         }
     }
 }

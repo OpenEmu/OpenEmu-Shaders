@@ -278,7 +278,6 @@ class SourceParser: NSObject {
             if count == 6 {
                 let param = ShaderParameter(name: name, desc: desc)
                 param.initial = initial
-                param.value = initial
                 param.minimum = minimum
                 param.maximum = maximum
                 param.step = step

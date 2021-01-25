@@ -72,7 +72,6 @@ class InMemProtocol: URLProtocol {
 struct Param {
     var name: String
     var desc: String = ""
-    var value: Float = 0.5
     var initial: Float = 0.5
     var minimum: Float = 0.0
     var maximum: Float = 1.0

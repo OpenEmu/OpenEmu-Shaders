@@ -132,6 +132,11 @@ typedef struct texture
     
     // device behavior
     BOOL _deviceUnifiedMemory;
+    
+    // parameters state
+    float                                       _parameters[kMaxParameters];
+    size_t                                      _parametersCount;
+    NSMutableDictionary<NSString *, NSNumber *> *_parametersMap;
 }
 
 - (instancetype)initWithDevice:(id<MTLDevice>)device
@@ -907,10 +912,13 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         memset(&_sourceTextures[i].viewSize, 0, sizeof(_sourceTextures[i].viewSize));
     }
     
+    memset(&_parameters, 0, sizeof(_parameters));
+    
     _historyCount  = 0;
     _passCount     = 0;
     _lastPassIndex = 0;
     _lutCount      = 0;
+    _parametersMap = nil;
 }
 
 - (BOOL)setShaderFromURL:(NSURL *)url error:(NSError **)error
@@ -938,6 +946,16 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     _passCount     = ss.passes.count;
     _lastPassIndex = _passCount - 1;
     _lutCount      = ss.luts.count;
+    
+    _parametersCount = ss.parameters.count;
+    _parametersMap   = [NSMutableDictionary new];
+    NSUInteger paramIndex = 0;
+    for (OEShaderParameter *param in ss.parameters)
+    {
+        _parametersMap[param.name] = @(paramIndex);
+        _parameters[paramIndex] = param.initial;
+        paramIndex++;
+    }
     
     OEShaderPassCompiler *compiler = [[OEShaderPassCompiler alloc] initWithShaderModel:ss];
     
@@ -976,6 +994,11 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             [sem addUniformData:&_outputFrame.outputSize semantic:OEShaderBufferSemanticFinalViewportSize];
             [sem addUniformData:&_pass[i].frameCount semantic:OEShaderBufferSemanticFrameCount];
             [sem addUniformData:&_pass[i].frameDirection semantic:OEShaderBufferSemanticFrameDirection];
+            
+            for (int i = 0; i < _parametersCount; i++)
+            {
+                [sem addUniformData:&_parameters[i] forParameterAtIndex:i];
+            }
             
             NSString *vs_src = nil;
             NSString *fs_src = nil;
@@ -1124,11 +1147,11 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         int index = 0;
         for (ShaderPassBindings *binding in compiler.bindings)
         {
-            _pass[index].hasFeedback    = binding.isFeedback;
+            _pass[index].hasFeedback = binding.isFeedback;
             index++;
         }
         
-        _shader       = ss;
+        _shader = ss;
         ss      = nil;
         [self loadLuts];
     }
@@ -1195,6 +1218,20 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         
         [self OE_initTexture:&_luts[i] withTexture:t];
     }
+}
+
+- (void)setValue:(CGFloat)value forParameterName:(NSString *)name
+{
+    NSNumber *index = _parametersMap[name];
+    if (index == nil) return;
+    
+    _parameters[index.intValue] = (float)value;
+}
+
+- (void)setValue:(CGFloat)value forParameterIndex:(NSUInteger)index
+{
+    if (index >= _parametersCount) return;
+    _parameters[index] = (float)value;
 }
 
 @end

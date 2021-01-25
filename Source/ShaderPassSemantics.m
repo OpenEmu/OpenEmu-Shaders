@@ -121,15 +121,17 @@
 
 @implementation ShaderPassSemantics
 {
-    NSMutableDictionary<OEShaderTextureSemantic, ShaderPassTextureSemantics *> *_textures;
-    NSMutableDictionary<OEShaderBufferSemantic, ShaderPassBufferSemantics *>   *_uniforms;
+    NSMutableDictionary<OEShaderTextureSemantic, ShaderPassTextureSemantics *>  *_textures;
+    NSMutableDictionary<OEShaderBufferSemantic, ShaderPassBufferSemantics *>    *_uniforms;
+    NSMutableDictionary<NSNumber *, ShaderPassBufferSemantics *>                *_parameters;
 }
 
 - (instancetype)init
 {
-    self      = [super init];
-    _textures = [NSMutableDictionary<OEShaderTextureSemantic, ShaderPassTextureSemantics *> new];
-    _uniforms = [NSMutableDictionary<OEShaderBufferSemantic, ShaderPassBufferSemantics *> new];
+    self        = [super init];
+    _textures   = [NSMutableDictionary<OEShaderTextureSemantic, ShaderPassTextureSemantics *> new];
+    _uniforms   = [NSMutableDictionary<OEShaderBufferSemantic, ShaderPassBufferSemantics *> new];
+    _parameters = [NSMutableDictionary new];
     return self;
 }
 
@@ -153,4 +155,15 @@
 {
     _uniforms[semantic] = [ShaderPassBufferSemantics makeWithData:data];
 }
+
+- (void)addUniformData:(void *)data forParameterAtIndex:(NSInteger)index
+{
+    _parameters[@(index)] = [ShaderPassBufferSemantics makeWithData:data];
+}
+
+- (nullable ShaderPassBufferSemantics *)parameterAtIndex:(NSInteger)index
+{
+    return _parameters[@(index)];
+}
+
 @end

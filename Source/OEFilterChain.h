@@ -79,6 +79,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)setDefaultFilteringLinear:(BOOL)linear;
 - (BOOL)setShaderFromURL:(NSURL *)url error:(NSError **)error;
+- (void)setValue:(CGFloat)value forParameterName:(NSString *)name;
+- (void)setValue:(CGFloat)value forParameterIndex:(NSUInteger)index;
 
 @end
 

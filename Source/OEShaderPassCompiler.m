@@ -304,15 +304,15 @@ void error_callback(void *userdata, const char *error)
     NSUInteger              i = 0;
     for (ShaderSemanticMeta *meta in ref.floatParameters) {
         NSString          *name  = [ref nameForBufferSemantic:OEShaderBufferSemanticFloatParameter index:i];
-        OEShaderParameter *param = _shader.parameters[i];
+        ShaderPassBufferSemantics *param = [passSemantics parameterAtIndex:i];
         if (meta.uboActive) {
-            [uboB addUniformData:param.valuePtr
+            [uboB addUniformData:param.data
                             size:meta.numberOfComponents * sizeof(float)
                           offset:meta.uboOffset
                             name:name];
         }
         if (meta.pushActive) {
-            [pshB addUniformData:param.valuePtr
+            [pshB addUniformData:param.data
                             size:meta.numberOfComponents * sizeof(float)
                           offset:meta.pushOffset
                             name:name];

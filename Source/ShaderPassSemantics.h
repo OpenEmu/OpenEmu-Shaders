@@ -22,7 +22,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 #import <OpenEmuShaders/OEEnums.h>
 
 @import Metal;
@@ -91,4 +91,7 @@
           semantic:(OEShaderTextureSemantic)semantic;
 
 - (void)addUniformData:(void *)data semantic:(OEShaderBufferSemantic)semantic;
+- (void)addUniformData:(void *)data forParameterAtIndex:(NSInteger)index;
+
+- (nullable ShaderPassBufferSemantics *)parameterAtIndex:(NSInteger)index;
 @end

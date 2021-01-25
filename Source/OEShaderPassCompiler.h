@@ -3,8 +3,8 @@
 // Copyright (c) 2019 OpenEmu. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <Metal/Metal.h>
+@import Foundation;
+@import Metal;
 
 NS_ASSUME_NONNULL_BEGIN
 
