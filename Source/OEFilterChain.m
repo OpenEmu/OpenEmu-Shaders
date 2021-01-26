@@ -913,12 +913,13 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     }
     
     memset(&_parameters, 0, sizeof(_parameters));
-    
+    _parametersMap   = nil;
+    _parametersCount = 0;
+
     _historyCount  = 0;
     _passCount     = 0;
     _lastPassIndex = 0;
     _lutCount      = 0;
-    _parametersMap = nil;
 }
 
 - (BOOL)setShaderFromURL:(NSURL *)url error:(NSError **)error
