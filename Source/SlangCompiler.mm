@@ -138,10 +138,14 @@ using namespace std;
     GlslangToSpv(*program.getIntermediate(language), *spirv.get());
     
     spvtools::Optimizer opt(SPV_ENV_UNIVERSAL_1_5);
-    opt.RegisterPassFromFlag("--ccp"); // conditional constant propagation
-    opt.RegisterPassFromFlag("--eliminate-dead-branches");
-    opt.RegisterPassFromFlag("--eliminate-dead-code-aggressive");
-    //opt.RegisterPerformancePasses();
+    opt.RegisterPass(spvtools::CreateCCPPass())
+        .RegisterPass(spvtools::CreateDeadBranchElimPass())
+        .RegisterPass(spvtools::CreateAggressiveDCEPass())
+        .RegisterPass(spvtools::CreateSSARewritePass())
+        .RegisterPass(spvtools::CreateAggressiveDCEPass())
+        .RegisterPass(spvtools::CreateEliminateDeadConstantPass())
+        .RegisterPass(spvtools::CreateAggressiveDCEPass());
+
     bool ok = opt.Run(spirv->data(), spirv->size(), spirv.get());
     
     return [[ShaderProgram alloc] initWithVector:spirv];

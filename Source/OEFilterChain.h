@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class SlangShader;
 @class OEPixelBuffer;
+@class ShaderCompilerOptions;
 
 @interface OEFilterChain : NSObject
 
@@ -78,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param linear YES to use linear filtering
  */
 - (void)setDefaultFilteringLinear:(BOOL)linear;
-- (BOOL)setShaderFromURL:(NSURL *)url error:(NSError **)error;
+- (BOOL)setShaderFromURL:(NSURL *)url options:(ShaderCompilerOptions *)shaderOptions error:(NSError **)error;
 - (void)setValue:(CGFloat)value forParameterName:(NSString *)name;
 - (void)setValue:(CGFloat)value forParameterIndex:(NSUInteger)index;
 

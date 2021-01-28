@@ -1,4 +1,4 @@
-// Copyright (c) 2019, OpenEmu Team
+// Copyright (c) 2021, OpenEmu Team
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -22,32 +22,13 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
-#import "spirv.h"
+import Foundation
 
-NS_ASSUME_NONNULL_BEGIN
-
-typedef NS_ENUM(NSUInteger, ShaderType)
-{
-    ShaderTypeVertex,
-    ShaderTypeFragment,
-};
-
-@interface ShaderProgram : NSObject
-
-@property (nonatomic, readonly) SpvId const *spirv;
-@property (nonatomic, readonly) size_t      spirvLength;
-@property (nonatomic, readonly) size_t      spirvLengthBytes;
-
-@end
-
-/*!
- * SlangCompiler is responsible for compiling a glsl shader program into SPIRV
- */
-@interface SlangCompiler : NSObject
-
-- (ShaderProgram *)compileSource:(NSString *)source ofType:(ShaderType)type error:(NSError **)error;
-
-@end
-
-NS_ASSUME_NONNULL_END
+extension OEShaderPassCompiler {
+    public func buildPass(_ passNumber: Int, options: ShaderCompilerOptions, passSemantics: ShaderPassSemantics?) throws -> (vert: String, frag: String) {
+        var vert: NSString?, frag: NSString?
+        try __buildPass(UInt(passNumber), options: options, passSemantics: passSemantics, vertex: &vert, fragment: &frag)
+        
+        return (vert! as String, frag! as String)
+    }
+}

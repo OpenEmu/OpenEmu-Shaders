@@ -922,7 +922,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     _lutCount      = 0;
 }
 
-- (BOOL)setShaderFromURL:(NSURL *)url error:(NSError **)error
+- (BOOL)setShaderFromURL:(NSURL *)url options:(ShaderCompilerOptions *)shaderOptions error:(NSError **)error
 {
     os_log_debug(OE_LOG_DEFAULT, "loading shader from '%{public}s'", url.fileSystemRepresentation);
     
@@ -962,6 +962,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     
     MTLCompileOptions *options = [MTLCompileOptions new];
     options.fastMathEnabled = YES;
+    options.languageVersion = shaderOptions.languageVersion;
     
     @try {
         texture_t *source = &_sourceTextures[0];
@@ -1005,7 +1006,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             NSString *fs_src = nil;
             _pass[i].bindings = compiler.bindings[i];
             if (![compiler buildPass:i
-                        metalVersion:options.languageVersion
+                             options:shaderOptions
                        passSemantics:sem
                               vertex:&vs_src
                             fragment:&fs_src

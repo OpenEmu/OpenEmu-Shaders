@@ -25,6 +25,8 @@
 @import Foundation;
 #import <OpenEmuShaders/OEEnums.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @import Metal;
 
 @interface ShaderPassUniformBinding : NSObject
@@ -45,7 +47,7 @@
 @end
 
 @interface ShaderPassTextureBinding : NSObject
-@property (nonatomic) id<MTLTexture> __unsafe_unretained *texture;
+@property (nonatomic) id<MTLTexture> __unsafe_unretained _Nonnull * _Nonnull texture;
 @property (nonatomic) OEShaderPassWrap                   wrap;
 @property (nonatomic) OEShaderPassFilter                 filter;
 @property (nonatomic) OEStageUsage                       stageUsage;
@@ -60,7 +62,7 @@
 @property (nonatomic, readonly) NSArray<ShaderPassBufferBinding *>  *buffers;
 @property (nonatomic, readonly) NSArray<ShaderPassTextureBinding *> *textures;
 
-- (ShaderPassTextureBinding *)addTexture:(id<MTLTexture> __unsafe_unretained *)texture;
+- (ShaderPassTextureBinding *)addTexture:(id<MTLTexture> __unsafe_unretained _Nonnull * _Nonnull)texture;
 
 @end
 
@@ -69,9 +71,9 @@
 @end
 
 @interface ShaderPassTextureSemantics : NSObject
-@property (nonatomic) id<MTLTexture> __unsafe_unretained *texture;
+@property (nonatomic) id<MTLTexture> __unsafe_unretained _Nonnull * _Nonnull texture;
 @property (nonatomic) size_t                             textureStride;
-@property (nonatomic) void                               *textureSize;
+@property (nonatomic, nonnull) void                     *textureSize;
 @property (nonatomic) size_t                             sizeStride;
 @end
 
@@ -80,11 +82,11 @@
 @property (nonatomic, readonly) NSDictionary<OEShaderTextureSemantic, ShaderPassTextureSemantics *> *textures;
 @property (nonatomic, readonly) NSDictionary<OEShaderBufferSemantic, ShaderPassBufferSemantics *>   *uniforms;
 
-- (void)addTexture:(id<MTLTexture> __unsafe_unretained *)texture
+- (void)addTexture:(id<MTLTexture> __unsafe_unretained _Nonnull * _Nonnull)texture
               size:(void *)size
           semantic:(OEShaderTextureSemantic)semantic;
 
-- (void)addTexture:(id<MTLTexture> __unsafe_unretained *)texture
+- (void)addTexture:(id<MTLTexture> __unsafe_unretained _Nonnull * _Nonnull)texture
             stride:(size_t)ts
               size:(void *)size
             stride:(size_t)ss
@@ -95,3 +97,5 @@
 
 - (nullable ShaderPassBufferSemantics *)parameterAtIndex:(NSInteger)index;
 @end
+
+NS_ASSUME_NONNULL_END

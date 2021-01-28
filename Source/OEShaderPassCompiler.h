@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class SlangShader;
 @class ShaderPassSemantics;
 @class ShaderPassBindings;
+@class ShaderCompilerOptions;
 
 @interface OEShaderPassCompiler : NSObject
 
@@ -20,11 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithShaderModel:(SlangShader *)shader;
 
 - (BOOL)buildPass:(NSUInteger)passNumber
-     metalVersion:(MTLLanguageVersion)metalVersion
-    passSemantics:(ShaderPassSemantics *)passSemantics
+          options:(ShaderCompilerOptions *)options
+    passSemantics:(ShaderPassSemantics * _Nullable)passSemantics
            vertex:(NSString * _Nullable * _Nonnull)vsrc
          fragment:(NSString * _Nullable * _Nonnull)fsrc
-            error:(NSError * _Nullable *)error;
+            error:(NSError * _Nullable * _Nullable)error NS_REFINED_FOR_SWIFT;
 
 @end
 

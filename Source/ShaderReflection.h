@@ -25,6 +25,8 @@
 @import Foundation;
 #import "ShaderPassSemantics.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface ShaderTextureSemanticMeta : NSObject
 @property (nonatomic) NSUInteger   binding;
 @property (nonatomic) NSUInteger   uboOffset;
@@ -77,12 +79,12 @@
 - (BOOL)addTextureBufferSemantic:(OEShaderTextureSemantic)semantic passIndex:(NSUInteger)i name:(NSString *)name;
 - (BOOL)addBufferSemantic:(OEShaderBufferSemantic)semantic passIndex:(NSUInteger)i name:(NSString *)name;
 
-- (NSString *)nameForBufferSemantic:(OEShaderBufferSemantic)semantic index:(NSUInteger)index;
-- (NSString *)nameForTextureSemantic:(OEShaderTextureSemantic)semantic index:(NSUInteger)index;
-- (NSString *)sizeNameForTextureSemantic:(OEShaderTextureSemantic)semantic index:(NSUInteger)index;
-- (ShaderSemanticMap *)bufferSemanticForUniformName:(NSString *)name;
-- (ShaderTextureSemanticMap *)textureSemanticForUniformName:(NSString *)name;
-- (ShaderTextureSemanticMap *)textureSemanticForName:(NSString *)name;
+- (nullable NSString *)nameForBufferSemantic:(OEShaderBufferSemantic)semantic index:(NSUInteger)index;
+- (nullable NSString *)nameForTextureSemantic:(OEShaderTextureSemantic)semantic index:(NSUInteger)index;
+- (nullable NSString *)sizeNameForTextureSemantic:(OEShaderTextureSemantic)semantic index:(NSUInteger)index;
+- (nullable ShaderSemanticMap *)bufferSemanticForUniformName:(NSString *)name;
+- (nullable ShaderTextureSemanticMap *)textureSemanticForUniformName:(NSString *)name;
+- (nullable ShaderTextureSemanticMap *)textureSemanticForName:(NSString *)name;
 
 - (BOOL)setOffset:(size_t)offset vecSize:(unsigned)vecSize forFloatParameterAtIndex:(NSUInteger)index ubo:(BOOL)ubo;
 - (BOOL)setOffset:(size_t)offset vecSize:(unsigned)vecSize forSemantic:(OEShaderBufferSemantic)semantic ubo:(BOOL)ubo;
@@ -90,3 +92,5 @@
 - (BOOL)setBinding:(NSUInteger)binding forTextureSemantic:(OEShaderTextureSemantic)semantic atIndex:(NSUInteger)index;
 
 @end
+
+NS_ASSUME_NONNULL_END
