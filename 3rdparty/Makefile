@@ -41,7 +41,7 @@ build_info.h: $(GLSLANG_BUILD_DIR)/include/glslang/build_info.h
 .PHONY: build_info.h
 
 $(GLSLANG_BUILD_DIR)/include/glslang/build_info.h: $(GLSLANG_DIR)/CHANGES.md $(GLSLANG_DIR)/build_info.h.tmpl $(GLSLANG_BUILD_DIR)/CMakeCache.txt
-	$(MAKE) -C $(GLSLANG_BUILD_DIR) glslang-build-info/fast
+	# $(MAKE) -C $(GLSLANG_BUILD_DIR) glslang-build-info/fast
 
 $(GLSLANG_BUILD_DIR)/CMakeCache.txt: $(GLSLANG_DIR)/CMakeLists.txt
 	mkdir -p $(GLSLANG_BUILD_DIR)
@@ -67,12 +67,12 @@ $(SPIRV_TOOLS_BUILD_DIR)/CMakeCache.txt: $(SPIRV_TOOLS_DIR)/CMakeLists.txt $(SPI
 	$(CMAKE) -B $(SPIRV_TOOLS_BUILD_DIR) -S $(SPIRV_TOOLS_DIR) -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_OSX_ARCHITECTURES='$(TARGET_ARCHITECTURES)' -DSPIRV_WERROR=OFF
 
 # SHA for SPIRV-Headers comes from 
-# https://github.com/KhronosGroup/SPIRV-Tools/blob/21f7c5675da3a45c13024dc1169438eb4e8f7e0c/DEPS#L9
+# https://github.com/KhronosGroup/SPIRV-Tools/blob/07383c65d92896d07b305675f8c78a61ac88246e/DEPS#L9
 $(SPIRV_TOOLS_EXTERNAL_DIR)/SPIRV-Headers:
 	pushd $(SPIRV_TOOLS_DIR); \
 	git clone https://github.com/KhronosGroup/SPIRV-Headers.git external/SPIRV-Headers; \
 	cd external/SPIRV-Headers; \
-	git checkout f027d53ded7e230e008d37c8b47ede7cd308e19d; \
+	git checkout faa570afbc91ac73d594d787486bcf8f2df1ace0; \
 	popd
 
 print:
