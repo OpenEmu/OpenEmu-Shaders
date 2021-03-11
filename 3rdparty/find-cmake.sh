@@ -6,6 +6,7 @@ if which -s cmake; then
 fi
 
 known_cmake_paths="/usr/local/bin/cmake \
+  /opt/homebrew/bin/cmake \
   /opt/local/bin/cmake \
   /Applications/CMake.app/Contents/bin/cmake"
   
