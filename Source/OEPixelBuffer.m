@@ -75,7 +75,8 @@
 
     if (pointer)
     {
-        _buffer = pointer;
+        _buffer     = pointer;
+        _bufferFree = NO;
     }
     else
     {
