@@ -119,6 +119,7 @@
 		052BE009228D184600942C12 /* SourceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE008228D184600942C12 /* SourceParserTests.swift */; };
 		052BE020228D187E00942C12 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE01F228D187E00942C12 /* TestHelpers.swift */; };
 		05410EDE22F5FF7400303424 /* SlangShaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05410EDD22F5FF7400303424 /* SlangShaderTests.swift */; };
+		054A176326C112A000CA9D34 /* SpirvIntrinsics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 054A176226C112A000CA9D34 /* SpirvIntrinsics.cpp */; };
 		05647CAB24381A9B00BF00A9 /* libspirv.h in Headers */ = {isa = PBXBuildFile; fileRef = 05647CA624381A9B00BF00A9 /* libspirv.h */; };
 		05647FBC2438D8A600BF00A9 /* libspirv.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 05647FB82438D8A600BF00A9 /* libspirv.hpp */; };
 		05647FBD2438D8A600BF00A9 /* linker.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 05647FB92438D8A600BF00A9 /* linker.hpp */; };
@@ -298,6 +299,7 @@
 		052BE008228D184600942C12 /* SourceParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceParserTests.swift; sourceTree = "<group>"; };
 		052BE01F228D187E00942C12 /* TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		05410EDD22F5FF7400303424 /* SlangShaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlangShaderTests.swift; sourceTree = "<group>"; };
+		054A176226C112A000CA9D34 /* SpirvIntrinsics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpirvIntrinsics.cpp; path = 3rdparty/glslang/glslang/MachineIndependent/SpirvIntrinsics.cpp; sourceTree = "<group>"; };
 		05647CA624381A9B00BF00A9 /* libspirv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libspirv.h; sourceTree = "<group>"; };
 		05647FB82438D8A600BF00A9 /* libspirv.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = libspirv.hpp; sourceTree = "<group>"; };
 		05647FB92438D8A600BF00A9 /* linker.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = linker.hpp; sourceTree = "<group>"; };
@@ -407,6 +409,7 @@
 				052A2AAF22A41FE800483370 /* RemoveTree.cpp */,
 				052A2AB022A41FE900483370 /* Scan.cpp */,
 				052A2AA422A41FE800483370 /* ShaderLang.cpp */,
+				054A176226C112A000CA9D34 /* SpirvIntrinsics.cpp */,
 				052A2ABA22A41FE900483370 /* SymbolTable.cpp */,
 				052A2AB222A41FE900483370 /* Versions.cpp */,
 			);
@@ -1081,6 +1084,7 @@
 				057847CE25C1250300A842E7 /* ShaderCompilerOptions.swift in Sources */,
 				052A2B7922A438EF00483370 /* spirv_cfg.cpp in Sources */,
 				052A2AC622A41FEA00483370 /* InfoSink.cpp in Sources */,
+				054A176326C112A000CA9D34 /* SpirvIntrinsics.cpp in Sources */,
 				052A2ABE22A41FEA00483370 /* linkValidate.cpp in Sources */,
 				052A2AC522A41FEA00483370 /* reflection.cpp in Sources */,
 				052A2AC422A41FEA00483370 /* intermOut.cpp in Sources */,
@@ -1306,7 +1310,7 @@
 					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source",
 					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source/opt",
 				);
-				MARKETING_VERSION = 1.17;
+				MARKETING_VERSION = 1.18;
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShaders;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1341,7 +1345,7 @@
 					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source",
 					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source/opt",
 				);
-				MARKETING_VERSION = 1.17;
+				MARKETING_VERSION = 1.18;
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShaders;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
