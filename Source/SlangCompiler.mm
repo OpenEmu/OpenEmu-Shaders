@@ -146,7 +146,7 @@ using namespace std;
         .RegisterPass(spvtools::CreateEliminateDeadConstantPass())
         .RegisterPass(spvtools::CreateAggressiveDCEPass());
 
-    bool ok = opt.Run(spirv->data(), spirv->size(), spirv.get());
+    (void)opt.Run(spirv->data(), spirv->size(), spirv.get());
     
     return [[ShaderProgram alloc] initWithVector:spirv];
 }
