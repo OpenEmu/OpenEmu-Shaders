@@ -970,9 +970,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         return NO;
     }
     
-    if (ss == nil) {
-        return NO;
-    }
+    NSAssert(ss != nil, @"SlangShader should not be nil");
     
     _passCount     = ss.passes.count;
     _lastPassIndex = _passCount - 1;
@@ -1089,10 +1087,15 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 psd.sampleCount      = 1;
                 psd.vertexDescriptor = vd;
                 
-                NSError        *err;
-                id<MTLLibrary> lib   = [_device newLibraryWithSource:vs_src options:options error:&err];
+                NSError *err;
+                id<MTLLibrary> lib = [_device newLibraryWithSource:vs_src options:options error:&err];
                 if (err != nil) {
+                    // if lib == nil, err contains compiler errors and the function should fail.
                     if (lib == nil) {
+                        if (error != nil)
+                        {
+                            *error = err;
+                        }
                         save_msl = YES;
                         os_log_error(OE_LOG_DEFAULT, "unable to compile vertex shader: %{public}@", err.localizedDescription);
                         return NO;
@@ -1106,7 +1109,12 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 
                 lib = [_device newLibraryWithSource:fs_src options:nil error:&err];
                 if (err != nil) {
+                    // if lib == nil, err contains compiler errors and the function should fail.
                     if (lib == nil) {
+                        if (error != nil)
+                        {
+                            *error = err;
+                        }
                         save_msl = YES;
                         os_log_error(OE_LOG_DEFAULT, "unable to compile fragment shader: %{public}@", err.localizedDescription);
                         return NO;
@@ -1119,6 +1127,10 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                 
                 _pass[i].state = [_device newRenderPipelineStateWithDescriptor:psd error:&err];
                 if (err != nil) {
+                    if (error != nil)
+                    {
+                        *error = err;
+                    }
                     save_msl = YES;
                     os_log_error(OE_LOG_DEFAULT, "error creating pipeline state for pass %d: %{public}@", i, err.localizedDescription);
                     return NO;
@@ -1168,7 +1180,6 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                                   error:&err];
                     if (err != nil) {
                         os_log_error(OE_LOG_DEFAULT, "unable to save fragment shader source for pass %d: %{public}@", i, err.localizedDescription);
-
                     }
                 }
             }
