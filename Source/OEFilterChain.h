@@ -30,6 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class OEPixelBuffer;
 @class ShaderCompilerOptions;
 
+typedef void (^OEImageHandler)(NSBitmapImageRep * _Nullable, NSError * _Nullable);
+
 @interface OEFilterChain : NSObject
 
 @property (nonatomic, readonly) CGRect              sourceRect;
@@ -69,6 +71,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*! @brief Returns an image of the last source image after all shaders have been applied */
 - (NSBitmapImageRep *)captureOutputImage;
+
+/*! @brief Captures an image by applying all shader effects.
+ @warning Returns an error if the image capture fails.
+ @see OEFilterChainErrorCodeImageCaptureFailed
+ */
+- (void)captureOutputImageWithCompletion:(OEImageHandler)handler;
 
 /*! @brief The default filtering mode when a shader pass leaves the value unspecified
  *

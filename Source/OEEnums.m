@@ -24,7 +24,8 @@ OEShaderBufferSemantic const OEShaderBufferSemanticFrameCount        = @"FrameCo
 OEShaderBufferSemantic const OEShaderBufferSemanticFrameDirection    = @"FrameDirection";
 OEShaderBufferSemantic const OEShaderBufferSemanticFloatParameter    = @"FloatParameter";
 
-NSErrorDomain const OEShaderErrorDomain = @"org.openemu.shaders.ErrorDomain";
+NSErrorDomain const OEShaderErrorDomain         = @"OEShaderErrorDomain";
+NSErrorDomain const OEFilterChainErrorDomain    = @"OEFilterChainErrorDomain";
 
 @implementation OEShaderConstants
 + (NSArray<OEShaderTextureSemantic> *)textureSemantics

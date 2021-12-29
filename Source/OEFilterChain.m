@@ -583,6 +583,20 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     return [self imageWithCIImage:img];
 }
 
+- (CIImage *)ciImageFromMTLTexture:(id<MTLTexture>)tex
+{
+    // copy to an NSBitmap
+    NSDictionary<CIImageOption, id> *opts = @{
+                                              kCIImageNearestSampling: @YES,
+                                              };
+    CIImage *img = [[CIImage alloc] initWithMTLTexture:tex options:opts];
+    img = [img imageBySettingAlphaOneInExtent:img.extent];
+    img = [img imageByCroppingToRect:CGRectMake(_outputBounds.origin.x, _outputBounds.origin.y, _outputBounds.size.width, _outputBounds.size.height)];
+    img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
+
+    return img;
+}
+
 - (NSBitmapImageRep *)captureOutputImage
 {
     // render the filtered image
@@ -596,16 +610,32 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     [commandBuffer commit];
     [commandBuffer waitUntilCompleted];
     
-    // copy to an NSBitmap
-    NSDictionary<CIImageOption, id> *opts = @{
-                                              kCIImageNearestSampling: @YES,
-                                              };
-    CIImage *img = [[CIImage alloc] initWithMTLTexture:tex options:opts];
-    img = [img imageBySettingAlphaOneInExtent:img.extent];
-    img = [img imageByCroppingToRect:CGRectMake(_outputBounds.origin.x, _outputBounds.origin.y, _outputBounds.size.width, _outputBounds.size.height)];
-    img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
-    
-    return [self imageWithCIImage:img];
+    return [self imageWithCIImage:[self ciImageFromMTLTexture:tex]];
+}
+
+- (void)captureOutputImageWithCompletion:(OEImageHandler)handler
+{
+    // render the filtered image
+    id<MTLTexture>          tex  = [self screenshotTexture];
+    MTLRenderPassDescriptor *rpd = [MTLRenderPassDescriptor new];
+    rpd.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 1);
+    rpd.colorAttachments[0].loadAction = MTLLoadActionClear;
+    rpd.colorAttachments[0].texture    = tex;
+    id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
+    [self renderWithCommandBuffer:commandBuffer renderPassDescriptor:rpd];
+    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> _Nonnull cb) {
+        if (cb.status == MTLCommandBufferStatusError) {
+            NSDictionary<NSErrorUserInfoKey, id> *ui = @{};
+            NSError *err = [NSError errorWithDomain:OEFilterChainErrorDomain
+                                               code:OEFilterChainErrorCodeImageCaptureFailed
+                                           userInfo:ui];
+            handler(nil, err);
+            return;
+        }
+        CIImage *img = [self ciImageFromMTLTexture:tex];
+        handler([self imageWithCIImage:img], nil);
+    }];
+    [commandBuffer commit];
 }
 
 - (void)OE_prepareNextFrameWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer

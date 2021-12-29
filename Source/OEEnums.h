@@ -230,3 +230,9 @@ NS_ERROR_ENUM(OEShaderErrorDomain) {
     OEShaderCompileLinkError        = -3,
 };
 
+extern NSErrorDomain const OEFilterChainErrorDomain;
+
+typedef NS_ERROR_ENUM(OEFilterChainErrorDomain, OEFilterChainErrorCode)
+{
+    OEFilterChainErrorCodeImageCaptureFailed,
+};
