@@ -183,6 +183,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		05201D6D277C542E0028CBE0 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		0521355B246E3A240085A598 /* CompiledShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompiledShader.swift; sourceTree = "<group>"; };
 		0524FF842458B798005C5E83 /* SlangShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlangShader.swift; sourceTree = "<group>"; };
 		0524FF892459E6C7005C5E83 /* ShaderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderModel.swift; sourceTree = "<group>"; };
@@ -370,6 +371,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		05201D6C277C541C0028CBE0 /* Docs */ = {
+			isa = PBXGroup;
+			children = (
+				05201D6D277C542E0028CBE0 /* CHANGELOG.md */,
+			);
+			name = Docs;
+			sourceTree = "<group>";
+		};
 		052A2A4722A41F3500483370 /* glslang */ = {
 			isa = PBXGroup;
 			children = (
@@ -696,6 +705,7 @@
 		05EEE32E227CC35C007D011B = {
 			isa = PBXGroup;
 			children = (
+				05201D6C277C541C0028CBE0 /* Docs */,
 				052A2B5C22A421B400483370 /* Config */,
 				05F5BA5422865F2C004D713C /* 3rd Party */,
 				05EEE388227CDA8F007D011B /* Source */,
@@ -1310,7 +1320,7 @@
 					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source",
 					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source/opt",
 				);
-				MARKETING_VERSION = 1.19.0;
+				MARKETING_VERSION = 1.19.3;
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShaders;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1345,7 +1355,7 @@
 					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source",
 					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source/opt",
 				);
-				MARKETING_VERSION = 1.19.0;
+				MARKETING_VERSION = 1.19.3;
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShaders;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
