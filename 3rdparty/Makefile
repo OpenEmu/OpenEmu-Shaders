@@ -72,7 +72,7 @@ $(SPIRV_TOOLS_EXTERNAL_DIR)/SPIRV-Headers:
 	pushd $(SPIRV_TOOLS_DIR); \
 	git clone https://github.com/KhronosGroup/SPIRV-Headers.git external/SPIRV-Headers; \
 	cd external/SPIRV-Headers; \
-	git checkout faa570afbc91ac73d594d787486bcf8f2df1ace0; \
+	git checkout b42ba6d92faf6b4938e6f22ddd186dbdacc98d78; \
 	popd
 
 print:
