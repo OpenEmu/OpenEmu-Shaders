@@ -353,7 +353,7 @@ typedef struct texture
     [self didChangeValueForKey:@"frameDirection"];
 }
 
-- (void)OE_updateHistory
+- (NSArray<id<MTLTexture>> *)OE_updateHistory
 {
     if (_shader) {
         if (_historyCount) {
@@ -371,7 +371,7 @@ typedef struct texture
     
     if (_historyCount == 0 && _sourceTexture) {
         [self OE_initTexture:&_sourceTextures[0] withTexture:_sourceTexture];
-        return;
+        return nil;
     }
     
     /* either no history, or we moved a texture of a different size in the front slot */
@@ -383,7 +383,11 @@ typedef struct texture
         td.storageMode  = MTLStorageModePrivate;
         td.usage        = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
         [self OE_initTexture:&_sourceTextures[0] withDescriptor:td];
+        // Ensure the history texture is cleared before first use
+        return @[_sourceTextures[0].view];
     }
+    
+    return nil;
 }
 
 /*
@@ -638,11 +642,59 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     [commandBuffer commit];
 }
 
+- (void)OE_clearTextures:(NSArray<id<MTLTexture>> *)textures withCommandBuffer:(id<MTLCommandBuffer>)commandBuffer {
+    if (@available(macOS 10.15, *)) {
+        /**
+          1. Find the size of the largest texture, in order to allocate a buffer with at least enough space.
+         */
+        NSUInteger sizeMax = 0;
+        for (id<MTLTexture> t in textures)
+        {
+            NSUInteger const bytesPerPixel = MTLPixelFormatBytesPerPixel(t.pixelFormat);
+            NSAssert(bytesPerPixel > 0, @"Unable to determine bytes per pixel for pixel format %lud", t.pixelFormat);
+            
+            NSUInteger const bytesPerRow   = t.width  * bytesPerPixel;
+            NSUInteger const bytesPerImage = t.height * bytesPerRow;
+            if (bytesPerImage > sizeMax)
+            {
+                sizeMax = bytesPerImage;
+            }
+        }
+        
+        /**
+         Allocate a buffer over the entire heap and fill it with zeros
+         */
+        __auto_type bce = [commandBuffer blitCommandEncoder];
+        __auto_type buf = [_device newBufferWithLength:sizeMax options:MTLResourceStorageModePrivate];
+        [bce fillBuffer:buf range:NSMakeRange(0, sizeMax) value:0];
+        
+        /**
+         Use the cleared buffer to clear the destination texture.
+         */
+        for (id<MTLTexture> t in textures)
+        {
+            NSUInteger const bytesPerPixel = MTLPixelFormatBytesPerPixel(t.pixelFormat);
+            NSUInteger const bytesPerRow   = t.width  * bytesPerPixel;
+            NSUInteger const bytesPerImage = t.height * bytesPerRow;
+            [bce copyFromBuffer:buf sourceOffset:0 sourceBytesPerRow:bytesPerRow sourceBytesPerImage:bytesPerImage sourceSize:MTLSizeMake(t.width, t.height, 1)
+                      toTexture:t destinationSlice:0 destinationLevel:0 destinationOrigin:MTLOriginMake(0, 0, 0)];
+        }
+        [bce endEncoding];
+    }
+}
+
 - (void)OE_prepareNextFrameWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
 {
     _frameCount++;
-    [self OE_resizeRenderTargets];
-    [self OE_updateHistory];
+    __auto_type clear0 = [self OE_resizeRenderTargets];
+    __auto_type clear1 = [self OE_updateHistory];
+    
+    if (clear0.count > 0 || clear1.count > 0) {
+        NSMutableArray<id<MTLTexture>> *textures = [NSMutableArray arrayWithArray:clear0];
+        [textures addObjectsFromArray:clear1];
+        [self OE_clearTextures:textures withCommandBuffer:commandBuffer];
+    }
+    
     _texture = _sourceTextures[0].view;
     
     if (_pixelBuffer) {
@@ -818,9 +870,11 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     }
 }
 
-- (void)OE_resizeRenderTargets
+- (NSArray<id<MTLTexture>> *)OE_resizeRenderTargets
 {
-    if (!_shader || !_renderTargetsNeedResize) return;
+    if (!_shader || !_renderTargetsNeedResize) return nil;
+    
+    NSMutableArray<id<MTLTexture>> *textures = nil;
     
     // release existing targets
     for (int i = 0; i < _passCount; i++) {
@@ -907,6 +961,12 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             if (_pass[i].hasFeedback) {
                 [self OE_initTexture:&_pass[i].feedbackTarget withDescriptor:td];
                 _pass[i].feedbackTarget.view.label = label;
+                if (textures == nil)
+                {
+                    textures = [NSMutableArray new];
+                }
+                [textures addObject:_pass[i].renderTarget.view]; // texture should be cleared before first use
+                [textures addObject:_pass[i].feedbackTarget.view]; // texture should be cleared before first use
             }
         } else {
             // last pass can render directly to the output render target
@@ -915,6 +975,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     }
     
     _renderTargetsNeedResize = NO;
+    return textures;
 }
 
 - (void)OE_freeShaderResources

@@ -102,6 +102,80 @@ MTLPixelFormat MTLPixelFormatFromGLSlangNSString(NSString *str)
     return MTLPixelFormatInvalid;
 }
 
+NSUInteger MTLPixelFormatBytesPerPixel(MTLPixelFormat format)
+{
+    switch (format)
+    {
+        
+    case MTLPixelFormatA8Unorm:
+    case MTLPixelFormatR8Unorm:
+    case MTLPixelFormatR8Unorm_sRGB:
+    case MTLPixelFormatR8Snorm:
+    case MTLPixelFormatR8Uint:
+    case MTLPixelFormatR8Sint:
+        return 1;
+
+    case MTLPixelFormatR16Unorm:
+    case MTLPixelFormatR16Snorm:
+    case MTLPixelFormatR16Uint:
+    case MTLPixelFormatR16Sint:
+    case MTLPixelFormatR16Float:
+        return 2;
+    case MTLPixelFormatRG8Unorm:
+    case MTLPixelFormatRG8Unorm_sRGB:
+    case MTLPixelFormatRG8Snorm:
+    case MTLPixelFormatRG8Uint:
+    case MTLPixelFormatRG8Sint:
+    case MTLPixelFormatB5G6R5Unorm:
+    case MTLPixelFormatA1BGR5Unorm:
+    case MTLPixelFormatABGR4Unorm:
+    case MTLPixelFormatBGR5A1Unorm:
+        return 2;
+    case MTLPixelFormatR32Uint:
+    case MTLPixelFormatR32Sint:
+    case MTLPixelFormatR32Float:
+    case MTLPixelFormatRG16Unorm:
+    case MTLPixelFormatRG16Snorm:
+    case MTLPixelFormatRG16Uint:
+    case MTLPixelFormatRG16Sint:
+    case MTLPixelFormatRG16Float:
+    case MTLPixelFormatRGBA8Unorm:
+    case MTLPixelFormatRGBA8Unorm_sRGB:
+    case MTLPixelFormatRGBA8Snorm:
+    case MTLPixelFormatRGBA8Uint:
+    case MTLPixelFormatRGBA8Sint:
+    case MTLPixelFormatBGRA8Unorm:
+    case MTLPixelFormatBGRA8Unorm_sRGB:
+    case MTLPixelFormatRGB10A2Unorm:
+    case MTLPixelFormatRGB10A2Uint:
+    case MTLPixelFormatRG11B10Float:
+    case MTLPixelFormatRGB9E5Float:
+    case MTLPixelFormatBGR10A2Unorm:
+    case MTLPixelFormatBGR10_XR:
+    case MTLPixelFormatBGR10_XR_sRGB:
+        return 4;
+    case MTLPixelFormatRG32Uint:
+    case MTLPixelFormatRG32Sint:
+    case MTLPixelFormatRG32Float:
+    case MTLPixelFormatRGBA16Unorm:
+    case MTLPixelFormatRGBA16Snorm:
+    case MTLPixelFormatRGBA16Uint:
+    case MTLPixelFormatRGBA16Sint:
+    case MTLPixelFormatRGBA16Float:
+    case MTLPixelFormatBGRA10_XR:
+    case MTLPixelFormatBGRA10_XR_sRGB:
+        return 8;
+    case MTLPixelFormatRGBA32Uint:
+    case MTLPixelFormatRGBA32Sint:
+    case MTLPixelFormatRGBA32Float:
+        return 16;
+    
+    case MTLPixelFormatInvalid:
+    default:
+        return 0;
+    }
+}
+
 NSUInteger OEMTLPixelFormatToBPP(OEMTLPixelFormat format)
 {
     switch (format)

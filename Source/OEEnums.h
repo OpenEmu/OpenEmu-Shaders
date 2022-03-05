@@ -160,6 +160,9 @@ FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticFloatParame
 /*! @brief Converts a GL Slang format string to Metal */
 extern MTLPixelFormat MTLPixelFormatFromGLSlangNSString(NSString *str);
 
+/*! @brief Returns the number of bytes per pixel for the given format; otherwise, 0 if the format is not supported */
+extern NSUInteger MTLPixelFormatBytesPerPixel(MTLPixelFormat format);
+
 #pragma mark -
 
 typedef NS_ENUM(NSUInteger, OEMTLPixelFormat)
