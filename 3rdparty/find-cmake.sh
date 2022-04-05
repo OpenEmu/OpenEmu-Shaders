@@ -7,6 +7,7 @@ fi
 
 known_cmake_paths="/usr/local/bin/cmake \
   /opt/local/bin/cmake \
+  /opt/homebrew/bin/cmake \
   /Applications/CMake.app/Contents/bin/cmake"
   
 for cmake_path in $known_cmake_paths; do
