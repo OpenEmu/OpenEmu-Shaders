@@ -335,7 +335,12 @@ struct ConfigScanner {
                 pos = scalars.index(after: pos)
             }
             let v = String(scalars[startIndex..<pos])
-            pos = scalars.index(after: pos)
+            if pos < scalars.endIndex {
+                pos = scalars.index(after: pos)
+            } else {
+                // Missing closing double quote
+                pos = scalars.endIndex
+            }
             return v
         }
         

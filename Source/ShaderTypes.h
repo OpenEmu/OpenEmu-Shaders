@@ -25,8 +25,7 @@
 //
 //  Header containing types and enum constants shared between Metal shaders and Swift/ObjC source
 //
-#ifndef ShaderTypes_h
-#define ShaderTypes_h
+#pragma once
 
 #ifdef __METAL_VERSION__
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
@@ -91,6 +90,3 @@ typedef struct
     simd_uint2  origin;
     uint        stride;
 } BufferUniforms;
-
-#endif /* ShaderTypes_h */
-

@@ -22,7 +22,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for OpenEmuShaders.
 FOUNDATION_EXPORT double OpenEmuShadersVersionNumber;
@@ -35,3 +35,4 @@ FOUNDATION_EXPORT const unsigned char OpenEmuShadersVersionString[];
 #import <OpenEmuShaders/OEPixelBuffer.h>
 #import <OpenEmuShaders/OEFilterChain.h>
 #import <OpenEmuShaders/OEShaderPassCompiler.h>
+#import <OpenEmuShaders/ShaderTypes.h>

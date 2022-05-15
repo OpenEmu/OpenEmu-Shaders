@@ -23,14 +23,16 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <OpenEmuShaders/OEEnums.h>
+#import <CoreGraphics/CoreGraphics.h>
 
+CF_IMPLICIT_BRIDGING_ENABLED
 NS_ASSUME_NONNULL_BEGIN
 
 @class SlangShader;
 @class OEPixelBuffer;
 @class ShaderCompilerOptions;
 
-typedef void (^OEImageHandler)(NSBitmapImageRep * _Nullable, NSError * _Nullable);
+typedef void (^OEImageHandler)(CF_RELEASES_ARGUMENT CGImageRef _Nullable, NSError * _Nullable);
 
 @interface OEFilterChain : NSObject
 
@@ -67,16 +69,16 @@ typedef void (^OEImageHandler)(NSBitmapImageRep * _Nullable, NSError * _Nullable
  * @remarks
  * The image dimensions are equal to the source pixel buffer and therefore not aspect corrected.
  */
-- (NSBitmapImageRep *)captureSourceImage;
+- (CGImageRef)createCGImageFromSource CF_RETURNS_RETAINED;
 
 /*! @brief Returns an image of the last source image after all shaders have been applied */
-- (NSBitmapImageRep *)captureOutputImage;
+- (CGImageRef)createCGImageFromOutput CF_RETURNS_RETAINED;
 
 /*! @brief Captures an image by applying all shader effects.
  @warning Returns an error if the image capture fails.
  @see OEFilterChainErrorCodeImageCaptureFailed
  */
-- (void)captureOutputImageWithCompletion:(OEImageHandler)handler;
+- (void)createCGImageFromOutputWithCompletion:(OEImageHandler)handler;
 
 /*! @brief The default filtering mode when a shader pass leaves the value unspecified
  *
@@ -94,3 +96,4 @@ typedef void (^OEImageHandler)(NSBitmapImageRep * _Nullable, NSError * _Nullable
 @end
 
 NS_ASSUME_NONNULL_END
+CF_IMPLICIT_BRIDGING_DISABLED

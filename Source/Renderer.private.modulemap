@@ -1,3 +1,0 @@
-module OpenEmuShaders.RendererPrivate {
-    export *
-}

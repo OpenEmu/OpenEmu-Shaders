@@ -4,8 +4,7 @@
 //
 
 #import "OEShaderPassCompiler.h"
-#import "spirv.h"
-#import "spirv_cross_c.h"
+#import <CSPIRVCross/CSPIRVCross.h>
 #import "SlangCompiler.h"
 #import "ShaderReflection.h"
 #import "ShaderPassSemantics.h"
@@ -104,6 +103,10 @@ void error_callback(void *userdata, const char *error)
 {
     unsigned int version = 0;
     switch (options.languageVersion) {
+        case MTLLanguageVersion2_4:
+            version = SPVC_MAKE_MSL_VERSION(2, 4, 0);
+            break;
+        
         case MTLLanguageVersion2_3:
             version = SPVC_MAKE_MSL_VERSION(2, 3, 0);
             break;

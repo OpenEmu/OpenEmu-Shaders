@@ -525,29 +525,17 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     return _screenshotTexture;
 }
 
-- (NSBitmapImageRep *)blackImage {
-    NSBitmapImageRep *img = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:nil
-                                                                    pixelsWide:32
-                                                                    pixelsHigh:32
-                                                                 bitsPerSample:8
-                                                               samplesPerPixel:4
-                                                                      hasAlpha:YES
-                                                                      isPlanar:NO
-                                                                colorSpaceName:NSDeviceRGBColorSpace
-                                                                   bytesPerRow:32 * 4
-                                                                  bitsPerPixel:32];
-    
-    NSGraphicsContext *ctx = [NSGraphicsContext graphicsContextWithBitmapImageRep:img];
-    [NSGraphicsContext saveGraphicsState];
-    NSGraphicsContext.currentContext = ctx;
-    [NSColor.blackColor drawSwatchInRect:NSMakeRect(0, 0, 32, 32)];
-    [ctx flushGraphics];
-    [NSGraphicsContext restoreGraphicsState];
-
-    return img;
+- (CGImageRef)blackImage {
+    CGColorSpaceRef cs = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+    CGContextRef ctx = CGBitmapContextCreate(nil, 32, 32, 8, 32 * 4, cs, 0);
+    CFRelease(cs);
+    CGContextSetFillColorWithColor(ctx, CGColorGetConstantColor(kCGColorBlack));
+    CGContextFillRect(ctx, CGRectMake(0, 0, 32, 32));
+    return CGBitmapContextCreateImage(ctx);
 }
 
-- (NSBitmapImageRep *)imageWithCIImage:(CIImage *)img {
+
+- (CGImageRef)imageWithCIImage:(CIImage *)img {
     CGColorSpaceRef cs  = nil;
     CGImageRef cgImgTmp = nil;
     CGImageRef cgImg    = nil;
@@ -562,18 +550,17 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
         // Override the original color space and set the correct one
         cgImg = CGImageCreateCopyWithColorSpace(cgImgTmp, cs);
         if (cgImg) {
-            return [[NSBitmapImageRep alloc] initWithCGImage:cgImg];
+            return cgImg;
         }
         os_log_error(OE_LOG_DEFAULT, "%{public}s: conversion failed, returning black image", __FUNCTION__);
         return [self blackImage];
     } @finally {
         if (cgImgTmp)   CGImageRelease(cgImgTmp);
-        if (cgImg)      CGImageRelease(cgImg);
         if (cs)         CGColorSpaceRelease(cs);
     }
 }
 
-- (NSBitmapImageRep *)captureSourceImage
+- (CGImageRef)createCGImageFromSource
 {
     NSDictionary<CIImageOption, id> *opts = @{
                                               kCIImageNearestSampling: @YES,
@@ -601,7 +588,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     return img;
 }
 
-- (NSBitmapImageRep *)captureOutputImage
+- (CGImageRef)createCGImageFromOutput
 {
     // render the filtered image
     id<MTLTexture>          tex  = [self screenshotTexture];
@@ -617,7 +604,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     return [self imageWithCIImage:[self ciImageFromMTLTexture:tex]];
 }
 
-- (void)captureOutputImageWithCompletion:(OEImageHandler)handler
+- (void)createCGImageFromOutputWithCompletion:(OEImageHandler)handler
 {
     // render the filtered image
     id<MTLTexture>          tex  = [self screenshotTexture];
@@ -637,7 +624,9 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             return;
         }
         CIImage *img = [self ciImageFromMTLTexture:tex];
-        handler([self imageWithCIImage:img], nil);
+        CGImageRef cgImg = [self imageWithCIImage:img];
+        handler(cgImg, nil);
+        CFRelease(cgImg);
     }];
     [commandBuffer commit];
 }

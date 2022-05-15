@@ -23,7 +23,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
-#import "spirv.h"
+#import <CSPIRVCross/CSPIRVCross.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

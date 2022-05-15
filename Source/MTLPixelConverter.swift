@@ -24,7 +24,6 @@
 
 import Foundation
 import Metal
-import RendererPrivate
 
 @objc
 public class MTLPixelConverter: NSObject {
