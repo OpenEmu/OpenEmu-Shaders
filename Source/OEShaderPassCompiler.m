@@ -74,16 +74,14 @@ void error_callback(void *userdata, const char *error)
         NSString *source = type == ShaderTypeVertex ? pass.source.vertexSource : pass.source.fragmentSource;
         SlangCompiler *c = [SlangCompiler new];
         NSError *err;
-        ShaderProgram *prog = [c compileSource:source ofType:type error:&err];
-        if (prog == nil || err != nil) {
+        data = [c compileSource:source ofType:type error:&err];
+        if (data == nil || err != nil) {
             if (error != nil)
             {
                 *error = err;
             }
             return nil;
         }
-        
-        data = [NSData dataWithBytes:(void *)prog.spirv length:prog.spirvLengthBytes];
         
         if (filename != nil)
         {

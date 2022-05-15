@@ -33,20 +33,12 @@ typedef NS_ENUM(NSUInteger, ShaderType)
     ShaderTypeFragment,
 };
 
-@interface ShaderProgram : NSObject
-
-@property (nonatomic, readonly) SpvId const *spirv;
-@property (nonatomic, readonly) size_t      spirvLength;
-@property (nonatomic, readonly) size_t      spirvLengthBytes;
-
-@end
-
 /*!
  * SlangCompiler is responsible for compiling a glsl shader program into SPIRV
  */
 @interface SlangCompiler : NSObject
 
-- (ShaderProgram *)compileSource:(NSString *)source ofType:(ShaderType)type error:(NSError **)error;
+- (NSData *)compileSource:(NSString *)source ofType:(ShaderType)type error:(NSError **)error;
 
 @end
 

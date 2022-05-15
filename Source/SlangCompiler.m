@@ -28,10 +28,12 @@
 #import <CSPIRVTools/CSPIRVTools.h>
 #include "OELogging.h"
 
+__attribute__((constructor))
+static void initialize_glslang()
+{
+    glslang_initialize_process();
+}
 
-@interface ShaderProgram()
-- (instancetype)initWithData:(NSData *)spirv;
-@end
 
 @implementation SlangCompiler
 
@@ -42,7 +44,7 @@
     return self;
 }
 
-- (ShaderProgram *)compileSource:(NSString *)source ofType:(ShaderType)type error:(NSError **)error
+- (NSData *)compileSource:(NSString *)source ofType:(ShaderType)type error:(NSError **)error
 {
     switch (type)
     {
@@ -53,7 +55,7 @@
     }
 }
 
-- (ShaderProgram *)compileSPIRV:(NSString *)src stage:(glslang_stage_t)stage error:(NSError **)error
+- (NSData *)compileSPIRV:(NSString *)src stage:(glslang_stage_t)stage error:(NSError **)error
 {
     const int DEFAULT_VERSION = 110;
 
@@ -95,6 +97,7 @@
         }
     
         os_log_error(OE_LOG_DEFAULT, "error preprocessing shader: %{public}s", msg);
+        glslang_shader_delete(shader);
         return nil;
     }
     
@@ -114,6 +117,7 @@
         }
         
         os_log_error(OE_LOG_DEFAULT, "error parsing shader info log: %{public}s", infoLog);
+        glslang_shader_delete(shader);
         return nil;
     }
     
@@ -138,6 +142,9 @@
         
         os_log_error(OE_LOG_DEFAULT, "error linking shader info log: %{public}s", infoLog);
         os_log_error(OE_LOG_DEFAULT, "error linking shader info debug log: %{public}s", infoDebugLog);
+        
+        glslang_program_delete(program);
+        glslang_shader_delete(shader);
         return nil;
     }
     
@@ -155,7 +162,11 @@
     uint32_t ** spirv           = nil;
     size_t      spirv_len_bytes = 0;
     
-    spvt_vector vec = spvt_optimizer_run(opt, glslang_program_SPIRV_get_ptr(program), glslang_program_SPIRV_get_size(program));
+    spv_optimizer_options opts = spvOptimizerOptionsCreate();
+    spvOptimizerOptionsSetRunValidator(opts, false);
+    spvt_vector vec = spvt_optimizer_run_options(opt, glslang_program_SPIRV_get_ptr(program), glslang_program_SPIRV_get_size(program), opts);
+    spvOptimizerOptionsDestroy(opts);
+    
     if (vec != nil)
     {
         spirv_len_bytes = spvt_vector_get_size(vec);
@@ -170,40 +181,11 @@
         glslang_program_SPIRV_get(program, (unsigned int *)spirv);
     }
     
-    NSData *data = [[NSData alloc] initWithBytesNoCopy:spirv length:spirv_len_bytes freeWhenDone:YES];
+    spvt_optimizer_destroy(opt);
+    glslang_program_delete(program);
+    glslang_shader_delete(shader);
     
-    return [[ShaderProgram alloc] initWithData:data];
-}
-
-@end
-
-@implementation ShaderProgram
-{
-    NSData *_spirv;
-}
-
-- (instancetype)initWithData:(NSData *)spirv
-{
-    self = [super init];
-    
-    _spirv = spirv;
-    
-    return self;
-}
-
-- (SpvId const *)spirv
-{
-    return (SpvId const *)_spirv.bytes;
-}
-
-- (size_t)spirvLength
-{
-    return _spirv.length / sizeof(uint32_t);
-}
-
-- (size_t)spirvLengthBytes
-{
-    return _spirv.length;
+    return [[NSData alloc] initWithBytesNoCopy:spirv length:spirv_len_bytes freeWhenDone:YES];
 }
 
 @end
