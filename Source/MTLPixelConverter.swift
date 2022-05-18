@@ -111,10 +111,10 @@ public class MTLPixelConverter: NSObject {
     ]
     
     @objc
-    public init(device: MTLDevice, library: MTLLibrary) throws {
+    public init(device: MTLDevice) throws {
         self.device = device
         let bundle = Bundle(for: type(of: self))
-        self.library = try device.makeDefaultLibrary(bundle: bundle)
+        library = try device.makeDefaultLibrary(bundle: bundle)
         
         var texToTex = [TextureConverter?](repeating: nil, count: Int(OEMTLPixelFormat.count.rawValue))
         var bufToTex = [BufferConverter?](repeating: nil, count: Int(OEMTLPixelFormat.count.rawValue))
@@ -150,6 +150,11 @@ public class MTLPixelConverter: NSObject {
     @objc
     public func bufferConverter(withFormat sourceFormat: OEMTLPixelFormat) -> BufferConverter? {
         return bufToTex[Int(sourceFormat.rawValue)]
+    }
+    
+    @objc
+    public func textureConverter(withFormat sourceFormat: OEMTLPixelFormat) -> TextureConverter? {
+        return texToTex[Int(sourceFormat.rawValue)]
     }
     
     @objc

@@ -163,9 +163,7 @@ typedef struct texture
     }
     assert(err == nil);
     _loader    = [[MTKTextureLoader alloc] initWithDevice:device];
-    _converter = [[MTLPixelConverter alloc] initWithDevice:_device
-                                                     library:_library
-                                                       error:&err];
+    _converter = [[MTLPixelConverter alloc] initWithDevice:_device error:&err];
     if (err != nil) {
         os_log_error(OE_LOG_DEFAULT, "error initializing pixel converter: %{public}@", err.localizedDescription);
     }
