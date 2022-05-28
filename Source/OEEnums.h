@@ -97,7 +97,7 @@ typedef NSString *OEShaderBufferSemantic NS_TYPED_ENUM;
  *
  * @details Shaders refer to the matrix constant via the @c MVP symbol.
  */
-FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticMVP;
+FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticMVP NS_SWIFT_NAME(mvp);
 
 /*!
  * Identifies the vec4 float containing the viewport size of the current pass.

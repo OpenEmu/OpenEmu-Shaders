@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSUInteger   uboOffset;
 @property (nonatomic) NSUInteger   pushOffset;
 @property (nonatomic) OEStageUsage stageUsage;
-@property (nonatomic) BOOL         texture;
+@property (nonatomic) BOOL         textureActive;
 @property (nonatomic) BOOL         uboActive;
 @property (nonatomic) BOOL         pushActive;
 @end

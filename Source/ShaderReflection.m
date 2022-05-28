@@ -431,9 +431,9 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
         array[index] = sem;
     }
     
-    sem.binding    = binding;
-    sem.texture    = YES;
-    sem.stageUsage = OEStageUsageFragment;
+    sem.binding         = binding;
+    sem.textureActive   = YES;
+    sem.stageUsage      = OEStageUsageFragment;
     
     return YES;
 }
@@ -447,7 +447,7 @@ static NSDictionary<OEShaderBufferSemantic, NSString *>     *semanticToUniformNa
     for (OEShaderTextureSemantic sem in OEShaderConstants.textureSemantics) {
         NSUInteger                     i = 0;
         for (ShaderTextureSemanticMeta *meta in _textures[sem]) {
-            if (meta.texture) {
+            if (meta.textureActive) {
                 [desc appendFormat:@"      %@ (#%lu)\n", sem, i];
             }
             i += 1;

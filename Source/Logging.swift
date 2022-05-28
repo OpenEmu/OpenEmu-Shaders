@@ -1,4 +1,4 @@
-// Copyright (c) 2019, OpenEmu Team
+// Copyright (c) 2022, OpenEmu Team
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -22,18 +22,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#import <Foundation/Foundation.h>
+import os.log
 
-//! Project version number for OpenEmuShaders.
-FOUNDATION_EXPORT double OpenEmuShadersVersionNumber;
-
-//! Project version string for OpenEmuShaders.
-FOUNDATION_EXPORT const unsigned char OpenEmuShadersVersionString[];
-
-#import <OpenEmuShaders/OEEnums.h>
-#import <OpenEmuShaders/ShaderPassSemantics.h>
-#import <OpenEmuShaders/OEPixelBuffer.h>
-#import <OpenEmuShaders/OEFilterChain.h>
-#import <OpenEmuShaders/OEShaderPassCompiler.h>
-#import <OpenEmuShaders/ShaderTypes.h>
-#import <OpenEmuShaders/ShaderReflection.h>
+extension OSLog {
+    static let shaders = OSLog(subsystem: "org.openemu.OpenEmuShaders", category: "default")
+}
