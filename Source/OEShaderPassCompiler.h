@@ -15,8 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface OEShaderPassCompiler : NSObject
 
-@property (nonatomic, readonly) NSUInteger                      historyCount;
-@property (nonatomic, readonly) NSArray<ShaderPassBindings *>  *bindings;
+@property (nonatomic, readonly)  SlangShader                    *shader;
+@property (nonatomic, readwrite) NSUInteger                      historyCount;
+@property (nonatomic, readonly)  NSArray<ShaderPassBindings *>  *bindings;
 
 - (instancetype)initWithShaderModel:(SlangShader *)shader;
 

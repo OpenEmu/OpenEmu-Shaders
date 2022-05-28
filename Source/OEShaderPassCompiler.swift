@@ -33,6 +33,138 @@ import os.log
         
         return (vert! as String, frag! as String)
     }
+    
+    // swiftlint: disable cyclomatic_complexity
+    public func processPass(_ passNumber: UInt,
+                            withVertexCompiler vsCompiler: SPVCompiler,
+                            fragmentCompiler fsCompiler: SPVCompiler,
+                            passSemantics: ShaderPassSemantics,
+                            passBindings: ShaderPassBindings) -> Bool {
+        let ref = ShaderReflection()
+        ref.passNumber = passNumber
+        
+        // add aliases
+        for pass in shader.passes.prefix(Int(passNumber + 1)) {
+            guard let name = pass.alias, !name.isEmpty
+            else { continue }
+            
+            let index = UInt(pass.index)
+            
+            guard ref.addTextureSemantic(.passOutput, pass: index, name: name) else { return false }
+            guard ref.addTextureBufferSemantic(.passOutput, pass: index, name: "\(name)Size") else { return false }
+            guard ref.addTextureSemantic(.passFeedback, pass: index, name: "\(name)Feedback") else { return false }
+            guard ref.addTextureBufferSemantic(.passFeedback, pass: index, name: "\(name)FeedbackSize") else { return false }
+        }
+        
+        for (i, lut) in shader.luts.enumerated() {
+            guard ref.addTextureSemantic(.user, pass: UInt(i), name: lut.name) else { return false }
+            guard ref.addTextureBufferSemantic(.user, pass: UInt(i), name: "\(lut.name)Size") else { return false }
+        }
+        
+        for (i, param) in shader.parameters.enumerated() {
+            guard ref.addBufferSemantic(.floatParameter, pass: UInt(i), name: param.name) else { return false }
+        }
+        
+        guard reflectWith(ref, withVertexCompiler: vsCompiler, fragmentCompiler: fsCompiler)
+        else {
+            // os_log_error(OE_LOG_DEFAULT, "reflect failed");
+            return false
+        }
+        
+        // UBO
+        let uboB = passBindings.buffers[0]
+        uboB.stageUsage  = ref.uboStageUsage
+        uboB.bindingVert = ref.uboBindingVert
+        uboB.bindingFrag = ref.uboBindingFrag
+        uboB.size        = (ref.uboSize + 0xf) & ~0xf // round up to nearest 16 bytes
+        
+        // push constants
+        let pshB = passBindings.buffers[1]
+        pshB.stageUsage  = ref.pushStageUsage
+        pshB.bindingVert = ref.pushBindingVert
+        pshB.bindingFrag = ref.pushBindingFrag
+        pshB.size        = (ref.pushSize + 0xf) & ~0xf // round up to nearest 16 bytes
+        
+        for (sem, meta) in ref.semantics {
+            let name = ref.name(forBufferSemantic: sem, index: 0)!
+            if meta.uboActive {
+                uboB.addUniformData(passSemantics.uniforms[sem]!.data,
+                                    size: Int(meta.numberOfComponents) * MemoryLayout<Float>.size,
+                                    offset: Int(meta.uboOffset),
+                                    name: name)
+            }
+            if meta.pushActive {
+                pshB.addUniformData(passSemantics.uniforms[sem]!.data,
+                                    size: Int(meta.numberOfComponents) * MemoryLayout<Float>.size,
+                                    offset: Int(meta.pushOffset),
+                                    name: name)
+            }
+        }
+        
+        for (i, meta) in ref.floatParameters.enumerated() {
+            let name = ref.name(forBufferSemantic: .floatParameter, index: UInt(i))!
+            guard let param = passSemantics.parameter(at: i)
+            else { fatalError("Unable to find parameter at index \(i)") }
+            
+            if meta.uboActive {
+                uboB.addUniformData(param.data,
+                                    size: Int(meta.numberOfComponents) * MemoryLayout<Float>.size,
+                                    offset: Int(meta.uboOffset),
+                                    name: name)
+            }
+            if meta.pushActive {
+                pshB.addUniformData(param.data,
+                                    size: Int(meta.numberOfComponents) * MemoryLayout<Float>.size,
+                                    offset: Int(meta.pushOffset),
+                                    name: name)
+            }
+        }
+        
+        for (sem, a) in ref.textures {
+            let tex = passSemantics.textures[sem]!
+            for (index, meta) in a.enumerated() {
+                if !meta.stageUsage.isEmpty {
+                    let ptr = UnsafeMutableRawPointer(tex.texture).advanced(by: index * tex.textureStride)
+                    let tex1 = AutoreleasingUnsafeMutablePointer<MTLTexture>(ptr.assumingMemoryBound(to: MTLTexture.self))
+                    let bind = passBindings.addTexture(tex1)
+                    
+                    if sem == .user {
+                        bind.wrap   = shader.luts[index].wrapMode
+                        bind.filter = shader.luts[index].filter
+                    } else {
+                        bind.wrap   = shader.passes[Int(passNumber)].wrapMode
+                        bind.filter = shader.passes[Int(passNumber)].filter
+                    }
+                    
+                    bind.stageUsage = meta.stageUsage
+                    bind.binding    = meta.binding
+                    bind.name       = ref.name(forTextureSemantic: sem, index: UInt(index))!
+                    
+                    if sem == .passFeedback {
+                        bindings[index].isFeedback = true
+                    } else if sem == .originalHistory && historyCount < index {
+                        historyCount = UInt(index)
+                    }
+                }
+                
+                let name = ref.sizeName(forTextureSemantic: sem, index: 0)!
+                if meta.uboActive {
+                    uboB.addUniformData(tex.textureSize.advanced(by: index * tex.sizeStride),
+                                        size: 4 * MemoryLayout<Float>.size,
+                                        offset: Int(meta.uboOffset),
+                                        name: name)
+                }
+                if meta.pushActive {
+                    pshB.addUniformData(tex.textureSize.advanced(by: index * tex.sizeStride),
+                                        size: 4 * MemoryLayout<Float>.size,
+                                        offset: Int(meta.pushOffset),
+                                        name: name)
+                }
+            }
+        }
+        
+        return true
+    }
 
     // swiftlint: disable cyclomatic_complexity
     public func reflectWith(_ ref: ShaderReflection, withVertexCompiler vsCompiler: SPVCompiler, fragmentCompiler fsCompiler: SPVCompiler) -> Bool {

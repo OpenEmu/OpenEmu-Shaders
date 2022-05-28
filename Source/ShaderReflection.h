@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSUInteger                                                                                     pushBindingFrag;
 @property (nonatomic) OEStageUsage                                                                                   uboStageUsage;
 @property (nonatomic) OEStageUsage                                                                                   pushStageUsage;
-@property (nonatomic, readonly) NSDictionary<OEShaderTextureSemantic, NSMutableArray<ShaderTextureSemanticMeta *> *> *textures;
+@property (nonatomic, readonly) NSDictionary<OEShaderTextureSemantic, NSArray<ShaderTextureSemanticMeta *> *>        *textures;
 @property (nonatomic, readonly) NSDictionary<OEShaderBufferSemantic, ShaderSemanticMeta *>                           *semantics;
 @property (nonatomic, readonly) NSArray<ShaderSemanticMeta *>                                                        *floatParameters;
 
