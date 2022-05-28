@@ -8,15 +8,6 @@ let url = "https://github.com/OpenEmu/OpenEmu-Shaders/releases/download/\(tag)/O
 
 let package = Package(
     name: "OpenEmuShaders",
-    platforms: [
-        .macOS(.v10_14),
-    ],
-    products: [
-        .library(
-            name: "OpenEmuShaders",
-            targets: ["OpenEmuShaders"]
-        ),
-    ],
     targets: [
         .binaryTarget(
             name: "OpenEmuShaders",

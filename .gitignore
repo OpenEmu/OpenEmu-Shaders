@@ -23,3 +23,4 @@ profile
 DerivedData/
 .gitconfig
 cmake-build-*/
+archive/
