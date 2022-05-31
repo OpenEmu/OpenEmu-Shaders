@@ -24,8 +24,7 @@
 
 import Foundation
 
-@objc
-public extension NSString {
+extension String {
     var versionValue: String {
         let parts = components(separatedBy: ".").compactMap(Int.init)
         let ints = parts.count < 3 ? parts + [Int](repeating: 0, count: 3 - parts.count) : parts

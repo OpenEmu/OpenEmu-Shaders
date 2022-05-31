@@ -34,6 +34,33 @@ import os.log
         return (vert! as String, frag! as String)
     }
     
+    public func irForPass(_ pass: ShaderPass, ofType type: ShaderType, options: ShaderCompilerOptions) throws -> Data {
+        var filename: URL?
+        
+        // If caching, set the filename and try loading the IR data
+        if let cacheDir = options.cacheDir, !options.isCacheDisabled {
+            try FileManager.default.createDirectory(at: cacheDir, withIntermediateDirectories: true)
+            
+            if let version = Bundle(for: Self.self).infoDictionary?["CFBundleShortVersionString"] as? String {
+                let vorf    = type == .vertex ? "vert" : "frag"
+                let file    = "\(pass.source.basename).\(pass.source.sha256).\(version.versionValue).\(vorf).spirv"
+                filename = cacheDir.appendingPathComponent(file)
+                if let data = try? Data(contentsOf: filename!) {
+                    return data
+                }
+            }
+        }
+        
+        let source = type == .vertex ? pass.source.vertexSource : pass.source.fragmentSource
+        let c = SlangCompiler()
+        let data = try c.compileSource(source, ofType: type)
+        if let filename = filename {
+            // Ignore any error if we can't write
+            try? data.write(to: filename, options: .atomic)
+        }
+        return data
+    }
+    
     // swiftlint: disable cyclomatic_complexity
     public func processPass(_ passNumber: UInt,
                             withVertexCompiler vsCompiler: SPVCompiler,

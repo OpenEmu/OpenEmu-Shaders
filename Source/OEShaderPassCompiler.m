@@ -11,6 +11,7 @@
 #import <OpenEmuShaders/OpenEmuShaders-Swift.h>
 #import "OESourceParser+Private.h"
 #import "OELogging.h"
+#import <OpenEmuShaders/OEEnums.h>
 
 @implementation OEShaderPassCompiler
 {
@@ -49,47 +50,6 @@ void error_callback(void *userdata, const char *error)
 {
     // TODO(sgc): handle callback errors
     os_log_error(OE_LOG_DEFAULT, "error from SPIR-V compiler: %{public}s", error);
-}
-
-- (NSData *)irForPass:(ShaderPass *)pass ofType:(ShaderType)type options:(ShaderCompilerOptions *)options error:(NSError **)error
-{
-    NSData *data = nil;
-    NSURL *filename = nil;
-    
-    if (options.isCacheDisabled == NO)
-    {
-        NSURL *cacheDir = options.cacheDir;
-        [NSFileManager.defaultManager createDirectoryAtURL:cacheDir withIntermediateDirectories:YES attributes:nil error:nil];
-        
-        NSString *version = [[NSBundle bundleForClass:self.class].infoDictionary objectForKey:@"CFBundleShortVersionString"];
-        
-        NSString *vorf  = type == ShaderTypeVertex ? @"vert" : @"frag";
-        NSString *file  = [NSString stringWithFormat:@"%@.%@.%@.%@.spirv", pass.source.basename, pass.source.sha256, version.versionValue, vorf];
-        filename = [cacheDir URLByAppendingPathComponent:file];
-        data = [NSData dataWithContentsOfURL:filename];
-    }
-    
-    if (data == nil)
-    {
-        NSString *source = type == ShaderTypeVertex ? pass.source.vertexSource : pass.source.fragmentSource;
-        SlangCompiler *c = [SlangCompiler new];
-        NSError *err;
-        data = [c compileSource:source ofType:type error:&err];
-        if (data == nil || err != nil) {
-            if (error != nil)
-            {
-                *error = err;
-            }
-            return nil;
-        }
-        
-        if (filename != nil)
-        {
-            [data writeToURL:filename atomically:YES];
-        }
-    }
-    
-    return data;
 }
 
 - (BOOL)makeCompilersForPass:(ShaderPass *)pass

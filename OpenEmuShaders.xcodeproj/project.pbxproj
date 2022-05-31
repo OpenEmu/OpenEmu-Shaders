@@ -29,6 +29,7 @@
 		05AA59F7246625A20031B73E /* ShaderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0524FF892459E6C7005C5E83 /* ShaderModel.swift */; };
 		05AA59F9246702410031B73E /* ShaderModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AA59F8246702410031B73E /* ShaderModelTests.swift */; };
 		05ABBE922842D0C0006F1A8C /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBE912842D0C0006F1A8C /* Logging.swift */; };
+		05ABBE9C2842EA5A006F1A8C /* SlangCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBE9B2842EA5A006F1A8C /* SlangCompiler.swift */; };
 		05D043542439043E00B6BDBF /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D043532439043E00B6BDBF /* Version.swift */; };
 		05EEE342227CC35D007D011B /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; };
 		05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE33B227CC35D007D011B /* OpenEmuShaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -49,8 +50,6 @@
 		A90209064B397A0A2B1BFDC0 /* OEShaderPassCompiler.m in Sources */ = {isa = PBXBuildFile; fileRef = A902093DEC93994FE062176F /* OEShaderPassCompiler.m */; };
 		A9020AE1BBCE1F965F5F8436 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90203E4FFF77BAF2B3ECC24 /* Config.swift */; };
 		A9020C552A8D57277535094F /* MTLPixelConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9020FD6E09797E3851BD2F2 /* MTLPixelConverter.swift */; };
-		A9020CDAE9B375337B23CB35 /* SlangCompiler.m in Sources */ = {isa = PBXBuildFile; fileRef = A90202C8B35052F56549FB38 /* SlangCompiler.m */; };
-		A9020D05FC6DD9399E7EFBC2 /* SlangCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = A90203C72A8A32B7143EB579 /* SlangCompiler.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -145,6 +144,7 @@
 		0592589F22AD71500064273D /* OELogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OELogging.h; sourceTree = "<group>"; };
 		05AA59F8246702410031B73E /* ShaderModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderModelTests.swift; sourceTree = "<group>"; };
 		05ABBE912842D0C0006F1A8C /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		05ABBE9B2842EA5A006F1A8C /* SlangCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlangCompiler.swift; sourceTree = "<group>"; };
 		05D043532439043E00B6BDBF /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		05EEE338227CC35D007D011B /* OpenEmuShaders.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OpenEmuShaders.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EEE33B227CC35D007D011B /* OpenEmuShaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenEmuShaders.h; sourceTree = "<group>"; };
@@ -160,8 +160,6 @@
 		05F5BB1022875C0B004D713C /* OpenEmuShadersTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenEmuShadersTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		A90200FD5FAAA6164A305470 /* OESourceParser+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OESourceParser+Private.h"; sourceTree = "<group>"; };
 		A902023035423BDAFACA21E6 /* NSScannerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSScannerTests.swift; sourceTree = "<group>"; };
-		A90202C8B35052F56549FB38 /* SlangCompiler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlangCompiler.m; sourceTree = "<group>"; };
-		A90203C72A8A32B7143EB579 /* SlangCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlangCompiler.h; sourceTree = "<group>"; };
 		A90203E4FFF77BAF2B3ECC24 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		A9020642C9363659BECEAAFF /* ShaderReflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderReflection.m; sourceTree = "<group>"; };
 		A90206493F90CBEED52108D7 /* ShaderPassSemantics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderPassSemantics.m; sourceTree = "<group>"; };
@@ -231,8 +229,7 @@
 				A9020642C9363659BECEAAFF /* ShaderReflection.m */,
 				A9020BF6D6C3253BE8395A68 /* ShaderPassSemantics.h */,
 				A90206493F90CBEED52108D7 /* ShaderPassSemantics.m */,
-				A90203C72A8A32B7143EB579 /* SlangCompiler.h */,
-				A90202C8B35052F56549FB38 /* SlangCompiler.m */,
+				05ABBE9B2842EA5A006F1A8C /* SlangCompiler.swift */,
 			);
 			name = Compiler;
 			sourceTree = "<group>";
@@ -384,7 +381,6 @@
 				059258A122AD71500064273D /* OELogging.h in Headers */,
 				056AC35B228BA11E005018DA /* OEEnums.h in Headers */,
 				052A2B8E22A475D300483370 /* OEPixelBuffer.h in Headers */,
-				A9020D05FC6DD9399E7EFBC2 /* SlangCompiler.h in Headers */,
 				A9020805BAF090A04D16722C /* ShaderPassSemantics.h in Headers */,
 				A902009F295CE6ED5C8FC8CA /* ShaderReflection.h in Headers */,
 				A90205711DC1472EA0049303 /* OEShaderPassCompiler.h in Headers */,
@@ -595,12 +591,12 @@
 				05F5495D229BBA8800561C14 /* OEFilterChain.m in Sources */,
 				056AC379228BA8D9005018DA /* ShaderParameter.swift in Sources */,
 				057847CE25C1250300A842E7 /* ShaderCompilerOptions.swift in Sources */,
-				A9020CDAE9B375337B23CB35 /* SlangCompiler.m in Sources */,
 				A90206302FA906B0B42F2CF2 /* ShaderPassSemantics.m in Sources */,
 				059258A022AD71500064273D /* OELogging.m in Sources */,
 				A90205F1433179AFFF015F07 /* ShaderReflection.m in Sources */,
 				A9020AE1BBCE1F965F5F8436 /* Config.swift in Sources */,
 				A90209064B397A0A2B1BFDC0 /* OEShaderPassCompiler.m in Sources */,
+				05ABBE9C2842EA5A006F1A8C /* SlangCompiler.swift in Sources */,
 				A9020C552A8D57277535094F /* MTLPixelConverter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
