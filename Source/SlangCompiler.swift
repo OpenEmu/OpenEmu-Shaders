@@ -27,8 +27,15 @@ import CGLSLang
 import CSPIRVTools
 import os.log
 
+var initialized: Bool = {
+    glslang_initialize_process()
+    return true
+}()
+
 class SlangCompiler {
     func compileSource(_ source: String, ofType type: ShaderType) throws -> Data {
+        _ = initialized
+        
         switch type {
         case .vertex:
             return try compileSPIRV(source, stage: .vertex)

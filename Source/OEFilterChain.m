@@ -25,7 +25,6 @@
 @import MetalKit;
 
 #import "OEFilterChain.h"
-#import "OEShaderPassCompiler.h"
 #import "OELogging.h"
 #import "OEPixelBuffer+Internal.h"
 #import "RendererCommon.h"

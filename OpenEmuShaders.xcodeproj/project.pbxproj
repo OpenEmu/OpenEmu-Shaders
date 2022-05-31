@@ -42,12 +42,10 @@
 		A9020051FEB9717E8F2ABA14 /* ConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9020E619BC7ACEF5904D318 /* ConfigTests.swift */; };
 		A902009F295CE6ED5C8FC8CA /* ShaderReflection.h in Headers */ = {isa = PBXBuildFile; fileRef = A9020B45B7562A79B4BCF645 /* ShaderReflection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A90203772A0E044990C034EA /* NSScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A902023035423BDAFACA21E6 /* NSScannerTests.swift */; };
-		A90205711DC1472EA0049303 /* OEShaderPassCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = A90209158C7B9B4C8306CD0D /* OEShaderPassCompiler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A90205F1433179AFFF015F07 /* ShaderReflection.m in Sources */ = {isa = PBXBuildFile; fileRef = A9020642C9363659BECEAAFF /* ShaderReflection.m */; };
 		A90206302FA906B0B42F2CF2 /* ShaderPassSemantics.m in Sources */ = {isa = PBXBuildFile; fileRef = A90206493F90CBEED52108D7 /* ShaderPassSemantics.m */; };
 		A9020770F02FBC42EDC65CC7 /* OESourceParser+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = A90200FD5FAAA6164A305470 /* OESourceParser+Private.h */; };
 		A9020805BAF090A04D16722C /* ShaderPassSemantics.h in Headers */ = {isa = PBXBuildFile; fileRef = A9020BF6D6C3253BE8395A68 /* ShaderPassSemantics.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A90209064B397A0A2B1BFDC0 /* OEShaderPassCompiler.m in Sources */ = {isa = PBXBuildFile; fileRef = A902093DEC93994FE062176F /* OEShaderPassCompiler.m */; };
 		A9020AE1BBCE1F965F5F8436 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90203E4FFF77BAF2B3ECC24 /* Config.swift */; };
 		A9020C552A8D57277535094F /* MTLPixelConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9020FD6E09797E3851BD2F2 /* MTLPixelConverter.swift */; };
 /* End PBXBuildFile section */
@@ -163,8 +161,6 @@
 		A90203E4FFF77BAF2B3ECC24 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		A9020642C9363659BECEAAFF /* ShaderReflection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderReflection.m; sourceTree = "<group>"; };
 		A90206493F90CBEED52108D7 /* ShaderPassSemantics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShaderPassSemantics.m; sourceTree = "<group>"; };
-		A90209158C7B9B4C8306CD0D /* OEShaderPassCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEShaderPassCompiler.h; sourceTree = "<group>"; };
-		A902093DEC93994FE062176F /* OEShaderPassCompiler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEShaderPassCompiler.m; sourceTree = "<group>"; };
 		A9020B45B7562A79B4BCF645 /* ShaderReflection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderReflection.h; sourceTree = "<group>"; };
 		A9020BF6D6C3253BE8395A68 /* ShaderPassSemantics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderPassSemantics.h; sourceTree = "<group>"; };
 		A9020E619BC7ACEF5904D318 /* ConfigTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigTests.swift; sourceTree = "<group>"; };
@@ -221,8 +217,6 @@
 			isa = PBXGroup;
 			children = (
 				0521355B246E3A240085A598 /* CompiledShader.swift */,
-				A90209158C7B9B4C8306CD0D /* OEShaderPassCompiler.h */,
-				A902093DEC93994FE062176F /* OEShaderPassCompiler.m */,
 				057848C125C2151900A842E7 /* OEShaderPassCompiler.swift */,
 				057847CD25C1250300A842E7 /* ShaderCompilerOptions.swift */,
 				A9020B45B7562A79B4BCF645 /* ShaderReflection.h */,
@@ -383,7 +377,6 @@
 				052A2B8E22A475D300483370 /* OEPixelBuffer.h in Headers */,
 				A9020805BAF090A04D16722C /* ShaderPassSemantics.h in Headers */,
 				A902009F295CE6ED5C8FC8CA /* ShaderReflection.h in Headers */,
-				A90205711DC1472EA0049303 /* OEShaderPassCompiler.h in Headers */,
 				05F5495B229BBA8800561C14 /* RendererCommon.h in Headers */,
 				A9020770F02FBC42EDC65CC7 /* OESourceParser+Private.h in Headers */,
 			);
@@ -595,7 +588,6 @@
 				059258A022AD71500064273D /* OELogging.m in Sources */,
 				A90205F1433179AFFF015F07 /* ShaderReflection.m in Sources */,
 				A9020AE1BBCE1F965F5F8436 /* Config.swift in Sources */,
-				A90209064B397A0A2B1BFDC0 /* OEShaderPassCompiler.m in Sources */,
 				05ABBE9C2842EA5A006F1A8C /* SlangCompiler.swift in Sources */,
 				A9020C552A8D57277535094F /* MTLPixelConverter.swift in Sources */,
 			);

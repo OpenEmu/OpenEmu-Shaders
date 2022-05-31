@@ -26,12 +26,86 @@ import Foundation
 import CSPIRVCross
 import os.log
 
-@objc extension OEShaderPassCompiler {
+@objc public class OEShaderPassCompiler: NSObject {
+    public enum ShaderError: Error {
+        case buildFailed
+        case processFailed
+    }
+    
+    @objc public let shader: SlangShader
+    @objc public let bindings: [ShaderPassBindings]
+    @objc public private(set) var historyCount: UInt = 0
+    
+    @objc public init(shaderModel shader: SlangShader) {
+        self.shader     = shader
+        self.bindings   = (0..<shader.passes.count).map { _ in ShaderPassBindings() }
+    }
+    
     @nonobjc public func buildPass(_ passNumber: Int, options: ShaderCompilerOptions, passSemantics: ShaderPassSemantics?) throws -> (vert: String, frag: String) {
-        var vert: NSString?, frag: NSString?
-        try __buildPass(UInt(passNumber), options: options, passSemantics: passSemantics, vertex: &vert, fragment: &frag)
+        var ctx: __SPVContext?
+        __spvc_context_create(&ctx)
+        guard let ctx = ctx else {
+            throw ShaderError.buildFailed
+        }
+        defer { ctx.destroy() }
         
-        return (vert! as String, frag! as String)
+        let errorHandler: @convention(c) (UnsafeMutableRawPointer?, UnsafePointer<Int8>?) -> Void = { userData, errorMsg in
+            guard
+                let userData = userData,
+                let errorMsg = errorMsg
+            else { return }
+            
+            let compiler = Unmanaged<OEShaderPassCompiler>.fromOpaque(userData).takeUnretainedValue()
+            compiler.compileError(String(cString: errorMsg))
+        }
+        
+        spvc_context_set_error_callback(ctx, errorHandler, Unmanaged.passUnretained(self).toOpaque())
+        let pass = shader.passes[Int(passNumber)]
+        let bind = bindings[Int(passNumber)]
+        bind.format = pass.format
+        
+        var vsCompiler: SPVCompiler?, fsCompiler: SPVCompiler?
+        try makeCompilersForPass(pass, context: ctx, options: options, vertexCompiler: &vsCompiler, fragmentCompiler: &fsCompiler)
+        
+        guard
+            let vsCompiler = vsCompiler,
+            let fsCompiler = fsCompiler
+        else {
+            throw ShaderError.buildFailed
+        }
+
+        var vsCode: UnsafePointer<Int8>?
+        vsCompiler.compile(&vsCode)
+        
+        var fsCode: UnsafePointer<Int8>?
+        fsCompiler.compile(&fsCode)
+        
+        if let passSemantics = passSemantics {
+            guard processPass(UInt(passNumber),
+                              withVertexCompiler: vsCompiler,
+                              fragmentCompiler: fsCompiler,
+                              passSemantics: passSemantics,
+                              passBindings: bind)
+            else {
+                throw ShaderError.processFailed
+            }
+        }
+        return (String(cString: vsCode!), String(cString: fsCode!))
+    }
+    
+    @objc public func buildPass(_ passNumber: UInt,
+                                options: ShaderCompilerOptions,
+                                passSemantics: ShaderPassSemantics?,
+                                vertex: AutoreleasingUnsafeMutablePointer<NSString?>,
+                                fragment: AutoreleasingUnsafeMutablePointer<NSString?>
+    ) throws {
+        let (vs, fs) = try buildPass(Int(passNumber), options: options, passSemantics: passSemantics)
+        vertex.pointee = vs as NSString
+        fragment.pointee = fs as NSString
+    }
+    
+    private func compileError(_ error: String) {
+        
     }
     
     private func makeVersion(major: Int, minor: Int, patch: Int = 0) -> UInt32 {
