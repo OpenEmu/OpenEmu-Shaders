@@ -34,6 +34,83 @@ import os.log
         return (vert! as String, frag! as String)
     }
     
+    private func makeVersion(major: Int, minor: Int, patch: Int = 0) -> UInt32 {
+        UInt32(major * 10000 + minor * 100 + patch)
+    }
+    
+    public func makeCompilersForPass(
+        _ pass: ShaderPass,
+        context ctx: __SPVContext,
+        options: ShaderCompilerOptions,
+        vertexCompiler vsCompiler: UnsafeMutablePointer<SPVCompiler?>,
+        fragmentCompiler fsCompiler: UnsafeMutablePointer<SPVCompiler?>
+    ) throws {
+        let version: UInt32
+        switch options.languageVersion {
+        case .version2_4:
+            version = makeVersion(major: 2, minor: 4)
+        case .version2_3:
+            version = makeVersion(major: 2, minor: 3)
+        case .version2_2:
+            version = makeVersion(major: 2, minor: 2)
+        default:
+            version = makeVersion(major: 2, minor: 1)
+        }
+        
+        let vsData = try irForPass(pass, ofType: .vertex, options: options)
+        var vsIR: SPVParsedIR?
+        vsData.withUnsafeBytes { buf in
+            _ = ctx.parse(data: buf.bindMemory(to: SpvId.self).baseAddress, buf.count / MemoryLayout<SpvId>.size, &vsIR)
+        }
+        guard let vsIR = vsIR else {
+            // os_log_error(OE_LOG_DEFAULT, "error parsing vertex spirv '%@'", pass.url.absoluteString)
+            return
+        }
+        
+        ctx.create_compiler(backend: .msl, ir: vsIR, captureMode: .takeOwnership, compiler: vsCompiler)
+
+        guard let vsCompiler = vsCompiler.pointee else {
+            // os_log_error(OE_LOG_DEFAULT, "error creating vertex compiler '%@'", pass.url.absoluteString)
+            return
+        }
+        
+        // vertex compile
+        var vsOptions: SPVCompilerOptions?
+        vsCompiler.create_compiler_options(&vsOptions)
+        guard let vsOptions = vsOptions else {
+            return
+        }
+        vsOptions.set_uint(option: SPVC_COMPILER_OPTION_MSL_VERSION, with: version)
+        vsCompiler.install_compiler_options(options: vsOptions)
+        
+        // fragment shader
+        let fsData = try irForPass(pass, ofType: .fragment, options: options)
+        var fsIR: SPVParsedIR?
+        fsData.withUnsafeBytes { buf in
+            _ = ctx.parse(data: buf.bindMemory(to: SpvId.self).baseAddress, buf.count / MemoryLayout<SpvId>.size, &fsIR)
+        }
+        guard let fsIR = fsIR else {
+            // os_log_error(OE_LOG_DEFAULT, "error parsing fragment spirv '%@'", pass.url.absoluteString)
+            return
+        }
+        
+        ctx.create_compiler(backend: .msl, ir: fsIR, captureMode: .takeOwnership, compiler: fsCompiler)
+
+        guard let fsCompiler = fsCompiler.pointee else {
+            // os_log_error(OE_LOG_DEFAULT, "error creating fragment compiler '%@'", pass.url.absoluteString)
+            return
+        }
+        
+        // fragment compile
+        var fsOptions: SPVCompilerOptions?
+        fsCompiler.create_compiler_options(&fsOptions)
+        guard let fsOptions = fsOptions else {
+            return
+        }
+        fsOptions.set_uint(option: SPVC_COMPILER_OPTION_MSL_VERSION, with: version)
+        fsCompiler.install_compiler_options(options: fsOptions)
+    }
+    
     public func irForPass(_ pass: ShaderPass, ofType type: ShaderType, options: ShaderCompilerOptions) throws -> Data {
         var filename: URL?
         

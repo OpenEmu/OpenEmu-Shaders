@@ -239,3 +239,9 @@ typedef NS_ERROR_ENUM(OEFilterChainErrorDomain, OEFilterChainErrorCode)
 {
     OEFilterChainErrorCodeImageCaptureFailed,
 };
+
+typedef NS_ENUM(NSUInteger, ShaderType)
+{
+    ShaderTypeVertex,
+    ShaderTypeFragment,
+};

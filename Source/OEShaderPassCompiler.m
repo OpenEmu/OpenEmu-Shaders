@@ -5,7 +5,6 @@
 
 #import "OEShaderPassCompiler.h"
 #import <CSPIRVCross/CSPIRVCross.h>
-#import "SlangCompiler.h"
 #import "ShaderReflection.h"
 #import "ShaderPassSemantics.h"
 #import <OpenEmuShaders/OpenEmuShaders-Swift.h>
@@ -50,100 +49,6 @@ void error_callback(void *userdata, const char *error)
 {
     // TODO(sgc): handle callback errors
     os_log_error(OE_LOG_DEFAULT, "error from SPIR-V compiler: %{public}s", error);
-}
-
-- (BOOL)makeCompilersForPass:(ShaderPass *)pass
-                     context:(spvc_context)ctx
-                     options:(ShaderCompilerOptions *)options
-              vertexCompiler:(spvc_compiler *)vsCompiler
-            fragmentCompiler:(spvc_compiler *)fsCompiler
-                       error:(NSError **)error
-{
-    unsigned int version = 0;
-    switch (options.languageVersion) {
-        case MTLLanguageVersion2_4:
-            version = SPVC_MAKE_MSL_VERSION(2, 4, 0);
-            break;
-        
-        case MTLLanguageVersion2_3:
-            version = SPVC_MAKE_MSL_VERSION(2, 3, 0);
-            break;
-        
-        case MTLLanguageVersion2_2:
-            version = SPVC_MAKE_MSL_VERSION(2, 2, 0);
-            break;
-
-        // default to Metal Version 2.1
-        case MTLLanguageVersion2_1:
-        default:
-            version = SPVC_MAKE_MSL_VERSION(2, 1, 0);
-            break;
-    }
-    
-    NSError *err;
-    NSData *data = [self irForPass:pass ofType:ShaderTypeVertex options:options error:&err];
-    if (err != nil)
-    {
-        if (error != nil)
-        {
-            *error = err;
-        }
-        
-        os_log_error(OE_LOG_DEFAULT, "error compiling vertex shader program '%@': %@", pass.url.absoluteString, err.localizedDescription);
-        return NO;
-    }
-    
-    spvc_parsed_ir vsIR = nil;
-    spvc_context_parse_spirv(ctx, data.bytes, data.length / sizeof(SpvId), &vsIR);
-    if (vsIR == nil) {
-        os_log_error(OE_LOG_DEFAULT, "error parsing vertex spirv '%@'", pass.url.absoluteString);
-        return NO;
-    }
-    
-    spvc_context_create_compiler(ctx, SPVC_BACKEND_MSL, vsIR, SPVC_CAPTURE_MODE_TAKE_OWNERSHIP, vsCompiler);
-    if (*vsCompiler == nil) {
-        os_log_error(OE_LOG_DEFAULT, "error creating vertex compiler '%@'", pass.url.absoluteString);
-        return NO;
-    }
-    
-    // vertex compile
-    spvc_compiler_options vsOptions;
-    spvc_compiler_create_compiler_options(*vsCompiler, &vsOptions);
-    spvc_compiler_options_set_uint(vsOptions, SPVC_COMPILER_OPTION_MSL_VERSION, (unsigned int)version);
-    spvc_compiler_install_compiler_options(*vsCompiler, vsOptions);
-    
-    // fragment shader
-    data = [self irForPass:pass ofType:ShaderTypeFragment options:options error:&err];
-    if (err != nil)
-    {
-        if (error != nil)
-        {
-            *error = err;
-        }
-        os_log_error(OE_LOG_DEFAULT, "error compiling fragment shader program '%@': %@", pass.url.absoluteString, err.localizedFailureReason);
-        return NO;
-    }
-    
-    spvc_parsed_ir fsIR = nil;
-    spvc_context_parse_spirv(ctx, data.bytes, data.length / sizeof(SpvId), &fsIR);
-    if (fsIR == nil) {
-        os_log_error(OE_LOG_DEFAULT, "error parsing fragment spirv '%@'", pass.url.absoluteString);
-        return NO;
-    }
-    
-    spvc_context_create_compiler(ctx, SPVC_BACKEND_MSL, fsIR, SPVC_CAPTURE_MODE_TAKE_OWNERSHIP, fsCompiler);
-    if (*fsCompiler == nil) {
-        os_log_error(OE_LOG_DEFAULT, "error creating fragment compiler '%@'", pass.url.absoluteString);
-        return NO;
-    }
-    
-    // fragment compiler
-    spvc_compiler_options fsOptions;
-    spvc_compiler_create_compiler_options(*fsCompiler, &fsOptions);
-    spvc_compiler_options_set_uint(fsOptions, SPVC_COMPILER_OPTION_MSL_VERSION, (unsigned int)version);
-    spvc_compiler_install_compiler_options(*fsCompiler, fsOptions);
-    
-    return YES;
 }
 
 - (BOOL)buildPass:(NSUInteger)passNumber
