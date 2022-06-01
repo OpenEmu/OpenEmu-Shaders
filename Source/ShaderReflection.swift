@@ -25,6 +25,44 @@
 import Foundation
 import os.log
 
+@objc class ShaderTextureSemanticMeta: NSObject {
+    public var binding: UInt = 0
+    public var uboOffset: UInt = 0
+    public var pushOffset: UInt = 0
+    public var stageUsage: OEStageUsage = []
+    public var textureActive: Bool = false
+    public var uboActive: Bool = false
+    public var pushActive: Bool = false
+}
+
+@objc class ShaderSemanticMeta: NSObject {
+    public var uboOffset: UInt = 0
+    public var pushOffset: UInt = 0
+    public var numberOfComponents: UInt = 0
+    public var uboActive: Bool = false
+    public var pushActive: Bool = false
+}
+
+@objc class ShaderTextureSemanticMap: NSObject {
+    public var semantic: OEShaderTextureSemantic
+    public var index: UInt
+    
+    public init(textureSemantic semantic: OEShaderTextureSemantic, index: UInt) {
+        self.semantic = semantic
+        self.index    = index
+    }
+}
+
+@objc class ShaderSemanticMap: NSObject {
+    public var semantic: OEShaderBufferSemantic
+    public var index: UInt
+    
+    public init(semantic: OEShaderBufferSemantic, index: UInt) {
+        self.semantic = semantic
+        self.index    = index
+    }
+}
+
 @objc class ShaderReflection: NSObject {
     public var passNumber: UInt = 0
     public var uboSize: Int = 0
@@ -245,6 +283,7 @@ import os.log
         return true
     }
     
+    @discardableResult
     public func setBinding(_ binding: UInt, forTextureSemantic semantic: OEShaderTextureSemantic, at index: UInt) -> Bool {
         guard var map = textures[semantic] else { return false }
         if reserve(&map, withCapacity: index, new: ShaderTextureSemanticMeta.init) {

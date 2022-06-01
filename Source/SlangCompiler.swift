@@ -46,8 +46,6 @@ class SlangCompiler {
             return try compileSPIRV(source, stage: .vertex)
         case .fragment:
             return try compileSPIRV(source, stage: .fragment)
-        @unknown default:
-            fatalError("Unexpected type")
         }
     }
     
