@@ -146,8 +146,8 @@ FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticFrameDirect
 FOUNDATION_EXPORT OEShaderBufferSemantic const OEShaderBufferSemanticFloatParameter;
 
 @interface OEShaderConstants : NSObject
-+ (NSArray<OEShaderTextureSemantic> *)textureSemantics;
-+ (NSArray<OEShaderBufferSemantic> *)bufferSemantics;
+@property (class, readonly, nonatomic) NSArray<OEShaderTextureSemantic> *textureSemantics;
+@property (class, readonly, nonatomic) NSArray<OEShaderBufferSemantic>  *bufferSemantics;
 @end
 
 #define kMaxShaderPasses    26
@@ -238,10 +238,4 @@ extern NSErrorDomain const OEFilterChainErrorDomain;
 typedef NS_ERROR_ENUM(OEFilterChainErrorDomain, OEFilterChainErrorCode)
 {
     OEFilterChainErrorCodeImageCaptureFailed,
-};
-
-typedef NS_ENUM(NSUInteger, ShaderType)
-{
-    ShaderTypeVertex,
-    ShaderTypeFragment,
 };

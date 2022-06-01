@@ -112,7 +112,7 @@ import os.log
         UInt32(major * 10000 + minor * 100 + patch)
     }
     
-    public func makeCompilersForPass(
+    func makeCompilersForPass(
         _ pass: ShaderPass,
         context ctx: __SPVContext,
         options: ShaderCompilerOptions,
@@ -185,7 +185,7 @@ import os.log
         fsCompiler.install_compiler_options(options: fsOptions)
     }
     
-    public func irForPass(_ pass: ShaderPass, ofType type: ShaderType, options: ShaderCompilerOptions) throws -> Data {
+    func irForPass(_ pass: ShaderPass, ofType type: ShaderType, options: ShaderCompilerOptions) throws -> Data {
         var filename: URL?
         
         // If caching, set the filename and try loading the IR data
@@ -213,11 +213,11 @@ import os.log
     }
     
     // swiftlint: disable cyclomatic_complexity
-    public func processPass(_ passNumber: UInt,
-                            withVertexCompiler vsCompiler: SPVCompiler,
-                            fragmentCompiler fsCompiler: SPVCompiler,
-                            passSemantics: ShaderPassSemantics,
-                            passBindings: ShaderPassBindings) -> Bool {
+    func processPass(_ passNumber: UInt,
+                     withVertexCompiler vsCompiler: SPVCompiler,
+                     fragmentCompiler fsCompiler: SPVCompiler,
+                     passSemantics: ShaderPassSemantics,
+                     passBindings: ShaderPassBindings) -> Bool {
         let ref = ShaderReflection()
         ref.passNumber = passNumber
         
@@ -345,7 +345,7 @@ import os.log
     }
 
     // swiftlint: disable cyclomatic_complexity
-    public func reflectWith(_ ref: ShaderReflection, withVertexCompiler vsCompiler: SPVCompiler, fragmentCompiler fsCompiler: SPVCompiler) -> Bool {
+    func reflectWith(_ ref: ShaderReflection, withVertexCompiler vsCompiler: SPVCompiler, fragmentCompiler fsCompiler: SPVCompiler) -> Bool {
         var vsResources: SPVResources?
         vsCompiler.create_shader_resources(&vsResources)
         guard let vsResources = vsResources else {
@@ -564,7 +564,7 @@ import os.log
         return true
     }
     
-    @nonobjc func validate(type: __SPVType, forBufferSemantic sem: OEShaderBufferSemantic) -> Bool {
+    func validate(type: __SPVType, forBufferSemantic sem: OEShaderBufferSemantic) -> Bool {
         if type.num_array_dimensions > 0 {
             return false
         }
@@ -596,7 +596,7 @@ import os.log
         }
     }
     
-    @nonobjc func validate(type: __SPVType, forTextureSemantic sem: OEShaderTextureSemantic) -> Bool {
+    func validate(type: __SPVType, forTextureSemantic sem: OEShaderTextureSemantic) -> Bool {
         if type.num_array_dimensions > 0 {
             return false
         }
@@ -604,7 +604,7 @@ import os.log
         return type.basetype == .fp32 && type.vector_size == 4 && type.columns == 1
     }
     
-    @nonobjc func addActiveBufferRanges(_ ref: ShaderReflection, compiler: SPVCompiler, resource res: __spvc_reflected_resource, ubo: Bool) -> Bool {
+    func addActiveBufferRanges(_ ref: ShaderReflection, compiler: SPVCompiler, resource res: __spvc_reflected_resource, ubo: Bool) -> Bool {
         var rangesPtr: UnsafePointer<spvc_buffer_range>?
         var numRanges = 0
         compiler.get_active_buffer_ranges(id: res.id, list: &rangesPtr, size: &numRanges)

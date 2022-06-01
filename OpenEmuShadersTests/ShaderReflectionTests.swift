@@ -1,4 +1,4 @@
-// Copyright (c) 2019, OpenEmu Team
+// Copyright (c) 2022, OpenEmu Team
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -22,39 +22,30 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-@import Foundation;
-#import <OpenEmuShaders/ShaderPassSemantics.h>
+import XCTest
+@testable import OpenEmuShaders
 
-NS_ASSUME_NONNULL_BEGIN
+class ShaderReflectionTests: XCTestCase {
 
-@interface ShaderTextureSemanticMeta : NSObject
-@property (nonatomic) NSUInteger   binding;
-@property (nonatomic) NSUInteger   uboOffset;
-@property (nonatomic) NSUInteger   pushOffset;
-@property (nonatomic) OEStageUsage stageUsage;
-@property (nonatomic) BOOL         textureActive;
-@property (nonatomic) BOOL         uboActive;
-@property (nonatomic) BOOL         pushActive;
-@end
+    override func setUpWithError() throws {
+        // Put setup code here. This method is called before the invocation of each test method in the class.
+    }
 
-@interface ShaderSemanticMeta : NSObject
-@property (nonatomic) NSUInteger uboOffset;
-@property (nonatomic) NSUInteger pushOffset;
-@property (nonatomic) NSUInteger numberOfComponents;
-@property (nonatomic) BOOL       uboActive;
-@property (nonatomic) BOOL       pushActive;
-@end
+    override func tearDownWithError() throws {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    }
 
-@interface ShaderTextureSemanticMap : NSObject
-@property (nonatomic) OEShaderTextureSemantic semantic;
-@property (nonatomic) NSUInteger              index;
-- (instancetype)initWithTextureSemantic:(OEShaderTextureSemantic)semantic index:(NSUInteger)index;
-@end
+    func testExample() throws {
+        let ref = ShaderReflection()
+        let res = ref.textureSemanticForUniformName("OriginalHistorySize2")
+        
+    }
 
-@interface ShaderSemanticMap : NSObject
-@property (nonatomic) OEShaderBufferSemantic semantic;
-@property (nonatomic) NSUInteger             index;
-- (instancetype)initWithSemantic:(OEShaderBufferSemantic)semantic index:(NSUInteger)index;
-@end
+    func testPerformanceExample() throws {
+        // This is an example of a performance test case.
+        self.measure {
+            // Put the code you want to measure the time of here.
+        }
+    }
 
-NS_ASSUME_NONNULL_END
+}

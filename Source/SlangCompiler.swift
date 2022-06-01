@@ -32,6 +32,11 @@ var initialized: Bool = {
     return true
 }()
 
+enum ShaderType {
+    case vertex
+    case fragment
+}
+
 class SlangCompiler {
     func compileSource(_ source: String, ofType type: ShaderType) throws -> Data {
         _ = initialized
