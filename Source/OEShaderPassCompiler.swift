@@ -32,7 +32,7 @@ import os.log
         case processFailed
     }
     
-    @objc public let shader: SlangShader
+    let shader: SlangShader
     @objc public let bindings: [ShaderPassBindings]
     @objc public private(set) var historyCount: UInt = 0
     
@@ -41,7 +41,7 @@ import os.log
         self.bindings   = (0..<shader.passes.count).map { _ in ShaderPassBindings() }
     }
     
-    @nonobjc public func buildPass(_ passNumber: Int, options: ShaderCompilerOptions, passSemantics: ShaderPassSemantics?) throws -> (vert: String, frag: String) {
+    public func buildPass(_ passNumber: Int, options: ShaderCompilerOptions, passSemantics: ShaderPassSemantics?) throws -> (vert: String, frag: String) {
         var ctx: __SPVContext?
         __spvc_context_create(&ctx)
         guard let ctx = ctx else {
@@ -302,9 +302,8 @@ import os.log
             let tex = passSemantics.textures[sem]!
             for (index, meta) in a.enumerated() {
                 if !meta.stageUsage.isEmpty {
-                    let ptr = UnsafeMutableRawPointer(tex.texture).advanced(by: index * tex.textureStride)
-                    let tex1 = AutoreleasingUnsafeMutablePointer<MTLTexture>(ptr.assumingMemoryBound(to: MTLTexture.self))
-                    let bind = passBindings.addTexture(tex1)
+                    let ptr = tex.texture.advanced(by: index * tex.textureStride)
+                    let bind = passBindings.addTexture(ptr)
                     
                     if sem == .user {
                         bind.wrap   = shader.luts[index].wrapMode

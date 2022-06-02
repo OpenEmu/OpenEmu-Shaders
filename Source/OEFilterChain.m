@@ -817,7 +817,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     id<MTLSamplerState>           samplers[kMaxShaderBindings]      = {NULL};
     for (ShaderPassTextureBinding *bind in _pass[i].bindings.textures) {
         NSUInteger binding = bind.binding;
-        textures[binding] = *(bind.texture);
+        textures[binding] = *(id<MTLTexture> __unsafe_unretained *)(bind.texture);
         samplers[binding] = _samplers[bind.filter][bind.wrap];
     }
     
@@ -1045,22 +1045,22 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
             ShaderPass *pass = ss.passes[i];
             
             ShaderPassSemantics *sem = [ShaderPassSemantics new];
-            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_sourceTextures[0].view
+            [sem addTexture:&_sourceTextures[0].view
                        size:&_sourceTextures[0].viewSize
                    semantic:OEShaderTextureSemanticOriginal];
-            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&source->view
+            [sem addTexture:&source->view
                        size:&source->viewSize
                    semantic:OEShaderTextureSemanticSource];
-            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_sourceTextures[0].view stride:sizeof(*_sourceTextures)
+            [sem addTexture:&_sourceTextures[0].view stride:sizeof(*_sourceTextures)
                        size:&_sourceTextures[0].viewSize stride:sizeof(*_sourceTextures)
                    semantic:OEShaderTextureSemanticOriginalHistory];
-            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_pass[0].renderTarget.view stride:sizeof(*_pass)
+            [sem addTexture:&_pass[0].renderTarget.view stride:sizeof(*_pass)
                        size:&_pass[0].renderTarget.viewSize stride:sizeof(*_pass)
                    semantic:OEShaderTextureSemanticPassOutput];
-            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_pass[0].feedbackTarget.view stride:sizeof(*_pass)
+            [sem addTexture:&_pass[0].feedbackTarget.view stride:sizeof(*_pass)
                        size:&_pass[0].feedbackTarget.viewSize stride:sizeof(*_pass)
                    semantic:OEShaderTextureSemanticPassFeedback];
-            [sem addTexture:(id<MTLTexture> __unsafe_unretained *)(void *)&_luts[0].view stride:sizeof(*_luts)
+            [sem addTexture:&_luts[0].view stride:sizeof(*_luts)
                        size:&_luts[0].viewSize stride:sizeof(*_luts)
                    semantic:OEShaderTextureSemanticUser];
             
