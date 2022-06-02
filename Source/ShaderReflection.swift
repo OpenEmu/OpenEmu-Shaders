@@ -25,56 +25,56 @@
 import Foundation
 import os.log
 
-@objc class ShaderTextureSemanticMeta: NSObject {
-    public var binding: UInt = 0
-    public var uboOffset: UInt = 0
-    public var pushOffset: UInt = 0
-    public var stageUsage: OEStageUsage = []
-    public var textureActive: Bool = false
-    public var uboActive: Bool = false
-    public var pushActive: Bool = false
+class ShaderTextureSemanticMeta {
+    var binding: UInt = 0
+    var uboOffset: UInt = 0
+    var pushOffset: UInt = 0
+    var stageUsage: OEStageUsage = []
+    var textureActive: Bool = false
+    var uboActive: Bool = false
+    var pushActive: Bool = false
 }
 
-@objc class ShaderSemanticMeta: NSObject {
-    public var uboOffset: UInt = 0
-    public var pushOffset: UInt = 0
-    public var numberOfComponents: UInt = 0
-    public var uboActive: Bool = false
-    public var pushActive: Bool = false
+class ShaderSemanticMeta {
+    var uboOffset: UInt = 0
+    var pushOffset: UInt = 0
+    var numberOfComponents: UInt = 0
+    var uboActive: Bool = false
+    var pushActive: Bool = false
 }
 
-@objc class ShaderTextureSemanticMap: NSObject {
-    public var semantic: OEShaderTextureSemantic
-    public var index: UInt
+class ShaderTextureSemanticMap {
+    var semantic: OEShaderTextureSemantic
+    var index: UInt
     
-    public init(textureSemantic semantic: OEShaderTextureSemantic, index: UInt) {
+    init(textureSemantic semantic: OEShaderTextureSemantic, index: UInt) {
         self.semantic = semantic
         self.index    = index
     }
 }
 
-@objc class ShaderSemanticMap: NSObject {
-    public var semantic: OEShaderBufferSemantic
-    public var index: UInt
+class ShaderSemanticMap {
+    var semantic: OEShaderBufferSemantic
+    var index: UInt
     
-    public init(semantic: OEShaderBufferSemantic, index: UInt) {
+    init(semantic: OEShaderBufferSemantic, index: UInt) {
         self.semantic = semantic
         self.index    = index
     }
 }
 
-@objc class ShaderReflection: NSObject {
-    public var passNumber: UInt = 0
-    public var uboSize: Int = 0
-    public var pushSize: Int = 0
-    public var uboBindingVert: UInt = 0
-    public var uboBindingFrag: UInt = 0
-    public var pushBindingVert: UInt = 0
-    public var pushBindingFrag: UInt = 0
-    public var uboStageUsage: OEStageUsage = []
-    public var pushStageUsage: OEStageUsage = []
+class ShaderReflection {
+    var passNumber: UInt = 0
+    var uboSize: Int = 0
+    var pushSize: Int = 0
+    var uboBindingVert: UInt = 0
+    var uboBindingFrag: UInt = 0
+    var pushBindingVert: UInt = 0
+    var pushBindingFrag: UInt = 0
+    var uboStageUsage: OEStageUsage = []
+    var pushStageUsage: OEStageUsage = []
     
-    public private(set) var textures: [OEShaderTextureSemantic: [ShaderTextureSemanticMeta]] = [
+    private(set) var textures: [OEShaderTextureSemantic: [ShaderTextureSemanticMeta]] = [
         .original: [],
         .source: [],
         .originalHistory: [],
@@ -83,7 +83,7 @@ import os.log
         .user: [],
     ]
     
-    public private(set) var semantics: [OEShaderBufferSemantic: ShaderSemanticMeta] = [
+    private(set) var semantics: [OEShaderBufferSemantic: ShaderSemanticMeta] = [
         .mvp: .init(),
         .outputSize: .init(),
         .finalViewportSize: .init(),
@@ -91,12 +91,12 @@ import os.log
         .frameDirection: .init(),
     ]
     
-    public private(set) var floatParameters: [ShaderSemanticMeta] = []
-    public private(set) var textureSemanticMap: [String: ShaderTextureSemanticMap] = [:]
-    public private(set) var textureUniformSemanticMap: [String: ShaderTextureSemanticMap] = [:]
-    public private(set) var semanticMap: [String: ShaderSemanticMap] = [:]
+    private(set) var floatParameters: [ShaderSemanticMeta] = []
+    private(set) var textureSemanticMap: [String: ShaderTextureSemanticMap] = [:]
+    private(set) var textureUniformSemanticMap: [String: ShaderTextureSemanticMap] = [:]
+    private(set) var semanticMap: [String: ShaderSemanticMap] = [:]
     
-    public func addTextureSemantic(_ semantic: OEShaderTextureSemantic, pass i: UInt, name: String) -> Bool {
+    func addTextureSemantic(_ semantic: OEShaderTextureSemantic, pass i: UInt, name: String) -> Bool {
         if textureSemanticMap[name] != nil {
             os_log(.error, log: .shaders, "pass %lu: alias %{public}@ already exists for texture semantic %{public}@",
                    i, name, semantic as NSString)
@@ -108,7 +108,7 @@ import os.log
         return true
     }
     
-    public func addTextureBufferSemantic(_ semantic: OEShaderTextureSemantic, pass i: UInt, name: String) -> Bool {
+    func addTextureBufferSemantic(_ semantic: OEShaderTextureSemantic, pass i: UInt, name: String) -> Bool {
         if textureUniformSemanticMap[name] != nil {
             os_log(.error, log: .shaders, "pass %lu: alias %{public}@ already exists for texture buffer semantic %{public}@",
                    i, name, semantic as NSString)
@@ -120,7 +120,7 @@ import os.log
         return true
     }
     
-    public func addBufferSemantic(_ semantic: OEShaderBufferSemantic, pass i: UInt, name: String) -> Bool {
+    func addBufferSemantic(_ semantic: OEShaderBufferSemantic, pass i: UInt, name: String) -> Bool {
         if semanticMap[name] != nil {
             os_log(.error, log: .shaders, "pass %lu: alias %{public}@ already exists for buffer semantic %{public}@",
                    i, name, semantic as NSString)
@@ -132,7 +132,7 @@ import os.log
         return true
     }
     
-    public func name(forBufferSemantic semantic: OEShaderBufferSemantic, index: UInt) -> String? {
+    func name(forBufferSemantic semantic: OEShaderBufferSemantic, index: UInt) -> String? {
         if let name = Self.semanticToUniformName[semantic] {
             return name
         }
@@ -142,7 +142,7 @@ import os.log
         }?.key
     }
     
-    public func name(forTextureSemantic semantic: OEShaderTextureSemantic, index: UInt) -> String? {
+    func name(forTextureSemantic semantic: OEShaderTextureSemantic, index: UInt) -> String? {
         if let name = Self.textureSemanticToName[semantic] {
             return name
         }
@@ -152,7 +152,7 @@ import os.log
         }?.key
     }
     
-    public func sizeName(forTextureSemantic semantic: OEShaderTextureSemantic, index: UInt) -> String? {
+    func sizeName(forTextureSemantic semantic: OEShaderTextureSemantic, index: UInt) -> String? {
         if let name = Self.textureSemanticToUniformName[semantic] {
             return name
         }
@@ -162,19 +162,19 @@ import os.log
         }?.key
     }
     
-    public func bufferSemantic(forUniformName name: String) -> ShaderSemanticMap? {
+    func bufferSemantic(forUniformName name: String) -> ShaderSemanticMap? {
         semanticMap[name] ?? Self.semanticUniformNames[name]
     }
     
-    public func textureSemanticIsArray(_ semantic: OEShaderTextureSemantic) -> Bool {
+    func textureSemanticIsArray(_ semantic: OEShaderTextureSemantic) -> Bool {
         Self.textureSemanticArrays[semantic] ?? false
     }
     
-    public func textureSemantic(forUniformName name: String) -> ShaderTextureSemanticMap? {
+    func textureSemantic(forUniformName name: String) -> ShaderTextureSemanticMap? {
         textureUniformSemanticMap[name] ?? textureSemanticForUniformName(name, names: Self.textureSemanticUniformNames)
     }
     
-    public func textureSemantic(forName name: String) -> ShaderTextureSemanticMap? {
+    func textureSemantic(forName name: String) -> ShaderTextureSemanticMap? {
         textureSemanticMap[name] ?? textureSemanticForUniformName(name, names: Self.textureSemanticNames)
     }
     
@@ -189,7 +189,7 @@ import os.log
         return true
     }
     
-    public func setOffset(_ offset: Int, vecSize: UInt32, forFloatParameterAt index: UInt, ubo: Bool) -> Bool {
+    func setOffset(_ offset: Int, vecSize: UInt32, forFloatParameterAt index: UInt, ubo: Bool) -> Bool {
         reserve(&floatParameters, withCapacity: index, new: ShaderSemanticMeta.init)
         let sem = floatParameters[Int(index)]
         
@@ -222,7 +222,7 @@ import os.log
         return true
     }
     
-    public func setOffset(_ offset: Int, vecSize: UInt32, forSemantic semantic: OEShaderBufferSemantic, ubo: Bool) -> Bool {
+    func setOffset(_ offset: Int, vecSize: UInt32, forSemantic semantic: OEShaderBufferSemantic, ubo: Bool) -> Bool {
         guard let sem = semantics[semantic] else { return false }
         
         if sem.numberOfComponents != vecSize && (sem.uboActive || sem.pushActive) {
@@ -254,7 +254,7 @@ import os.log
         return true
     }
     
-    public func setOffset(_ offset: Int, forTextureSemantic semantic: OEShaderTextureSemantic, at index: UInt, ubo: Bool) -> Bool {
+    func setOffset(_ offset: Int, forTextureSemantic semantic: OEShaderTextureSemantic, at index: UInt, ubo: Bool) -> Bool {
         guard var map = textures[semantic] else { return false }
         if reserve(&map, withCapacity: index, new: ShaderTextureSemanticMeta.init) {
             textures[semantic] = map
@@ -284,7 +284,7 @@ import os.log
     }
     
     @discardableResult
-    public func setBinding(_ binding: UInt, forTextureSemantic semantic: OEShaderTextureSemantic, at index: UInt) -> Bool {
+    func setBinding(_ binding: UInt, forTextureSemantic semantic: OEShaderTextureSemantic, at index: UInt) -> Bool {
         guard var map = textures[semantic] else { return false }
         if reserve(&map, withCapacity: index, new: ShaderTextureSemanticMeta.init) {
             textures[semantic] = map
@@ -377,8 +377,8 @@ import os.log
     ]
 }
 
-extension ShaderReflection {
-    override var debugDescription: String {
+extension ShaderReflection: CustomDebugStringConvertible {
+    var debugDescription: String {
         var desc = ""
         desc.append("\n")
         desc.append("  → textures:\n")
