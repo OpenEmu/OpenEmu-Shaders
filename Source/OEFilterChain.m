@@ -70,11 +70,6 @@ typedef struct texture
     
     id<MTLSamplerState> _samplers[OEShaderPassFilterCount][OEShaderPassWrapCount];
     
-    // #pragma mark screenshots
-    id<MTLCommandQueue> _commandQueue;
-    id<MTLTexture>      _screenshotTexture;
-    CIContext           *_ciContext;
-    
     SlangShader *_shader;
     
     NSUInteger _frameCount;
@@ -118,7 +113,7 @@ typedef struct texture
     CGSize _aspectSize;
     CGSize _drawableSize;
     // aspect-adjusted output bound
-    NSRect _outputBounds;
+    CGRect _outputBounds;
     
     // render target layer state
     id<MTLRenderPipelineState> _pipelineState;
@@ -361,7 +356,7 @@ typedef struct texture
                 for (NSUInteger k   = _historyCount; k > 0; k--) {
                     _sourceTextures[k] = _sourceTextures[k - 1];
                 }
-                _sourceTextures[0]  = tmp;
+                _sourceTextures[0] = tmp;
             }
         }
     }
@@ -490,144 +485,6 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     return _pixelBuffer;
 }
 
-- (id<MTLCommandQueue>)commandQueue
-{
-    if (_commandQueue == nil) {
-        _commandQueue = [_device newCommandQueue];
-    }
-    return _commandQueue;
-}
-
-- (CIContext *)OE_ciContext
-{
-    if (_ciContext == nil) {
-        _ciContext = [CIContext contextWithMTLDevice:_device];
-    }
-    return _ciContext;
-}
-
-- (id<MTLTexture>)screenshotTexture
-{
-    if (_screenshotTexture == nil ||
-            _screenshotTexture.width != _drawableSize.width ||
-            _screenshotTexture.height != _drawableSize.height) {
-        MTLTextureDescriptor *td = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
-                                                                                      width:(NSUInteger)_drawableSize.width
-                                                                                     height:(NSUInteger)_drawableSize.height
-                                                                                  mipmapped:NO];
-        td.storageMode  = MTLStorageModePrivate;
-        td.usage        = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
-        _screenshotTexture = [_device newTextureWithDescriptor:td];
-    }
-    return _screenshotTexture;
-}
-
-- (CGImageRef)blackImage {
-    CGColorSpaceRef cs = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-    CGContextRef ctx = CGBitmapContextCreate(nil, 32, 32, 8, 32 * 4, cs, 0);
-    CFRelease(cs);
-    CGContextSetFillColorWithColor(ctx, CGColorGetConstantColor(kCGColorBlack));
-    CGContextFillRect(ctx, CGRectMake(0, 0, 32, 32));
-    return CGBitmapContextCreateImage(ctx);
-}
-
-
-- (CGImageRef)imageWithCIImage:(CIImage *)img {
-    CGColorSpaceRef cs  = nil;
-    CGImageRef cgImgTmp = nil;
-    CGImageRef cgImg    = nil;
-    @try {
-        // TODO: use same color space as OEGameHelperMetalLayer
-        cs = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-
-        CIContext *ctx = [self OE_ciContext];
-        // Specify the same color space as the original CIImage to preserve the original
-        // pixel values of the MTLTexture
-        cgImgTmp = [ctx createCGImage:img fromRect:img.extent format:kCIFormatBGRA8 colorSpace:img.colorSpace];
-        // Override the original color space and set the correct one
-        cgImg = CGImageCreateCopyWithColorSpace(cgImgTmp, cs);
-        if (cgImg) {
-            return cgImg;
-        }
-        os_log_error(OE_LOG_DEFAULT, "%{public}s: conversion failed, returning black image", __FUNCTION__);
-        return [self blackImage];
-    } @finally {
-        if (cgImgTmp)   CGImageRelease(cgImgTmp);
-        if (cs)         CGColorSpaceRelease(cs);
-    }
-}
-
-- (CGImageRef)createCGImageFromSource
-{
-    NSDictionary<CIImageOption, id> *opts = @{
-                                              kCIImageNearestSampling: @YES,
-                                              };
-    CIImage *img  = [[CIImage alloc] initWithMTLTexture:_texture options:opts];
-    img = [img imageBySettingAlphaOneInExtent:img.extent];
-    if (!_sourceTexture || !_sourceTextureIsFlipped) {
-        img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
-    }
-    
-    return [self imageWithCIImage:img];
-}
-
-- (CIImage *)ciImageFromMTLTexture:(id<MTLTexture>)tex
-{
-    // copy to an NSBitmap
-    NSDictionary<CIImageOption, id> *opts = @{
-                                              kCIImageNearestSampling: @YES,
-                                              };
-    CIImage *img = [[CIImage alloc] initWithMTLTexture:tex options:opts];
-    img = [img imageBySettingAlphaOneInExtent:img.extent];
-    img = [img imageByCroppingToRect:CGRectMake(_outputBounds.origin.x, _outputBounds.origin.y, _outputBounds.size.width, _outputBounds.size.height)];
-    img = [img imageByApplyingTransform:CGAffineTransformTranslate(CGAffineTransformMakeScale(1, -1), 0, img.extent.size.height)];
-
-    return img;
-}
-
-- (CGImageRef)createCGImageFromOutput
-{
-    // render the filtered image
-    id<MTLTexture>          tex  = [self screenshotTexture];
-    MTLRenderPassDescriptor *rpd = [MTLRenderPassDescriptor new];
-    rpd.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 1);
-    rpd.colorAttachments[0].loadAction = MTLLoadActionClear;
-    rpd.colorAttachments[0].texture    = tex;
-    id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
-    [self renderWithCommandBuffer:commandBuffer renderPassDescriptor:rpd];
-    [commandBuffer commit];
-    [commandBuffer waitUntilCompleted];
-    
-    return [self imageWithCIImage:[self ciImageFromMTLTexture:tex]];
-}
-
-- (void)createCGImageFromOutputWithCompletion:(OEImageHandler)handler
-{
-    // render the filtered image
-    id<MTLTexture>          tex  = [self screenshotTexture];
-    MTLRenderPassDescriptor *rpd = [MTLRenderPassDescriptor new];
-    rpd.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 1);
-    rpd.colorAttachments[0].loadAction = MTLLoadActionClear;
-    rpd.colorAttachments[0].texture    = tex;
-    id<MTLCommandBuffer> commandBuffer = [self.commandQueue commandBuffer];
-    [self renderWithCommandBuffer:commandBuffer renderPassDescriptor:rpd];
-    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> _Nonnull cb) {
-        if (cb.status == MTLCommandBufferStatusError) {
-            NSDictionary<NSErrorUserInfoKey, id> *ui = @{};
-            NSError *err = [NSError errorWithDomain:OEFilterChainErrorDomain
-                                               code:OEFilterChainErrorCodeImageCaptureFailed
-                                           userInfo:ui];
-            handler(nil, err);
-            return;
-        }
-        CIImage *img = [self ciImageFromMTLTexture:tex];
-        CGImageRef cgImg = [self imageWithCIImage:img];
-        handler(cgImg, nil);
-        CFRelease(cgImg);
-    }];
-    [commandBuffer commit];
-}
-
 - (void)OE_clearTextures:(NSArray<id<MTLTexture>> *)textures withCommandBuffer:(id<MTLCommandBuffer>)commandBuffer {
     if (@available(macOS 10.15, *)) {
         /**
@@ -725,7 +582,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     td.storageMode  = MTLStorageModePrivate;
     td.usage        = MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
     
-    for (int i = 0; i < _historyCount + 1; i++) {
+    for (int i = 0; i <= _historyCount; i++) {
         [self OE_initTexture:&_sourceTextures[i] withDescriptor:td];
     }
     _historyNeedsInit = NO;
@@ -739,6 +596,12 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
     [rce setViewport:_outputFrame.viewport];
     [rce setFragmentTexture:texture atIndex:TextureIndexColor];
     [rce drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
+}
+
+- (id<MTLTexture>)renderSourceWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
+{
+    [self OE_prepareNextFrameWithCommandBuffer:commandBuffer];
+    return _texture;
 }
 
 - (void)renderWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer

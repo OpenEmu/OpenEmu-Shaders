@@ -38,10 +38,11 @@ typedef void (^OEImageHandler)(CF_RELEASES_ARGUMENT CGImageRef _Nullable, NSErro
 
 @property (nonatomic, readonly) CGRect              sourceRect;
 @property (nonatomic, readonly) CGSize              sourceAspectSize;
-@property (nonatomic)           id<MTLTexture>      sourceTexture;
+@property (nonatomic, nullable) id<MTLTexture>      sourceTexture;
 @property (nonatomic)           BOOL                sourceTextureIsFlipped;
 @property (nonatomic, readonly) SlangShader         *shader;
 @property (nonatomic)           CGSize              drawableSize;
+@property (nonatomic, readonly) CGRect              outputBounds;
 
 /*! Indicates the direction frames are progressing
  *
@@ -63,22 +64,7 @@ typedef void (^OEImageHandler)(CF_RELEASES_ARGUMENT CGImageRef _Nullable, NSErro
 - (void)renderFinalPassWithCommandEncoder:(id<MTLRenderCommandEncoder>)commandEncoder;
 
 - (void)renderWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer renderPassDescriptor:(MTLRenderPassDescriptor *)renderPassDescriptor;
-
-/*! @brief Returns an raw image of the last rendered source pixel buffer.
- *
- * @remarks
- * The image dimensions are equal to the source pixel buffer and therefore not aspect corrected.
- */
-- (CGImageRef)createCGImageFromSource CF_RETURNS_RETAINED;
-
-/*! @brief Returns an image of the last source image after all shaders have been applied */
-- (CGImageRef)createCGImageFromOutput CF_RETURNS_RETAINED;
-
-/*! @brief Captures an image by applying all shader effects.
- @warning Returns an error if the image capture fails.
- @see OEFilterChainErrorCodeImageCaptureFailed
- */
-- (void)createCGImageFromOutputWithCompletion:(OEImageHandler)handler;
+- (id<MTLTexture>)renderSourceWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer;
 
 /*! @brief The default filtering mode when a shader pass leaves the value unspecified
  *

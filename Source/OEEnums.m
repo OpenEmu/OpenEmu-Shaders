@@ -25,7 +25,6 @@ OEShaderBufferSemantic const OEShaderBufferSemanticFrameDirection    = @"FrameDi
 OEShaderBufferSemantic const OEShaderBufferSemanticFloatParameter    = @"FloatParameter";
 
 NSErrorDomain const OEShaderErrorDomain         = @"OEShaderErrorDomain";
-NSErrorDomain const OEFilterChainErrorDomain    = @"OEFilterChainErrorDomain";
 
 @implementation OEShaderConstants
 + (NSArray<OEShaderTextureSemantic> *)textureSemantics

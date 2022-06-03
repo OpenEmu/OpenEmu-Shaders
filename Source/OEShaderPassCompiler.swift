@@ -81,14 +81,15 @@ import os.log
         fsCompiler.compile(&fsCode)
         
         if let passSemantics = passSemantics {
-            guard processPass(UInt(passNumber),
-                              withVertexCompiler: vsCompiler,
-                              fragmentCompiler: fsCompiler,
-                              passSemantics: passSemantics,
-                              passBindings: bind)
+            guard let ref = makeReflection(UInt(passNumber),
+                                           withVertexCompiler: vsCompiler,
+                                           fragmentCompiler: fsCompiler,
+                                           passSemantics: passSemantics,
+                                           passBindings: bind)
             else {
                 throw ShaderError.processFailed
             }
+            updateBindings(passSemantics: passSemantics, passBindings: bind, ref: ref)
         }
         return (String(cString: vsCode!), String(cString: fsCode!))
     }
@@ -212,43 +213,7 @@ import os.log
         return data
     }
     
-    // swiftlint: disable cyclomatic_complexity
-    func processPass(_ passNumber: UInt,
-                     withVertexCompiler vsCompiler: SPVCompiler,
-                     fragmentCompiler fsCompiler: SPVCompiler,
-                     passSemantics: ShaderPassSemantics,
-                     passBindings: ShaderPassBindings) -> Bool {
-        let ref = ShaderReflection()
-        ref.passNumber = passNumber
-        
-        // add aliases
-        for pass in shader.passes.prefix(Int(passNumber + 1)) {
-            guard let name = pass.alias, !name.isEmpty
-            else { continue }
-            
-            let index = UInt(pass.index)
-            
-            guard ref.addTextureSemantic(.passOutput, pass: index, name: name) else { return false }
-            guard ref.addTextureBufferSemantic(.passOutput, pass: index, name: "\(name)Size") else { return false }
-            guard ref.addTextureSemantic(.passFeedback, pass: index, name: "\(name)Feedback") else { return false }
-            guard ref.addTextureBufferSemantic(.passFeedback, pass: index, name: "\(name)FeedbackSize") else { return false }
-        }
-        
-        for (i, lut) in shader.luts.enumerated() {
-            guard ref.addTextureSemantic(.user, pass: UInt(i), name: lut.name) else { return false }
-            guard ref.addTextureBufferSemantic(.user, pass: UInt(i), name: "\(lut.name)Size") else { return false }
-        }
-        
-        for (i, param) in shader.parameters.enumerated() {
-            guard ref.addBufferSemantic(.floatParameter, pass: UInt(i), name: param.name) else { return false }
-        }
-        
-        guard reflectWith(ref, withVertexCompiler: vsCompiler, fragmentCompiler: fsCompiler)
-        else {
-            // os_log_error(OE_LOG_DEFAULT, "reflect failed");
-            return false
-        }
-        
+    func updateBindings(passSemantics: ShaderPassSemantics, passBindings: ShaderPassBindings, ref: ShaderReflection) {
         // UBO
         let uboB = passBindings.buffers[0]
         uboB.stageUsage  = ref.uboStageUsage
@@ -309,8 +274,8 @@ import os.log
                         bind.wrap   = shader.luts[index].wrapMode
                         bind.filter = shader.luts[index].filter
                     } else {
-                        bind.wrap   = shader.passes[Int(passNumber)].wrapMode
-                        bind.filter = shader.passes[Int(passNumber)].filter
+                        bind.wrap   = shader.passes[Int(ref.passNumber)].wrapMode
+                        bind.filter = shader.passes[Int(ref.passNumber)].filter
                     }
                     
                     bind.stageUsage = meta.stageUsage
@@ -324,7 +289,7 @@ import os.log
                     }
                 }
                 
-                let name = ref.sizeName(forTextureSemantic: sem, index: 0)!
+                let name = ref.sizeName(forTextureSemantic: sem, index: UInt(index))!
                 if meta.uboActive {
                     uboB.addUniformData(tex.textureSize.advanced(by: index * tex.sizeStride),
                                         size: 4 * MemoryLayout<Float>.size,
@@ -339,8 +304,74 @@ import os.log
                 }
             }
         }
+    }
+    
+    func makeReflection(_ passNumber: UInt,
+                        withVertexCompiler vsCompiler: SPVCompiler,
+                        fragmentCompiler fsCompiler: SPVCompiler,
+                        passSemantics: ShaderPassSemantics,
+                        passBindings: ShaderPassBindings) -> ShaderReflection? {
+        let ref = ShaderReflection(passNumber: passNumber)
         
-        return true
+        // add aliases
+        for pass in shader.passes.prefix(Int(passNumber + 1)) {
+            guard let name = pass.alias, !name.isEmpty else { continue }
+            
+            let index = UInt(pass.index)
+            
+            guard ref.addTextureSemantic(.passOutput, atIndex: index, name: name) else { return nil }
+            guard ref.addTextureBufferSemantic(.passOutput, atIndex: index, name: "\(name)Size") else { return nil }
+            guard ref.addTextureSemantic(.passFeedback, atIndex: index, name: "\(name)Feedback") else { return nil }
+            guard ref.addTextureBufferSemantic(.passFeedback, atIndex: index, name: "\(name)FeedbackSize") else { return nil }
+        }
+        
+        for (i, lut) in shader.luts.enumerated() {
+            guard ref.addTextureSemantic(.user, atIndex: UInt(i), name: lut.name) else { return nil }
+            guard ref.addTextureBufferSemantic(.user, atIndex: UInt(i), name: "\(lut.name)Size") else { return nil }
+        }
+        
+        for (i, param) in shader.parameters.enumerated() {
+            guard ref.addBufferSemantic(.floatParameter, atIndex: UInt(i), name: param.name) else { return nil }
+        }
+        
+        guard reflectWith(ref, withVertexCompiler: vsCompiler, fragmentCompiler: fsCompiler)
+        else {
+            // os_log_error(OE_LOG_DEFAULT, "reflect failed");
+            return nil
+        }
+        
+        return ref
+    }
+
+    private enum ValidationError: Error {
+        case apiError
+        case unexpectedResource
+    }
+    
+    private func validateResources(vsResources: SPVResources, fsResources: SPVResources) throws {
+        
+        func checkEmpty(_ r: SPVResources, _ t: SPVResourceType) throws {
+            var list: UnsafePointer<__spvc_reflected_resource>?
+            var listSize = 0
+            if r.get_resource_list_for_type(type: t, list: &list, size: &listSize).errorResult != nil {
+                throw ValidationError.apiError
+            }
+            guard listSize == 0
+            else {
+                // os_log_error(OE_LOG_DEFAULT, "unexpected resource type in shader %{public}@", @#TYPE); \
+                throw ValidationError.unexpectedResource
+            }
+        }
+
+        try checkEmpty(vsResources, .sampledImage)
+        try checkEmpty(vsResources, .storageBuffer)
+        try checkEmpty(vsResources, .subpassInput)
+        try checkEmpty(vsResources, .storageImage)
+        try checkEmpty(vsResources, .atomicCounter)
+        try checkEmpty(fsResources, .storageBuffer)
+        try checkEmpty(fsResources, .subpassInput)
+        try checkEmpty(fsResources, .storageImage)
+        try checkEmpty(fsResources, .atomicCounter)
     }
 
     // swiftlint: disable cyclomatic_complexity
@@ -357,38 +388,12 @@ import os.log
             return false
         }
         
-        enum CheckError: Error {
-            case apiError
-            case unexpectedResource
-        }
-
-        func checkEmpty(_ r: SPVResources, _ t: SPVResourceType) throws {
-            var list: UnsafePointer<__spvc_reflected_resource>?
-            var listSize = 0
-            if r.get_resource_list_for_type(type: t, list: &list, size: &listSize).errorResult != nil {
-                throw CheckError.apiError
-            }
-            guard listSize == 0
-            else {
-                // os_log_error(OE_LOG_DEFAULT, "unexpected resource type in shader %{public}@", @#TYPE); \
-                throw CheckError.unexpectedResource
-            }
-        }
-
         do {
-            try checkEmpty(vsResources, .sampledImage)
-            try checkEmpty(vsResources, .storageBuffer)
-            try checkEmpty(vsResources, .subpassInput)
-            try checkEmpty(vsResources, .storageImage)
-            try checkEmpty(vsResources, .atomicCounter)
-            try checkEmpty(fsResources, .storageBuffer)
-            try checkEmpty(fsResources, .subpassInput)
-            try checkEmpty(fsResources, .storageImage)
-            try checkEmpty(fsResources, .atomicCounter)
+            try validateResources(vsResources: vsResources, fsResources: fsResources)
         } catch {
             return false
         }
-        
+
         // validate input to vertex shader
         var list: UnsafePointer<__spvc_reflected_resource>?
         var listSize = 0
@@ -429,12 +434,12 @@ import os.log
             var list: UnsafePointer<__spvc_reflected_resource>?
             var listSize = 0
             if r.get_resource_list_for_type(type: t, list: &list, size: &listSize).errorResult != nil {
-                throw CheckError.apiError
+                throw ValidationError.apiError
             }
             guard listSize < 2
             else {
                 // os_log_error(OE_LOG_DEFAULT, err);
-                throw CheckError.unexpectedResource
+                throw ValidationError.unexpectedResource
             }
             
             return listSize == 1 ? list?.pointee : nil

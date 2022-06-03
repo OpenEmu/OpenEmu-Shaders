@@ -34,6 +34,7 @@
 		05ABBEA52846D318006F1A8C /* ShaderReflectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEA42846D318006F1A8C /* ShaderReflectionTests.swift */; };
 		05ABBEA72847283F006F1A8C /* ShaderPassSemantics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEA62847283F006F1A8C /* ShaderPassSemantics.swift */; };
 		05ABBEA928483072006F1A8C /* ShaderPassBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEA828483072006F1A8C /* ShaderPassBindings.swift */; };
+		05ABBEAD284979BA006F1A8C /* Screenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEAC284979BA006F1A8C /* Screenshot.swift */; };
 		05D043542439043E00B6BDBF /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D043532439043E00B6BDBF /* Version.swift */; };
 		05EEE342227CC35D007D011B /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; };
 		05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE33B227CC35D007D011B /* OpenEmuShaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -146,6 +147,7 @@
 		05ABBEA42846D318006F1A8C /* ShaderReflectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderReflectionTests.swift; sourceTree = "<group>"; };
 		05ABBEA62847283F006F1A8C /* ShaderPassSemantics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderPassSemantics.swift; sourceTree = "<group>"; };
 		05ABBEA828483072006F1A8C /* ShaderPassBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderPassBindings.swift; sourceTree = "<group>"; };
+		05ABBEAC284979BA006F1A8C /* Screenshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screenshot.swift; sourceTree = "<group>"; };
 		05D043532439043E00B6BDBF /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		05EEE338227CC35D007D011B /* OpenEmuShaders.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OpenEmuShaders.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EEE33B227CC35D007D011B /* OpenEmuShaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenEmuShaders.h; sourceTree = "<group>"; };
@@ -343,6 +345,7 @@
 				052A2B8D22A475D300483370 /* OEPixelBuffer.m */,
 				05F54954229BBA8800561C14 /* OEFilterChain.h */,
 				05F54955229BBA8800561C14 /* OEFilterChain.m */,
+				05ABBEAC284979BA006F1A8C /* Screenshot.swift */,
 				05F54953229BBA8800561C14 /* RendererCommon.h */,
 				05F54950229BBA8800561C14 /* RendererCommon.m */,
 				05F5494F229BBA8800561C14 /* Shaders.metal */,
@@ -564,6 +567,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				05F54957229BBA8800561C14 /* Shaders.metal in Sources */,
+				05ABBEAD284979BA006F1A8C /* Screenshot.swift in Sources */,
 				05ABBE922842D0C0006F1A8C /* Logging.swift in Sources */,
 				056AC372228BA144005018DA /* OEEnums.m in Sources */,
 				05F54958229BBA8800561C14 /* RendererCommon.m in Sources */,
