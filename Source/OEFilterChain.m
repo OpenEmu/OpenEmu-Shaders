@@ -773,7 +773,7 @@ static NSRect FitAspectRectIntoRect(CGSize aspectSize, CGSize size)
                     break;
                 
                 case OEShaderPassScaleAbsolute:
-                    height = (NSInteger)pass.size.width;
+                    height = (NSInteger)pass.size.height;
                     break;
                 
                 default:
