@@ -24,8 +24,7 @@
 
 import Foundation
 
-@objc
-public class ShaderConfigSerialization: NSObject {
+public class ShaderConfigSerialization {
     public enum Errors: LocalizedError {
         case invalidPathExtension(String)
         case missingKey(String)
@@ -43,7 +42,6 @@ public class ShaderConfigSerialization: NSObject {
         }
     }
     
-    @objc
     public class func config(fromURL url: URL) throws -> [String: AnyObject] {
         if url.pathExtension == "plist" {
             let data = try Data(contentsOf: url)

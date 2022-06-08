@@ -94,17 +94,6 @@ public class ShaderPassCompiler {
         return (String(cString: vsCode!), String(cString: fsCode!))
     }
     
-    func buildPass(_ passNumber: Int,
-                   options: ShaderCompilerOptions,
-                   passSemantics: ShaderPassSemantics?,
-                   vertex: AutoreleasingUnsafeMutablePointer<NSString?>,
-                   fragment: AutoreleasingUnsafeMutablePointer<NSString?>
-    ) throws {
-        let (vs, fs) = try buildPass(passNumber, options: options, passSemantics: passSemantics)
-        vertex.pointee = vs as NSString
-        fragment.pointee = fs as NSString
-    }
-    
     private func compileError(_ error: String) {
         
     }
