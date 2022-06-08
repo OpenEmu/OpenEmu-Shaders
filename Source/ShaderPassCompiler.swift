@@ -26,17 +26,17 @@ import Foundation
 import CSPIRVCross
 import os.log
 
-@objc public class OEShaderPassCompiler: NSObject {
+public class ShaderPassCompiler {
     public enum ShaderError: Error {
         case buildFailed
         case processFailed
     }
     
     let shader: SlangShader
-    @objc public let bindings: [ShaderPassBindings]
-    @objc public private(set) var historyCount: UInt = 0
+    let bindings: [ShaderPassBindings]
+    private(set) var historyCount: UInt = 0
     
-    @objc public init(shaderModel shader: SlangShader) {
+    public init(shaderModel shader: SlangShader) {
         self.shader     = shader
         self.bindings   = (0..<shader.passes.count).map(ShaderPassBindings.init)
     }
@@ -55,7 +55,7 @@ import os.log
                 let errorMsg = errorMsg
             else { return }
             
-            let compiler = Unmanaged<OEShaderPassCompiler>.fromOpaque(userData).takeUnretainedValue()
+            let compiler = Unmanaged<ShaderPassCompiler>.fromOpaque(userData).takeUnretainedValue()
             compiler.compileError(String(cString: errorMsg))
         }
         
@@ -94,7 +94,7 @@ import os.log
         return (String(cString: vsCode!), String(cString: fsCode!))
     }
     
-    @objc public func buildPass(_ passNumber: UInt,
+    func buildPass(_ passNumber: UInt,
                                 options: ShaderCompilerOptions,
                                 passSemantics: ShaderPassSemantics?,
                                 vertex: AutoreleasingUnsafeMutablePointer<NSString?>,
@@ -542,8 +542,8 @@ import os.log
                 continue
             }
             
-            if binding >= kMaxShaderBindings {
-                // os_log_error(OE_LOG_DEFAULT, "fragment shader texture binding exceeds %d", kMaxShaderBindings);
+            if binding >= Constants.maxShaderBindings {
+                // os_log_error(OE_LOG_DEFAULT, "fragment shader texture binding exceeds %d", Constants.maxShaderBindings);
                 return false
             }
             
@@ -568,7 +568,7 @@ import os.log
         return true
     }
     
-    func validate(type: __SPVType, forBufferSemantic sem: OEShaderBufferSemantic) -> Bool {
+    func validate(type: __SPVType, forBufferSemantic sem: ShaderBufferSemantic) -> Bool {
         if type.num_array_dimensions > 0 {
             return false
         }
@@ -600,7 +600,7 @@ import os.log
         }
     }
     
-    func validate(type: __SPVType, forTextureSemantic sem: OEShaderTextureSemantic) -> Bool {
+    func validate(type: __SPVType, forTextureSemantic sem: ShaderTextureSemantic) -> Bool {
         if type.num_array_dimensions > 0 {
             return false
         }

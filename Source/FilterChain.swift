@@ -54,7 +54,7 @@ import os.log
     private var pixelBuffer: PixelBuffer?
     private var samplers: SamplerFilterArray<MTLSamplerState>
     
-    @objc public var shader: SlangShader?
+    public var shader: SlangShader?
     
     private var frameCount: UInt = 0
     private var passCount: Int = 0
@@ -63,7 +63,7 @@ import os.log
     private var historyCount: Int = 0
     
     private var texture: MTLTexture? // final render texture
-    private var sourceTextures = [Texture](repeating: .init(), count: Int(kMaxFrameHistory) + 1)
+    private var sourceTextures = [Texture](repeating: .init(), count: Constants.maxFrameHistory + 1)
     
     private struct OutputFrame {
         var viewport: MTLViewport
@@ -77,9 +77,9 @@ import os.log
     private var outputFrame: OutputFrame = .init()
     
     fileprivate struct Pass {
-        var buffers = [MTLBuffer?](repeating: nil, count: Int(kMaxConstantBuffers))
-        var vBuffers = [MTLBuffer?](repeating: nil, count: Int(kMaxConstantBuffers)) // array used for vertex binding
-        var fBuffers = [MTLBuffer?](repeating: nil, count: Int(kMaxConstantBuffers)) // array used for fragment binding
+        var buffers = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers)
+        var vBuffers = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for vertex binding
+        var fBuffers = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for fragment binding
         var renderTarget: Texture = .init()
         var feedbackTarget: Texture = .init()
         var frameCount: UInt32 = 0
@@ -91,8 +91,8 @@ import os.log
         var hasFeedback: Bool = false
     }
     
-    private var pass = [Pass](repeating: .init(), count: Int(kMaxShaderPasses))
-    private var luts = [Texture](repeating: .init(), count: Int(kMaxTextures))
+    private var pass = [Pass](repeating: .init(), count: Constants.maxShaderPasses)
+    private var luts = [Texture](repeating: .init(), count: Constants.maxTextures)
     private var lutsFlipped: Bool = false
     
     private var renderTargetsNeedResize = true
@@ -144,7 +144,7 @@ import os.log
     private let deviceHasUnifiedMemory: Bool
     
     // parameters state
-    private var parameters = [Float](repeating: 0, count: Int(kMaxParameters))
+    private var parameters = [Float](repeating: 0, count: Constants.maxParameters)
     private var parametersCount: Int = 0
     private var parametersMap: [String: Int] = [:]
     
@@ -209,10 +209,10 @@ import os.log
     
     private static func makeSamplers(_ device: MTLDevice) throws -> SamplerFilterArray<MTLSamplerState> {
         var samplers = [[MTLSamplerState?]](repeating: [MTLSamplerState?](repeating: nil,
-                                                                          count: OEShaderPassWrap.allCases.count),
-                                            count: OEShaderPassFilter.allCases.count)
+                                                                          count: ShaderPassWrap.allCases.count),
+                                            count: ShaderPassFilter.allCases.count)
         let sd = MTLSamplerDescriptor()
-        for i in OEShaderPassWrap.allCases {
+        for i in ShaderPassWrap.allCases {
             var label = ""
             switch i {
             case .border:
@@ -400,7 +400,7 @@ import os.log
              */
             var sizeMax = 0
             for t in textures {
-                let bytesPerPixel = Int(MTLPixelFormatBytesPerPixel(t.pixelFormat))
+                let bytesPerPixel = t.pixelFormat.bytesPerPixel
                 precondition(bytesPerPixel > 0, "Unable to determine bytes per pixel for pixel format \(t.pixelFormat)")
                 
                 let bytesPerRow   = t.width  * bytesPerPixel
@@ -421,7 +421,7 @@ import os.log
                  Use the cleared buffer to clear the destination texture.
                  */
                 for t in textures {
-                    let bytesPerPixel = Int(MTLPixelFormatBytesPerPixel(t.pixelFormat))
+                    let bytesPerPixel = t.pixelFormat.bytesPerPixel
                     let bytesPerRow   = t.width  * bytesPerPixel
                     let bytesPerImage = t.height * bytesPerRow
                     let sourceSize    = MTLSize(width: t.width, height: t.height, depth: 1)
@@ -561,7 +561,7 @@ import os.log
                 pass[i].frameCount %= pass[i].frameCountMod
             }
             
-            for j in 0..<Int(kMaxConstantBuffers) {
+            for j in 0..<Constants.maxConstantBuffers {
                 let sem = pass[i].bindings!.buffers[j]
                 
                 guard !sem.stageUsage.isEmpty && !sem.uniforms.isEmpty else { continue }
@@ -581,14 +581,14 @@ import os.log
     }
     
     // these fields are used for per-pass state
-    private var _renderTextures: [MTLTexture?] = .init(repeating: nil, count: Int(kMaxShaderBindings))
-    private var _renderSamplers: [MTLSamplerState?] = .init(repeating: nil, count: Int(kMaxShaderBindings))
-    private var _renderbOffsets: [Int] = .init(repeating: 0, count: Int(kMaxConstantBuffers))
+    private var _renderTextures: [MTLTexture?] = .init(repeating: nil, count: Constants.maxShaderBindings)
+    private var _renderSamplers: [MTLSamplerState?] = .init(repeating: nil, count: Constants.maxShaderBindings)
+    private var _renderbOffsets: [Int] = .init(repeating: 0, count: Constants.maxConstantBuffers)
     
     private func renderPassIndex(_ i: Int, renderCommandEncoder rce: MTLRenderCommandEncoder) {
         defer {
             // clear references from temporary buffers
-            for i in 0..<Int(kMaxShaderBindings) {
+            for i in 0..<Constants.maxShaderBindings {
                 _renderTextures[i] = nil
                 _renderSamplers[i] = nil
             }
@@ -604,10 +604,10 @@ import os.log
         rce.setRenderPipelineState(pass[i].state!)
         rce.label = pass[i].state!.label
         
-        rce.setVertexBuffers(pass[i].vBuffers, offsets: _renderbOffsets, range: 0..<Int(kMaxConstantBuffers))
-        rce.setFragmentBuffers(pass[i].fBuffers, offsets: _renderbOffsets, range: 0..<Int(kMaxConstantBuffers))
-        rce.setFragmentTextures(_renderTextures, range: 0..<Int(kMaxShaderBindings))
-        rce.setFragmentSamplerStates(_renderSamplers, range: 0..<Int(kMaxShaderBindings))
+        rce.setVertexBuffers(pass[i].vBuffers, offsets: _renderbOffsets, range: 0..<Constants.maxConstantBuffers)
+        rce.setFragmentBuffers(pass[i].fBuffers, offsets: _renderbOffsets, range: 0..<Constants.maxConstantBuffers)
+        rce.setFragmentTextures(_renderTextures, range: 0..<Constants.maxShaderBindings)
+        rce.setFragmentSamplerStates(_renderSamplers, range: 0..<Constants.maxShaderBindings)
         rce.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
     }
     
@@ -729,11 +729,11 @@ import os.log
     }
     
     private func freeShaderResources() {
-        pass = .init(repeating: .init(), count: Int(kMaxShaderPasses))
-        luts = .init(repeating: .init(), count: Int(kMaxTextures))
-        sourceTextures = .init(repeating: .init(), count: Int(kMaxFrameHistory) + 1)
+        pass = .init(repeating: .init(), count: Constants.maxShaderPasses)
+        luts = .init(repeating: .init(), count: Constants.maxTextures)
+        sourceTextures = .init(repeating: .init(), count: Constants.maxFrameHistory + 1)
         
-        parameters = .init(repeating: 0, count: Int(kMaxParameters))
+        parameters = .init(repeating: 0, count: Constants.maxParameters)
         parametersMap = [:]
         parametersCount = 0
         
@@ -760,7 +760,7 @@ import os.log
         parametersMap   = .init(uniqueKeysWithValues: ss.parameters.enumerated().map({ index, param in (param.name, index) }))
         parameters      = .init(ss.parameters.map(\.initial))
         
-        let compiler = OEShaderPassCompiler(shaderModel: ss)
+        let compiler = ShaderPassCompiler(shaderModel: ss)
         
         let options = MTLCompileOptions()
         options.fastMathEnabled = true
@@ -897,9 +897,9 @@ import os.log
             
             self.pass[passNumber].state = try device.makeRenderPipelineState(descriptor: psd)
             
-            for j in 0..<Int(kMaxConstantBuffers) {
+            for j in 0..<Constants.maxConstantBuffers {
                 let sem = self.pass[passNumber].bindings!.buffers[j]
-                precondition(sem.bindingVert < kMaxConstantBuffers, "Unexpected constant binding")
+                precondition(sem.bindingVert < Constants.maxConstantBuffers, "Unexpected constant binding")
                 
                 let size = sem.size
                 guard size > 0 else { continue }
@@ -1006,25 +1006,17 @@ func fitAspectRectIntoRect(aspectSize: CGSize, size: CGSize) -> CGRect {
 }
 
 extension FilterChain.SamplerWrapArray {
-    subscript(x: OEShaderPassWrap) -> Element {
+    subscript(x: ShaderPassWrap) -> Element {
         get { self[x.rawValue] }
         set { self[x.rawValue] = newValue }
     }
 }
 
 extension FilterChain.SamplerFilterArray {
-    subscript(x: OEShaderPassFilter) -> Element {
+    subscript(x: ShaderPassFilter) -> Element {
         get { self[x.rawValue] }
         set { self[x.rawValue] = newValue }
     }
-}
-
-extension OEShaderPassWrap: CaseIterable {
-    public static var allCases: [OEShaderPassWrap] = [.border, .edge, .repeat, .mirroredRepeat]
-}
-
-extension OEShaderPassFilter: CaseIterable {
-    public static var allCases: [OEShaderPassFilter] = [.unspecified, .linear, .nearest]
 }
 
 extension FilterChain {

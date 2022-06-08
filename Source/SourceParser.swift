@@ -91,22 +91,21 @@ extension Sequence where Self.Element == UInt8 {
  *
  * Valid `#pragma` directives include `name`, `format` and `parameter`.
  */
-@objc(OESourceParser)
-class SourceParser: NSObject {
+class SourceParser {
     
     private var buffer: [String]
     var parametersMap: [String: ShaderParameter]
     var included: Set<String> = Set()
     
-    @objc private(set) var name: String?
+    private(set) var name: String?
     
-    @objc let basename: String
+    let basename: String
     
-    @objc var parameters: [ShaderParameter]
+    var parameters: [ShaderParameter]
     
-    @objc var format: MTLPixelFormat
+    var format: MTLPixelFormat
     
-    @objc lazy var sha256: String = {
+    lazy var sha256: String = {
         let data = Array(buffer.joined().utf8)
         var digest = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
         data.withUnsafeBytes {
@@ -118,25 +117,23 @@ class SourceParser: NSObject {
     /**
      Returns the vertex shader portion of the slang file
      */
-    @objc lazy var vertexSource: String = {
+    lazy var vertexSource: String = {
         return self.findSource(forStage: "vertex")
     }()
     
     /**
      Returns the fragment shader portion of the slang file
      */
-    @objc lazy var fragmentSource: String = {
+    lazy var fragmentSource: String = {
         return self.findSource(forStage: "fragment")
     }()
     
-    @objc
     init(fromURL url: URL) throws {
         buffer = []
         parametersMap = [:]
         parameters = []
         format = .invalid
         basename = (url.lastPathComponent as NSString).deletingPathExtension
-        super.init()
         
         try autoreleasepool {
             try self.load(url, isRoot: true)
@@ -301,7 +298,7 @@ class SourceParser: NSObject {
             var tmp: NSString?
             s.scanCharacters(from: .identifierCharacters, into: &tmp)
             if let fmt = tmp as String? {
-                format = MTLPixelFormatFromGLSlangNSString(fmt)
+                format = .init(glslangFormat: fmt)
             }
             if format == .invalid {
                 throw SourceParserError.invalidFormatPragma

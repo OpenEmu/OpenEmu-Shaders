@@ -50,32 +50,28 @@ class ShaderPassTextureSemantics {
     }
 }
 
-@objc public class ShaderPassSemantics: NSObject {
-    private(set) var textures: [OEShaderTextureSemantic: ShaderPassTextureSemantics] = [:]
-    private(set) var uniforms: [OEShaderBufferSemantic: ShaderPassBufferSemantics] = [:]
+public class ShaderPassSemantics {
+    private(set) var textures: [ShaderTextureSemantic: ShaderPassTextureSemantics] = [:]
+    private(set) var uniforms: [ShaderBufferSemantic: ShaderPassBufferSemantics] = [:]
     private(set) var parameters: [Int: ShaderPassBufferSemantics] = [:]
     
-    @objc
-    public func addTexture(_ texture: UnsafeRawPointer, size: UnsafeRawPointer, semantic: OEShaderTextureSemantic) {
+    func addTexture(_ texture: UnsafeRawPointer, size: UnsafeRawPointer, semantic: ShaderTextureSemantic) {
         textures[semantic] = ShaderPassTextureSemantics(texture: texture, size: size)
     }
     
-    @objc
-    public func addTexture(_ texture: UnsafeRawPointer,
-                           stride ts: Int,
-                           size: UnsafeRawPointer,
-                           stride ss: Int,
-                           semantic: OEShaderTextureSemantic) {
+    func addTexture(_ texture: UnsafeRawPointer,
+                    stride ts: Int,
+                    size: UnsafeRawPointer,
+                    stride ss: Int,
+                    semantic: ShaderTextureSemantic) {
         textures[semantic] = ShaderPassTextureSemantics(texture: texture, stride: ts, size: size, stride: ss)
     }
     
-    @objc
-    public func addUniformData(_ data: UnsafeRawPointer, semantic: OEShaderBufferSemantic) {
+    func addUniformData(_ data: UnsafeRawPointer, semantic: ShaderBufferSemantic) {
         uniforms[semantic] = ShaderPassBufferSemantics(data: data)
     }
     
-    @objc(addUniformData:forParameterAtIndex:)
-    public func addUniformData(_ data: UnsafeRawPointer, forParameterAt index: Int) {
+    func addUniformData(_ data: UnsafeRawPointer, forParameterAt index: Int) {
         parameters[index] = ShaderPassBufferSemantics(data: data)
     }
     

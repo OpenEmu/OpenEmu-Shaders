@@ -51,7 +51,7 @@ import Foundation
         
         self.device             = device
         self.format             = format
-        self.bpp                = Int(OEMTLPixelFormatToBPP(format))
+        self.bpp                = format.bytesPerPixel
         self.sourceBytesPerRow  = bytesPerRow
         self.sourceSize         = .init(width: bytesPerRow / bpp, height: height)
         self.bufferLenBytes     = length
@@ -111,7 +111,7 @@ import Foundation
     }
 
     static func makeBuffer(withDevice device: MTLDevice, converter: MTLPixelConverter, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int, bytes: UnsafeMutableRawPointer?) -> PixelBuffer {
-        if OEMTLPixelFormatIsNative(format) {
+        if format.isNative {
             return NativePixelBuffer(withDevice: device, format: format,
                                      height: height, bytesPerRow: bytesPerRow,
                                      pointer: bytes)
@@ -165,7 +165,7 @@ import Foundation
             copyBuffer()
             
             let orig = MTLOrigin(x: Int(outputRect.origin.x), y: Int(outputRect.origin.y), z: 0)
-            converter.convert(fromBuffer: sourceBuffer, sourceOrigin: orig, sourceBytesPerRow: UInt(sourceBytesPerRow),
+            converter.convert(fromBuffer: sourceBuffer, sourceOrigin: orig, sourceBytesPerRow: sourceBytesPerRow,
                               toTexture: texture, commandBuffer: commandBuffer)
         }
     }

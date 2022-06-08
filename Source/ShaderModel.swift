@@ -61,7 +61,7 @@ extension ShaderConfigSerialization {
         
         let pass = ShaderPassModel(pass: i, shader: shader)
         
-        pass.wrapMode = OEShaderPassWrap(string: d["wrap_mode\(i)"])
+        pass.wrapMode = ShaderPassWrap(string: d["wrap_mode\(i)"])
         
         for (from, to) in strings {
             if let v = d["\(from)\(i)"] {
@@ -97,7 +97,7 @@ extension ShaderConfigSerialization {
             let name = String(t)
             guard let path = d[name] else { continue }
             
-            let wrapMode = OEShaderPassWrap(string: d["\(name)_wrap_mode"])
+            let wrapMode = ShaderPassWrap(string: d["\(name)_wrap_mode"])
             let linear: Bool?
             if let v = d["\(name)_linear"], let bv = Bool(v) {
                 linear = bv
@@ -183,7 +183,7 @@ public class ShaderModel {
 public class ShaderPassModel {
     public var pass: Int
     public var shader: String
-    public var wrapMode: OEShaderPassWrap?
+    public var wrapMode: ShaderPassWrap?
     public var alias: String?
     public var scaleType: String?
     public var scaleTypeX: String?
@@ -209,11 +209,11 @@ public class ShaderPassModel {
 public class ShaderTextureModel {
     var name: String
     var path: String
-    var wrapMode: OEShaderPassWrap?
+    var wrapMode: ShaderPassWrap?
     var linear: Bool?
     var mipmapInput: Bool?
     
-    init(name: String, path: String, wrapMode: OEShaderPassWrap?, linear: Bool?, mipmapInput: Bool?) {
+    init(name: String, path: String, wrapMode: ShaderPassWrap?, linear: Bool?, mipmapInput: Bool?) {
         self.name = name
         self.path = path
         self.wrapMode = wrapMode

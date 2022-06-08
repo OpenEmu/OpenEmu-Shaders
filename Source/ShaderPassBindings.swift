@@ -24,11 +24,11 @@
 
 import Foundation
 
-@objc public class ShaderPassUniformBinding: NSObject {
-    @objc public var data: UnsafeRawPointer
-    @objc public var size: Int
-    @objc public var offset: Int
-    @objc public var name: String
+public class ShaderPassUniformBinding {
+    var data: UnsafeRawPointer
+    var size: Int
+    var offset: Int
+    var name: String
     
     init(data: UnsafeRawPointer, size: Int, offset: Int, name: String) {
         self.data = data
@@ -38,12 +38,12 @@ import Foundation
     }
 }
 
-@objc public class ShaderPassBufferBinding: NSObject {
-    @objc public var stageUsage: OEStageUsage = []
-    @objc public var bindingVert: UInt = 0
-    @objc public var bindingFrag: UInt = 0
-    @objc public var size: Int = 0
-    @objc public var uniforms: [ShaderPassUniformBinding] = []
+class ShaderPassBufferBinding {
+    var stageUsage: StageUsage = []
+    var bindingVert: UInt = 0
+    var bindingFrag: UInt = 0
+    var size: Int = 0
+    var uniforms: [ShaderPassUniformBinding] = []
     
     @discardableResult
     func addUniformData(_ data: UnsafeRawPointer, size: Int, offset: Int, name: String) -> ShaderPassUniformBinding {
@@ -53,25 +53,25 @@ import Foundation
     }
 }
 
-@objc public class ShaderPassTextureBinding: NSObject {
-    @objc public var texture: UnsafeRawPointer
-    @objc public var wrap: OEShaderPassWrap = .default
-    @objc public var filter: OEShaderPassFilter = .nearest
-    @objc public var stageUsage: OEStageUsage = []
-    @objc public var binding: UInt = 0
-    @objc public var name: String = ""
+class ShaderPassTextureBinding {
+    var texture: UnsafeRawPointer
+    var wrap: ShaderPassWrap = .default
+    var filter: ShaderPassFilter = .nearest
+    var stageUsage: StageUsage = []
+    var binding: UInt = 0
+    var name: String = ""
     
     init(texture: UnsafeRawPointer) {
         self.texture = texture
     }
 }
 
-@objc public class ShaderPassBindings: NSObject {
-    @objc public let index: Int
-    @objc public var format: MTLPixelFormat = .bgra8Unorm
-    @objc public var isFeedback: Bool = false
-    @objc public private(set) var buffers = [ShaderPassBufferBinding(), ShaderPassBufferBinding()] // equivalent to kMaxConstantBuffers
-    @objc public private(set) var textures: [ShaderPassTextureBinding] = []
+class ShaderPassBindings {
+    public let index: Int
+    public var format: MTLPixelFormat = .bgra8Unorm
+    public var isFeedback: Bool = false
+    public private(set) var buffers = [ShaderPassBufferBinding(), ShaderPassBufferBinding()] // equivalent to Constants.maxConstantBuffers
+    public private(set) var textures: [ShaderPassTextureBinding] = []
     
     init(index: Int) {
         self.index = index

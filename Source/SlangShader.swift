@@ -24,9 +24,7 @@
 
 import Foundation
 
-@objc
-@objcMembers
-public final class SlangShader: NSObject {
+public final class SlangShader {
     public enum Errors: LocalizedError {
         case missingKey(String)
         case parameterConflict(String)
@@ -103,16 +101,14 @@ public final class SlangShader: NSObject {
     }
 }
 
-@objc
-@objcMembers
-public final class ShaderPass: NSObject {
+public final class ShaderPass {
     public var url: URL
     public var index: Int
     public var frameCountMod: UInt
-    public var scaleX: OEShaderPassScale = .invalid
-    public var scaleY: OEShaderPassScale = .invalid
-    public var filter: OEShaderPassFilter
-    public var wrapMode: OEShaderPassWrap
+    public var scaleX: ShaderPassScale = .invalid
+    public var scaleY: ShaderPassScale = .invalid
+    public var filter: ShaderPassFilter
+    public var wrapMode: ShaderPassWrap
     public var scale: CGSize = CGSize(width: 1, height: 1)
     public var size: CGSize = CGSize(width: 0, height: 0)
     public var isScaled: Bool = false
@@ -142,8 +138,8 @@ public final class ShaderPass: NSObject {
     init(from url: URL, index: Int, dictionary d: [String: AnyObject]) throws {
         self.url        = url
         self.index      = index
-        filter          = OEShaderPassFilter(bool: d["filterLinear"] as? Bool)
-        wrapMode        = OEShaderPassWrap(string: d["wrapMode"] as? String)
+        filter          = ShaderPassFilter(bool: d["filterLinear"] as? Bool)
+        wrapMode        = ShaderPassWrap(string: d["wrapMode"] as? String)
         frameCountMod   = d["frameCountMod"] as? UInt ?? 0
         issRGB          = d["srgbFramebuffer"] as? Bool ?? false
         isFloat         = d["floatFramebuffer"] as? Bool ?? false
@@ -154,15 +150,15 @@ public final class ShaderPass: NSObject {
             scaleX    = .source
             scaleY    = .source
             
-            if let scaleType = OEShaderPassScale(string: d["scaleType"] as? String) {
+            if let scaleType = ShaderPassScale(string: d["scaleType"] as? String) {
                 scaleX = scaleType
                 scaleY = scaleType
             } else {
-                if let scaleType = OEShaderPassScale(string: d["scaleTypeX"] as? String) {
+                if let scaleType = ShaderPassScale(string: d["scaleTypeX"] as? String) {
                     scaleX = scaleType
                 }
                 
-                if let scaleType = OEShaderPassScale(string: d["scaleTypeY"] as? String) {
+                if let scaleType = ShaderPassScale(string: d["scaleTypeY"] as? String) {
                     scaleY = scaleType
                 }
             }
@@ -190,25 +186,23 @@ public final class ShaderPass: NSObject {
     }
 }
 
-@objc
-@objcMembers
-public final class ShaderLUT: NSObject {
+public final class ShaderLUT {
     public var url: URL
     public var name: String
-    public var filter: OEShaderPassFilter
-    public var wrapMode: OEShaderPassWrap
+    public var filter: ShaderPassFilter
+    public var wrapMode: ShaderPassWrap
     public var isMipmap: Bool
     
     init(url: URL, name: String, dictionary d: [String: AnyObject]) {
         self.url      = url
         self.name     = name
-        self.filter   = OEShaderPassFilter(bool: d["linear"] as? Bool)
-        self.wrapMode = OEShaderPassWrap(string: d["wrapMode"] as? String)
+        self.filter   = ShaderPassFilter(bool: d["linear"] as? Bool)
+        self.wrapMode = ShaderPassWrap(string: d["wrapMode"] as? String)
         self.isMipmap = d["mipmapInput"] as? Bool ?? false
     }
 }
 
-extension OEShaderPassFilter {
+extension ShaderPassFilter {
     init(bool: Bool?) {
         switch bool {
         case true:
@@ -221,7 +215,7 @@ extension OEShaderPassFilter {
     }
 }
 
-extension OEShaderPassWrap {
+extension ShaderPassWrap {
     init(string: String?) {
         guard let v = string else {
             self = .default
@@ -244,7 +238,7 @@ extension OEShaderPassWrap {
     }
 }
 
-extension OEShaderPassScale {
+extension ShaderPassScale {
     init?(string: String?) {
         switch string {
         case "source":

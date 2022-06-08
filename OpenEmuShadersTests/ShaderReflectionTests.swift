@@ -36,8 +36,8 @@ class ShaderReflectionTests: XCTestCase {
     }
 
     func testExample() throws {
-        let ref = ShaderReflection()
-        let res = ref.textureSemanticForUniformName("OriginalHistorySize2")
+        let ref = ShaderReflection(passNumber: 0)
+        let res = ref.textureSemantic(forUniformName: "OriginalHistorySize2")
         
     }
 

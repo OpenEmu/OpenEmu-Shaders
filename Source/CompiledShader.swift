@@ -8,8 +8,18 @@
 
 import Foundation
 
-class CompiledShader: NSObject {
+enum Compiled {
+    class Shader: NSObject {
+        
+    }
+    
+    class ShaderPass: NSObject {
+        
+    }
+}
 
+class CompiledShader: NSObject {
+    
 }
 
 class CompiledShaderPass: NSObject {

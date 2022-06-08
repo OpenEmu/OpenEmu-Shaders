@@ -24,9 +24,7 @@
 
 import Foundation
 
-@objc(OEShaderParameter)
-@objcMembers
-public class ShaderParameter: NSObject {
+public class ShaderParameter: CustomStringConvertible {
     public var name: String
     public var desc: String
     public var initial: Float = 0.0
@@ -39,20 +37,13 @@ public class ShaderParameter: NSObject {
         self.desc = desc
     }
     
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? ShaderParameter else {
-            return false
-        }
-        return self == other
-    }
-    
-    public override var description: String {
+    public var description: String {
         return "\(desc) (\(initial))"
     }
 }
 
-extension ShaderParameter {
-    static func == (lhs: ShaderParameter, rhs: ShaderParameter) -> Bool {
+extension ShaderParameter: Equatable {
+    public static func == (lhs: ShaderParameter, rhs: ShaderParameter) -> Bool {
         return lhs.name == rhs.name &&
                 lhs.desc == rhs.desc &&
                 lhs.initial == rhs.initial &&
