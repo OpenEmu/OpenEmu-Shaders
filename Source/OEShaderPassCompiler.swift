@@ -38,7 +38,7 @@ import os.log
     
     @objc public init(shaderModel shader: SlangShader) {
         self.shader     = shader
-        self.bindings   = (0..<shader.passes.count).map { _ in ShaderPassBindings() }
+        self.bindings   = (0..<shader.passes.count).map(ShaderPassBindings.init)
     }
     
     public func buildPass(_ passNumber: Int, options: ShaderCompilerOptions, passSemantics: ShaderPassSemantics?) throws -> (vert: String, frag: String) {
@@ -563,7 +563,7 @@ import os.log
             ref.setBinding(UInt(binding), forTextureSemantic: sem.semantic, at: sem.index)
         }
         
-        os_log(.debug, log: .shaders, "%{public}@", ref.debugDescription)
+        os_log(.debug, log: .default, "%{public}@", ref.debugDescription)
         
         return true
     }

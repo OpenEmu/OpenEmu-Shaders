@@ -67,10 +67,15 @@ import Foundation
 }
 
 @objc public class ShaderPassBindings: NSObject {
+    @objc public let index: Int
     @objc public var format: MTLPixelFormat = .bgra8Unorm
     @objc public var isFeedback: Bool = false
     @objc public private(set) var buffers = [ShaderPassBufferBinding(), ShaderPassBufferBinding()] // equivalent to kMaxConstantBuffers
     @objc public private(set) var textures: [ShaderPassTextureBinding] = []
+    
+    init(index: Int) {
+        self.index = index
+    }
     
     func addTexture(_ texture: UnsafeRawPointer) -> ShaderPassTextureBinding {
         let t = ShaderPassTextureBinding(texture: texture)

@@ -22,7 +22,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#import "OEPixelBuffer+Internal.h"
 #import <OpenEmuShaders/OpenEmuShaders-Swift.h>
 
 @interface OENativePixelBuffer: OEPixelBuffer

@@ -25,5 +25,5 @@
 import os.log
 
 extension OSLog {
-    static let shaders = OSLog(subsystem: "org.openemu.OpenEmuShaders", category: "default")
+    static let `default` = OSLog(subsystem: "org.openemu.OpenEmuShaders", category: "default")
 }

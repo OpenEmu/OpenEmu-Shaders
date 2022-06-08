@@ -165,7 +165,7 @@ extern NSUInteger MTLPixelFormatBytesPerPixel(MTLPixelFormat format);
 
 #pragma mark -
 
-typedef NS_ENUM(NSUInteger, OEMTLPixelFormat)
+typedef NS_ENUM(NSInteger, OEMTLPixelFormat)
 {
     OEMTLPixelFormatInvalid,
     
@@ -190,14 +190,14 @@ extern NSString     *NSStringFromOEMTLPixelFormat(OEMTLPixelFormat format);
 extern BOOL         OEMTLPixelFormatIsNative(OEMTLPixelFormat format);
 
 
-typedef NS_OPTIONS(NSUInteger, OEStageUsage)
+typedef NS_OPTIONS(NSInteger, OEStageUsage)
 {
     OEStageUsageNone     = 0,
     OEStageUsageVertex   = (1 << 0), // semantic is used by the vertex shader
     OEStageUsageFragment = (1 << 1), // semantic is used by the fragment shader
 };
 
-typedef NS_ENUM(NSUInteger, OEShaderPassScale)
+typedef NS_ENUM(NSInteger, OEShaderPassScale)
 {
     OEShaderPassScaleInvalid = 0,
     OEShaderPassScaleSource,
@@ -205,7 +205,7 @@ typedef NS_ENUM(NSUInteger, OEShaderPassScale)
     OEShaderPassScaleViewport,
 };
 
-typedef NS_ENUM(NSUInteger, OEShaderPassFilter)
+typedef NS_ENUM(NSInteger, OEShaderPassFilter)
 {
     OEShaderPassFilterUnspecified = 0,
     OEShaderPassFilterLinear,
@@ -213,7 +213,7 @@ typedef NS_ENUM(NSUInteger, OEShaderPassFilter)
     OEShaderPassFilterCount,
 };
 
-typedef NS_ENUM(NSUInteger, OEShaderPassWrap)
+typedef NS_ENUM(NSInteger, OEShaderPassWrap)
 {
     OEShaderPassWrapBorder  = 0,
     OEShaderPassWrapDefault = OEShaderPassWrapBorder,

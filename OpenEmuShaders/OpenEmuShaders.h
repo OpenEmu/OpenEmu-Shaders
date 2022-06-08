@@ -32,5 +32,4 @@ FOUNDATION_EXPORT const unsigned char OpenEmuShadersVersionString[];
 
 #import <OpenEmuShaders/OEEnums.h>
 #import <OpenEmuShaders/OEPixelBuffer.h>
-#import <OpenEmuShaders/OEFilterChain.h>
 #import <OpenEmuShaders/ShaderTypes.h>

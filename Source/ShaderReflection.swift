@@ -107,7 +107,7 @@ class ShaderReflection {
     
     func addTextureSemantic(_ semantic: OEShaderTextureSemantic, atIndex i: UInt, name: String) -> Bool {
         if textureSemanticMap[name] != nil {
-            os_log(.error, log: .shaders, "pass %lu: alias %{public}@ already exists for texture semantic %{public}@",
+            os_log(.error, log: .default, "pass %lu: alias %{public}@ already exists for texture semantic %{public}@",
                    i, name, semantic as NSString)
             return false
         }
@@ -119,7 +119,7 @@ class ShaderReflection {
     
     func addTextureBufferSemantic(_ semantic: OEShaderTextureSemantic, atIndex i: UInt, name: String) -> Bool {
         if textureUniformSemanticMap[name] != nil {
-            os_log(.error, log: .shaders, "pass %lu: alias %{public}@ already exists for texture buffer semantic %{public}@",
+            os_log(.error, log: .default, "pass %lu: alias %{public}@ already exists for texture buffer semantic %{public}@",
                    i, name, semantic as NSString)
             return false
         }
@@ -131,7 +131,7 @@ class ShaderReflection {
     
     func addBufferSemantic(_ semantic: OEShaderBufferSemantic, atIndex i: UInt, name: String) -> Bool {
         if semanticMap[name] != nil {
-            os_log(.error, log: .shaders, "pass %lu: alias %{public}@ already exists for buffer semantic %{public}@",
+            os_log(.error, log: .default, "pass %lu: alias %{public}@ already exists for buffer semantic %{public}@",
                    i, name, semantic as NSString)
             return false
         }
@@ -204,14 +204,14 @@ class ShaderReflection {
         let sem = floatParameters[Int(index)]
         
         if sem.numberOfComponents != vecSize && (sem.uboActive || sem.pushActive) {
-            os_log(.error, log: .shaders, "vertex and fragment shaders have different data type sizes for same parameter #%lu (%lu / %lu)",
+            os_log(.error, log: .default, "vertex and fragment shaders have different data type sizes for same parameter #%lu (%lu / %lu)",
                    index, sem.numberOfComponents, Int(vecSize))
             return false
         }
         
         if ubo {
             if sem.uboActive && sem.uboOffset != offset {
-                os_log(.error, log: .shaders, "vertex and fragment shaders have different offsets for same parameter #%lu (%lu / %lu)",
+                os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same parameter #%lu (%lu / %lu)",
                        index, sem.uboOffset, offset)
                 return false
             }
@@ -219,7 +219,7 @@ class ShaderReflection {
             sem.uboOffset = UInt(offset)
         } else {
             if sem.pushActive && sem.pushOffset != offset {
-                os_log(.error, log: .shaders, "vertex and fragment shaders have different offsets for same parameter #%lu (%lu / %lu)",
+                os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same parameter #%lu (%lu / %lu)",
                        index, sem.pushOffset, offset)
                 return false
             }
@@ -236,14 +236,14 @@ class ShaderReflection {
         guard let sem = semantics[semantic] else { return false }
         
         if sem.numberOfComponents != vecSize && (sem.uboActive || sem.pushActive) {
-            os_log(.error, log: .shaders, "vertex and fragment shaders have different data type sizes for same semantic %@ (%lu / %lu)",
+            os_log(.error, log: .default, "vertex and fragment shaders have different data type sizes for same semantic %@ (%lu / %lu)",
                    semantic.rawValue, sem.numberOfComponents, Int(vecSize))
             return false
         }
         
         if ubo {
             if sem.uboActive && sem.uboOffset != offset {
-                os_log(.error, log: .shaders, "vertex and fragment shaders have different offsets for same semantic %@ (%lu / %lu)",
+                os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same semantic %@ (%lu / %lu)",
                        semantic.rawValue, sem.uboOffset, offset)
                 return false
             }
@@ -251,7 +251,7 @@ class ShaderReflection {
             sem.uboOffset = UInt(offset)
         } else {
             if sem.pushActive && sem.pushOffset != offset {
-                os_log(.error, log: .shaders, "vertex and fragment shaders have different offsets for same semantic %@ (%lu / %lu)",
+                os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same semantic %@ (%lu / %lu)",
                        semantic.rawValue, sem.pushOffset, offset)
                 return false
             }
@@ -274,7 +274,7 @@ class ShaderReflection {
         
         if ubo {
             if sem.uboActive && sem.uboOffset != offset {
-                os_log(.error, log: .shaders, "vertex and fragment shaders have different offsets for same semantic %@ #%lu (%lu / %lu)",
+                os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same semantic %@ #%lu (%lu / %lu)",
                        semantic.rawValue, index, sem.uboOffset, offset)
                 return false
             }
@@ -282,7 +282,7 @@ class ShaderReflection {
             sem.uboOffset = UInt(offset)
         } else {
             if sem.pushActive && sem.pushOffset != offset {
-                os_log(.error, log: .shaders, "vertex and fragment shaders have different offsets for same semantic %@ #%lu (%lu / %lu)",
+                os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same semantic %@ #%lu (%lu / %lu)",
                        semantic.rawValue, index, sem.pushOffset, offset)
                 return false
             }

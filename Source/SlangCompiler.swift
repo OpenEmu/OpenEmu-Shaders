@@ -81,7 +81,7 @@ class SlangCompiler {
             guard shader.preprocess(input: &inp)
             else {
                 let msg = shader.preprocessed_code
-                os_log(.error, log: .shaders, "Error preprocessing shader: %{public}s", msg)
+                os_log(.error, log: .default, "Error preprocessing shader: %{public}s", msg)
                 
                 let userInfo: [String: Any] = [
                     NSLocalizedDescriptionKey: NSLocalizedString("Failed to preprocess shader", comment: "Shader failed to compile"),
@@ -95,7 +95,7 @@ class SlangCompiler {
             guard shader.parse(input: &inp)
             else {
                 let msg = shader.preprocessed_code
-                os_log(.error, log: .shaders, "Error parsing shader: %{public}s", msg)
+                os_log(.error, log: .default, "Error parsing shader: %{public}s", msg)
                 
                 let userInfo: [String: Any] = [
                     NSLocalizedDescriptionKey: NSLocalizedString("Failed to parse shader", comment: "Shader failed to compile"),
@@ -116,8 +116,8 @@ class SlangCompiler {
                 let infoLog = program.info_log
                 let infoDebugLog = program.info_debug_log
                 
-                os_log(.error, log: .shaders, "Error linking shader info log: %{public}s", infoLog)
-                os_log(.error, log: .shaders, "Error linking shader info debug log: %{public}s", infoDebugLog)
+                os_log(.error, log: .default, "Error linking shader info log: %{public}s", infoLog)
+                os_log(.error, log: .default, "Error linking shader info debug log: %{public}s", infoDebugLog)
                 
                 let userInfo: [String: Any] = [
                     NSLocalizedDescriptionKey: NSLocalizedString("Failed to link shader", comment: "Shader failed to compile"),

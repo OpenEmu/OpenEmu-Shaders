@@ -26,6 +26,16 @@ import Foundation
 import CoreImage
 import CoreGraphics
 
+@objc public protocol ScreenshotSource {
+    var drawableSize: CGSize { get }
+    var outputBounds: CGRect { get }
+    var sourceTexture: MTLTexture? { get }
+    var sourceTextureIsFlipped: Bool { get }
+    func render(withCommandBuffer commandBuffer: MTLCommandBuffer,
+                renderPassDescriptor rpd: MTLRenderPassDescriptor)
+    func renderSource(withCommandBuffer commandBuffer: MTLCommandBuffer) -> MTLTexture
+}
+
 @objc public class Screenshot: NSObject {
     let device: MTLDevice
     let commandQueue: MTLCommandQueue
@@ -84,11 +94,11 @@ import CoreGraphics
     /// 
     /// The image dimensions are equal to the source pixel
     /// buffer and therefore not aspect corrected.
-    @objc public func getCGImageFromSourceWithFilterChain(_ f: OEFilterChain) -> CGImage {
+    @objc public func getCGImageFromSourceWithFilterChain(_ f: ScreenshotSource) -> CGImage {
         guard let commandBuffer = commandQueue.makeCommandBuffer()
         else { return blackImage }
         
-        let tex = f.renderSource(with: commandBuffer)
+        let tex = f.renderSource(withCommandBuffer: commandBuffer)
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()
         
@@ -106,7 +116,7 @@ import CoreGraphics
     }
 
     /// Returns an image of the last source image after all shaders have been applied
-    @objc public func getCGImageFromOutputWithFilterChain(_ f: OEFilterChain) -> CGImage {
+    @objc public func getCGImageFromOutputWithFilterChain(_ f: ScreenshotSource) -> CGImage {
         guard let tex = screenshotTexture(f.drawableSize)
         else { return blackImage }
         
@@ -120,7 +130,7 @@ import CoreGraphics
         guard let commandBuffer = commandQueue.makeCommandBuffer()
         else { return blackImage }
         
-        f.render(with: commandBuffer, renderPassDescriptor: rpd)
+        f.render(withCommandBuffer: commandBuffer, renderPassDescriptor: rpd)
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()
         

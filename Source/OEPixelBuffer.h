@@ -27,12 +27,25 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class MTLPixelConverter;
+@class MTLPixelFormatConverter;
+
 @interface OEPixelBuffer : NSObject
 
 @property (nonatomic, readonly) OEMTLPixelFormat format;
 @property (nonatomic, readonly) CGSize           sourceSize;
 @property (nonatomic)           CGRect           outputRect;
 @property (nonatomic, readonly) void             *contents;
+
+#pragma mark - Internal APIs
+
++ (instancetype)bufferWithDevice:(id<MTLDevice>)device converter:(MTLPixelConverter *)converter
+                          format:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow;
++ (instancetype)bufferWithDevice:(id<MTLDevice>)device converter:(MTLPixelConverter *)converter
+                          format:(OEMTLPixelFormat)format height:(NSUInteger)height bytesPerRow:(NSUInteger)bytesPerRow
+                           bytes:(void *_Nullable)pointer;
+
+- (void)prepareWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer texture:(id<MTLTexture>)texture;
 
 @end
 
