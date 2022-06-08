@@ -51,7 +51,7 @@ import os.log
     ]
     let vertexSizeBytes: Int
     
-    private var pixelBuffer: OEPixelBuffer?
+    private var pixelBuffer: PixelBuffer?
     private var samplers: SamplerFilterArray<MTLSamplerState>
     
     @objc public var shader: SlangShader?
@@ -379,15 +379,15 @@ import os.log
         }
     }
     
-    @objc public func newBuffer(withFormat format: OEMTLPixelFormat, height: UInt, bytesPerRow: UInt) -> OEPixelBuffer {
-        let pb = OEPixelBuffer(device: device, converter: converter, format: format, height: height, bytesPerRow: bytesPerRow)
+    @objc public func newBuffer(withFormat format: OEMTLPixelFormat, height: UInt, bytesPerRow: UInt) -> PixelBuffer {
+        let pb = PixelBuffer.makeBuffer(withDevice: device, converter: converter, format: format, height: Int(height), bytesPerRow: Int(bytesPerRow))
         pb.outputRect = sourceRect
         pixelBuffer = pb
         return pb
     }
     
-    @objc public func newBuffer(withFormat format: OEMTLPixelFormat, height: UInt, bytesPerRow: UInt, bytes pointer: UnsafeMutableRawPointer) -> OEPixelBuffer {
-        let pb = OEPixelBuffer(device: device, converter: converter, format: format, height: height, bytesPerRow: bytesPerRow, bytes: pointer)
+    @objc public func newBuffer(withFormat format: OEMTLPixelFormat, height: UInt, bytesPerRow: UInt, bytes pointer: UnsafeMutableRawPointer) -> PixelBuffer {
+        let pb = PixelBuffer.makeBuffer(withDevice: device, converter: converter, format: format, height: Int(height), bytesPerRow: Int(bytesPerRow), bytes: pointer)
         pb.outputRect = sourceRect
         pixelBuffer = pb
         return pb
@@ -454,7 +454,7 @@ import os.log
         guard let texture = texture else { return }
         
         if let pixelBuffer = pixelBuffer {
-            pixelBuffer.prepare(withCommand: commandBuffer, texture: texture)
+            pixelBuffer.prepare(withCommandBuffer: commandBuffer, texture: texture)
             return
         }
         
