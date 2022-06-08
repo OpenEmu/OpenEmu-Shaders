@@ -40,8 +40,8 @@ public class ShaderPassUniformBinding {
 
 class ShaderPassBufferBinding {
     var stageUsage: StageUsage = []
-    var bindingVert: UInt = 0
-    var bindingFrag: UInt = 0
+    var bindingVert: Int = 0
+    var bindingFrag: Int = 0
     var size: Int = 0
     var uniforms: [ShaderPassUniformBinding] = []
     
@@ -58,7 +58,7 @@ class ShaderPassTextureBinding {
     var wrap: ShaderPassWrap = .default
     var filter: ShaderPassFilter = .nearest
     var stageUsage: StageUsage = []
-    var binding: UInt = 0
+    var binding: Int = 0
     var name: String = ""
     
     init(texture: UnsafeRawPointer) {

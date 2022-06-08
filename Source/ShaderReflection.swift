@@ -26,9 +26,9 @@ import Foundation
 import os.log
 
 class ShaderTextureSemanticMeta {
-    var binding: UInt = 0
-    var uboOffset: UInt = 0
-    var pushOffset: UInt = 0
+    var binding: Int = 0
+    var uboOffset: Int = 0
+    var pushOffset: Int = 0
     var stageUsage: StageUsage = []
     var textureActive: Bool = false
     var uboActive: Bool = false
@@ -36,18 +36,18 @@ class ShaderTextureSemanticMeta {
 }
 
 class ShaderSemanticMeta {
-    var uboOffset: UInt = 0
-    var pushOffset: UInt = 0
-    var numberOfComponents: UInt = 0
+    var uboOffset: Int = 0
+    var pushOffset: Int = 0
+    var numberOfComponents: Int = 0
     var uboActive: Bool = false
     var pushActive: Bool = false
 }
 
 class ShaderTextureSemanticMap {
     var semantic: ShaderTextureSemantic
-    var index: UInt
+    var index: Int
     
-    init(textureSemantic semantic: ShaderTextureSemantic, index: UInt) {
+    init(textureSemantic semantic: ShaderTextureSemantic, index: Int) {
         self.semantic = semantic
         self.index    = index
     }
@@ -55,9 +55,9 @@ class ShaderTextureSemanticMap {
 
 class ShaderSemanticMap {
     var semantic: ShaderBufferSemantic
-    var index: UInt
+    var index: Int
     
-    init(semantic: ShaderBufferSemantic, index: UInt) {
+    init(semantic: ShaderBufferSemantic, index: Int) {
         self.semantic = semantic
         self.index    = index
     }
@@ -69,17 +69,17 @@ class ShaderSemanticMap {
 }
 
 class ShaderReflection {
-    let passNumber: UInt
+    let passNumber: Int
     var uboSize: Int = 0
     var pushSize: Int = 0
-    var uboBindingVert: UInt = 0
-    var uboBindingFrag: UInt = 0
-    var pushBindingVert: UInt = 0
-    var pushBindingFrag: UInt = 0
+    var uboBindingVert: Int = 0
+    var uboBindingFrag: Int = 0
+    var pushBindingVert: Int = 0
+    var pushBindingFrag: Int = 0
     var uboStageUsage: StageUsage = []
     var pushStageUsage: StageUsage = []
     
-    init(passNumber: UInt) {
+    init(passNumber: Int) {
         self.passNumber = passNumber
     }
     
@@ -105,7 +105,7 @@ class ShaderReflection {
     private(set) var textureUniformSemanticMap: [String: ShaderTextureSemanticMap] = [:]
     private(set) var semanticMap: [String: ShaderSemanticMap] = [:]
     
-    func addTextureSemantic(_ semantic: ShaderTextureSemantic, atIndex i: UInt, name: String) -> Bool {
+    func addTextureSemantic(_ semantic: ShaderTextureSemantic, atIndex i: Int, name: String) -> Bool {
         if textureSemanticMap[name] != nil {
             os_log(.error, log: .default, "pass %lu: alias %{public}@ already exists for texture semantic %{public}@",
                    i, name, semantic.description as NSString)
@@ -117,7 +117,7 @@ class ShaderReflection {
         return true
     }
     
-    func addTextureBufferSemantic(_ semantic: ShaderTextureSemantic, atIndex i: UInt, name: String) -> Bool {
+    func addTextureBufferSemantic(_ semantic: ShaderTextureSemantic, atIndex i: Int, name: String) -> Bool {
         if textureUniformSemanticMap[name] != nil {
             os_log(.error, log: .default, "pass %lu: alias %{public}@ already exists for texture buffer semantic %{public}@",
                    i, name, semantic.description as NSString)
@@ -129,7 +129,7 @@ class ShaderReflection {
         return true
     }
     
-    func addBufferSemantic(_ semantic: ShaderBufferSemantic, atIndex i: UInt, name: String) -> Bool {
+    func addBufferSemantic(_ semantic: ShaderBufferSemantic, atIndex i: Int, name: String) -> Bool {
         if semanticMap[name] != nil {
             os_log(.error, log: .default, "pass %lu: alias %{public}@ already exists for buffer semantic %{public}@",
                    i, name, semantic.description as NSString)
@@ -141,7 +141,7 @@ class ShaderReflection {
         return true
     }
     
-    func name(forBufferSemantic semantic: ShaderBufferSemantic, index: UInt) -> String? {
+    func name(forBufferSemantic semantic: ShaderBufferSemantic, index: Int) -> String? {
         if let name = Self.semanticToUniformName[semantic] {
             return name
         }
@@ -151,7 +151,7 @@ class ShaderReflection {
         }?.key
     }
     
-    func name(forTextureSemantic semantic: ShaderTextureSemantic, index: UInt) -> String? {
+    func name(forTextureSemantic semantic: ShaderTextureSemantic, index: Int) -> String? {
         if let name = Self.textureSemanticToName[semantic] {
             return textureSemanticIsArray(semantic) ? "\(name)\(index)" : name
         }
@@ -161,7 +161,7 @@ class ShaderReflection {
         }?.key
     }
     
-    func sizeName(forTextureSemantic semantic: ShaderTextureSemantic, index: UInt) -> String? {
+    func sizeName(forTextureSemantic semantic: ShaderTextureSemantic, index: Int) -> String? {
         if let name = Self.textureSemanticToUniformName[semantic] {
             return textureSemanticIsArray(semantic) ? "\(name)\(index)" : name
         }
@@ -188,24 +188,24 @@ class ShaderReflection {
     }
     
     @discardableResult
-    func reserve<T>(_ array: inout [T], withCapacity items: UInt, new: () -> T) -> Bool {
+    func reserve<T>(_ array: inout [T], withCapacity items: Int, new: () -> T) -> Bool {
         if array.count > items {
             return false
         }
-        array.reserveCapacity(Int(items))
+        array.reserveCapacity(items)
         while array.count <= items {
             array.append(new())
         }
         return true
     }
     
-    func setOffset(_ offset: Int, vecSize: UInt32, forFloatParameterAt index: UInt, ubo: Bool) -> Bool {
+    func setOffset(_ offset: Int, vecSize: Int, forFloatParameterAt index: Int, ubo: Bool) -> Bool {
         reserve(&floatParameters, withCapacity: index, new: ShaderSemanticMeta.init)
-        let sem = floatParameters[Int(index)]
+        let sem = floatParameters[index]
         
         if sem.numberOfComponents != vecSize && (sem.uboActive || sem.pushActive) {
             os_log(.error, log: .default, "vertex and fragment shaders have different data type sizes for same parameter #%lu (%lu / %lu)",
-                   index, sem.numberOfComponents, Int(vecSize))
+                   index, sem.numberOfComponents, vecSize)
             return false
         }
         
@@ -216,7 +216,7 @@ class ShaderReflection {
                 return false
             }
             sem.uboActive = true
-            sem.uboOffset = UInt(offset)
+            sem.uboOffset = offset
         } else {
             if sem.pushActive && sem.pushOffset != offset {
                 os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same parameter #%lu (%lu / %lu)",
@@ -224,20 +224,20 @@ class ShaderReflection {
                 return false
             }
             sem.pushActive = true
-            sem.pushOffset = UInt(offset)
+            sem.pushOffset = offset
         }
         
-        sem.numberOfComponents = UInt(vecSize)
+        sem.numberOfComponents = vecSize
         
         return true
     }
     
-    func setOffset(_ offset: Int, vecSize: UInt32, forSemantic semantic: ShaderBufferSemantic, ubo: Bool) -> Bool {
+    func setOffset(_ offset: Int, vecSize: Int, forSemantic semantic: ShaderBufferSemantic, ubo: Bool) -> Bool {
         guard let sem = semantics[semantic] else { return false }
         
         if sem.numberOfComponents != vecSize && (sem.uboActive || sem.pushActive) {
             os_log(.error, log: .default, "vertex and fragment shaders have different data type sizes for same semantic %@ (%lu / %lu)",
-                   semantic.rawValue, sem.numberOfComponents, Int(vecSize))
+                   semantic.rawValue, sem.numberOfComponents, vecSize)
             return false
         }
         
@@ -248,7 +248,7 @@ class ShaderReflection {
                 return false
             }
             sem.uboActive = true
-            sem.uboOffset = UInt(offset)
+            sem.uboOffset = offset
         } else {
             if sem.pushActive && sem.pushOffset != offset {
                 os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same semantic %@ (%lu / %lu)",
@@ -256,21 +256,21 @@ class ShaderReflection {
                 return false
             }
             sem.pushActive = true
-            sem.pushOffset = UInt(offset)
+            sem.pushOffset = offset
         }
         
-        sem.numberOfComponents = UInt(vecSize)
+        sem.numberOfComponents = vecSize
         
         return true
     }
     
-    func setOffset(_ offset: Int, forTextureSemantic semantic: ShaderTextureSemantic, at index: UInt, ubo: Bool) -> Bool {
+    func setOffset(_ offset: Int, forTextureSemantic semantic: ShaderTextureSemantic, at index: Int, ubo: Bool) -> Bool {
         guard var map = textures[semantic] else { return false }
         if reserve(&map, withCapacity: index, new: ShaderTextureSemanticMeta.init) {
             textures[semantic] = map
         }
         
-        let sem = map[Int(index)]
+        let sem = map[index]
         
         if ubo {
             if sem.uboActive && sem.uboOffset != offset {
@@ -279,7 +279,7 @@ class ShaderReflection {
                 return false
             }
             sem.uboActive = true
-            sem.uboOffset = UInt(offset)
+            sem.uboOffset = offset
         } else {
             if sem.pushActive && sem.pushOffset != offset {
                 os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same semantic %@ #%lu (%lu / %lu)",
@@ -287,20 +287,20 @@ class ShaderReflection {
                 return false
             }
             sem.pushActive = true
-            sem.pushOffset = UInt(offset)
+            sem.pushOffset = offset
         }
         
         return true
     }
     
     @discardableResult
-    func setBinding(_ binding: UInt, forTextureSemantic semantic: ShaderTextureSemantic, at index: UInt) -> Bool {
+    func setBinding(_ binding: Int, forTextureSemantic semantic: ShaderTextureSemantic, at index: Int) -> Bool {
         guard var map = textures[semantic] else { return false }
         if reserve(&map, withCapacity: index, new: ShaderTextureSemanticMeta.init) {
             textures[semantic] = map
         }
         
-        let sem = map[Int(index)]
+        let sem = map[index]
         
         sem.binding = binding
         sem.textureActive = true
@@ -317,7 +317,7 @@ class ShaderReflection {
                 // An array texture may be referred to as PassOutput0, PassOutput1, etc
                 if name.hasPrefix(key) {
                     // TODO: Validate the suffix is a number and within range
-                    let index = UInt(name.suffix(from: key.endIndex))
+                    let index = Int(name.suffix(from: key.endIndex))
                     return ShaderTextureSemanticMap(textureSemantic: sem, index: index ?? 0)
                 }
             } else if name == key {

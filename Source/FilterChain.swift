@@ -908,16 +908,16 @@ import os.log
                 self.pass[passNumber].buffers[j] = buf
                 
                 if sem.stageUsage.contains(.vertex) {
-                    self.pass[passNumber].vBuffers[Int(sem.bindingVert)] = buf
+                    self.pass[passNumber].vBuffers[sem.bindingVert] = buf
                 }
                 if sem.stageUsage.contains(.fragment) {
-                    self.pass[passNumber].fBuffers[Int(sem.bindingFrag)] = buf
+                    self.pass[passNumber].fBuffers[sem.bindingFrag] = buf
                 }
             }
         }
         
         // finalise remaining state
-        historyCount = Int(compiler.historyCount)
+        historyCount = compiler.historyCount
         for binding in compiler.bindings {
             self.pass[binding.index].hasFeedback = binding.isFeedback
         }
