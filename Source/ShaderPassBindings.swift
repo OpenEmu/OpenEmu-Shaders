@@ -57,7 +57,6 @@ class ShaderPassTextureBinding {
     var texture: UnsafeRawPointer
     var wrap: ShaderPassWrap = .default
     var filter: ShaderPassFilter = .nearest
-    var stageUsage: StageUsage = []
     var binding: Int = 0
     var name: String = ""
     

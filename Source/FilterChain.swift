@@ -238,9 +238,6 @@ import os.log
             case .mirroredRepeat:
                 label = "mirrored_repeat"
                 sd.sAddressMode = .mirrorRepeat
-                
-            default:
-                fatalError("unexpected shader pass wrap enumeration")
             }
             
             sd.tAddressMode = sd.sAddressMode

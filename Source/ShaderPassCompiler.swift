@@ -219,74 +219,73 @@ public class ShaderPassCompiler {
         
         for (sem, meta) in ref.semantics {
             let name = ref.name(forBufferSemantic: sem, index: 0)!
-            if meta.uboActive {
+            if let offset = meta.uboOffset {
                 uboB.addUniformData(passSemantics.uniforms[sem]!.data,
                                     size: meta.numberOfComponents * MemoryLayout<Float>.size,
-                                    offset: meta.uboOffset,
+                                    offset: offset,
                                     name: name)
             }
-            if meta.pushActive {
+            if let offset = meta.pushOffset {
                 pshB.addUniformData(passSemantics.uniforms[sem]!.data,
                                     size: meta.numberOfComponents * MemoryLayout<Float>.size,
-                                    offset: meta.pushOffset,
+                                    offset: offset,
                                     name: name)
             }
         }
         
-        for (i, meta) in ref.floatParameters.enumerated() {
-            let name = ref.name(forBufferSemantic: .floatParameter, index: i)!
-            guard let param = passSemantics.parameter(at: i)
-            else { fatalError("Unable to find parameter at index \(i)") }
+        for meta in ref.floatParameters.values {
+            let name = ref.name(forBufferSemantic: .floatParameter, index: meta.index)!
+            guard let param = passSemantics.parameter(at: meta.index)
+            else { fatalError("Unable to find parameter at index \(meta.index)") }
             
-            if meta.uboActive {
+            if let offset = meta.uboOffset {
                 uboB.addUniformData(param.data,
                                     size: meta.numberOfComponents * MemoryLayout<Float>.size,
-                                    offset: meta.uboOffset,
+                                    offset: offset,
                                     name: name)
             }
-            if meta.pushActive {
+            if let offset = meta.pushOffset {
                 pshB.addUniformData(param.data,
                                     size: meta.numberOfComponents * MemoryLayout<Float>.size,
-                                    offset: meta.pushOffset,
+                                    offset: offset,
                                     name: name)
             }
         }
         
         for (sem, a) in ref.textures {
             let tex = passSemantics.textures[sem]!
-            for (index, meta) in a.enumerated() {
-                if !meta.stageUsage.isEmpty {
-                    let ptr = tex.texture.advanced(by: index * tex.textureStride)
+            for meta in a.values where meta.textureActive || meta.uboActive || meta.pushActive {
+                if meta.textureActive {
+                    let ptr = tex.texture.advanced(by: meta.index * tex.textureStride)
                     let bind = passBindings.addTexture(ptr)
                     
                     if sem == .user {
-                        bind.wrap   = shader.luts[index].wrapMode
-                        bind.filter = shader.luts[index].filter
+                        bind.wrap   = shader.luts[meta.index].wrapMode
+                        bind.filter = shader.luts[meta.index].filter
                     } else {
                         bind.wrap   = shader.passes[ref.passNumber].wrapMode
                         bind.filter = shader.passes[ref.passNumber].filter
                     }
                     
-                    bind.stageUsage = meta.stageUsage
                     bind.binding    = meta.binding
-                    bind.name       = ref.name(forTextureSemantic: sem, index: index)!
+                    bind.name       = ref.name(forTextureSemantic: sem, index: meta.index)!
                     
                     if sem == .passFeedback {
-                        bindings[index].isFeedback = true
-                    } else if sem == .originalHistory && historyCount < index {
-                        historyCount = index
+                        bindings[meta.index].isFeedback = true
+                    } else if sem == .originalHistory && historyCount < meta.index {
+                        historyCount = meta.index
                     }
                 }
                 
-                let name = ref.sizeName(forTextureSemantic: sem, index: index)!
+                let name = ref.sizeName(forTextureSemantic: sem, index: meta.index)!
                 if meta.uboActive {
-                    uboB.addUniformData(tex.textureSize.advanced(by: index * tex.sizeStride),
+                    uboB.addUniformData(tex.textureSize.advanced(by: meta.index * tex.sizeStride),
                                         size: 4 * MemoryLayout<Float>.size,
                                         offset: meta.uboOffset,
                                         name: name)
                 }
                 if meta.pushActive {
-                    pshB.addUniformData(tex.textureSize.advanced(by: index * tex.sizeStride),
+                    pshB.addUniformData(tex.textureSize.advanced(by: meta.index * tex.sizeStride),
                                         size: 4 * MemoryLayout<Float>.size,
                                         offset: meta.pushOffset,
                                         name: name)

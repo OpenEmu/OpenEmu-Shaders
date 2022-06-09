@@ -26,21 +26,32 @@ import Foundation
 import os.log
 
 class ShaderTextureSemanticMeta {
+    let index: Int
     var binding: Int = 0
     var uboOffset: Int = 0
     var pushOffset: Int = 0
-    var stageUsage: StageUsage = []
     var textureActive: Bool = false
     var uboActive: Bool = false
     var pushActive: Bool = false
+    
+    init(index: Int) {
+        self.index = index
+    }
 }
 
 class ShaderSemanticMeta {
-    var uboOffset: Int = 0
-    var pushOffset: Int = 0
+    let index: Int
+    var uboOffset: Int?
+    var pushOffset: Int?
     var numberOfComponents: Int = 0
-    var uboActive: Bool = false
-    var pushActive: Bool = false
+    
+    convenience init() {
+        self.init(index: 0)
+    }
+    
+    init(index: Int) {
+        self.index = index
+    }
 }
 
 class ShaderTextureSemanticMap {
@@ -83,13 +94,13 @@ class ShaderReflection {
         self.passNumber = passNumber
     }
     
-    private(set) var textures: [ShaderTextureSemantic: [ShaderTextureSemanticMeta]] = [
-        .original: [],
-        .source: [],
-        .originalHistory: [],
-        .passOutput: [],
-        .passFeedback: [],
-        .user: [],
+    private(set) var textures: [ShaderTextureSemantic: [Int: ShaderTextureSemanticMeta]] = [
+        .original: [:],
+        .source: [:],
+        .originalHistory: [:],
+        .passOutput: [:],
+        .passFeedback: [:],
+        .user: [:],
     ]
     
     private(set) var semantics: [ShaderBufferSemantic: ShaderSemanticMeta] = [
@@ -100,7 +111,7 @@ class ShaderReflection {
         .frameDirection: .init(),
     ]
     
-    private(set) var floatParameters: [ShaderSemanticMeta] = []
+    private(set) var floatParameters: [Int: ShaderSemanticMeta] = [:]
     private(set) var textureSemanticMap: [String: ShaderTextureSemanticMap] = [:]
     private(set) var textureUniformSemanticMap: [String: ShaderTextureSemanticMap] = [:]
     private(set) var semanticMap: [String: ShaderSemanticMap] = [:]
@@ -187,43 +198,34 @@ class ShaderReflection {
         textureSemanticMap[name] ?? textureSemanticForUniformName(name, names: Self.textureSemanticNames)
     }
     
-    @discardableResult
-    func reserve<T>(_ array: inout [T], withCapacity items: Int, new: () -> T) -> Bool {
-        if array.count > items {
-            return false
-        }
-        array.reserveCapacity(items)
-        while array.count <= items {
-            array.append(new())
-        }
-        return true
-    }
-    
     func setOffset(_ offset: Int, vecSize: Int, forFloatParameterAt index: Int, ubo: Bool) -> Bool {
-        reserve(&floatParameters, withCapacity: index, new: ShaderSemanticMeta.init)
-        let sem = floatParameters[index]
+        let sem: ShaderSemanticMeta
+        if let tmp = floatParameters[index] {
+            sem = tmp
+        } else {
+            sem = ShaderSemanticMeta(index: index)
+            floatParameters[index] = sem
+        }
         
-        if sem.numberOfComponents != vecSize && (sem.uboActive || sem.pushActive) {
+        if sem.numberOfComponents != vecSize && (sem.uboOffset != nil || sem.pushOffset != nil) {
             os_log(.error, log: .default, "vertex and fragment shaders have different data type sizes for same parameter #%lu (%lu / %lu)",
                    index, sem.numberOfComponents, vecSize)
             return false
         }
         
         if ubo {
-            if sem.uboActive && sem.uboOffset != offset {
+            if let existing = sem.uboOffset, existing != offset {
                 os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same parameter #%lu (%lu / %lu)",
-                       index, sem.uboOffset, offset)
+                       index, existing, offset)
                 return false
             }
-            sem.uboActive = true
             sem.uboOffset = offset
         } else {
-            if sem.pushActive && sem.pushOffset != offset {
+            if let existing = sem.pushOffset, existing != offset {
                 os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same parameter #%lu (%lu / %lu)",
-                       index, sem.pushOffset, offset)
+                       index, existing, offset)
                 return false
             }
-            sem.pushActive = true
             sem.pushOffset = offset
         }
         
@@ -235,27 +237,25 @@ class ShaderReflection {
     func setOffset(_ offset: Int, vecSize: Int, forSemantic semantic: ShaderBufferSemantic, ubo: Bool) -> Bool {
         guard let sem = semantics[semantic] else { return false }
         
-        if sem.numberOfComponents != vecSize && (sem.uboActive || sem.pushActive) {
+        if sem.numberOfComponents != vecSize && (sem.uboOffset != nil || sem.pushOffset != nil) {
             os_log(.error, log: .default, "vertex and fragment shaders have different data type sizes for same semantic %@ (%lu / %lu)",
                    semantic.rawValue, sem.numberOfComponents, vecSize)
             return false
         }
         
         if ubo {
-            if sem.uboActive && sem.uboOffset != offset {
+            if let existing = sem.uboOffset, existing != offset {
                 os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same semantic %@ (%lu / %lu)",
-                       semantic.rawValue, sem.uboOffset, offset)
+                       semantic.rawValue, existing, offset)
                 return false
             }
-            sem.uboActive = true
             sem.uboOffset = offset
         } else {
-            if sem.pushActive && sem.pushOffset != offset {
+            if let existing = sem.pushOffset, existing != offset {
                 os_log(.error, log: .default, "vertex and fragment shaders have different offsets for same semantic %@ (%lu / %lu)",
-                       semantic.rawValue, sem.pushOffset, offset)
+                       semantic.rawValue, existing, offset)
                 return false
             }
-            sem.pushActive = true
             sem.pushOffset = offset
         }
         
@@ -266,11 +266,14 @@ class ShaderReflection {
     
     func setOffset(_ offset: Int, forTextureSemantic semantic: ShaderTextureSemantic, at index: Int, ubo: Bool) -> Bool {
         guard var map = textures[semantic] else { return false }
-        if reserve(&map, withCapacity: index, new: ShaderTextureSemanticMeta.init) {
+        var sem: ShaderTextureSemanticMeta
+        if let tmp = map[index] {
+            sem = tmp
+        } else {
+            sem = ShaderTextureSemanticMeta(index: index)
+            map[index] = sem
             textures[semantic] = map
         }
-        
-        let sem = map[index]
         
         if ubo {
             if sem.uboActive && sem.uboOffset != offset {
@@ -296,15 +299,17 @@ class ShaderReflection {
     @discardableResult
     func setBinding(_ binding: Int, forTextureSemantic semantic: ShaderTextureSemantic, at index: Int) -> Bool {
         guard var map = textures[semantic] else { return false }
-        if reserve(&map, withCapacity: index, new: ShaderTextureSemanticMeta.init) {
+        var sem: ShaderTextureSemanticMeta
+        if let tmp = map[index] {
+            sem = tmp
+        } else {
+            sem = ShaderTextureSemanticMeta(index: index)
+            map[index] = sem
             textures[semantic] = map
         }
         
-        let sem = map[index]
-        
         sem.binding = binding
         sem.textureActive = true
-        sem.stageUsage = .fragment
         
         return true
     }
@@ -396,9 +401,9 @@ extension ShaderReflection: CustomDebugStringConvertible {
         
         for sem in ShaderTextureSemantic.allCases {
             guard let t = textures[sem] else { continue }
-            for (i, meta) in t.enumerated() where meta.textureActive {
+            for meta in t.values.sorted(by: { $0.index < $1.index }) where meta.textureActive {
                 desc.append(String(format: "      %@ (#%lu)\n",
-                                   sem.description as NSString, i))
+                                   sem.description as NSString, meta.index))
             }
         }
         
@@ -408,17 +413,17 @@ extension ShaderReflection: CustomDebugStringConvertible {
                            uboStageUsage.contains(.fragment) ? "YES" : "NO"))
         
         for sem in ShaderBufferSemantic.allCases {
-            if let meta = semantics[sem], meta.uboActive {
+            if let meta = semantics[sem], let offset = meta.uboOffset {
                 desc.append(String(format: "      UBO  %@ (offset: %lu)\n",
-                                   sem.description as NSString, meta.uboOffset))
+                                   sem.description as NSString, offset))
             }
         }
         
         for sem in ShaderTextureSemantic.allCases {
             guard let t = textures[sem] else { continue }
-            for (i, meta) in t.enumerated() where meta.uboActive {
+            for meta in t.values.sorted(by: { $0.index < $1.index }) where meta.uboActive {
                 desc.append(String(format: "      UBO  %@ (#%lu) (offset: %lu)\n",
-                                   Self.textureSemanticToUniformName[sem]!, i, meta.uboOffset))
+                                   Self.textureSemanticToUniformName[sem]!, meta.index, meta.uboOffset))
             }
         }
         
@@ -428,29 +433,29 @@ extension ShaderReflection: CustomDebugStringConvertible {
                            pushStageUsage.contains(.fragment) ? "YES" : "NO"))
         
         for sem in ShaderBufferSemantic.allCases {
-            if let meta = semantics[sem], meta.pushActive {
+            if let meta = semantics[sem], let offset = meta.pushOffset {
                 desc.append(String(format: "      PUSH %@ (offset: %lu)\n",
-                                   sem.description as NSString, meta.pushOffset))
+                                   sem.description as NSString, offset))
             }
         }
         
         for sem in ShaderTextureSemantic.allCases {
             guard let t = textures[sem] else { continue }
-            for (i, meta) in t.enumerated() where meta.pushActive {
+            for meta in t.values.sorted(by: { $0.index < $1.index }) where meta.pushActive {
                 desc.append(String(format: "      PUSH %@ (#%lu) (offset: %lu)\n",
-                                   Self.textureSemanticToUniformName[sem]!, i, meta.pushOffset))
+                                   Self.textureSemanticToUniformName[sem]!, meta.index, meta.pushOffset))
             }
         }
         
         desc.append("\n")
         desc.append("  → Parameters:\n")
         
-        for (i, meta) in floatParameters.enumerated() {
-            if meta.uboActive {
-                desc.append(String(format: "      UBO  #%lu (offset: %lu)\n", i, meta.uboOffset))
+        for meta in floatParameters.values.sorted(by: { $0.index < $1.index }) {
+            if let offset = meta.uboOffset {
+                desc.append(String(format: "      UBO  #%lu (offset: %lu)\n", meta.index, offset))
             }
-            if meta.pushActive {
-                desc.append(String(format: "      PUSH #%lu (offset: %lu)\n", i, meta.pushOffset))
+            if let offset = meta.pushOffset {
+                desc.append(String(format: "      PUSH #%lu (offset: %lu)\n", meta.index, offset))
             }
         }
         

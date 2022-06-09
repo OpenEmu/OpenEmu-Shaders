@@ -9,27 +9,28 @@
 import Foundation
 
 enum Compiled {
-    class Shader: NSObject {
+    /// Shader is the root object of a compiled shader.
+    class Shader {
         
     }
     
-    class ShaderPass: NSObject {
+    class ShaderPass {
         
     }
 }
 
-class CompiledShader: NSObject {
+class CompiledShader {
     
 }
 
-class CompiledShaderPass: NSObject {
+class CompiledShaderPass {
 
 }
 
-class BufferBindingDescriptor: NSObject {
+class BufferBindingDescriptor {
 
 }
 
-class TextureBindingDescriptor: NSObject {
+class TextureBindingDescriptor {
 
 }
