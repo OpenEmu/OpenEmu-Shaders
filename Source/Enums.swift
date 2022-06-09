@@ -159,13 +159,6 @@ enum Constants {
     static let maxShaderBindings = 16
 }
 
-struct StageUsage: OptionSet {
-    let rawValue: Int
-    
-    static let vertex = StageUsage(rawValue: 1 << 0)   // semantic is used by the vertex shader
-    static let fragment = StageUsage(rawValue: 1 << 1) // semantic is used by the fragment shader
-}
-
 public enum ShaderPassScale: CaseIterable {
     case invalid, source, absolute, viewport
 }

@@ -561,7 +561,9 @@ import os.log
             for j in 0..<Constants.maxConstantBuffers {
                 let sem = pass[i].bindings!.buffers[j]
                 
-                guard !sem.stageUsage.isEmpty && !sem.uniforms.isEmpty else { continue }
+                guard
+                    (sem.bindingVert != nil || sem.bindingFrag != nil) &&
+                        !sem.uniforms.isEmpty else { continue }
                 
                 if let buffer = pass[i].buffers[j] {
                     let data = buffer.contents()
@@ -896,7 +898,6 @@ import os.log
             
             for j in 0..<Constants.maxConstantBuffers {
                 let sem = self.pass[passNumber].bindings!.buffers[j]
-                precondition(sem.bindingVert < Constants.maxConstantBuffers, "Unexpected constant binding")
                 
                 let size = sem.size
                 guard size > 0 else { continue }
@@ -904,11 +905,11 @@ import os.log
                 let buf = device.makeBuffer(length: size, options: opts)
                 self.pass[passNumber].buffers[j] = buf
                 
-                if sem.stageUsage.contains(.vertex) {
-                    self.pass[passNumber].vBuffers[sem.bindingVert] = buf
+                if let binding = sem.bindingVert {
+                    self.pass[passNumber].vBuffers[binding] = buf
                 }
-                if sem.stageUsage.contains(.fragment) {
-                    self.pass[passNumber].fBuffers[sem.bindingFrag] = buf
+                if let binding = sem.bindingFrag {
+                    self.pass[passNumber].fBuffers[binding] = buf
                 }
             }
         }

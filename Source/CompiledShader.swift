@@ -18,19 +18,3 @@ enum Compiled {
         
     }
 }
-
-class CompiledShader {
-    
-}
-
-class CompiledShaderPass {
-
-}
-
-class BufferBindingDescriptor {
-
-}
-
-class TextureBindingDescriptor {
-
-}

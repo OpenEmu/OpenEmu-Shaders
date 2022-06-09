@@ -39,9 +39,8 @@ public class ShaderPassUniformBinding {
 }
 
 class ShaderPassBufferBinding {
-    var stageUsage: StageUsage = []
-    var bindingVert: Int = 0
-    var bindingFrag: Int = 0
+    var bindingVert: Int?
+    var bindingFrag: Int?
     var size: Int = 0
     var uniforms: [ShaderPassUniformBinding] = []
     

@@ -205,17 +205,19 @@ public class ShaderPassCompiler {
     func updateBindings(passSemantics: ShaderPassSemantics, passBindings: ShaderPassBindings, ref: ShaderReflection) {
         // UBO
         let uboB = passBindings.buffers[0]
-        uboB.stageUsage  = ref.uboStageUsage
-        uboB.bindingVert = ref.uboBindingVert
-        uboB.bindingFrag = ref.uboBindingFrag
-        uboB.size        = (ref.uboSize + 0xf) & ~0xf // round up to nearest 16 bytes
+        if let b = ref.ubo {
+            uboB.bindingVert = b.bindingVert
+            uboB.bindingFrag = b.bindingFrag
+            uboB.size        = (b.size + 0xf) & ~0xf // round up to nearest 16 bytes
+        }
         
         // push constants
         let pshB = passBindings.buffers[1]
-        pshB.stageUsage  = ref.pushStageUsage
-        pshB.bindingVert = ref.pushBindingVert
-        pshB.bindingFrag = ref.pushBindingFrag
-        pshB.size        = (ref.pushSize + 0xf) & ~0xf // round up to nearest 16 bytes
+        if let b = ref.push {
+            pshB.bindingVert = b.bindingVert
+            pshB.bindingFrag = b.bindingFrag
+            pshB.size        = (b.size + 0xf) & ~0xf // round up to nearest 16 bytes
+        }
         
         for (sem, meta) in ref.semantics {
             let name = ref.name(forBufferSemantic: sem, index: 0)!
@@ -254,8 +256,8 @@ public class ShaderPassCompiler {
         
         for (sem, a) in ref.textures {
             let tex = passSemantics.textures[sem]!
-            for meta in a.values where meta.textureActive || meta.uboActive || meta.pushActive {
-                if meta.textureActive {
+            for meta in a.values where meta.binding != nil || meta.uboOffset != nil || meta.pushOffset != nil {
+                if let binding = meta.binding {
                     let ptr = tex.texture.advanced(by: meta.index * tex.textureStride)
                     let bind = passBindings.addTexture(ptr)
                     
@@ -267,7 +269,7 @@ public class ShaderPassCompiler {
                         bind.filter = shader.passes[ref.passNumber].filter
                     }
                     
-                    bind.binding    = meta.binding
+                    bind.binding    = binding
                     bind.name       = ref.name(forTextureSemantic: sem, index: meta.index)!
                     
                     if sem == .passFeedback {
@@ -278,16 +280,16 @@ public class ShaderPassCompiler {
                 }
                 
                 let name = ref.sizeName(forTextureSemantic: sem, index: meta.index)!
-                if meta.uboActive {
+                if let offset = meta.uboOffset {
                     uboB.addUniformData(tex.textureSize.advanced(by: meta.index * tex.sizeStride),
                                         size: 4 * MemoryLayout<Float>.size,
-                                        offset: meta.uboOffset,
+                                        offset: offset,
                                         name: name)
                 }
-                if meta.pushActive {
+                if let offset = meta.pushOffset {
                     pshB.addUniformData(tex.textureSize.advanced(by: meta.index * tex.sizeStride),
                                         size: 4 * MemoryLayout<Float>.size,
-                                        offset: meta.pushOffset,
+                                        offset: offset,
                                         name: name)
                 }
             }
@@ -432,83 +434,96 @@ public class ShaderPassCompiler {
             
             return listSize == 1 ? list?.pointee : nil
         }
-        
-        let vertexUBO: __spvc_reflected_resource?
-        let vertexPSH: __spvc_reflected_resource?
-        let fragmentUBO: __spvc_reflected_resource?
-        let fragmentPSH: __spvc_reflected_resource?
+
+        // vertex UBO binding
+        var vertexUBO: __spvc_reflected_resource?
         do {
-            vertexUBO = try getResource(vsResources, .uniformBuffer, "vertex shader must use zero or one uniform buffer")
-            vertexPSH = try getResource(vsResources, .pushConstant, "vertex shader must use zero or one push constant buffer")
-            fragmentUBO = try getResource(fsResources, .uniformBuffer, "fragment shader must use zero or one uniform buffer")
-            fragmentPSH = try getResource(fsResources, .pushConstant, "fragment shader must use zero or one push constant buffer")
+            if let br = try getResource(vsResources, .uniformBuffer, "vertex shader must use zero or one uniform buffer") {
+                vertexUBO = br
+                if vsCompiler.get_decoration(id: br.id, decoration: .descriptorSet) != 0 {
+                    // os_log_error(OE_LOG_DEFAULT, "vertex shader resources must use descriptor set #0");
+                    return false
+                }
+                
+                let binding = Int(vsCompiler.mslGetAutomaticResourceBinding(br.id))
+                var desc = ref.ubo ?? BufferBindingDescriptor()
+                desc.bindingVert = binding
+                var sz = 0
+                vsCompiler.get_declared_struct_size(type: vsCompiler.get_type_handle(br.base_type_id), size: &sz)
+                desc.size = max(desc.size, sz)
+                ref.ubo = desc
+            }
         } catch {
             return false
         }
-        
-        if let ubo = vertexUBO, vsCompiler.get_decoration(id: ubo.id, decoration: .descriptorSet) != 0 {
-            // os_log_error(OE_LOG_DEFAULT, "vertex shader resources must use descriptor set #0");
+
+        // fragment UBO binding
+        var fragmentUBO: __spvc_reflected_resource?
+        do {
+            if let br = try getResource(fsResources, .uniformBuffer, "fragment shader must use zero or one uniform buffer") {
+                fragmentUBO = br
+                if fsCompiler.get_decoration(id: br.id, decoration: .descriptorSet) != 0 {
+                    // os_log_error(OE_LOG_DEFAULT, "fragment shader resources must use descriptor set #0");
+                    return false
+                }
+                
+                let binding = Int(fsCompiler.mslGetAutomaticResourceBinding(br.id))
+                var desc = ref.ubo ?? BufferBindingDescriptor()
+                desc.bindingFrag = binding
+                var sz = 0
+                fsCompiler.get_declared_struct_size(type: fsCompiler.get_type_handle(br.base_type_id), size: &sz)
+                desc.size = max(desc.size, sz)
+                ref.ubo = desc
+            }
+        } catch {
             return false
         }
-        
-        if let ubo = fragmentUBO, fsCompiler.get_decoration(id: ubo.id, decoration: .descriptorSet) != 0 {
-            // os_log_error(OE_LOG_DEFAULT, "fragment shader resources must use descriptor set #0");
+
+        // vertex Push binding
+        var vertexPSH: __spvc_reflected_resource?
+        do {
+            if let br = try getResource(vsResources, .pushConstant, "vertex shader must use zero or one push constant buffer") {
+                vertexPSH = br
+                let binding = Int(vsCompiler.mslGetAutomaticResourceBinding(br.id))
+                var desc = ref.push ?? BufferBindingDescriptor()
+                desc.bindingVert = binding
+                var sz = 0
+                vsCompiler.get_declared_struct_size(type: vsCompiler.get_type_handle(br.base_type_id), size: &sz)
+                desc.size = max(desc.size, sz)
+                ref.push = desc
+            }
+        } catch {
             return false
         }
-        
-        let vertexUBOBinding = vertexUBO != nil ? Int(vsCompiler.mslGetAutomaticResourceBinding(vertexUBO!.id)) : .max
-        let fragmentUBOBinding = fragmentUBO != nil ? Int(fsCompiler.mslGetAutomaticResourceBinding(fragmentUBO!.id)) : .max
-        let hasVertUBO = vertexUBO != nil && vertexUBOBinding != .max
-        let hasFragUBO = fragmentUBO != nil && fragmentUBOBinding != .max
-        ref.uboBindingVert = hasVertUBO ? vertexUBOBinding : 0
-        ref.uboBindingFrag = hasFragUBO ? fragmentUBOBinding : 0
-        
-        let vertexPSHBinding = vertexPSH != nil ? Int(vsCompiler.mslGetAutomaticResourceBinding(vertexPSH!.id)) : .max
-        let fragmentPSHBinding = fragmentPSH != nil ? Int(fsCompiler.mslGetAutomaticResourceBinding(fragmentPSH!.id)) : .max
-        let hasVertPSH = vertexPSH != nil && vertexPSHBinding != .max
-        let hasFragPSH = fragmentPSH != nil && fragmentPSHBinding != .max
-        ref.pushBindingVert = hasVertPSH ? vertexPSHBinding : 0
-        ref.pushBindingFrag = hasFragPSH ? fragmentPSHBinding : 0
-        
-        if hasVertUBO {
-            ref.uboStageUsage = .vertex
-            var sz = 0
-            vsCompiler.get_declared_struct_size(type: vsCompiler.get_type_handle(vertexUBO!.base_type_id), size: &sz)
-            ref.uboSize = sz
+
+        // fragment UBO binding
+        var fragmentPSH: __spvc_reflected_resource?
+        do {
+            if let br = try getResource(fsResources, .pushConstant, "fragment shader must use zero or one push constant buffer") {
+                fragmentPSH = br
+                let binding = Int(fsCompiler.mslGetAutomaticResourceBinding(br.id))
+                var desc = ref.push ?? BufferBindingDescriptor()
+                desc.bindingFrag = binding
+                var sz = 0
+                fsCompiler.get_declared_struct_size(type: fsCompiler.get_type_handle(br.base_type_id), size: &sz)
+                desc.size = max(desc.size, sz)
+                ref.push = desc
+            }
+        } catch {
+            return false
         }
-        
-        if hasVertPSH {
-            ref.pushStageUsage = .vertex
-            var sz = 0
-            vsCompiler.get_declared_struct_size(type: vsCompiler.get_type_handle(vertexPSH!.base_type_id), size: &sz)
-            ref.pushSize = sz
-        }
-        
-        if hasFragUBO {
-            ref.uboStageUsage.insert(.fragment)
-            var sz = 0
-            fsCompiler.get_declared_struct_size(type: fsCompiler.get_type_handle(fragmentUBO!.base_type_id), size: &sz)
-            ref.uboSize = max(ref.uboSize, sz)
-        }
-        
-        if hasFragPSH {
-            ref.pushStageUsage.insert(.fragment)
-            var sz = 0
-            fsCompiler.get_declared_struct_size(type: fsCompiler.get_type_handle(fragmentPSH!.base_type_id), size: &sz)
-            ref.pushSize = max(ref.pushSize, sz)
-        }
-        
+
         // Find all relevant uniforms and push constants
-        if hasVertUBO && !addActiveBufferRanges(ref, compiler: vsCompiler, resource: vertexUBO!, ubo: true) {
+        if let res = vertexUBO, !addActiveBufferRanges(ref, compiler: vsCompiler, resource: res, ubo: true) {
             return false
         }
-        if hasFragUBO && !addActiveBufferRanges(ref, compiler: fsCompiler, resource: fragmentUBO!, ubo: true) {
+        if let res = fragmentUBO, !addActiveBufferRanges(ref, compiler: fsCompiler, resource: res, ubo: true) {
             return false
         }
-        if hasVertPSH && !addActiveBufferRanges(ref, compiler: vsCompiler, resource: vertexPSH!, ubo: false) {
+        if let res = vertexPSH, !addActiveBufferRanges(ref, compiler: vsCompiler, resource: res, ubo: false) {
             return false
         }
-        if hasFragPSH && !addActiveBufferRanges(ref, compiler: fsCompiler, resource: fragmentPSH!, ubo: false) {
+        if let res = fragmentPSH, !addActiveBufferRanges(ref, compiler: fsCompiler, resource: res, ubo: false) {
             return false
         }
 
