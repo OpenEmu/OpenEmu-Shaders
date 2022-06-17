@@ -89,7 +89,7 @@ public class ShaderPassCompiler {
             else {
                 throw ShaderError.processFailed
             }
-            updateBindings(passSemantics: passSemantics, passBindings: bind, ref: ref)
+            updateBindings(passNumber: passNumber, passSemantics: passSemantics, passBindings: bind, ref: ref)
         }
         return (String(cString: vsCode!), String(cString: fsCode!))
     }
@@ -202,7 +202,7 @@ public class ShaderPassCompiler {
         return data
     }
     
-    func updateBindings(passSemantics: ShaderPassSemantics, passBindings: ShaderPassBindings, ref: ShaderReflection) {
+    func updateBindings(passNumber: Int, passSemantics: ShaderPassSemantics, passBindings: ShaderPassBindings, ref: ShaderReflection) {
         // UBO
         let uboB = passBindings.buffers[0]
         if let b = ref.ubo {
@@ -220,7 +220,7 @@ public class ShaderPassCompiler {
         }
         
         for (sem, meta) in ref.semantics {
-            let name = ref.name(forBufferSemantic: sem, index: 0)!
+            let name = ref.name(forBufferSemantic: sem)!
             if let offset = meta.uboOffset {
                 uboB.addUniformData(passSemantics.uniforms[sem]!.data,
                                     size: meta.numberOfComponents * MemoryLayout<Float>.size,
@@ -236,7 +236,7 @@ public class ShaderPassCompiler {
         }
         
         for meta in ref.floatParameters.values {
-            let name = ref.name(forBufferSemantic: .floatParameter, index: meta.index)!
+            let name = ref.name(forFloatParameterAtIndex: meta.index)!
             guard let param = passSemantics.parameter(at: meta.index)
             else { fatalError("Unable to find parameter at index \(meta.index)") }
             
@@ -257,20 +257,20 @@ public class ShaderPassCompiler {
         for (sem, a) in ref.textures {
             let tex = passSemantics.textures[sem]!
             for meta in a.values where meta.binding != nil || meta.uboOffset != nil || meta.pushOffset != nil {
+                // if the texture is bound, meta.binding will be set
                 if let binding = meta.binding {
                     let ptr = tex.texture.advanced(by: meta.index * tex.textureStride)
-                    let bind = passBindings.addTexture(ptr)
+                    let bind = passBindings.addTexture(ptr, binding: binding)
                     
                     if sem == .user {
                         bind.wrap   = shader.luts[meta.index].wrapMode
                         bind.filter = shader.luts[meta.index].filter
                     } else {
-                        bind.wrap   = shader.passes[ref.passNumber].wrapMode
-                        bind.filter = shader.passes[ref.passNumber].filter
+                        bind.wrap   = shader.passes[passNumber].wrapMode
+                        bind.filter = shader.passes[passNumber].filter
                     }
                     
-                    bind.binding    = binding
-                    bind.name       = ref.name(forTextureSemantic: sem, index: meta.index)!
+                    bind.name = ref.name(forTextureSemantic: sem, index: meta.index)!
                     
                     if sem == .passFeedback {
                         bindings[meta.index].isFeedback = true
@@ -301,7 +301,7 @@ public class ShaderPassCompiler {
                         fragmentCompiler fsCompiler: SPVCompiler,
                         passSemantics: ShaderPassSemantics,
                         passBindings: ShaderPassBindings) -> ShaderReflection? {
-        let ref = ShaderReflection(passNumber: passNumber)
+        let ref = ShaderReflection()
         
         // add aliases
         for pass in shader.passes.prefix(passNumber + 1) {
@@ -321,10 +321,10 @@ public class ShaderPassCompiler {
         }
         
         for (i, param) in shader.parameters.enumerated() {
-            guard ref.addBufferSemantic(.floatParameter, atIndex: i, name: param.name) else { return nil }
+            guard ref.addFloatParameterSemantic(atIndex: i, name: param.name) else { return nil }
         }
         
-        guard reflectWith(ref, withVertexCompiler: vsCompiler, fragmentCompiler: fsCompiler)
+        guard reflectWith(ref, passNumber: passNumber, withVertexCompiler: vsCompiler, fragmentCompiler: fsCompiler)
         else {
             // os_log_error(OE_LOG_DEFAULT, "reflect failed");
             return nil
@@ -365,7 +365,7 @@ public class ShaderPassCompiler {
     }
 
     // swiftlint: disable cyclomatic_complexity
-    func reflectWith(_ ref: ShaderReflection, withVertexCompiler vsCompiler: SPVCompiler, fragmentCompiler fsCompiler: SPVCompiler) -> Bool {
+    func reflectWith(_ ref: ShaderReflection, passNumber: Int, withVertexCompiler vsCompiler: SPVCompiler, fragmentCompiler fsCompiler: SPVCompiler) -> Bool {
         var vsResources: SPVResources?
         vsCompiler.create_shader_resources(&vsResources)
         guard let vsResources = vsResources else {
@@ -436,94 +436,88 @@ public class ShaderPassCompiler {
         }
 
         // vertex UBO binding
-        var vertexUBO: __spvc_reflected_resource?
         do {
-            if let br = try getResource(vsResources, .uniformBuffer, "vertex shader must use zero or one uniform buffer") {
-                vertexUBO = br
-                if vsCompiler.get_decoration(id: br.id, decoration: .descriptorSet) != 0 {
+            if let bufRes = try getResource(vsResources, .uniformBuffer, "vertex shader must use zero or one uniform buffer") {
+                if vsCompiler.get_decoration(id: bufRes.id, decoration: .descriptorSet) != 0 {
                     // os_log_error(OE_LOG_DEFAULT, "vertex shader resources must use descriptor set #0");
                     return false
                 }
                 
-                let binding = Int(vsCompiler.mslGetAutomaticResourceBinding(br.id))
+                let binding = Int(vsCompiler.mslGetAutomaticResourceBinding(bufRes.id))
                 var desc = ref.ubo ?? BufferBindingDescriptor()
                 desc.bindingVert = binding
                 var sz = 0
-                vsCompiler.get_declared_struct_size(type: vsCompiler.get_type_handle(br.base_type_id), size: &sz)
+                vsCompiler.get_declared_struct_size(type: vsCompiler.get_type_handle(bufRes.base_type_id), size: &sz)
                 desc.size = max(desc.size, sz)
                 ref.ubo = desc
+                
+                if !addActiveBufferRanges(ref, passNumber: passNumber, compiler: vsCompiler, resource: bufRes, ubo: true) {
+                    return false
+                }
             }
         } catch {
             return false
         }
 
         // fragment UBO binding
-        var fragmentUBO: __spvc_reflected_resource?
         do {
-            if let br = try getResource(fsResources, .uniformBuffer, "fragment shader must use zero or one uniform buffer") {
-                fragmentUBO = br
-                if fsCompiler.get_decoration(id: br.id, decoration: .descriptorSet) != 0 {
+            if let bufRes = try getResource(fsResources, .uniformBuffer, "fragment shader must use zero or one uniform buffer") {
+                if fsCompiler.get_decoration(id: bufRes.id, decoration: .descriptorSet) != 0 {
                     // os_log_error(OE_LOG_DEFAULT, "fragment shader resources must use descriptor set #0");
                     return false
                 }
                 
-                let binding = Int(fsCompiler.mslGetAutomaticResourceBinding(br.id))
+                let binding = Int(fsCompiler.mslGetAutomaticResourceBinding(bufRes.id))
                 var desc = ref.ubo ?? BufferBindingDescriptor()
                 desc.bindingFrag = binding
                 var sz = 0
-                fsCompiler.get_declared_struct_size(type: fsCompiler.get_type_handle(br.base_type_id), size: &sz)
+                fsCompiler.get_declared_struct_size(type: fsCompiler.get_type_handle(bufRes.base_type_id), size: &sz)
                 desc.size = max(desc.size, sz)
                 ref.ubo = desc
+                
+                if !addActiveBufferRanges(ref, passNumber: passNumber, compiler: fsCompiler, resource: bufRes, ubo: true) {
+                    return false
+                }
             }
         } catch {
             return false
         }
 
         // vertex Push binding
-        var vertexPSH: __spvc_reflected_resource?
         do {
-            if let br = try getResource(vsResources, .pushConstant, "vertex shader must use zero or one push constant buffer") {
-                vertexPSH = br
-                let binding = Int(vsCompiler.mslGetAutomaticResourceBinding(br.id))
+            if let bufRes = try getResource(vsResources, .pushConstant, "vertex shader must use zero or one push constant buffer") {
+                let binding = Int(vsCompiler.mslGetAutomaticResourceBinding(bufRes.id))
                 var desc = ref.push ?? BufferBindingDescriptor()
                 desc.bindingVert = binding
                 var sz = 0
-                vsCompiler.get_declared_struct_size(type: vsCompiler.get_type_handle(br.base_type_id), size: &sz)
+                vsCompiler.get_declared_struct_size(type: vsCompiler.get_type_handle(bufRes.base_type_id), size: &sz)
                 desc.size = max(desc.size, sz)
                 ref.push = desc
+                
+                if !addActiveBufferRanges(ref, passNumber: passNumber, compiler: vsCompiler, resource: bufRes, ubo: false) {
+                    return false
+                }
             }
         } catch {
             return false
         }
 
-        // fragment UBO binding
-        var fragmentPSH: __spvc_reflected_resource?
+        // fragment Push binding
         do {
-            if let br = try getResource(fsResources, .pushConstant, "fragment shader must use zero or one push constant buffer") {
-                fragmentPSH = br
-                let binding = Int(fsCompiler.mslGetAutomaticResourceBinding(br.id))
+            if let bufRes = try getResource(fsResources, .pushConstant, "fragment shader must use zero or one push constant buffer") {
+                let binding = Int(fsCompiler.mslGetAutomaticResourceBinding(bufRes.id))
                 var desc = ref.push ?? BufferBindingDescriptor()
                 desc.bindingFrag = binding
                 var sz = 0
-                fsCompiler.get_declared_struct_size(type: fsCompiler.get_type_handle(br.base_type_id), size: &sz)
+                fsCompiler.get_declared_struct_size(type: fsCompiler.get_type_handle(bufRes.base_type_id), size: &sz)
                 desc.size = max(desc.size, sz)
                 ref.push = desc
+                
+                if !addActiveBufferRanges(ref, passNumber: passNumber, compiler: fsCompiler, resource: bufRes, ubo: false) {
+                    return false
+                }
             }
         } catch {
-            return false
-        }
-
-        // Find all relevant uniforms and push constants
-        if let res = vertexUBO, !addActiveBufferRanges(ref, compiler: vsCompiler, resource: res, ubo: true) {
-            return false
-        }
-        if let res = fragmentUBO, !addActiveBufferRanges(ref, compiler: fsCompiler, resource: res, ubo: true) {
-            return false
-        }
-        if let res = vertexPSH, !addActiveBufferRanges(ref, compiler: vsCompiler, resource: res, ubo: false) {
-            return false
-        }
-        if let res = fragmentPSH, !addActiveBufferRanges(ref, compiler: fsCompiler, resource: res, ubo: false) {
             return false
         }
 
@@ -611,35 +605,25 @@ public class ShaderPassCompiler {
         return type.basetype == .fp32 && type.vector_size == 4 && type.columns == 1
     }
     
-    func addActiveBufferRanges(_ ref: ShaderReflection, compiler: SPVCompiler, resource res: __spvc_reflected_resource, ubo: Bool) -> Bool {
+    func addActiveBufferRanges(_ ref: ShaderReflection, passNumber: Int, compiler: SPVCompiler, resource res: __spvc_reflected_resource, ubo: Bool) -> Bool {
         var rangesPtr: UnsafePointer<spvc_buffer_range>?
         var numRanges = 0
         compiler.get_active_buffer_ranges(id: res.id, list: &rangesPtr, size: &numRanges)
-        guard let rangesPtr = rangesPtr else {
-            return true
-        }
+        guard let rangesPtr = rangesPtr else { return true }
         
         let ranges = UnsafeBufferPointer(start: rangesPtr, count: numRanges)
         for range in ranges {
             let name = String(cString: compiler.get_member_name(id: res.base_type_id, index: range.index))
             let type = compiler.get_type_handle(compiler.get_type_handle(res.base_type_id)!.get_member_type(index: range.index))!
             
-            let bufferSem = ref.bufferSemantic(forUniformName: name)
-            let texSem    = ref.textureSemantic(forUniformName: name)
-            
-            if let texSem = texSem, texSem.semantic == .passOutput && texSem.index >= ref.passNumber {
-                // os_log_error(OE_LOG_DEFAULT, "shader pass #%lu is attempting to use output from self or later pass #%lu", ref.passNumber, texSem.index);
-                return false
-            }
-            
-            let vecsz = Int(type.vector_size)
-            let cols  = Int(type.columns)
-            
-            if let bufferSem = bufferSem {
+            if let bufferSem = ref.bufferSemantic(forUniformName: name) {
                 if !validate(type: type, forBufferSemantic: bufferSem.semantic) {
                     // os_log_error(OE_LOG_DEFAULT, "invalid type for %{public}s", name);
                     return false
                 }
+                
+                let vecsz = Int(type.vector_size)
+                let cols  = Int(type.columns)
                 
                 if bufferSem.semantic == .floatParameter {
                     if !ref.setOffset(range.offset, vecSize: vecsz, forFloatParameterAt: bufferSem.index, ubo: ubo) {
@@ -650,7 +634,12 @@ public class ShaderPassCompiler {
                         return false
                     }
                 }
-            } else if let texSem = texSem {
+            } else if let texSem = ref.textureSemantic(forUniformName: name) {
+                if texSem.semantic == .passOutput && texSem.index >= passNumber {
+                    // os_log_error(OE_LOG_DEFAULT, "shader pass #%lu is attempting to use output from self or later pass #%lu", ref.passNumber, texSem.index);
+                    return false
+                }
+                
                 if !validate(type: type, forTextureSemantic: texSem.semantic) {
                     // os_log_error(OE_LOG_DEFAULT, "invalid type for %{public}s; expected a vec4", name);
                     return false

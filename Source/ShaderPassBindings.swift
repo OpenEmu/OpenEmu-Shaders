@@ -25,10 +25,10 @@
 import Foundation
 
 public class ShaderPassUniformBinding {
-    var data: UnsafeRawPointer
-    var size: Int
-    var offset: Int
-    var name: String
+    let data: UnsafeRawPointer
+    let size: Int
+    let offset: Int
+    let name: String
     
     init(data: UnsafeRawPointer, size: Int, offset: Int, name: String) {
         self.data = data
@@ -53,14 +53,15 @@ class ShaderPassBufferBinding {
 }
 
 class ShaderPassTextureBinding {
-    var texture: UnsafeRawPointer
+    let texture: UnsafeRawPointer
+    let binding: Int
     var wrap: ShaderPassWrap = .default
     var filter: ShaderPassFilter = .nearest
-    var binding: Int = 0
     var name: String = ""
     
-    init(texture: UnsafeRawPointer) {
+    init(texture: UnsafeRawPointer, binding: Int) {
         self.texture = texture
+        self.binding = binding
     }
 }
 
@@ -75,8 +76,8 @@ class ShaderPassBindings {
         self.index = index
     }
     
-    func addTexture(_ texture: UnsafeRawPointer) -> ShaderPassTextureBinding {
-        let t = ShaderPassTextureBinding(texture: texture)
+    func addTexture(_ texture: UnsafeRawPointer, binding: Int) -> ShaderPassTextureBinding {
+        let t = ShaderPassTextureBinding(texture: texture, binding: binding)
         textures.append(t)
         return t
     }
