@@ -111,8 +111,13 @@ public class ShaderPassCompiler {
     ) throws {
         let version: UInt32
         switch options.languageVersion {
+        #if swift(>=5.5)
         case .version2_4:
             version = makeVersion(major: 2, minor: 4)
+        #else
+        case MTLLanguageVersion(rawValue: 131076):
+            version = makeVersion(major: 2, minor: 4)
+        #endif
         case .version2_3:
             version = makeVersion(major: 2, minor: 3)
         case .version2_2:
