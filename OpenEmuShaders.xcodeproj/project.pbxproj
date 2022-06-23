@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05059BB82863F7F70081E53C /* ShaderPassCompiler+Compiled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05059BB72863F7F70081E53C /* ShaderPassCompiler+Compiled.swift */; };
+		051C31ED2865076900281C57 /* ShaderPassCompiler+Reflection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051C31EC2865076900281C57 /* ShaderPassCompiler+Reflection.swift */; };
 		0521355C246E3A240085A598 /* CompiledShader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0521355B246E3A240085A598 /* CompiledShader.swift */; };
 		052BE009228D184600942C12 /* SourceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE008228D184600942C12 /* SourceParserTests.swift */; };
 		052BE020228D187E00942C12 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE01F228D187E00942C12 /* TestHelpers.swift */; };
@@ -142,6 +144,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		05059BB72863F7F70081E53C /* ShaderPassCompiler+Compiled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShaderPassCompiler+Compiled.swift"; sourceTree = "<group>"; };
+		051C31EC2865076900281C57 /* ShaderPassCompiler+Reflection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShaderPassCompiler+Reflection.swift"; sourceTree = "<group>"; };
 		05201D6D277C542E0028CBE0 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		0521355B246E3A240085A598 /* CompiledShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompiledShader.swift; sourceTree = "<group>"; };
 		0524FF842458B798005C5E83 /* SlangShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlangShader.swift; sourceTree = "<group>"; };
@@ -256,6 +260,8 @@
 			children = (
 				0521355B246E3A240085A598 /* CompiledShader.swift */,
 				057848C125C2151900A842E7 /* ShaderPassCompiler.swift */,
+				051C31EC2865076900281C57 /* ShaderPassCompiler+Reflection.swift */,
+				05059BB72863F7F70081E53C /* ShaderPassCompiler+Compiled.swift */,
 				057847CD25C1250300A842E7 /* ShaderCompilerOptions.swift */,
 				05ABBEA22845FB1C006F1A8C /* ShaderReflection.swift */,
 				05ABBEA828483072006F1A8C /* ShaderPassBindings.swift */,
@@ -694,9 +700,11 @@
 				056696F02460EF5D000A5BE3 /* SlangShader.swift in Sources */,
 				056AC3A7228BB3E9005018DA /* SourceParser.swift in Sources */,
 				05D043542439043E00B6BDBF /* String+Version.swift in Sources */,
+				05059BB82863F7F70081E53C /* ShaderPassCompiler+Compiled.swift in Sources */,
 				057848C225C2151900A842E7 /* ShaderPassCompiler.swift in Sources */,
 				05ABBEA928483072006F1A8C /* ShaderPassBindings.swift in Sources */,
 				05ABBEA72847283F006F1A8C /* ShaderPassSemantics.swift in Sources */,
+				051C31ED2865076900281C57 /* ShaderPassCompiler+Reflection.swift in Sources */,
 				056AC379228BA8D9005018DA /* ShaderParameter.swift in Sources */,
 				057847CE25C1250300A842E7 /* ShaderCompilerOptions.swift in Sources */,
 				05ABBEA32845FB1C006F1A8C /* ShaderReflection.swift in Sources */,

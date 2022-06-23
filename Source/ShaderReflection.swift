@@ -23,6 +23,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
+import CSPIRVCross
 import os.log
 
 class ShaderTextureSemanticMeta {
@@ -59,22 +60,44 @@ class ShaderTextureSemanticMap {
         self.semantic = semantic
         self.index    = index
     }
+    
+    func validateSizeType(_ type: __SPVType) -> Bool {
+        type.num_array_dimensions == 0 &&
+        type.basetype == .fp32 &&
+        type.vector_size == 4 &&
+        type.columns == 1
+    }
 }
 
 class ShaderSemanticMap {
-    var semantic: ShaderBufferSemantic
-    var index: Int
+    let semantic: ShaderBufferSemantic
+    let index: Int
     
-    //
+    let baseType: SPVBaseType
+    let vecSize: Int
+    let cols: Int
     
-    init(semantic: ShaderBufferSemantic, index: Int) {
+    init(semantic: ShaderBufferSemantic, index: Int, baseType: SPVBaseType, vecSize: Int, cols: Int) {
         self.semantic = semantic
         self.index    = index
+        self.baseType = baseType
+        self.vecSize  = vecSize
+        self.cols     = cols
     }
     
-    init(semantic: ShaderBufferSemantic) {
+    init(semantic: ShaderBufferSemantic, baseType: SPVBaseType, vecSize: Int, cols: Int) {
         self.semantic = semantic
         self.index    = 0
+        self.baseType = baseType
+        self.vecSize  = vecSize
+        self.cols     = cols
+    }
+    
+    func validateType(_ type: __SPVType) -> Bool {
+        type.num_array_dimensions == 0 &&
+        type.basetype == baseType &&
+        type.vector_size == vecSize &&
+        type.columns == cols
     }
 }
 
@@ -141,7 +164,7 @@ class ShaderReflection {
             return false
         }
         
-        floatParameterSemanticMap[name] = ShaderSemanticMap(semantic: .floatParameter, index: i)
+        floatParameterSemanticMap[name] = ShaderSemanticMap(semantic: .floatParameter, index: i, baseType: .fp32, vecSize: 1, cols: 1)
         
         return true
     }
@@ -362,11 +385,11 @@ class ShaderReflection {
     ]
     
     static let semanticUniformNames: [String: ShaderSemanticMap] = [
-        "MVP": .init(semantic: .mvp),
-        "OutputSize": .init(semantic: .outputSize),
-        "FinalViewportSize": .init(semantic: .finalViewportSize),
-        "FrameCount": .init(semantic: .frameCount),
-        "FrameDirection": .init(semantic: .frameDirection),
+        "MVP": .init(semantic: .mvp, baseType: .fp32, vecSize: 4, cols: 4),
+        "OutputSize": .init(semantic: .outputSize, baseType: .fp32, vecSize: 4, cols: 1),
+        "FinalViewportSize": .init(semantic: .finalViewportSize, baseType: .fp32, vecSize: 4, cols: 1),
+        "FrameCount": .init(semantic: .frameCount, baseType: .uint32, vecSize: 1, cols: 1),
+        "FrameDirection": .init(semantic: .frameDirection, baseType: .int32, vecSize: 1, cols: 1),
     ]
     static let semanticToUniformName: [ShaderBufferSemantic: String] = [
         .mvp: "MVP",

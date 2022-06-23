@@ -46,7 +46,8 @@ extension OEShaders {
             let options = ShaderCompilerOptions()
             options.isCacheDisabled = true
             let compiler = ShaderPassCompiler(shaderModel: shader)
-            let (vs, fs) = try compiler.buildPass(1, options: options, passSemantics: nil)
+            let res = try compiler.compile(options: options)
+            print(dump(res))
         }
     }
 }
