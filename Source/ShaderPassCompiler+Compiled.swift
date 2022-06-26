@@ -27,13 +27,57 @@ import CSPIRVCross
 
 extension ShaderPassCompiler {
     public func compile(options: ShaderCompilerOptions) throws -> Compiled.Shader {
-        func mapPass(_ pass: ShaderPass) throws -> Compiled.ShaderPass {
+        var passes = try shader.passes.map { pass in
             try compilePass(pass, options: options)
         }
         
-        let passes = try shader.passes.map(mapPass(_:))
+        // The set contains the pass numbers of all passes
+        // that are feedback passes.
+        let feedback = Set<Int>(passes.flatMap { pass in
+            pass.textures
+                .filter { $0.semantic == .passFeedback }
+                .compactMap(\.index)
+        })
         
-        return Compiled.Shader(passes: passes, parameters: [], luts: [])
+        for passNumber in feedback {
+            passes[passNumber].isFeedback = true
+        }
+        
+        for pass in passes {
+            for tex in pass.textures where tex.semantic == .passFeedback {
+                print("Pass \(pass.index) uses pass \(tex.index!) for feedback")
+            }
+        }
+        
+        let parameters = shader.parameters
+            .enumerated()
+            .map { (index, p) in
+                Compiled.Parameter(index: index, source: p)
+            }
+        
+        let luts = shader.luts
+            .map {
+                Compiled.LUT(url: $0.url,
+                             name: $0.name,
+                             filter: .init($0.filter),
+                             wrapMode: .init($0.wrapMode),
+                             isMipmap: $0.isMipmap)
+            }
+        
+        // Find the maximum index for the OriginalHistory texture semantic to determine
+        // how many frames of original history is required.
+        let historyCount = passes
+            .flatMap {
+                $0.textures
+                    .filter { $0.semantic == .originalHistory }
+                    .map { $0.index! }
+            }
+            .max() ?? 0
+        
+        return Compiled.Shader(passes: passes,
+                               parameters: parameters,
+                               luts: luts,
+                               historyCount: historyCount)
     }
     
     func compilePass(_ pass: ShaderPass, options: ShaderCompilerOptions) throws -> Compiled.ShaderPass {
@@ -65,7 +109,7 @@ extension ShaderPassCompiler {
         else {
             throw ShaderError.buildFailed
         }
-
+        
         var vsCode: UnsafePointer<Int8>?
         vsCompiler.compile(&vsCode)
         
@@ -81,28 +125,62 @@ extension ShaderPassCompiler {
         // TODO: Determine isFeedback
         let isFeedback = false
         
-        // TODO: Populate buffer descriptors
         let buffers  = [
             makeBuffersForSemantics(ref, source: \.ubo, offset: \.uboOffset, textureOffset: \.uboOffset),
             makeBuffersForSemantics(ref, source: \.push, offset: \.pushOffset, textureOffset: \.pushOffset),
         ]
         
-        // TODO: Populate texture descriptos
-        let textures = [Compiled.TextureDescriptor]()
-
+        let textures = makeTextures(ref, symbols: sym)
+        
         return .init(index: pass.index,
                      vertexSource: String(cString: vsCode!),
                      fragmentSource: String(cString: fsCode!),
+                     frameCountMod: pass.frameCountMod,
+                     scaleX: .init(pass.scaleX),
+                     scaleY: .init(pass.scaleY),
+                     scale: pass.scale,
+                     size: pass.size,
+                     isScaled: pass.isScaled,
                      format: try .init(pass.format),
                      isFeedback: isFeedback,
                      buffers: buffers,
                      textures: textures)
     }
     
-    private func makeTextures(_ ref: ShaderReflection) -> [Compiled.TextureDescriptor] {
-        fatalError("not implemented")
+    /// Find all the bound textures for the pass.
+    private func makeTextures(_ ref: ShaderPassReflection, symbols sym: ShaderSymbols) -> [Compiled.TextureDescriptor] {
+        var textures = [Compiled.TextureDescriptor]()
+        
+        for (sem, a) in ref.textures {
+            for meta in a.values {
+                if let binding = meta.binding {
+                    let wrap: Compiled.ShaderPassWrap
+                    let filter: Compiled.ShaderPassFilter
+                    if sem == .user {
+                        wrap   = .init(shader.luts[meta.index].wrapMode)
+                        filter = .init(shader.luts[meta.index].filter)
+                    } else {
+                        wrap   = .init(shader.passes[ref.passNumber].wrapMode)
+                        filter = .init(shader.passes[meta.index].filter)
+                    }
+                    
+                    let name = sym.name(forTextureSemantic: sem, index: meta.index)!
+                    
+                    textures.append(Compiled.TextureDescriptor(name: name,
+                                                               semantic: .init(sem),
+                                                               binding: binding,
+                                                               wrap: wrap,
+                                                               filter: filter,
+                                                               index: meta.index))
+                    
+                }
+            }
+        }
+        
+        return textures
     }
     
+    /// Find all the bound buffer values for the pass
     private func makeBuffersForSemantics(_ ref: ShaderPassReflection,
                                          source: KeyPath<ShaderPassReflection, BufferBindingDescriptor?>,
                                          offset: KeyPath<ShaderSemanticMeta, Int?>,
@@ -111,6 +189,7 @@ extension ShaderPassCompiler {
         guard let b = ref[keyPath: source]
         else { return .init(bindingVert: nil, bindingFrag: nil, size: 0, uniforms: []) }
         
+        // Find bound global semantics, like MVP, FrameCount, etc
         let semantics = ref.semantics.compactMap { sem, meta in
             if let offset = meta[keyPath: offset] {
                 return Compiled.BufferUniformDescriptor(semantic: .init(sem),
@@ -121,6 +200,7 @@ extension ShaderPassCompiler {
             return nil
         }
         
+        // Find bound parameters
         let parameters = ref.floatParameters.values.compactMap { meta in
             if let offset = meta[keyPath: offset] {
                 return Compiled.BufferUniformDescriptor(semantic: .floatParameter,
@@ -131,6 +211,7 @@ extension ShaderPassCompiler {
             return nil
         }
         
+        // Find bound texture sizes such as OriginalSize, <LUT alias>Size, etc
         let textures = ref.textures.flatMap { sem, a in
             a.values.compactMap { meta in
                 if let offset = meta[keyPath: textureOffset] {

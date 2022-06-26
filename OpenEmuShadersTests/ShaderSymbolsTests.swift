@@ -25,7 +25,7 @@
 import XCTest
 @testable import OpenEmuShaders
 
-class ShaderReflectionTests: XCTestCase {
+class ShaderSymbolsTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -36,9 +36,9 @@ class ShaderReflectionTests: XCTestCase {
     }
 
     func testExample() throws {
-        let ref = ShaderReflection(passNumber: 0)
-        let res = ref.textureSemantic(forUniformName: "OriginalHistorySize2")
-        
+        let sym = ShaderSymbols()
+        let res = sym.textureSemantic(forUniformName: "OriginalHistorySize2")
+        XCTAssertEqual(res?.semantic, .originalHistory)
     }
 
     func testPerformanceExample() throws {

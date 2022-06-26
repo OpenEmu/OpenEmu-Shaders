@@ -41,7 +41,7 @@
 		05ABBE922842D0C0006F1A8C /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBE912842D0C0006F1A8C /* Logging.swift */; };
 		05ABBE9C2842EA5A006F1A8C /* SlangCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBE9B2842EA5A006F1A8C /* SlangCompiler.swift */; };
 		05ABBEA32845FB1C006F1A8C /* ShaderReflection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEA22845FB1C006F1A8C /* ShaderReflection.swift */; };
-		05ABBEA52846D318006F1A8C /* ShaderReflectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEA42846D318006F1A8C /* ShaderReflectionTests.swift */; };
+		05ABBEA52846D318006F1A8C /* ShaderSymbolsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEA42846D318006F1A8C /* ShaderSymbolsTests.swift */; };
 		05ABBEA72847283F006F1A8C /* ShaderPassSemantics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEA62847283F006F1A8C /* ShaderPassSemantics.swift */; };
 		05ABBEA928483072006F1A8C /* ShaderPassBindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEA828483072006F1A8C /* ShaderPassBindings.swift */; };
 		05ABBEAB2849795F006F1A8C /* FilterChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEAA2849795F006F1A8C /* FilterChain.swift */; };
@@ -179,7 +179,7 @@
 		05ABBE912842D0C0006F1A8C /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		05ABBE9B2842EA5A006F1A8C /* SlangCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlangCompiler.swift; sourceTree = "<group>"; };
 		05ABBEA22845FB1C006F1A8C /* ShaderReflection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderReflection.swift; sourceTree = "<group>"; };
-		05ABBEA42846D318006F1A8C /* ShaderReflectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderReflectionTests.swift; sourceTree = "<group>"; };
+		05ABBEA42846D318006F1A8C /* ShaderSymbolsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderSymbolsTests.swift; sourceTree = "<group>"; };
 		05ABBEA62847283F006F1A8C /* ShaderPassSemantics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderPassSemantics.swift; sourceTree = "<group>"; };
 		05ABBEA828483072006F1A8C /* ShaderPassBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderPassBindings.swift; sourceTree = "<group>"; };
 		05ABBEAA2849795F006F1A8C /* FilterChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterChain.swift; sourceTree = "<group>"; };
@@ -377,8 +377,8 @@
 				05AA59F8246702410031B73E /* ShaderModelTests.swift */,
 				05410EDD22F5FF7400303424 /* SlangShaderTests.swift */,
 				052BE008228D184600942C12 /* SourceParserTests.swift */,
+				05ABBEA42846D318006F1A8C /* ShaderSymbolsTests.swift */,
 				052BE01F228D187E00942C12 /* TestHelpers.swift */,
-				05ABBEA42846D318006F1A8C /* ShaderReflectionTests.swift */,
 			);
 			path = OpenEmuShadersTests;
 			sourceTree = "<group>";
@@ -719,7 +719,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05ABBEA52846D318006F1A8C /* ShaderReflectionTests.swift in Sources */,
+				05ABBEA52846D318006F1A8C /* ShaderSymbolsTests.swift in Sources */,
 				05AA59F9246702410031B73E /* ShaderModelTests.swift in Sources */,
 				05410EDE22F5FF7400303424 /* SlangShaderTests.swift in Sources */,
 				052BE020228D187E00942C12 /* TestHelpers.swift in Sources */,

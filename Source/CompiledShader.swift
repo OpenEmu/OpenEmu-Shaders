@@ -14,6 +14,7 @@ public enum Compiled {
         public let passes: [ShaderPass]
         public let parameters: [Parameter]
         public let luts: [LUT]
+        public let historyCount: Int
     }
     
     public struct LUT: Codable {
@@ -32,14 +33,30 @@ public enum Compiled {
         public let minimum: Float
         public let maximum: Float
         public let step: Float
+        
+        init(index: Int, source p: ShaderParameter) {
+            self.index   = index
+            self.name    = p.name
+            self.desc    = p.desc
+            self.initial = p.initial
+            self.minimum = p.minimum
+            self.maximum = p.maximum
+            self.step    = p.step
+        }
     }
     
     public struct ShaderPass: Codable {
         public let index: Int
         public let vertexSource: String
         public let fragmentSource: String
+        public let frameCountMod: UInt
+        public let scaleX: ShaderPassScale
+        public let scaleY: ShaderPassScale
+        public let scale: CGSize
+        public let size: CGSize
+        public let isScaled: Bool
         public let format: PixelFormat
-        public let isFeedback: Bool
+        public internal(set) var isFeedback: Bool
         public let buffers: [BufferDescriptor]
         public let textures: [TextureDescriptor]
     }
@@ -75,12 +92,48 @@ public enum Compiled {
     
     // MARK: - Enumerations
     
+    public enum ShaderPassScale: String, CaseIterable, Codable {
+        case invalid, source, absolute, viewport
+        
+        static let mapFrom: [OpenEmuShaders.ShaderPassScale: Self] = [
+            .invalid: .invalid,
+            .source: .source,
+            .absolute: .absolute,
+            .viewport: .viewport,
+        ]
+
+        init(_ scale: OpenEmuShaders.ShaderPassScale) {
+            self = Self.mapFrom[scale]!
+        }
+    }
+    
     public enum ShaderPassFilter: String, CaseIterable, Codable {
         case unspecified, linear, nearest
+        
+        static let mapFrom: [OpenEmuShaders.ShaderPassFilter: Self] = [
+            .unspecified: .unspecified,
+            .linear: .linear,
+            .nearest: .nearest,
+        ]
+        
+        init(_ filter: OpenEmuShaders.ShaderPassFilter) {
+            self = Self.mapFrom[filter]!
+        }
     }
 
     public enum ShaderPassWrap: String, CaseIterable, Codable {
         case border, edge, `repeat`, mirroredRepeat
+        
+        static let mapFrom: [OpenEmuShaders.ShaderPassWrap: Self] = [
+            .border: .border,
+            .edge: .edge,
+            .repeat: .repeat,
+            .mirroredRepeat: .mirroredRepeat,
+        ]
+        
+        init(_ wrap: OpenEmuShaders.ShaderPassWrap) {
+            self = Self.mapFrom[wrap]!
+        }
     }
     
     public enum ShaderTextureSemantic: String, Codable {
@@ -132,6 +185,19 @@ public enum Compiled {
         /// Shaders refer to user lookup or user textures by name as defined
         /// in the `.slangp` file.
         case user
+        
+        static let mapFrom: [OpenEmuShaders.ShaderTextureSemantic: Self] = [
+            .original: .original,
+            .source: .source,
+            .originalHistory: .originalHistory,
+            .passOutput: .passOutput,
+            .passFeedback: .passFeedback,
+            .user: .user,
+        ]
+        
+        init(_ sem: OpenEmuShaders.ShaderTextureSemantic) {
+            self = Self.mapFrom[sem]!
+        }
     }
     
     public enum ShaderBufferSemantic: String, Codable {

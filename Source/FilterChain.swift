@@ -54,7 +54,7 @@ import os.log
     private var pixelBuffer: PixelBuffer?
     private var samplers: SamplerFilterArray<MTLSamplerState>
     
-    public var shader: SlangShader?
+    public var hasShader: Bool = false
     
     private var frameCount: UInt = 0
     private var passCount: Int = 0
@@ -89,6 +89,11 @@ import os.log
         var viewport: MTLViewport = .init()
         var state: MTLRenderPipelineState?
         var hasFeedback: Bool = false
+        var scaleX: ShaderPassScale = .invalid
+        var scaleY: ShaderPassScale = .invalid
+        var scale: CGSize = CGSize(width: 1, height: 1)
+        var size: CGSize = CGSize(width: 0, height: 0)
+        var isScaled: Bool = false
     }
     
     private var pass = [Pass](repeating: .init(), count: Constants.maxShaderPasses)
@@ -300,7 +305,7 @@ import os.log
     }
     
     private func updateHistory() -> [MTLTexture]? {
-        if shader != nil {
+        if hasShader {
             if historyCount > 0 {
                 if historyNeedsInit {
                     return initHistory()
@@ -352,7 +357,7 @@ import os.log
                                            zfar: 1)
         outputFrame.outputSize = .init(width: size.width, height: size.height)
         
-        if shader != nil {
+        if hasShader {
             renderTargetsNeedResize = true
         }
     }
@@ -377,14 +382,23 @@ import os.log
     }
     
     @objc public func newBuffer(withFormat format: OEMTLPixelFormat, height: UInt, bytesPerRow: UInt) -> PixelBuffer {
-        let pb = PixelBuffer.makeBuffer(withDevice: device, converter: converter, format: format, height: Int(height), bytesPerRow: Int(bytesPerRow))
+        let pb = PixelBuffer.makeBuffer(withDevice: device,
+                                        converter: converter,
+                                        format: format,
+                                        height: Int(height),
+                                        bytesPerRow: Int(bytesPerRow))
         pb.outputRect = sourceRect
         pixelBuffer = pb
         return pb
     }
     
     @objc public func newBuffer(withFormat format: OEMTLPixelFormat, height: UInt, bytesPerRow: UInt, bytes pointer: UnsafeMutableRawPointer) -> PixelBuffer {
-        let pb = PixelBuffer.makeBuffer(withDevice: device, converter: converter, format: format, height: Int(height), bytesPerRow: Int(bytesPerRow), bytes: pointer)
+        let pb = PixelBuffer.makeBuffer(withDevice: device,
+                                        converter: converter,
+                                        format: format,
+                                        height: Int(height),
+                                        bytesPerRow: Int(bytesPerRow),
+                                        bytes: pointer)
         pb.outputRect = sourceRect
         pixelBuffer = pb
         return pb
@@ -527,7 +541,7 @@ import os.log
         prepareNextFrameWithCommandBuffer(commandBuffer)
         updateBuffersForPasses()
         
-        guard shader != nil && passCount > 0 else { return }
+        guard hasShader && passCount > 0 else { return }
         
         // flip feedback render targets
         for i in 0..<passCount where pass[i].hasFeedback {
@@ -618,7 +632,7 @@ import os.log
             rce.setVertexBytes(&vertex, length: vertexSizeBytes, index: BufferIndex.positions.rawValue)
         }
         
-        if shader == nil || passCount == 0 {
+        if !hasShader || passCount == 0 {
             guard let texture = texture else { return }
             return renderTexture(texture, renderCommandEncoder: rce)
         }
@@ -633,7 +647,6 @@ import os.log
     
     private func resizeRenderTargets() -> [MTLTexture]? {
         guard renderTargetsNeedResize else { return nil }
-        guard let shader = shader else { return nil }
 
         for i in 0..<passCount {
             pass[i].renderTarget = .init()
@@ -649,7 +662,7 @@ import os.log
         let viewportSize = CGSize(width: outputFrame.viewport.width, height: outputFrame.viewport.height)
         
         for i in 0..<passCount {
-            let pass = shader.passes[i]
+            let pass = pass[i]
             
             if pass.isScaled {
                 switch pass.scaleX {
@@ -740,6 +753,7 @@ import os.log
         passCount = 0
         lastPassIndex = 0
         lutCount = 0
+        hasShader = false
     }
     
     @objc public func setShader(fromURL url: URL, options shaderOptions: ShaderCompilerOptions) throws {
@@ -850,6 +864,13 @@ import os.log
             let pass = ss.passes[passNumber]
             self.pass[passNumber].frameCountMod = UInt32(pass.frameCountMod)
             
+            // update scaling
+            self.pass[passNumber].scaleX    = pass.scaleX
+            self.pass[passNumber].scaleY    = pass.scaleY
+            self.pass[passNumber].scale     = pass.scale
+            self.pass[passNumber].size      = pass.size
+            self.pass[passNumber].isScaled  = pass.isScaled
+            
             let vd = MTLVertexDescriptor()
             if let attr = vd.attributes[VertexAttribute.position.rawValue] {
                 attr.offset = MemoryLayout<Vertex>.offset(of: \Vertex.position)!
@@ -923,13 +944,13 @@ import os.log
         let end = CACurrentMediaTime() - start
         os_log("Shader compilation completed in %{xcode:interval}f seconds", log: .default, type: .debug, end)
         
-        shader = ss
-        loadLuts()
+        loadLuts(ss)
+        hasShader = true
         renderTargetsNeedResize = true
         historyNeedsInit = true
     }
     
-    private func loadLuts() {
+    private func loadLuts(_ shader: SlangShader) {
         var opts: [MTKTextureLoader.Option: Any] = [
             .generateMipmaps: true,
             .allocateMipmaps: true,
@@ -943,7 +964,7 @@ import os.log
         }
         
         var i: Int = 0
-        for lut in shader!.luts {
+        for lut in shader.luts {
             let t: MTLTexture
             do {
                 t = try loader.newTexture(URL: lut.url, options: opts)
