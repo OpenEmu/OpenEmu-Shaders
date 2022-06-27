@@ -47,7 +47,10 @@ extension OEShaders {
             options.isCacheDisabled = true
             let compiler = ShaderPassCompiler(shaderModel: shader)
             let res = try compiler.compile(options: options)
-            print(dump(res))
+            let je = JSONEncoder()
+            je.outputFormatting = [.prettyPrinted, .sortedKeys]
+            let json = try je.encode(res)
+            print(String(data: json, encoding: .utf8)!)
         }
     }
 }

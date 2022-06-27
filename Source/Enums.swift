@@ -161,6 +161,17 @@ enum Constants {
 
 public enum ShaderPassScale: CaseIterable {
     case invalid, source, absolute, viewport
+    
+    static let mapFrom: [Compiled.ShaderPassScale: Self] = [
+        .invalid: .invalid,
+        .source: .source,
+        .absolute: .absolute,
+        .viewport: .viewport,
+    ]
+
+    init(_ scale: Compiled.ShaderPassScale) {
+        self = Self.mapFrom[scale]!
+    }
 }
 
 public enum ShaderPassFilter: Int, CaseIterable {

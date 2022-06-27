@@ -52,6 +52,8 @@ public enum Compiled {
         public let frameCountMod: UInt
         public let scaleX: ShaderPassScale
         public let scaleY: ShaderPassScale
+        public let filter: ShaderPassFilter
+        public let wrapMode: ShaderPassWrap
         public let scale: CGSize
         public let size: CGSize
         public let isScaled: Bool
@@ -59,6 +61,7 @@ public enum Compiled {
         public internal(set) var isFeedback: Bool
         public let buffers: [BufferDescriptor]
         public let textures: [TextureDescriptor]
+        public let alias: String?
     }
     
     /// An object that describes how to organize and map data
@@ -77,6 +80,7 @@ public enum Compiled {
         public let semantic: ShaderBufferSemantic
         /// An optional index if the uniform is an array
         public let index: Int?
+        public let name: String
         public let size: Int
         public let offset: Int
     }
@@ -95,7 +99,7 @@ public enum Compiled {
     public enum ShaderPassScale: String, CaseIterable, Codable {
         case invalid, source, absolute, viewport
         
-        static let mapFrom: [OpenEmuShaders.ShaderPassScale: Self] = [
+        private static let mapFrom: [OpenEmuShaders.ShaderPassScale: Self] = [
             .invalid: .invalid,
             .source: .source,
             .absolute: .absolute,
@@ -110,7 +114,7 @@ public enum Compiled {
     public enum ShaderPassFilter: String, CaseIterable, Codable {
         case unspecified, linear, nearest
         
-        static let mapFrom: [OpenEmuShaders.ShaderPassFilter: Self] = [
+        private static let mapFrom: [OpenEmuShaders.ShaderPassFilter: Self] = [
             .unspecified: .unspecified,
             .linear: .linear,
             .nearest: .nearest,
@@ -124,7 +128,7 @@ public enum Compiled {
     public enum ShaderPassWrap: String, CaseIterable, Codable {
         case border, edge, `repeat`, mirroredRepeat
         
-        static let mapFrom: [OpenEmuShaders.ShaderPassWrap: Self] = [
+        private static let mapFrom: [OpenEmuShaders.ShaderPassWrap: Self] = [
             .border: .border,
             .edge: .edge,
             .repeat: .repeat,
@@ -294,7 +298,7 @@ public enum Compiled {
             .outputSize: .outputSize,
             .finalViewportSize: .finalViewportSize,
             .frameCount: .frameCount,
-            .frameDirection: .frameCount,
+            .frameDirection: .frameDirection,
             .floatParameter: .floatParameter,
         ]
         
@@ -355,76 +359,193 @@ public enum Compiled {
         case bgra8Unorm_srgb
         case bgra8Unorm
         
-        // swiftlint: disable cyclomatic_complexity
+        private static let mapFrom: [MTLPixelFormat: Self] = [
+            .r8Unorm: .r8Unorm,
+            .r8Uint: .r8Uint,
+            .r8Sint: .r8Sint,
+            .rg8Unorm: .rg8Unorm,
+            .rg8Uint: .rg8Uint,
+            .rg8Sint: .rg8Sint,
+            .rgba8Unorm: .rgba8Unorm,
+            .rgba8Uint: .rgba8Uint,
+            .rgba8Sint: .rgba8Sint,
+            .rgba8Unorm_srgb: .rgba8Unorm_srgb,
+            .rgb10a2Unorm: .rgb10a2Unorm,
+            .rgb10a2Uint: .rgb10a2Uint,
+            .r16Uint: .r16Uint,
+            .r16Sint: .r16Sint,
+            .r16Float: .r16Float,
+            .rg16Uint: .rg16Uint,
+            .rg16Sint: .rg16Sint,
+            .rg16Float: .rg16Float,
+            .rgba16Uint: .rgba16Uint,
+            .rgba16Sint: .rgba16Sint,
+            .rgba16Float: .rgba16Float,
+            .r32Uint: .r32Uint,
+            .r32Sint: .r32Sint,
+            .r32Float: .r32Float,
+            .rg32Uint: .rg32Uint,
+            .rg32Sint: .rg32Sint,
+            .rg32Float: .rg32Float,
+            .rgba32Uint: .rgba32Uint,
+            .rgba32Sint: .rgba32Sint,
+            .rgba32Float: .rgba32Float,
+            .bgra8Unorm_srgb: .bgra8Unorm_srgb,
+            .bgra8Unorm: .bgra8Unorm,
+        ]
+        
         init(_ pf: MTLPixelFormat) throws {
-            switch pf {
+            guard let v = Self.mapFrom[pf]
+            else { throw PixelFormatError.invalidFormat(val: pf) }
+            self = v
+        }
+        
+        var metalPixelFormat: MTLPixelFormat {
+            switch self {
             case .r8Unorm:
-                self = .r8Unorm
+                return .r8Unorm
             case .r8Uint:
-                self = .r8Uint
+                return .r8Uint
             case .r8Sint:
-                self = .r8Sint
+                return .r8Sint
             case .rg8Unorm:
-                self = .rg8Unorm
+                return .rg8Unorm
             case .rg8Uint:
-                self = .rg8Uint
+                return .rg8Uint
             case .rg8Sint:
-                self = .rg8Sint
+                return .rg8Sint
             case .rgba8Unorm:
-                self = .rgba8Unorm
+                return .rgba8Unorm
             case .rgba8Uint:
-                self = .rgba8Uint
+                return .rgba8Uint
             case .rgba8Sint:
-                self = .rgba8Sint
+                return .rgba8Sint
             case .rgba8Unorm_srgb:
-                self = .rgba8Unorm_srgb
+                return .rgba8Unorm_srgb
             case .rgb10a2Unorm:
-                self = .rgb10a2Unorm
+                return .rgb10a2Unorm
             case .rgb10a2Uint:
-                self = .rgb10a2Uint
+                return .rgb10a2Uint
             case .r16Uint:
-                self = .r16Uint
+                return .r16Uint
             case .r16Sint:
-                self = .r16Sint
+                return .r16Sint
             case .r16Float:
-                self = .r16Float
+                return .r16Float
             case .rg16Uint:
-                self = .rg16Uint
+                return .rg16Uint
             case .rg16Sint:
-                self = .rg16Sint
+                return .rg16Sint
             case .rg16Float:
-                self = .rg16Float
+                return .rg16Float
             case .rgba16Uint:
-                self = .rgba16Uint
+                return .rgba16Uint
             case .rgba16Sint:
-                self = .rgba16Sint
+                return .rgba16Sint
             case .rgba16Float:
-                self = .rgba16Float
+                return .rgba16Float
             case .r32Uint:
-                self = .r32Uint
+                return .r32Uint
             case .r32Sint:
-                self = .r32Sint
+                return .r32Sint
             case .r32Float:
-                self = .r32Float
+                return .r32Float
             case .rg32Uint:
-                self = .rg32Uint
+                return .rg32Uint
             case .rg32Sint:
-                self = .rg32Sint
+                return .rg32Sint
             case .rg32Float:
-                self = .rg32Float
+                return .rg32Float
             case .rgba32Uint:
-                self = .rgba32Uint
+                return .rgba32Uint
             case .rgba32Sint:
-                self = .rgba32Sint
+                return .rgba32Sint
             case .rgba32Float:
-                self = .rgba32Float
+                return .rgba32Float
             case .bgra8Unorm_srgb:
-                self = .bgra8Unorm_srgb
+                return .bgra8Unorm_srgb
             case .bgra8Unorm:
-                self = .bgra8Unorm
-            default:
-                throw PixelFormatError.invalidFormat(val: pf)
+                return .bgra8Unorm
             }
         }
+    }
+}
+
+extension ShaderTextureSemantic {
+    private static let fromShaderBufferSemantic: [Compiled.ShaderBufferSemantic: Self] = [
+        .originalSize: .original,
+        .sourceSize: .source,
+        .originalHistorySize: .originalHistory,
+        .passOutputSize: .passOutput,
+        .passFeedbackSize: .passFeedback,
+    ]
+    
+    init?(_ sem: Compiled.ShaderBufferSemantic) {
+        if let v = Self.fromShaderBufferSemantic[sem] {
+            self = v
+        } else {
+            return nil
+        }
+    }
+    
+    private static let fromShaderTextureSemantic: [Compiled.ShaderTextureSemantic: Self] = [
+        .original: .original,
+        .source: .source,
+        .originalHistory: .originalHistory,
+        .passOutput: .passOutput,
+        .passFeedback: .passFeedback,
+        .user: .user,
+    ]
+    
+    init?(_ sem: Compiled.ShaderTextureSemantic) {
+        if let v = Self.fromShaderTextureSemantic[sem] {
+            self = v
+        } else {
+            return nil
+        }
+    }
+}
+
+extension ShaderBufferSemantic {
+    private static let fromShaderBufferSemantic: [Compiled.ShaderBufferSemantic: Self] = [
+        .mvp: .mvp,
+        .outputSize: .outputSize,
+        .finalViewportSize: .finalViewportSize,
+        .frameCount: .frameCount,
+        .frameDirection: .frameDirection,
+        .floatParameter: .floatParameter,
+    ]
+    
+    init?(_ sem: Compiled.ShaderBufferSemantic) {
+        if let v = Self.fromShaderBufferSemantic[sem] {
+            self = v
+        } else {
+            return nil
+        }
+    }
+}
+
+extension ShaderPassFilter {
+    private static let fromCompiled: [Compiled.ShaderPassFilter: Self] = [
+        .unspecified: .unspecified,
+        .linear: .linear,
+        .nearest: .nearest,
+    ]
+    
+    init(_ sem: Compiled.ShaderPassFilter) {
+        self = Self.fromCompiled[sem]!
+    }
+}
+
+extension ShaderPassWrap {
+    private static let fromCompiled: [Compiled.ShaderPassWrap: Self] = [
+        .border: .border,
+        .edge: .edge,
+        .repeat: .repeat,
+        .mirroredRepeat: .mirroredRepeat,
+    ]
+    
+    init(_ sem: Compiled.ShaderPassWrap) {
+        self = Self.fromCompiled[sem]!
     }
 }

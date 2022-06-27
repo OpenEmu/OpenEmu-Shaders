@@ -24,17 +24,21 @@
 
 import Foundation
 
-public class ShaderPassUniformBinding {
+public class ShaderPassUniformBinding: CustomDebugStringConvertible {
     let data: UnsafeRawPointer
     let size: Int
     let offset: Int
     let name: String
     
     init(data: UnsafeRawPointer, size: Int, offset: Int, name: String) {
-        self.data = data
-        self.size = size
+        self.data   = data
+        self.size   = size
         self.offset = offset
-        self.name = name
+        self.name   = name
+    }
+    
+    public var debugDescription: String {
+        "\(name) size=\(size), offset=\(offset), data=\(data)"
     }
 }
 
@@ -55,13 +59,14 @@ class ShaderPassBufferBinding {
 class ShaderPassTextureBinding {
     let texture: UnsafeRawPointer
     let binding: Int
+    let name: String
     var wrap: ShaderPassWrap = .default
     var filter: ShaderPassFilter = .nearest
-    var name: String = ""
     
-    init(texture: UnsafeRawPointer, binding: Int) {
+    init(texture: UnsafeRawPointer, binding: Int, name: String) {
         self.texture = texture
         self.binding = binding
+        self.name    = name
     }
 }
 
@@ -76,9 +81,21 @@ class ShaderPassBindings {
         self.index = index
     }
     
-    func addTexture(_ texture: UnsafeRawPointer, binding: Int) -> ShaderPassTextureBinding {
-        let t = ShaderPassTextureBinding(texture: texture, binding: binding)
+    func addTexture(_ texture: UnsafeRawPointer, binding: Int, name: String) -> ShaderPassTextureBinding {
+        let t = ShaderPassTextureBinding(texture: texture, binding: binding, name: name)
         textures.append(t)
         return t
+    }
+    
+    func sort() {
+        textures.sort { l, r in
+            l.binding < r.binding
+        }
+        buffers[0].uniforms.sort { l, r in
+            l.offset < r.offset
+        }
+        buffers[1].uniforms.sort { l, r in
+            l.offset < r.offset
+        }
     }
 }

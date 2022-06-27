@@ -70,7 +70,9 @@ extension OEShaders.Shader {
             let buf = fi.newBuffer(withFormat: .bgra8Unorm, height: UInt(ctx.height), bytesPerRow: UInt(ctx.bytesPerRow))
             buf.contents.copyMemory(from: ctx.data!, byteCount: ctx.height * ctx.bytesPerRow)
             
-            let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm, width: Int(fi.drawableSize.width), height: Int(fi.drawableSize.height), mipmapped: false)
+            let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
+                                                              width: Int(fi.drawableSize.width), height: Int(fi.drawableSize.height),
+                                                              mipmapped: false)
             td.storageMode = .private
             td.usage = .renderTarget
             

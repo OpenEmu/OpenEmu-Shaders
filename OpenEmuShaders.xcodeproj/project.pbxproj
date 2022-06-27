@@ -3,12 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		05059BB82863F7F70081E53C /* ShaderPassCompiler+Compiled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05059BB72863F7F70081E53C /* ShaderPassCompiler+Compiled.swift */; };
 		051C31ED2865076900281C57 /* ShaderPassCompiler+Reflection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051C31EC2865076900281C57 /* ShaderPassCompiler+Reflection.swift */; };
+		051C31F7286891CE00281C57 /* FilterChain+Bindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051C31F6286891CE00281C57 /* FilterChain+Bindings.swift */; };
 		0521355C246E3A240085A598 /* CompiledShader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0521355B246E3A240085A598 /* CompiledShader.swift */; };
 		052BE009228D184600942C12 /* SourceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE008228D184600942C12 /* SourceParserTests.swift */; };
 		052BE020228D187E00942C12 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE01F228D187E00942C12 /* TestHelpers.swift */; };
@@ -146,6 +147,7 @@
 /* Begin PBXFileReference section */
 		05059BB72863F7F70081E53C /* ShaderPassCompiler+Compiled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShaderPassCompiler+Compiled.swift"; sourceTree = "<group>"; };
 		051C31EC2865076900281C57 /* ShaderPassCompiler+Reflection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShaderPassCompiler+Reflection.swift"; sourceTree = "<group>"; };
+		051C31F6286891CE00281C57 /* FilterChain+Bindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FilterChain+Bindings.swift"; sourceTree = "<group>"; };
 		05201D6D277C542E0028CBE0 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		0521355B246E3A240085A598 /* CompiledShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompiledShader.swift; sourceTree = "<group>"; };
 		0524FF842458B798005C5E83 /* SlangShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlangShader.swift; sourceTree = "<group>"; };
@@ -426,6 +428,7 @@
 				A9020FD6E09797E3851BD2F2 /* MTLPixelConverter.swift */,
 				058AB98A28507F3A009A35FA /* PixelBuffer.swift */,
 				05ABBEAA2849795F006F1A8C /* FilterChain.swift */,
+				051C31F6286891CE00281C57 /* FilterChain+Bindings.swift */,
 				05ABBEAE2849DF9B006F1A8C /* Matrix.swift */,
 				05ABBEAC284979BA006F1A8C /* Screenshot.swift */,
 				05F5494F229BBA8800561C14 /* Shaders.metal */,
@@ -650,6 +653,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		05915A75245DF13F00C3DBAC /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -694,6 +698,7 @@
 				05ABBE922842D0C0006F1A8C /* Logging.swift in Sources */,
 				056AC372228BA144005018DA /* OEEnums.m in Sources */,
 				0521355C246E3A240085A598 /* CompiledShader.swift in Sources */,
+				051C31F7286891CE00281C57 /* FilterChain+Bindings.swift in Sources */,
 				056AC3A9228BD73F005018DA /* Scanner+Extensions.swift in Sources */,
 				05AA59F7246625A20031B73E /* ShaderModel.swift in Sources */,
 				058AB98E28509CB1009A35FA /* Enums.swift in Sources */,
@@ -921,11 +926,6 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source",
-					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source/opt",
-				);
 				MARKETING_VERSION = 1.21.1;
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShaders;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -956,11 +956,6 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source",
-					"$(PROJECT_DIR)/3rdparty/SPIRV-Tools/build/source/opt",
 				);
 				MARKETING_VERSION = 1.21.1;
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.OpenEmuShaders;

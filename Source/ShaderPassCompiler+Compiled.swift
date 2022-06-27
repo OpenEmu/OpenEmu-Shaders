@@ -43,12 +43,6 @@ extension ShaderPassCompiler {
             passes[passNumber].isFeedback = true
         }
         
-        for pass in passes {
-            for tex in pass.textures where tex.semantic == .passFeedback {
-                print("Pass \(pass.index) uses pass \(tex.index!) for feedback")
-            }
-        }
-        
         let parameters = shader.parameters
             .enumerated()
             .map { (index, p) in
@@ -122,9 +116,6 @@ extension ShaderPassCompiler {
             throw ShaderError.processFailed
         }
         
-        // TODO: Determine isFeedback
-        let isFeedback = false
-        
         let buffers  = [
             makeBuffersForSemantics(ref, source: \.ubo, offset: \.uboOffset, textureOffset: \.uboOffset),
             makeBuffersForSemantics(ref, source: \.push, offset: \.pushOffset, textureOffset: \.pushOffset),
@@ -138,13 +129,16 @@ extension ShaderPassCompiler {
                      frameCountMod: pass.frameCountMod,
                      scaleX: .init(pass.scaleX),
                      scaleY: .init(pass.scaleY),
+                     filter: .init(pass.filter),
+                     wrapMode: .init(pass.wrapMode),
                      scale: pass.scale,
                      size: pass.size,
                      isScaled: pass.isScaled,
                      format: try .init(pass.format),
-                     isFeedback: isFeedback,
+                     isFeedback: false,
                      buffers: buffers,
-                     textures: textures)
+                     textures: textures,
+                     alias: pass.alias)
     }
     
     /// Find all the bound textures for the pass.
@@ -161,12 +155,10 @@ extension ShaderPassCompiler {
                         filter = .init(shader.luts[meta.index].filter)
                     } else {
                         wrap   = .init(shader.passes[ref.passNumber].wrapMode)
-                        filter = .init(shader.passes[meta.index].filter)
+                        filter = .init(shader.passes[ref.passNumber].filter)
                     }
                     
-                    let name = sym.name(forTextureSemantic: sem, index: meta.index)!
-                    
-                    textures.append(Compiled.TextureDescriptor(name: name,
+                    textures.append(Compiled.TextureDescriptor(name: meta.name,
                                                                semantic: .init(sem),
                                                                binding: binding,
                                                                wrap: wrap,
@@ -194,6 +186,7 @@ extension ShaderPassCompiler {
             if let offset = meta[keyPath: offset] {
                 return Compiled.BufferUniformDescriptor(semantic: .init(sem),
                                                         index: nil,
+                                                        name: meta.name,
                                                         size: meta.numberOfComponents * MemoryLayout<Float>.size,
                                                         offset: offset)
             }
@@ -205,6 +198,7 @@ extension ShaderPassCompiler {
             if let offset = meta[keyPath: offset] {
                 return Compiled.BufferUniformDescriptor(semantic: .floatParameter,
                                                         index: meta.index,
+                                                        name: meta.name,
                                                         size: meta.numberOfComponents * MemoryLayout<Float>.size,
                                                         offset: offset)
             }
@@ -217,6 +211,7 @@ extension ShaderPassCompiler {
                 if let offset = meta[keyPath: textureOffset] {
                     return Compiled.BufferUniformDescriptor(semantic: .init(sem),
                                                             index: meta.index,
+                                                            name: meta.name,
                                                             size: 4 * MemoryLayout<Float>.size,
                                                             offset: offset)
                 }
@@ -226,7 +221,7 @@ extension ShaderPassCompiler {
         
         return .init(bindingVert: b.bindingVert,
                      bindingFrag: b.bindingFrag,
-                     size: (b.size + 0xf) & ~0xf, // round up to nearest 16 bytes
+                     size: b.size,
                      uniforms: semantics + parameters + textures)
     }
 }

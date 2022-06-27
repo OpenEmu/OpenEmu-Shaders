@@ -40,7 +40,7 @@ class MTLPixelConverter {
         }
         
         func convert(fromBuffer src: MTLBuffer, sourceOrigin: MTLOrigin, sourceBytesPerRow: Int,
-                            toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
+                     toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
             let ce = commandBuffer.makeComputeCommandEncoder()!
             ce.label = "pixel conversion"
             ce.setComputePipelineState(kernel)
@@ -133,7 +133,7 @@ class MTLPixelConverter {
     }
     
     func convert(fromBuffer src: MTLBuffer, sourceFormat: OEMTLPixelFormat, sourceOrigin: MTLOrigin, sourceBytesPerRow: Int,
-                        toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
+                 toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
         guard let filter = bufToTex[sourceFormat.rawValue] else {
             return
         }

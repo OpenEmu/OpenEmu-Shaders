@@ -45,23 +45,21 @@ extension ShaderPassCompiler {
         }
         
         for (sem, meta) in ref.semantics {
-            let name = sym.name(forBufferSemantic: sem)!
             if let offset = meta.uboOffset {
                 uboB.addUniformData(passSemantics.uniforms[sem]!.data,
                                     size: meta.numberOfComponents * MemoryLayout<Float>.size,
                                     offset: offset,
-                                    name: name)
+                                    name: meta.name)
             }
             if let offset = meta.pushOffset {
                 pshB.addUniformData(passSemantics.uniforms[sem]!.data,
                                     size: meta.numberOfComponents * MemoryLayout<Float>.size,
                                     offset: offset,
-                                    name: name)
+                                    name: meta.name)
             }
         }
         
         for meta in ref.floatParameters.values {
-            let name = sym.name(forFloatParameterAtIndex: meta.index)!
             guard let param = passSemantics.parameter(at: meta.index)
             else { fatalError("Unable to find parameter at index \(meta.index)") }
             
@@ -69,13 +67,13 @@ extension ShaderPassCompiler {
                 uboB.addUniformData(param.data,
                                     size: meta.numberOfComponents * MemoryLayout<Float>.size,
                                     offset: offset,
-                                    name: name)
+                                    name: meta.name)
             }
             if let offset = meta.pushOffset {
                 pshB.addUniformData(param.data,
                                     size: meta.numberOfComponents * MemoryLayout<Float>.size,
                                     offset: offset,
-                                    name: name)
+                                    name: meta.name)
             }
         }
         
@@ -85,7 +83,7 @@ extension ShaderPassCompiler {
                 // if the texture is bound, meta.binding will be set
                 if let binding = meta.binding {
                     let ptr = tex.texture.advanced(by: meta.index * tex.textureStride)
-                    let bind = passBindings.addTexture(ptr, binding: binding)
+                    let bind = passBindings.addTexture(ptr, binding: binding, name: meta.name)
                     
                     if sem == .user {
                         bind.wrap   = shader.luts[meta.index].wrapMode
@@ -95,8 +93,6 @@ extension ShaderPassCompiler {
                         bind.filter = shader.passes[ref.passNumber].filter
                     }
                     
-                    bind.name = sym.name(forTextureSemantic: sem, index: meta.index)!
-                    
                     if sem == .passFeedback {
                         bindings[meta.index].isFeedback = true
                     } else if sem == .originalHistory && historyCount < meta.index {
@@ -104,18 +100,17 @@ extension ShaderPassCompiler {
                     }
                 }
                 
-                let name = sym.sizeName(forTextureSemantic: sem, index: meta.index)!
                 if let offset = meta.uboOffset {
                     uboB.addUniformData(tex.textureSize.advanced(by: meta.index * tex.sizeStride),
                                         size: 4 * MemoryLayout<Float>.size,
                                         offset: offset,
-                                        name: name)
+                                        name: meta.name)
                 }
                 if let offset = meta.pushOffset {
                     pshB.addUniformData(tex.textureSize.advanced(by: meta.index * tex.sizeStride),
                                         size: 4 * MemoryLayout<Float>.size,
                                         offset: offset,
-                                        name: name)
+                                        name: meta.name)
                 }
             }
         }
@@ -343,7 +338,7 @@ extension ShaderPassCompiler {
                 return nil
             }
             
-            ref.setBinding(binding, forTextureSemantic: sem.semantic, at: sem.index)
+            ref.setBinding(binding, forTextureSemantic: sem.semantic, at: sem.index, name: sem.name)
         }
         
         os_log(.debug, log: .default, "%{public}@", ref.debugDescription)
@@ -372,7 +367,7 @@ extension ShaderPassCompiler {
                 let cols  = Int(type.columns)
                 
                 if bufferSem.semantic == .floatParameter {
-                    if !ref.setOffset(range.offset, vecSize: vecsz, forFloatParameterAt: bufferSem.index, ubo: ubo) {
+                    if !ref.setOffset(range.offset, vecSize: vecsz, forFloatParameterAt: bufferSem.index, name: name, ubo: ubo) {
                         return false
                     }
                 } else {
@@ -391,7 +386,7 @@ extension ShaderPassCompiler {
                     return false
                 }
                 
-                if !ref.setOffset(range.offset, forTextureSemantic: texSem.semantic, at: texSem.index, ubo: ubo) {
+                if !ref.setOffset(range.offset, forTextureSemantic: texSem.semantic, at: texSem.index, name: name, ubo: ubo) {
                     return false
                 }
             }
@@ -445,7 +440,7 @@ class ShaderSymbols {
             return false
         }
         
-        textureSemanticMap[name] = ShaderTextureSemanticMap(textureSemantic: semantic, index: i)
+        textureSemanticMap[name] = ShaderTextureSemanticMap(textureSemantic: semantic, index: i, name: name)
         
         return true
     }
@@ -457,7 +452,7 @@ class ShaderSymbols {
             return false
         }
         
-        textureUniformSemanticMap[name] = ShaderTextureSemanticMap(textureSemantic: semantic, index: i)
+        textureUniformSemanticMap[name] = ShaderTextureSemanticMap(textureSemantic: semantic, index: i, name: name)
         
         return true
     }
@@ -469,7 +464,7 @@ class ShaderSymbols {
             return false
         }
         
-        floatParameterSemanticMap[name] = ShaderSemanticMap(semantic: .floatParameter, index: i, baseType: .fp32, vecSize: 1, cols: 1)
+        floatParameterSemanticMap[name] = ShaderSemanticMap(semantic: .floatParameter, index: i, name: name, baseType: .fp32, vecSize: 1, cols: 1)
         
         return true
     }
@@ -529,10 +524,10 @@ class ShaderSymbols {
                 if name.hasPrefix(key) {
                     // TODO: Validate the suffix is a number and within range
                     let index = Int(name.suffix(from: key.endIndex))
-                    return ShaderTextureSemanticMap(textureSemantic: sem, index: index ?? 0)
+                    return ShaderTextureSemanticMap(textureSemantic: sem, index: index ?? 0, name: name)
                 }
             } else if name == key {
-                return ShaderTextureSemanticMap(textureSemantic: sem, index: 0)
+                return ShaderTextureSemanticMap(textureSemantic: sem, index: 0, name: name)
             }
         }
         return nil
@@ -611,21 +606,21 @@ class ShaderPassReflection {
     ]
     
     private(set) var semantics: [ShaderBufferSemantic: ShaderSemanticMeta] = [
-        .mvp: .init(),
-        .outputSize: .init(),
-        .finalViewportSize: .init(),
-        .frameCount: .init(),
-        .frameDirection: .init(),
+        .mvp: .init(.mvp),
+        .outputSize: .init(.outputSize),
+        .finalViewportSize: .init(.finalViewportSize),
+        .frameCount: .init(.frameCount),
+        .frameDirection: .init(.frameDirection),
     ]
     
     private(set) var floatParameters: [Int: ShaderSemanticMeta] = [:]
 
-    func setOffset(_ offset: Int, vecSize: Int, forFloatParameterAt index: Int, ubo: Bool) -> Bool {
+    func setOffset(_ offset: Int, vecSize: Int, forFloatParameterAt index: Int, name: String, ubo: Bool) -> Bool {
         let sem: ShaderSemanticMeta
         if let tmp = floatParameters[index] {
             sem = tmp
         } else {
-            sem = ShaderSemanticMeta(index: index)
+            sem = ShaderSemanticMeta(index: index, name: name)
             floatParameters[index] = sem
         }
         
@@ -686,13 +681,13 @@ class ShaderPassReflection {
         return true
     }
     
-    func setOffset(_ offset: Int, forTextureSemantic semantic: ShaderTextureSemantic, at index: Int, ubo: Bool) -> Bool {
+    func setOffset(_ offset: Int, forTextureSemantic semantic: ShaderTextureSemantic, at index: Int, name: String, ubo: Bool) -> Bool {
         guard var map = textures[semantic] else { return false }
         var sem: ShaderTextureSemanticMeta
         if let tmp = map[index] {
             sem = tmp
         } else {
-            sem = ShaderTextureSemanticMeta(index: index)
+            sem = ShaderTextureSemanticMeta(index: index, name: name)
             map[index] = sem
             textures[semantic] = map
         }
@@ -717,13 +712,13 @@ class ShaderPassReflection {
     }
     
     @discardableResult
-    func setBinding(_ binding: Int, forTextureSemantic semantic: ShaderTextureSemantic, at index: Int) -> Bool {
+    func setBinding(_ binding: Int, forTextureSemantic semantic: ShaderTextureSemantic, at index: Int, name: String) -> Bool {
         guard var map = textures[semantic] else { return false }
         var sem: ShaderTextureSemanticMeta
         if let tmp = map[index] {
             sem = tmp
         } else {
-            sem = ShaderTextureSemanticMeta(index: index)
+            sem = ShaderTextureSemanticMeta(index: index, name: name)
             map[index] = sem
             textures[semantic] = map
         }
@@ -743,8 +738,8 @@ extension ShaderPassReflection: CustomDebugStringConvertible {
         for sem in ShaderTextureSemantic.allCases {
             guard let t = textures[sem] else { continue }
             for meta in t.values.sorted(by: { $0.index < $1.index }) where meta.binding != nil {
-                desc.append(String(format: "      %@ (#%lu)\n",
-                                   sem.description as NSString, meta.index))
+                desc.append(String(format: "      %@ (%@ #%lu)\n",
+                                   sem.description as NSString, meta.name as NSString, meta.index))
             }
         }
         
@@ -755,7 +750,7 @@ extension ShaderPassReflection: CustomDebugStringConvertible {
         
         for sem in ShaderBufferSemantic.allCases {
             if let meta = semantics[sem], let offset = meta.uboOffset {
-                desc.append(String(format: "      UBO  %@ (offset: %lu)\n",
+                desc.append(String(format: "      %@ (offset: %lu)\n",
                                    sem.description as NSString, offset))
             }
         }
@@ -763,8 +758,8 @@ extension ShaderPassReflection: CustomDebugStringConvertible {
         for sem in ShaderTextureSemantic.allCases {
             guard let t = textures[sem] else { continue }
             for meta in t.values.sorted(by: { $0.index < $1.index }) where meta.uboOffset != nil {
-                desc.append(String(format: "      UBO  %@ (#%lu) (offset: %lu)\n",
-                                   ShaderSymbols.textureSemanticToUniformName[sem]!, meta.index, meta.uboOffset!))
+                desc.append(String(format: "      %@ (#%lu) (offset: %lu)\n",
+                                   meta.name as NSString, meta.index, meta.uboOffset!))
             }
         }
         
@@ -775,7 +770,7 @@ extension ShaderPassReflection: CustomDebugStringConvertible {
         
         for sem in ShaderBufferSemantic.allCases {
             if let meta = semantics[sem], let offset = meta.pushOffset {
-                desc.append(String(format: "      PUSH %@ (offset: %lu)\n",
+                desc.append(String(format: "      %@ (offset: %lu)\n",
                                    sem.description as NSString, offset))
             }
         }
@@ -783,8 +778,8 @@ extension ShaderPassReflection: CustomDebugStringConvertible {
         for sem in ShaderTextureSemantic.allCases {
             guard let t = textures[sem] else { continue }
             for meta in t.values.sorted(by: { $0.index < $1.index }) where meta.pushOffset != nil {
-                desc.append(String(format: "      PUSH %@ (#%lu) (offset: %lu)\n",
-                                   ShaderSymbols.textureSemanticToUniformName[sem]!, meta.index, meta.pushOffset!))
+                desc.append(String(format: "      %@ (#%lu) (offset: %lu)\n",
+                                   meta.name as NSString, meta.index, meta.pushOffset!))
             }
         }
         
@@ -793,10 +788,10 @@ extension ShaderPassReflection: CustomDebugStringConvertible {
         
         for meta in floatParameters.values.sorted(by: { $0.index < $1.index }) {
             if let offset = meta.uboOffset {
-                desc.append(String(format: "      UBO  #%lu (offset: %lu)\n", meta.index, offset))
+                desc.append(String(format: "      UBO  %@ #%lu (offset: %lu)\n", meta.name, meta.index, offset))
             }
             if let offset = meta.pushOffset {
-                desc.append(String(format: "      PUSH #%lu (offset: %lu)\n", meta.index, offset))
+                desc.append(String(format: "      PUSH %@ #%lu (offset: %lu)\n", meta.name, meta.index, offset))
             }
         }
         
