@@ -72,8 +72,6 @@ class ShaderPassTextureBinding {
 
 class ShaderPassBindings {
     public let index: Int
-    public var format: MTLPixelFormat = .bgra8Unorm
-    public var isFeedback: Bool = false
     public private(set) var buffers = [ShaderPassBufferBinding(), ShaderPassBufferBinding()] // equivalent to Constants.maxConstantBuffers
     public private(set) var textures: [ShaderPassTextureBinding] = []
     

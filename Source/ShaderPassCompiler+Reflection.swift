@@ -27,94 +27,6 @@ import CSPIRVCross
 import os.log
 
 extension ShaderPassCompiler {
-    func updateBindings(passSemantics: ShaderPassSemantics, passBindings: ShaderPassBindings, ref: ShaderPassReflection, sym: ShaderSymbols) {
-        // UBO
-        let uboB = passBindings.buffers[0]
-        if let b = ref.ubo {
-            uboB.bindingVert = b.bindingVert
-            uboB.bindingFrag = b.bindingFrag
-            uboB.size        = (b.size + 0xf) & ~0xf // round up to nearest 16 bytes
-        }
-        
-        // push constants
-        let pshB = passBindings.buffers[1]
-        if let b = ref.push {
-            pshB.bindingVert = b.bindingVert
-            pshB.bindingFrag = b.bindingFrag
-            pshB.size        = (b.size + 0xf) & ~0xf // round up to nearest 16 bytes
-        }
-        
-        for (sem, meta) in ref.semantics {
-            if let offset = meta.uboOffset {
-                uboB.addUniformData(passSemantics.uniforms[sem]!.data,
-                                    size: meta.numberOfComponents * MemoryLayout<Float>.size,
-                                    offset: offset,
-                                    name: meta.name)
-            }
-            if let offset = meta.pushOffset {
-                pshB.addUniformData(passSemantics.uniforms[sem]!.data,
-                                    size: meta.numberOfComponents * MemoryLayout<Float>.size,
-                                    offset: offset,
-                                    name: meta.name)
-            }
-        }
-        
-        for meta in ref.floatParameters.values {
-            guard let param = passSemantics.parameter(at: meta.index)
-            else { fatalError("Unable to find parameter at index \(meta.index)") }
-            
-            if let offset = meta.uboOffset {
-                uboB.addUniformData(param.data,
-                                    size: meta.numberOfComponents * MemoryLayout<Float>.size,
-                                    offset: offset,
-                                    name: meta.name)
-            }
-            if let offset = meta.pushOffset {
-                pshB.addUniformData(param.data,
-                                    size: meta.numberOfComponents * MemoryLayout<Float>.size,
-                                    offset: offset,
-                                    name: meta.name)
-            }
-        }
-        
-        for (sem, a) in ref.textures {
-            let tex = passSemantics.textures[sem]!
-            for meta in a.values where meta.binding != nil || meta.uboOffset != nil || meta.pushOffset != nil {
-                // if the texture is bound, meta.binding will be set
-                if let binding = meta.binding {
-                    let ptr = tex.texture.advanced(by: meta.index * tex.textureStride)
-                    let bind = passBindings.addTexture(ptr, binding: binding, name: meta.name)
-                    
-                    if sem == .user {
-                        bind.wrap   = shader.luts[meta.index].wrapMode
-                        bind.filter = shader.luts[meta.index].filter
-                    } else {
-                        bind.wrap   = shader.passes[ref.passNumber].wrapMode
-                        bind.filter = shader.passes[ref.passNumber].filter
-                    }
-                    
-                    if sem == .passFeedback {
-                        bindings[meta.index].isFeedback = true
-                    } else if sem == .originalHistory && historyCount < meta.index {
-                        historyCount = meta.index
-                    }
-                }
-                
-                if let offset = meta.uboOffset {
-                    uboB.addUniformData(tex.textureSize.advanced(by: meta.index * tex.sizeStride),
-                                        size: 4 * MemoryLayout<Float>.size,
-                                        offset: offset,
-                                        name: meta.name)
-                }
-                if let offset = meta.pushOffset {
-                    pshB.addUniformData(tex.textureSize.advanced(by: meta.index * tex.sizeStride),
-                                        size: 4 * MemoryLayout<Float>.size,
-                                        offset: offset,
-                                        name: meta.name)
-                }
-            }
-        }
-    }
     
     func makeSymbols() -> ShaderSymbols? {
         let sym = ShaderSymbols()
@@ -467,36 +379,6 @@ class ShaderSymbols {
         floatParameterSemanticMap[name] = ShaderSemanticMap(semantic: .floatParameter, index: i, name: name, baseType: .fp32, vecSize: 1, cols: 1)
         
         return true
-    }
-    
-    func name(forBufferSemantic semantic: ShaderBufferSemantic) -> String? {
-        Self.semanticToUniformName[semantic]
-    }
-    
-    func name(forFloatParameterAtIndex index: Int) -> String? {
-        return floatParameterSemanticMap.first { (_, v) in
-            v.index == index
-        }?.key
-    }
-
-    func name(forTextureSemantic semantic: ShaderTextureSemantic, index: Int) -> String? {
-        if let name = Self.textureSemanticToName[semantic] {
-            return textureSemanticIsArray(semantic) ? "\(name)\(index)" : name
-        }
-        
-        return textureSemanticMap.first { (_, v) in
-            v.semantic == semantic && v.index == index
-        }?.key
-    }
-    
-    func sizeName(forTextureSemantic semantic: ShaderTextureSemantic, index: Int) -> String? {
-        if let name = Self.textureSemanticToUniformName[semantic] {
-            return textureSemanticIsArray(semantic) ? "\(name)\(index)" : name
-        }
-        
-        return textureUniformSemanticMap.first { (_, v) in
-            v.semantic == semantic && v.index == index
-        }?.key
     }
     
     func bufferSemantic(forUniformName name: String) -> ShaderSemanticMap? {

@@ -77,6 +77,7 @@ import os.log
     private var outputFrame: OutputFrame = .init()
     
     fileprivate struct Pass {
+        var format: MTLPixelFormat = .bgra8Unorm
         var buffers = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers)
         var vBuffers = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for vertex binding
         var fBuffers = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for fragment binding
@@ -700,10 +701,11 @@ import os.log
             
             os_log("pass %d, render target size %0.0f x %0.0f", log: .default, type: .debug, i, width, height)
             
-            let fmt = self.pass[i].bindings!.format
-            if i != lastPassIndex ||
-                width != viewportSize.width || height != viewportSize.height ||
-                fmt != .bgra8Unorm {
+            let fmt = self.pass[i].format
+            if i != lastPassIndex
+                || width != viewportSize.width
+                || height != viewportSize.height
+                || fmt != .bgra8Unorm {
                 
                 let (width, height) = (Int(width), Int(height))
                 self.pass[i].viewport = .init(originX: 0, originY: 0,
@@ -859,6 +861,7 @@ import os.log
                            passSemantics: sem,
                            pass: pass)
             self.pass[passNumber].bindings = bindings
+            self.pass[passNumber].format   = pass.format.metalPixelFormat
             self.pass[passNumber].frameCountMod = UInt32(pass.frameCountMod)
             
             // update scaling
@@ -891,7 +894,7 @@ import os.log
             }
             
             if let ca = psd.colorAttachments[0] {
-                ca.pixelFormat                 = self.pass[passNumber].bindings!.format
+                ca.pixelFormat                 = self.pass[passNumber].format
                 ca.isBlendingEnabled           = false
                 ca.sourceAlphaBlendFactor      = .sourceAlpha
                 ca.sourceRGBBlendFactor        = .sourceAlpha
@@ -939,7 +942,7 @@ import os.log
         }
         
         let end = CACurrentMediaTime() - start
-        os_log("Shader compilation completed in %{xcode:interval}f seconds", log: .default, type: .debug, end)
+        os_log("Shader load completed in %{xcode:interval}f seconds", log: .default, type: .debug, end)
         
         loadLuts(ss.luts)
         hasShader = true
@@ -950,229 +953,19 @@ import os.log
     @objc public func setShader(fromURL url: URL, options shaderOptions: ShaderCompilerOptions) throws {
         os_log("Loading shader from '%{public}@'", log: .default, type: .debug, url.absoluteString)
         
-    }
-    
-    @objc public func setShader2(fromURL url: URL, options shaderOptions: ShaderCompilerOptions) throws {
-        os_log("Loading shader from '%{public}@'", log: .default, type: .debug, url.absoluteString)
-        
-        freeShaderResources()
-        
         let start = CACurrentMediaTime()
         
-        let ss = try SlangShader(fromURL: url)
+        let shader = try SlangShader(fromURL: url)
+        let compiler = ShaderPassCompiler(shaderModel: shader)
         
-        passCount     = ss.passes.count
-        lastPassIndex = passCount - 1
-        lutCount      = ss.luts.count
+        os_log("Compiling shader from '%{public}@'", log: .default, type: .debug, url.absoluteString)
         
-        parametersCount = ss.parameters.count
-        parametersMap   = .init(uniqueKeysWithValues: ss.parameters.enumerated().map({ index, param in (param.name, index) }))
-        parameters      = .init(ss.parameters.map(\.initial))
-        
-        let compiler = ShaderPassCompiler(shaderModel: ss)
-        
-        let options = MTLCompileOptions()
-        options.fastMathEnabled = true
-        options.languageVersion = shaderOptions.languageVersion
-
-        let texStride = MemoryLayout<Texture>.stride
-        let texViewOffset = MemoryLayout<Texture>.offset(of: \Texture.view)!
-        let texSizeOffset = MemoryLayout<Texture>.offset(of: \Texture.size)!
-        
-        for passNumber in 0..<passCount {
-            let sem = ShaderPassSemantics()
-            
-            withUnsafePointer(to: &sourceTextures[0]) {
-                let p = UnsafeRawPointer($0)
-                sem.addTexture(p.advanced(by: texViewOffset),
-                               size: p.advanced(by: texSizeOffset),
-                               semantic: .original)
-                
-                sem.addTexture(p.advanced(by: texViewOffset), stride: texStride,
-                               size: p.advanced(by: texSizeOffset), stride: texStride,
-                               semantic: .originalHistory)
-                
-                if passNumber == 0 {
-                    // The source texture for first pass is the original input
-                    sem.addTexture(p.advanced(by: texViewOffset),
-                                   size: p.advanced(by: texSizeOffset),
-                                   semantic: .source)
-                }
-            }
-            
-            if passNumber > 0 {
-                // The source texture for passes 1..<n is the output of the previous pass
-                withUnsafePointer(to: &pass[passNumber-1].renderTarget) {
-                    let p = UnsafeRawPointer($0)
-                    sem.addTexture(p.advanced(by: texViewOffset),
-                                   size: p.advanced(by: texSizeOffset),
-                                   semantic: .source)
-                }
-            }
-            
-            withUnsafePointer(to: &pass[0]) {
-                let p = UnsafeRawPointer($0)
-                
-                let rt = p.advanced(by: MemoryLayout<Pass>.offset(of: \Pass.renderTarget)!)
-                sem.addTexture(rt.advanced(by: texViewOffset), stride: MemoryLayout<Pass>.stride,
-                               size: rt.advanced(by: texSizeOffset), stride: MemoryLayout<Pass>.stride,
-                               semantic: .passOutput)
-                
-                let ft = p.advanced(by: MemoryLayout<Pass>.offset(of: \Pass.feedbackTarget)!)
-                sem.addTexture(ft.advanced(by: texViewOffset), stride: MemoryLayout<Pass>.stride,
-                               size: ft.advanced(by: texSizeOffset), stride: MemoryLayout<Pass>.stride,
-                               semantic: .passFeedback)
-            }
-            
-            withUnsafePointer(to: &luts[0]) {
-                let p = UnsafeRawPointer($0)
-                sem.addTexture(p.advanced(by: texViewOffset), stride: texStride,
-                               size: p.advanced(by: texSizeOffset), stride: texStride,
-                               semantic: .user)
-            }
-            
-            if passNumber == lastPassIndex {
-                sem.addUniformData(&uniforms.projectionMatrix, semantic: .mvp)
-            } else {
-                sem.addUniformData(&uniformsNoRotate.projectionMatrix, semantic: .mvp)
-            }
-            
-            withUnsafePointer(to: &pass[passNumber]) {
-                let p = UnsafeRawPointer($0)
-                sem.addUniformData(p.advanced(by: MemoryLayout<Pass>.offset(of: \Pass.renderTarget.size)!), semantic: .outputSize)
-                sem.addUniformData(p.advanced(by: MemoryLayout<Pass>.offset(of: \Pass.frameCount)!), semantic: .frameCount)
-                sem.addUniformData(p.advanced(by: MemoryLayout<Pass>.offset(of: \Pass.frameDirection)!), semantic: .frameDirection)
-            }
-            
-            withUnsafePointer(to: &outputFrame.outputSize) {
-                sem.addUniformData(UnsafeRawPointer($0), semantic: .finalViewportSize)
-            }
-
-            for i in 0..<parametersCount {
-                withUnsafePointer(to: &parameters[i]) {
-                    sem.addUniformData(UnsafeRawPointer($0), forParameterAt: i)
-                }
-            }
-            
-            let bindings = compiler.bindings[passNumber]
-            let (vsSrc, fsSrc) = try compiler.buildPass(passNumber, options: shaderOptions, passSemantics: sem)
-            pass[passNumber].bindings = bindings
-            
-            let pass = ss.passes[passNumber]
-            self.pass[passNumber].frameCountMod = UInt32(pass.frameCountMod)
-            
-            // update scaling
-            self.pass[passNumber].scaleX    = pass.scaleX
-            self.pass[passNumber].scaleY    = pass.scaleY
-            self.pass[passNumber].scale     = pass.scale
-            self.pass[passNumber].size      = pass.size
-            self.pass[passNumber].isScaled  = pass.isScaled
-            
-            let vd = MTLVertexDescriptor()
-            if let attr = vd.attributes[VertexAttribute.position.rawValue] {
-                attr.offset = MemoryLayout<Vertex>.offset(of: \Vertex.position)!
-                attr.format = .float4
-                attr.bufferIndex = BufferIndex.positions.rawValue
-            }
-            if let attr = vd.attributes[VertexAttribute.texcoord.rawValue] {
-                attr.offset = MemoryLayout<Vertex>.offset(of: \Vertex.texCoord)!
-                attr.format = .float2
-                attr.bufferIndex = BufferIndex.positions.rawValue
-            }
-            if let l = vd.layouts[BufferIndex.positions.rawValue] {
-                l.stride = MemoryLayout<Vertex>.stride
-            }
-            
-            let psd = MTLRenderPipelineDescriptor()
-            if let alias = pass.alias {
-                psd.label = "pass \(passNumber) (\(alias))"
-            } else {
-                psd.label = "pass \(passNumber)"
-            }
-            
-            if let ca = psd.colorAttachments[0] {
-                ca.pixelFormat                 = self.pass[passNumber].bindings!.format
-                ca.isBlendingEnabled           = false
-                ca.sourceAlphaBlendFactor      = .sourceAlpha
-                ca.sourceRGBBlendFactor        = .sourceAlpha
-                ca.destinationAlphaBlendFactor = .oneMinusSourceAlpha
-                ca.destinationRGBBlendFactor   = .oneMinusSourceAlpha
-            }
-
-            psd.sampleCount = 1
-            psd.vertexDescriptor = vd
-            
-            do {
-                let lib = try device.makeLibrary(source: vsSrc, options: options)
-                psd.vertexFunction = lib.makeFunction(name: "main0")
-            }
-            
-            do {
-                let lib = try device.makeLibrary(source: fsSrc, options: options)
-                psd.fragmentFunction = lib.makeFunction(name: "main0")
-            }
-            
-            self.pass[passNumber].state = try device.makeRenderPipelineState(descriptor: psd)
-            
-            for j in 0..<Constants.maxConstantBuffers {
-                let sem = self.pass[passNumber].bindings!.buffers[j]
-                
-                let size = sem.size
-                guard size > 0 else { continue }
-                let opts: MTLResourceOptions = deviceHasUnifiedMemory ? .storageModeShared : .storageModeManaged
-                let buf = device.makeBuffer(length: size, options: opts)
-                self.pass[passNumber].buffers[j] = buf
-                
-                if let binding = sem.bindingVert {
-                    self.pass[passNumber].vBuffers[binding] = buf
-                }
-                if let binding = sem.bindingFrag {
-                    self.pass[passNumber].fBuffers[binding] = buf
-                }
-            }
-        }
-        
-        // finalise remaining state
-        historyCount = compiler.historyCount
-        for binding in compiler.bindings {
-            self.pass[binding.index].hasFeedback = binding.isFeedback
-        }
+        let compiled = try compiler.compile(options: shaderOptions)
         
         let end = CACurrentMediaTime() - start
         os_log("Shader compilation completed in %{xcode:interval}f seconds", log: .default, type: .debug, end)
         
-        loadLuts(ss.luts)
-        hasShader = true
-        renderTargetsNeedResize = true
-        historyNeedsInit = true
-    }
-    
-    private func loadLuts(_ images: [ShaderLUT]) {
-        var opts: [MTKTextureLoader.Option: Any] = [
-            .generateMipmaps: true,
-            .allocateMipmaps: true,
-            .SRGB: false,
-            .textureStorageMode: MTLStorageMode.private.rawValue,
-        ]
-        
-        // if the source texture exists and is flipped
-        if sourceTexture != nil && sourceTextureIsFlipped {
-            opts[.origin] = MTKTextureLoader.Origin.flippedVertically.rawValue
-        }
-        
-        var i: Int = 0
-        for lut in images {
-            let t: MTLTexture
-            do {
-                t = try loader.newTexture(URL: lut.url, options: opts)
-            } catch {
-                os_log("Unable to load LUT texture, using default. Path '%{public}@: %{public}@", log: .default, type: .error,
-                       lut.url.absoluteString, error.localizedDescription)
-                t = checkers
-            }
-            initTexture(&luts[i], withTexture: t)
-            i+=1
-        }
+        try setCompiledShader(compiled)
     }
     
     private func loadLuts(_ images: [Compiled.LUT]) {

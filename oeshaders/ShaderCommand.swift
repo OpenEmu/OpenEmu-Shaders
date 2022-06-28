@@ -32,7 +32,6 @@ extension OEShaders {
             subcommands: [
                 Thumbnail.self,
                 Benchmark.self,
-                DumpMetalSource.self,
             ]
         )
     }

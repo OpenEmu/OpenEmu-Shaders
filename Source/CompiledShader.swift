@@ -96,6 +96,32 @@ public enum Compiled {
     
     // MARK: - Enumerations
     
+    enum LanguageVersionError: Error {
+        case unsupportedVersion
+    }
+    
+    public enum LanguageVersion: String, CaseIterable, Codable {
+        // swiftlint: disable identifier_name
+        case version2_4, version2_3, version2_2, version2_1
+        
+        init(_ mtl: MTLLanguageVersion) throws {
+            switch mtl {
+#if swift(>=5.5)
+            case .version2_4:
+                self = .version2_4
+#endif
+            case .version2_3:
+                self = .version2_3
+            case .version2_2:
+                self = .version2_2
+            case .version2_1:
+                self = .version2_1
+            default:
+                throw LanguageVersionError.unsupportedVersion
+            }
+        }
+    }
+    
     public enum ShaderPassScale: String, CaseIterable, Codable {
         case invalid, source, absolute, viewport
         
@@ -105,7 +131,7 @@ public enum Compiled {
             .absolute: .absolute,
             .viewport: .viewport,
         ]
-
+        
         init(_ scale: OpenEmuShaders.ShaderPassScale) {
             self = Self.mapFrom[scale]!
         }
@@ -124,7 +150,7 @@ public enum Compiled {
             self = Self.mapFrom[filter]!
         }
     }
-
+    
     public enum ShaderPassWrap: String, CaseIterable, Codable {
         case border, edge, `repeat`, mirroredRepeat
         

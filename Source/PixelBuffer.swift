@@ -133,7 +133,10 @@ import Foundation
         
         override func prepare(withCommandBuffer commandBuffer: MTLCommandBuffer, texture: MTLTexture) {
             if texture.storageMode != .private {
-                texture.replace(region: MTLRegionMake2D(Int(outputRect.origin.x), Int(outputRect.origin.y), Int(outputRect.width), Int(outputRect.height)),
+                texture.replace(region: MTLRegionMake2D(Int(outputRect.origin.x),
+                                                        Int(outputRect.origin.y),
+                                                        Int(outputRect.width),
+                                                        Int(outputRect.height)),
                                 mipmapLevel: 0,
                                 withBytes: buffer,
                                 bytesPerRow: sourceBytesPerRow)

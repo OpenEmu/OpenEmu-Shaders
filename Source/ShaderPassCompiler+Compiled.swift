@@ -94,15 +94,7 @@ extension ShaderPassCompiler {
         
         spvc_context_set_error_callback(ctx, errorHandler, Unmanaged.passUnretained(self).toOpaque())
         
-        var vsCompiler: SPVCompiler?, fsCompiler: SPVCompiler?
-        try makeCompilersForPass(pass, context: ctx, options: options, vertexCompiler: &vsCompiler, fragmentCompiler: &fsCompiler)
-        
-        guard
-            let vsCompiler = vsCompiler,
-            let fsCompiler = fsCompiler
-        else {
-            throw ShaderError.buildFailed
-        }
+        let (vsCompiler, fsCompiler) = try makeCompilersForPass(pass, context: ctx, options: options)
         
         var vsCode: UnsafePointer<Int8>?
         vsCompiler.compile(&vsCode)

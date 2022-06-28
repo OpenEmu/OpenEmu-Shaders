@@ -34,7 +34,6 @@
 		058AB9BC28513185009A35FA /* CGContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058AB9BB28513185009A35FA /* CGContext.swift */; };
 		058AB9BE285135D9009A35FA /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 058AB9BD285135D9009A35FA /* ArgumentParser */; };
 		058AB9C128513642009A35FA /* ShaderCommand+Benchmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058AB9BF28513642009A35FA /* ShaderCommand+Benchmark.swift */; };
-		058AB9C228513642009A35FA /* ShaderCommand+DumpMetalSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058AB9C028513642009A35FA /* ShaderCommand+DumpMetalSource.swift */; };
 		058AB9C3285137A5009A35FA /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; };
 		058AB9CA28513B33009A35FA /* CompileCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058AB9C928513B33009A35FA /* CompileCommand.swift */; };
 		05AA59F7246625A20031B73E /* ShaderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0524FF892459E6C7005C5E83 /* ShaderModel.swift */; };
@@ -175,7 +174,6 @@
 		058AB9B92851317C009A35FA /* Chalk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Chalk.swift; sourceTree = "<group>"; };
 		058AB9BB28513185009A35FA /* CGContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGContext.swift; sourceTree = "<group>"; };
 		058AB9BF28513642009A35FA /* ShaderCommand+Benchmark.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShaderCommand+Benchmark.swift"; sourceTree = "<group>"; };
-		058AB9C028513642009A35FA /* ShaderCommand+DumpMetalSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ShaderCommand+DumpMetalSource.swift"; sourceTree = "<group>"; };
 		058AB9C928513B33009A35FA /* CompileCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompileCommand.swift; sourceTree = "<group>"; };
 		05AA59F8246702410031B73E /* ShaderModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderModelTests.swift; sourceTree = "<group>"; };
 		05ABBE912842D0C0006F1A8C /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
@@ -304,7 +302,6 @@
 			children = (
 				058AB9B4285130EE009A35FA /* ShaderCommand.swift */,
 				058AB9BF28513642009A35FA /* ShaderCommand+Benchmark.swift */,
-				058AB9C028513642009A35FA /* ShaderCommand+DumpMetalSource.swift */,
 				058AB9B62851313C009A35FA /* ShaderCommand+Thumbnail.swift */,
 			);
 			name = "Shader Command";
@@ -676,7 +673,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				058AB9C228513642009A35FA /* ShaderCommand+DumpMetalSource.swift in Sources */,
 				058AB9B5285130EE009A35FA /* ShaderCommand.swift in Sources */,
 				058AB9BA2851317C009A35FA /* Chalk.swift in Sources */,
 				058AB9B72851313C009A35FA /* ShaderCommand+Thumbnail.swift in Sources */,

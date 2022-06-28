@@ -33,64 +33,9 @@ public class ShaderPassCompiler {
     }
     
     let shader: SlangShader
-    let bindings: [ShaderPassBindings]
-    var historyCount: Int = 0
     
     public init(shaderModel shader: SlangShader) {
         self.shader     = shader
-        self.bindings   = (0..<shader.passes.count).map(ShaderPassBindings.init)
-    }
-    
-    public func buildPass(_ passNumber: Int, options: ShaderCompilerOptions, passSemantics: ShaderPassSemantics?) throws -> (vert: String, frag: String) {
-        var ctx: __SPVContext?
-        __spvc_context_create(&ctx)
-        guard let ctx = ctx else {
-            throw ShaderError.buildFailed
-        }
-        defer { ctx.destroy() }
-        
-        let errorHandler: @convention(c) (UnsafeMutableRawPointer?, UnsafePointer<Int8>?) -> Void = { userData, errorMsg in
-            guard
-                let userData = userData,
-                let errorMsg = errorMsg
-            else { return }
-            
-            let compiler = Unmanaged<ShaderPassCompiler>.fromOpaque(userData).takeUnretainedValue()
-            compiler.compileError(String(cString: errorMsg))
-        }
-        
-        spvc_context_set_error_callback(ctx, errorHandler, Unmanaged.passUnretained(self).toOpaque())
-        let pass = shader.passes[passNumber]
-        let bind = bindings[passNumber]
-        bind.format = pass.format
-        
-        var vsCompiler: SPVCompiler?, fsCompiler: SPVCompiler?
-        try makeCompilersForPass(pass, context: ctx, options: options, vertexCompiler: &vsCompiler, fragmentCompiler: &fsCompiler)
-        
-        guard
-            let vsCompiler = vsCompiler,
-            let fsCompiler = fsCompiler
-        else {
-            throw ShaderError.buildFailed
-        }
-
-        var vsCode: UnsafePointer<Int8>?
-        vsCompiler.compile(&vsCode)
-        
-        var fsCode: UnsafePointer<Int8>?
-        fsCompiler.compile(&fsCode)
-        
-        if let passSemantics = passSemantics {
-            guard let sym = makeSymbols() else { throw ShaderError.processFailed }
-            guard let ref = reflect(passNumber: passNumber,
-                                    withSymbols: sym,
-                                    withVertexCompiler: vsCompiler,
-                                    fragmentCompiler: fsCompiler)
-            else { throw ShaderError.processFailed }
-            
-            updateBindings(passSemantics: passSemantics, passBindings: bind, ref: ref, sym: sym)
-        }
-        return (String(cString: vsCode!), String(cString: fsCode!))
     }
     
     func compileError(_ error: String) {
@@ -104,10 +49,8 @@ public class ShaderPassCompiler {
     func makeCompilersForPass(
         _ pass: ShaderPass,
         context ctx: __SPVContext,
-        options: ShaderCompilerOptions,
-        vertexCompiler vsCompiler: UnsafeMutablePointer<SPVCompiler?>,
-        fragmentCompiler fsCompiler: UnsafeMutablePointer<SPVCompiler?>
-    ) throws {
+        options: ShaderCompilerOptions
+    ) throws -> (vsCompiler: SPVCompiler, fsCompiler: SPVCompiler) {
         let version: UInt32
         switch options.languageVersion {
         #if swift(>=5.5)
@@ -129,21 +72,22 @@ public class ShaderPassCompiler {
         }
         guard let vsIR = vsIR else {
             // os_log_error(OE_LOG_DEFAULT, "error parsing vertex spirv '%@'", pass.url.absoluteString)
-            return
+            throw ShaderError.buildFailed
         }
         
-        ctx.create_compiler(backend: .msl, ir: vsIR, captureMode: .takeOwnership, compiler: vsCompiler)
+        var vsCompiler: SPVCompiler?
+        ctx.create_compiler(backend: .msl, ir: vsIR, captureMode: .takeOwnership, compiler: &vsCompiler)
 
-        guard let vsCompiler = vsCompiler.pointee else {
+        guard let vsCompiler = vsCompiler else {
             // os_log_error(OE_LOG_DEFAULT, "error creating vertex compiler '%@'", pass.url.absoluteString)
-            return
+            throw ShaderError.buildFailed
         }
         
         // vertex compile
         var vsOptions: SPVCompilerOptions?
         vsCompiler.create_compiler_options(&vsOptions)
         guard let vsOptions = vsOptions else {
-            return
+            throw ShaderError.buildFailed
         }
         vsOptions.set_uint(option: SPVC_COMPILER_OPTION_MSL_VERSION, with: version)
         vsCompiler.install_compiler_options(options: vsOptions)
@@ -156,24 +100,27 @@ public class ShaderPassCompiler {
         }
         guard let fsIR = fsIR else {
             // os_log_error(OE_LOG_DEFAULT, "error parsing fragment spirv '%@'", pass.url.absoluteString)
-            return
+            throw ShaderError.buildFailed
         }
         
-        ctx.create_compiler(backend: .msl, ir: fsIR, captureMode: .takeOwnership, compiler: fsCompiler)
+        var fsCompiler: SPVCompiler?
+        ctx.create_compiler(backend: .msl, ir: fsIR, captureMode: .takeOwnership, compiler: &fsCompiler)
 
-        guard let fsCompiler = fsCompiler.pointee else {
+        guard let fsCompiler = fsCompiler else {
             // os_log_error(OE_LOG_DEFAULT, "error creating fragment compiler '%@'", pass.url.absoluteString)
-            return
+            throw ShaderError.buildFailed
         }
         
         // fragment compile
         var fsOptions: SPVCompilerOptions?
         fsCompiler.create_compiler_options(&fsOptions)
         guard let fsOptions = fsOptions else {
-            return
+            throw ShaderError.buildFailed
         }
         fsOptions.set_uint(option: SPVC_COMPILER_OPTION_MSL_VERSION, with: version)
         fsCompiler.install_compiler_options(options: fsOptions)
+        
+        return (vsCompiler, fsCompiler)
     }
     
     func irForPass(_ pass: ShaderPass, ofType type: ShaderType, options: ShaderCompilerOptions) throws -> Data {

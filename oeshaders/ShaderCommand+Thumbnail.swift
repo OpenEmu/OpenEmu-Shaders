@@ -47,9 +47,6 @@ This command generates a thumbnail image of a shader using a user-specified sour
         @Option
         var outputScale: Int = 3
         
-        @Flag
-        var compiled: Bool = false
-        
         func run() throws {
             guard
                 let dev = MTLCreateSystemDefaultDevice()
@@ -61,14 +58,7 @@ This command generates a thumbnail image of a shader using a user-specified sour
             let options = ShaderCompilerOptions()
             
             let fi = try FilterChain(device: dev)
-            if compiled {
-                let shader = try SlangShader(fromURL: URL(fileURLWithPath: shaderPath))
-                let compiler = ShaderPassCompiler(shaderModel: shader)
-                let compiled = try compiler.compile(options: options)
-                try fi.setCompiledShader(compiled)
-            } else {
-                try fi.setShader(fromURL: URL(fileURLWithPath: shaderPath), options: options)
-            }
+            try fi.setShader(fromURL: URL(fileURLWithPath: shaderPath), options: options)
             
             guard let ctx = CGContext.make(URL(fileURLWithPath: imagePath))
             else {

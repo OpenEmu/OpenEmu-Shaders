@@ -26,89 +26,55 @@ import Foundation
 
 extension FilterChain {
     func updateBindings(passBindings: ShaderPassBindings, forPassNumber passNumber: Int, passSemantics: ShaderPassSemantics, pass: Compiled.ShaderPass) {
-        passBindings.format = pass.format.metalPixelFormat
-        passBindings.isFeedback = pass.isFeedback
+        func addUniforms(bufferIndex: Int) {
+            let desc = pass.buffers[bufferIndex]
+            guard desc.size > 0 else { return }
+
+            let bind = passBindings.buffers[bufferIndex]
+            bind.bindingVert = desc.bindingVert
+            bind.bindingFrag = desc.bindingFrag
+            bind.size        = (desc.size + 0xf) & ~0xf // round up to nearest 16 bytes
+            
+            for u in desc.uniforms {
+                if let sem = ShaderBufferSemantic(u.semantic) {
+                    if sem == .floatParameter {
+                        guard let param = passSemantics.parameter(at: u.index!)
+                        else { fatalError("Unable to find parameter at index \(u.index!)") }
+                        bind.addUniformData(param.data,
+                                            size: u.size,
+                                            offset: u.offset,
+                                            name: u.name)
+                    } else {
+                        bind.addUniformData(passSemantics.uniforms[sem]!.data,
+                                            size: u.size,
+                                            offset: u.offset,
+                                            name: u.name)
+                    }
+                } else if let sem = ShaderTextureSemantic(u.semantic) {
+                    let tex = passSemantics.textures[sem]!
+                    
+                    bind.addUniformData(tex.textureSize.advanced(by: u.index! * tex.sizeStride),
+                                        size: u.size,
+                                        offset: u.offset,
+                                        name: u.name)
+                }
+            }
+        }
         
         // UBO
-        let uboB = passBindings.buffers[0]
-        if pass.buffers[0].size > 0 {
-            let b = pass.buffers[0]
-            uboB.bindingVert = b.bindingVert
-            uboB.bindingFrag = b.bindingFrag
-            uboB.size        = (b.size + 0xf) & ~0xf // round up to nearest 16 bytes
-        }
-        
-        // push constants
-        let pshB = passBindings.buffers[1]
-        if pass.buffers[1].size > 0 {
-            let b = pass.buffers[1]
-            pshB.bindingVert = b.bindingVert
-            pshB.bindingFrag = b.bindingFrag
-            pshB.size        = (b.size + 0xf) & ~0xf // round up to nearest 16 bytes
-        }
-        
-        for u in pass.buffers[0].uniforms {
-            if let sem = ShaderBufferSemantic(u.semantic) {
-                if sem == .floatParameter {
-                    guard let param = passSemantics.parameter(at: u.index!)
-                    else { fatalError("Unable to find parameter at index \(u.index!)") }
-                    uboB.addUniformData(param.data,
-                                        size: u.size,
-                                        offset: u.offset,
-                                        name: u.name)
-                } else {
-                    uboB.addUniformData(passSemantics.uniforms[sem]!.data,
-                                        size: u.size,
-                                        offset: u.offset,
-                                        name: u.name)
-                }
-            } else if let sem = ShaderTextureSemantic(u.semantic) {
-                let tex = passSemantics.textures[sem]!
-                
-                uboB.addUniformData(tex.textureSize.advanced(by: u.index! * tex.sizeStride),
-                                    size: u.size,
-                                    offset: u.offset,
-                                    name: u.name)
-            }
-        }
-
-        for u in pass.buffers[1].uniforms {
-            if let sem = ShaderBufferSemantic(u.semantic) {
-                if sem == .floatParameter {
-                    guard let param = passSemantics.parameter(at: u.index!)
-                    else { fatalError("Unable to find parameter at index \(u.index!)") }
-                    pshB.addUniformData(param.data,
-                                        size: u.size,
-                                        offset: u.offset,
-                                        name: u.name)
-                } else {
-                    pshB.addUniformData(passSemantics.uniforms[sem]!.data,
-                                        size: u.size,
-                                        offset: u.offset,
-                                        name: u.name)
-
-                }
-            } else if let sem = ShaderTextureSemantic(u.semantic) {
-                let tex = passSemantics.textures[sem]!
-                
-                pshB.addUniformData(tex.textureSize.advanced(by: u.index! * tex.sizeStride),
-                                    size: u.size,
-                                    offset: u.offset,
-                                    name: u.name)
-            }
-        }
+        addUniforms(bufferIndex: 0)
+        // Push
+        addUniforms(bufferIndex: 1)
         
         for t in pass.textures {
             guard let sem = ShaderTextureSemantic(t.semantic)
             else { continue }
             
-            let index = t.index!
-            
-            let tex = passSemantics.textures[sem]!
-            
-            let ptr = tex.texture.advanced(by: index * tex.textureStride)
-            let bind = passBindings.addTexture(ptr, binding: t.binding, name: t.name)
-            bind.wrap = .init(t.wrap)
+            let tex  = passSemantics.textures[sem]!
+            let bind = passBindings.addTexture(tex.texture.advanced(by: t.index! * tex.textureStride),
+                                               binding: t.binding,
+                                               name: t.name)
+            bind.wrap   = .init(t.wrap)
             bind.filter = .init(t.filter)
         }
     }
