@@ -264,8 +264,6 @@
 				05059BB72863F7F70081E53C /* ShaderPassCompiler+Compiled.swift */,
 				057847CD25C1250300A842E7 /* ShaderCompilerOptions.swift */,
 				05ABBEA22845FB1C006F1A8C /* ShaderReflection.swift */,
-				05ABBEA828483072006F1A8C /* ShaderPassBindings.swift */,
-				05ABBEA62847283F006F1A8C /* ShaderPassSemantics.swift */,
 				05ABBE9B2842EA5A006F1A8C /* SlangCompiler.swift */,
 			);
 			name = Compiler;
@@ -428,6 +426,8 @@
 				051C31F6286891CE00281C57 /* FilterChain+Bindings.swift */,
 				05ABBEAE2849DF9B006F1A8C /* Matrix.swift */,
 				05ABBEAC284979BA006F1A8C /* Screenshot.swift */,
+				05ABBEA828483072006F1A8C /* ShaderPassBindings.swift */,
+				05ABBEA62847283F006F1A8C /* ShaderPassSemantics.swift */,
 				05F5494F229BBA8800561C14 /* Shaders.metal */,
 				05F54951229BBA8800561C14 /* ShaderTypes.h */,
 			);

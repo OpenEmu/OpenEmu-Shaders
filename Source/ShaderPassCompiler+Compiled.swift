@@ -32,7 +32,8 @@ extension ShaderPassCompiler {
         }
         
         // The set contains the pass numbers of all passes
-        // that are feedback passes.
+        // that are used as feedback. We search through all
+        // passes that refer to a texture of type passFeedback.
         let feedback = Set<Int>(passes.flatMap { pass in
             pass.textures
                 .filter { $0.semantic == .passFeedback }

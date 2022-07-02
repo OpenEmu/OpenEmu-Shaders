@@ -67,7 +67,7 @@ import os.log
     
     private struct OutputFrame {
         var viewport: MTLViewport
-        var outputSize: Float4
+        var outputSize: TextureSize
         
         init() {
             viewport = .init()
@@ -171,7 +171,7 @@ import os.log
         
         super.init()
         
-        self.rotation = 0
+        rotation = 0
         setDefaultFilteringLinear(false)
     }
     
@@ -205,9 +205,9 @@ import os.log
             ca.destinationRGBBlendFactor   = .oneMinusSourceAlpha
         }
 
-        psd.sampleCount = 1
+        psd.sampleCount      = 1
         psd.vertexDescriptor = vd
-        psd.vertexFunction = library.makeFunction(name: "basic_vertex_proj_tex")
+        psd.vertexFunction   = library.makeFunction(name: "basic_vertex_proj_tex")
         psd.fragmentFunction = library.makeFunction(name: "basic_fragment_proj_tex")
         
         return try device.makeRenderPipelineState(descriptor: psd)
@@ -469,13 +469,13 @@ import os.log
             pixelBuffer.prepare(withCommandBuffer: commandBuffer, texture: texture)
             return
         }
-        
+
+        if historyCount == 0 {
+            // When historyCount is 0, sourceTextures[0].view == sourceTexture
+            return
+        }
+
         if let sourceTexture = sourceTexture {
-            if historyCount == 0 {
-                // sourceTextures[0].view == sourceTexture
-                return
-            }
-            
             let orig: MTLOrigin = .init(x: Int(sourceRect.origin.x), y: Int(sourceRect.origin.y), z: 0)
             let size: MTLSize = .init(width: Int(sourceRect.width), height: Int(sourceRect.height), depth: 1)
             let zero: MTLOrigin = .init()
@@ -544,7 +544,7 @@ import os.log
         
         guard hasShader && passCount > 0 else { return }
         
-        // flip feedback render targets
+        // swap feedback render targets
         for i in 0..<passCount where pass[i].hasFeedback {
             (pass[i].renderTarget, pass[i].feedbackTarget) = (pass[i].feedbackTarget, pass[i].renderTarget)
         }
@@ -577,8 +577,9 @@ import os.log
                 let sem = pass[i].bindings!.buffers[j]
                 
                 guard
-                    (sem.bindingVert != nil || sem.bindingFrag != nil) &&
-                        !sem.uniforms.isEmpty else { continue }
+                    (sem.bindingVert != nil || sem.bindingFrag != nil)
+                        && !sem.uniforms.isEmpty
+                else { continue }
                 
                 if let buffer = pass[i].buffers[j] {
                     let data = buffer.contents()
@@ -594,7 +595,7 @@ import os.log
         }
     }
     
-    // these fields are used for per-pass state
+    // these fields are used for temporary per-pass state
     private var _renderTextures: [MTLTexture?] = .init(repeating: nil, count: Constants.maxShaderBindings)
     private var _renderSamplers: [MTLSamplerState?] = .init(repeating: nil, count: Constants.maxShaderBindings)
     private var _renderbOffsets: [Int] = .init(repeating: 0, count: Constants.maxConstantBuffers)
@@ -654,7 +655,7 @@ import os.log
             pass[i].feedbackTarget = .init()
         }
         
-        var textures: [MTLTexture]?
+        var textures = [MTLTexture]()
         
         // width and height represent the size of the Source image to the current
         // pass
@@ -719,17 +720,15 @@ import os.log
                 td.storageMode = .private
                 td.usage = [.shaderRead, .renderTarget]
                 initTexture(&self.pass[i].renderTarget, withDescriptor: td)
+                // textures should be cleared before first use
+                textures.append(self.pass[i].renderTarget.view!)
+
                 let label = String(format: "Pass %02d Output", i)
                 self.pass[i].renderTarget.view?.label = label
                 if self.pass[i].hasFeedback {
                     initTexture(&self.pass[i].feedbackTarget, withDescriptor: td)
                     self.pass[i].feedbackTarget.view?.label = label
-                    if textures == nil {
-                        textures = []
-                    }
-                    // textures should be cleared before first use
-                    textures?.append(self.pass[i].renderTarget.view!)
-                    textures?.append(self.pass[i].feedbackTarget.view!)
+                    textures.append(self.pass[i].feedbackTarget.view!)
                 }
             } else {
                 // last pass can render directly to the output render target
@@ -739,7 +738,7 @@ import os.log
         
         renderTargetsNeedResize = false
         
-        return textures
+        return textures.isEmpty ? nil : textures
     }
     
     private func freeShaderResources() {
@@ -1015,7 +1014,7 @@ import os.log
 /*
  * Take the raw visible game rect and turn it into a smaller rect
  * which is centered inside 'bounds' and has aspect ratio 'aspectSize'.
- * ATM we try to fill the window, but maybe someday we'll support fixed zooms.
+ * Currently we try to fill the window, but maybe someday we'll support fixed zooms.
  */
 func fitAspectRectIntoRect(aspectSize: CGSize, size: CGSize) -> CGRect {
     let wantAspect = aspectSize.width / aspectSize.height
@@ -1057,7 +1056,7 @@ extension FilterChain.SamplerFilterArray {
 }
 
 extension FilterChain {
-    fileprivate struct Float4 {
+    fileprivate struct TextureSize {
         static let zero: Self = .init()
         
         let x: Float
@@ -1088,6 +1087,6 @@ extension FilterChain {
     
     fileprivate struct Texture {
         var view: MTLTexture?
-        var size: Float4 = .zero
+        var size: TextureSize = .zero
     }
 }
