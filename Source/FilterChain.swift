@@ -26,7 +26,7 @@ import Foundation
 import Metal
 import MetalKit
 import os.log
-
+// swiftlint: disable type_body_length
 @objc final public class FilterChain: NSObject, ScreenshotSource {
     enum InitError: Error {
         case invalidSamplerState
@@ -70,46 +70,46 @@ import os.log
         var outputSize: TextureSize
         
         init() {
-            viewport = .init()
+            viewport   = .init()
             outputSize = .init()
         }
     }
     private var outputFrame: OutputFrame = .init()
     
     fileprivate struct Pass {
-        var format: MTLPixelFormat = .bgra8Unorm
-        var buffers = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers)
-        var vBuffers = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for vertex binding
-        var fBuffers = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for fragment binding
-        var renderTarget: Texture = .init()
-        var feedbackTarget: Texture = .init()
-        var frameCount: UInt32 = 0
-        var frameCountMod: UInt32 = 0
-        var frameDirection: UInt32 = 0
+        var format          = MTLPixelFormat.bgra8Unorm
+        var buffers         = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers)
+        var vBuffers        = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for vertex binding
+        var fBuffers        = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for fragment binding
+        var renderTarget    = Texture.init()
+        var feedbackTarget  = Texture.init()
+        var frameCount      = UInt32(0)
+        var frameCountMod   = UInt32(0)
+        var frameDirection  = UInt32(0)
         var bindings: ShaderPassBindings?
-        var viewport: MTLViewport = .init()
+        var viewport = MTLViewport.init()
         var state: MTLRenderPipelineState?
-        var hasFeedback: Bool = false
-        var scaleX: ShaderPassScale = .invalid
-        var scaleY: ShaderPassScale = .invalid
-        var scale: CGSize = CGSize(width: 1, height: 1)
-        var size: CGSize = CGSize(width: 0, height: 0)
-        var isScaled: Bool = false
+        var hasFeedback = false
+        var scaleX      = ShaderPassScale.invalid
+        var scaleY      = ShaderPassScale.invalid
+        var scale       = CGSize(width: 1, height: 1)
+        var size        = CGSize(width: 0, height: 0)
+        var isScaled    = false
     }
     
     private var pass = [Pass](repeating: .init(), count: Constants.maxShaderPasses)
     private var luts = [Texture](repeating: .init(), count: Constants.maxTextures)
-    private var lutsFlipped: Bool = false
+    private var lutsFlipped = false
     
     private var renderTargetsNeedResize = true
-    private var historyNeedsInit = false
+    private var historyNeedsInit        = false
     
-    @objc public private(set) var sourceRect: CGRect = .zero
-    @objc public var sourceTextureIsFlipped: Bool = false
+    @objc public private(set) var sourceRect = CGRect.zero
+    @objc public var sourceTextureIsFlipped  = false
     
-    private var aspectSize: CGSize = .zero
+    private var aspectSize = CGSize.zero
     
-    @objc public private(set) var outputBounds: CGRect = .zero
+    @objc public private(set) var outputBounds = CGRect.zero
     
     @objc public var frameDirection: Int = 1
     
@@ -118,8 +118,9 @@ import os.log
     
     private var _rotation: Float = 0
 
-    private var uniforms: Uniforms = .init()
-    private var uniformsNoRotate: Uniforms = .init()
+    private var uniforms         = Uniforms.init()
+    private var uniformsNoRotate = Uniforms.init()
+    
     private lazy var checkers: MTLTexture = {
         // swiftlint: disable identifier_name force_try
         let T0 = UInt32(0xff000000)
@@ -150,9 +151,9 @@ import os.log
     private let deviceHasUnifiedMemory: Bool
     
     // parameters state
-    private var parameters = [Float](repeating: 0, count: Constants.maxParameters)
-    private var parametersCount: Int = 0
-    private var parametersMap: [String: Int] = [:]
+    private var parameters      = [Float](repeating: 0, count: Constants.maxParameters)
+    private var parametersCount = 0
+    private var parametersMap   = [String: Int]()
     
     @objc public init(device: MTLDevice) throws {
         self.device = device
@@ -162,11 +163,11 @@ import os.log
             deviceHasUnifiedMemory = false
         }
         
-        library = try device.makeDefaultLibrary(bundle: Bundle(for: Self.self))
-        loader = .init(device: device)
-        converter = try .init(device: device)
-        pipelineState = try Self.makePipelineState(device, library)
-        samplers = try Self.makeSamplers(device)
+        library         = try device.makeDefaultLibrary(bundle: Bundle(for: Self.self))
+        loader          = .init(device: device)
+        converter       = try .init(device: device)
+        pipelineState   = try Self.makePipelineState(device, library)
+        samplers        = try Self.makeSamplers(device)
         vertexSizeBytes = MemoryLayout<Vertex>.size * vertex.count
         
         super.init()
@@ -180,13 +181,13 @@ import os.log
     private static func makePipelineState(_ device: MTLDevice, _ library: MTLLibrary) throws -> MTLRenderPipelineState {
         let vd = MTLVertexDescriptor()
         if let attr = vd.attributes[VertexAttribute.position.rawValue] {
-            attr.offset = MemoryLayout<Vertex>.offset(of: \Vertex.position)!
-            attr.format = .float4
+            attr.offset      = MemoryLayout<Vertex>.offset(of: \Vertex.position)!
+            attr.format      = .float4
             attr.bufferIndex = BufferIndex.positions.rawValue
         }
         if let attr = vd.attributes[VertexAttribute.texcoord.rawValue] {
-            attr.offset = MemoryLayout<Vertex>.offset(of: \Vertex.texCoord)!
-            attr.format = .float2
+            attr.offset      = MemoryLayout<Vertex>.offset(of: \Vertex.texCoord)!
+            attr.format      = .float2
             attr.bufferIndex = BufferIndex.positions.rawValue
         }
         if let l = vd.layouts[BufferIndex.positions.rawValue] {
@@ -285,9 +286,6 @@ import os.log
     
     /// Sets the default filtering mode when a shader pass leaves the value unspecified.
     ///
-    /// When a shader does not spcify a filtering mode, the default will be
-    /// determined from this method.
-    ///
     /// - parameters:
     ///     - linear: `true` to use linear filtering
     @objc public func setDefaultFilteringLinear(_ linear: Bool) {
@@ -301,7 +299,7 @@ import os.log
     @objc public var sourceTexture: MTLTexture? {
         didSet {
             pixelBuffer = nil
-            texture = nil
+            texture     = nil
         }
     }
     
@@ -341,8 +339,38 @@ import os.log
         return nil
     }
     
+    /*
+     * Take the raw visible game rect and turn it into a smaller rect
+     * which is centered inside 'bounds' and has aspect ratio 'aspectSize'.
+     * Currently we try to fill the window, but maybe someday we'll support fixed zooms.
+     */
+    private static func fitAspectRectIntoRect(aspectSize: CGSize, size: CGSize) -> CGRect {
+        let wantAspect = aspectSize.width / aspectSize.height
+        let viewAspect = size.width / size.height
+        
+        var minFactor: CGFloat
+        var outRectSize: CGSize
+        
+        if viewAspect >= wantAspect {
+            // Raw image is too wide (normal case), squish inwards
+            minFactor   = wantAspect / viewAspect
+            outRectSize = .init(width: size.width * minFactor, height: size.height)
+        } else {
+            // Raw image is too tall, squish upwards
+            minFactor   = viewAspect / wantAspect
+            outRectSize = .init(width: size.width, height: size.height * minFactor)
+        }
+        
+        let outRect = CGRect(origin: .init(x: (size.width - outRectSize.width) / 2,
+                                           y: (size.height - outRectSize.height) / 2),
+                             size: outRectSize)
+        
+        // This is going into a Nearest Neighbor, so the edges should be on pixels!
+        return NSIntegralRectWithOptions(outRect, .alignAllEdgesNearest)
+    }
+    
     private func resize() {
-        let bounds = fitAspectRectIntoRect(aspectSize: aspectSize, size: drawableSize)
+        let bounds = Self.fitAspectRectIntoRect(aspectSize: aspectSize, size: drawableSize)
         if outputBounds.origin == bounds.origin && outputBounds.size == bounds.size {
             return
         }
@@ -595,7 +623,7 @@ import os.log
         }
     }
     
-    // these fields are used for temporary per-pass state
+    // these fields are used as temporary storage when rendering each pass
     private var _renderTextures: [MTLTexture?] = .init(repeating: nil, count: Constants.maxShaderBindings)
     private var _renderSamplers: [MTLSamplerState?] = .init(repeating: nil, count: Constants.maxShaderBindings)
     private var _renderbOffsets: [Int] = .init(repeating: 0, count: Constants.maxConstantBuffers)
@@ -944,9 +972,9 @@ import os.log
         os_log("Shader load completed in %{xcode:interval}f seconds", log: .default, type: .debug, end)
         
         loadLuts(ss.luts)
-        hasShader = true
+        hasShader               = true
         renderTargetsNeedResize = true
-        historyNeedsInit = true
+        historyNeedsInit        = true
     }
     
     @objc public func setShader(fromURL url: URL, options shaderOptions: ShaderCompilerOptions) throws {
@@ -1009,36 +1037,6 @@ import os.log
     
     typealias SamplerWrapArray<Element> = [Element]
     typealias SamplerFilterArray<Element> = [SamplerWrapArray<Element>]
-}
-
-/*
- * Take the raw visible game rect and turn it into a smaller rect
- * which is centered inside 'bounds' and has aspect ratio 'aspectSize'.
- * Currently we try to fill the window, but maybe someday we'll support fixed zooms.
- */
-func fitAspectRectIntoRect(aspectSize: CGSize, size: CGSize) -> CGRect {
-    let wantAspect = aspectSize.width / aspectSize.height
-    let viewAspect = size.width / size.height
-    
-    var minFactor: CGFloat
-    var outRectSize: CGSize
-    
-    if viewAspect >= wantAspect {
-        // Raw image is too wide (normal case), squish inwards
-        minFactor   = wantAspect / viewAspect
-        outRectSize = .init(width: size.width * minFactor, height: size.height)
-    } else {
-        // Raw image is too tall, squish upwards
-        minFactor   = viewAspect / wantAspect
-        outRectSize = .init(width: size.width, height: size.height * minFactor)
-    }
-    
-    let outRect = CGRect(origin: .init(x: (size.width - outRectSize.width) / 2,
-                                       y: (size.height - outRectSize.height) / 2),
-                         size: outRectSize)
-    
-    // This is going into a Nearest Neighbor, so the edges should be on pixels!
-    return NSIntegralRectWithOptions(outRect, .alignAllEdgesNearest)
 }
 
 extension FilterChain.SamplerWrapArray {
