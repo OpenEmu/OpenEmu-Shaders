@@ -81,13 +81,13 @@ import os.log
         var buffers         = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers)
         var vBuffers        = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for vertex binding
         var fBuffers        = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for fragment binding
-        var renderTarget    = Texture.init()
-        var feedbackTarget  = Texture.init()
+        var renderTarget    = Texture()
+        var feedbackTarget  = Texture()
         var frameCount      = UInt32(0)
         var frameCountMod   = UInt32(0)
         var frameDirection  = UInt32(0)
         var bindings: ShaderPassBindings?
-        var viewport = MTLViewport.init()
+        var viewport = MTLViewport()
         var state: MTLRenderPipelineState?
         var hasFeedback = false
         var scaleX      = ShaderPassScale.invalid
@@ -118,8 +118,8 @@ import os.log
     
     private var _rotation: Float = 0
 
-    private var uniforms         = Uniforms.init()
-    private var uniformsNoRotate = Uniforms.init()
+    private var uniforms         = Uniforms()
+    private var uniformsNoRotate = Uniforms()
     
     private lazy var checkers: MTLTexture = {
         // swiftlint: disable identifier_name force_try
@@ -1005,7 +1005,8 @@ import os.log
         
         // if the source texture exists and is flipped
         if sourceTexture != nil && sourceTextureIsFlipped {
-            opts[.origin] = MTKTextureLoader.Origin.flippedVertically.rawValue
+            // NOTE: causes Kurozumi to render colors incorrectly (purple) due to LUT being flipped
+            // opts[.origin] = MTKTextureLoader.Origin.flippedVertically.rawValue
         }
         
         var i: Int = 0

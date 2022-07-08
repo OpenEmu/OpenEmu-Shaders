@@ -25,12 +25,12 @@
 import Foundation
 import Metal
 
-class MTLPixelConverter {
+public class MTLPixelConverter {
     enum Error: LocalizedError {
         case missingFunction(String)
     }
     
-    class BufferConverter {
+    public class BufferConverter {
         let kernel: MTLComputePipelineState
         let bytesPerPixel: Int
         
@@ -39,8 +39,8 @@ class MTLPixelConverter {
             self.bytesPerPixel = bytesPerPixel
         }
         
-        func convert(fromBuffer src: MTLBuffer, sourceOrigin: MTLOrigin, sourceBytesPerRow: Int,
-                     toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
+        public func convert(fromBuffer src: MTLBuffer, sourceOrigin: MTLOrigin, sourceBytesPerRow: Int,
+                            toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
             let ce = commandBuffer.makeComputeCommandEncoder()!
             ce.label = "pixel conversion"
             ce.setComputePipelineState(kernel)
@@ -62,14 +62,14 @@ class MTLPixelConverter {
         }
     }
     
-    class TextureConverter {
+    public class TextureConverter {
         let kernel: MTLComputePipelineState
         
         init(kernel: MTLComputePipelineState) {
             self.kernel = kernel
         }
         
-        func convert(texture src: MTLTexture, out dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
+        public func convert(texture src: MTLTexture, out dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
             let ce = commandBuffer.makeComputeCommandEncoder()!
             ce.label = "pixel conversion"
             ce.setComputePipelineState(kernel)
@@ -85,7 +85,7 @@ class MTLPixelConverter {
             ce.endEncoding()
         }
     }
-
+    
     let device: MTLDevice
     let library: MTLLibrary
     let texToTex: [TextureConverter?]
@@ -106,7 +106,7 @@ class MTLPixelConverter {
         (.fromBuffer, .abgr8Unorm, "convert_abgr8888_to_bgra8888_buf"),
     ]
     
-    init(device: MTLDevice) throws {
+    public init(device: MTLDevice) throws {
         self.device = device
         let bundle = Bundle(for: type(of: self))
         library = try device.makeDefaultLibrary(bundle: bundle)
@@ -132,8 +132,8 @@ class MTLPixelConverter {
         self.bufToTex = bufToTex
     }
     
-    func convert(fromBuffer src: MTLBuffer, sourceFormat: OEMTLPixelFormat, sourceOrigin: MTLOrigin, sourceBytesPerRow: Int,
-                 toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
+    public func convert(fromBuffer src: MTLBuffer, sourceFormat: OEMTLPixelFormat, sourceOrigin: MTLOrigin, sourceBytesPerRow: Int,
+                        toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
         guard let filter = bufToTex[sourceFormat.rawValue] else {
             return
         }
@@ -141,15 +141,15 @@ class MTLPixelConverter {
                        toTexture: dst, commandBuffer: commandBuffer)
     }
     
-    func bufferConverter(withFormat sourceFormat: OEMTLPixelFormat) -> BufferConverter? {
+    public func bufferConverter(withFormat sourceFormat: OEMTLPixelFormat) -> BufferConverter? {
         return bufToTex[sourceFormat.rawValue]
     }
     
-    func textureConverter(withFormat sourceFormat: OEMTLPixelFormat) -> TextureConverter? {
+    public func textureConverter(withFormat sourceFormat: OEMTLPixelFormat) -> TextureConverter? {
         return texToTex[sourceFormat.rawValue]
     }
     
-    func convert(fromTexture src: MTLTexture, sourceFormat: OEMTLPixelFormat, toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
+    public func convert(fromTexture src: MTLTexture, sourceFormat: OEMTLPixelFormat, toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
         guard let filter = texToTex[sourceFormat.rawValue] else {
             return
         }

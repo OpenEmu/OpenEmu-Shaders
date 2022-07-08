@@ -40,7 +40,7 @@ import Foundation
     }
     @objc public let contents: UnsafeMutableRawPointer
     
-    // for unalilgned buffers
+    // for unaligned buffers
     let buffer: UnsafeMutableRawPointer
     let bufferLenBytes: Int
     let bufferFree: Bool
@@ -98,19 +98,19 @@ import Foundation
     
     // MARK: - Internal APIs
     
-    func prepare(withCommandBuffer commandBuffer: MTLCommandBuffer, texture: MTLTexture) {
+    public func prepare(withCommandBuffer commandBuffer: MTLCommandBuffer, texture: MTLTexture) {
         fatalError("not implemented")
     }
     
     // MARK: - Static initializers
     
-    static func makeBuffer(withDevice device: MTLDevice, converter: MTLPixelConverter, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int) -> PixelBuffer {
+    static public func makeBuffer(withDevice device: MTLDevice, converter: MTLPixelConverter, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int) -> PixelBuffer {
         return makeBuffer(withDevice: device, converter: converter,
                           format: format, height: height, bytesPerRow: bytesPerRow,
                           bytes: nil)
     }
 
-    static func makeBuffer(withDevice device: MTLDevice, converter: MTLPixelConverter, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int, bytes: UnsafeMutableRawPointer?) -> PixelBuffer {
+    static public func makeBuffer(withDevice device: MTLDevice, converter: MTLPixelConverter, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int, bytes: UnsafeMutableRawPointer?) -> PixelBuffer {
         if format.isNative {
             return NativePixelBuffer(withDevice: device, format: format,
                                      height: height, bytesPerRow: bytesPerRow,

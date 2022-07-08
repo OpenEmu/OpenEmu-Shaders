@@ -175,7 +175,7 @@ extension ShaderPassCompiler {
         else { return .init(bindingVert: nil, bindingFrag: nil, size: 0, uniforms: []) }
         
         // Find bound global semantics, like MVP, FrameCount, etc
-        let semantics = ref.semantics.compactMap { sem, meta in
+        let semantics = ref.semantics.compactMap { (sem, meta) -> Compiled.BufferUniformDescriptor? in
             if let offset = meta[keyPath: offset] {
                 return Compiled.BufferUniformDescriptor(semantic: .init(sem),
                                                         index: nil,
@@ -187,7 +187,7 @@ extension ShaderPassCompiler {
         }
         
         // Find bound parameters
-        let parameters = ref.floatParameters.values.compactMap { meta in
+        let parameters = ref.floatParameters.values.compactMap { meta -> Compiled.BufferUniformDescriptor? in
             if let offset = meta[keyPath: offset] {
                 return Compiled.BufferUniformDescriptor(semantic: .floatParameter,
                                                         index: meta.index,
@@ -200,7 +200,7 @@ extension ShaderPassCompiler {
         
         // Find bound texture sizes such as OriginalSize, <LUT alias>Size, etc
         let textures = ref.textures.flatMap { sem, a in
-            a.values.compactMap { meta in
+            a.values.compactMap { meta -> Compiled.BufferUniformDescriptor? in
                 if let offset = meta[keyPath: textureOffset] {
                     return Compiled.BufferUniformDescriptor(semantic: .init(sem),
                                                             index: meta.index,
