@@ -73,7 +73,7 @@ class SlangCompiler {
             
             guard let shader = CGLSLangShader(input: &inp)
             else {
-                throw NSError(domain: OEShaderErrorDomain, code: OEShaderCompilePreprocessError)
+                throw SlangCompilerError.preprocess(reason: nil)
             }
             
             defer { glslang_shader_delete(shader) }
@@ -83,13 +83,7 @@ class SlangCompiler {
                 let msg = shader.preprocessed_code
                 os_log(.error, log: .default, "Error preprocessing shader: %{public}s", msg)
                 
-                let userInfo: [String: Any] = [
-                    NSLocalizedDescriptionKey: NSLocalizedString("Failed to preprocess shader", comment: "Shader failed to compile"),
-                    NSLocalizedFailureReasonErrorKey: String(cString: msg),
-                ]
-                throw NSError(domain: OEShaderErrorDomain,
-                              code: OEShaderCompilePreprocessError,
-                              userInfo: userInfo)
+                throw SlangCompilerError.preprocess(reason: String(cString: msg))
             }
             
             guard shader.parse(input: &inp)
@@ -97,13 +91,7 @@ class SlangCompiler {
                 let msg = shader.preprocessed_code
                 os_log(.error, log: .default, "Error parsing shader: %{public}s", msg)
                 
-                let userInfo: [String: Any] = [
-                    NSLocalizedDescriptionKey: NSLocalizedString("Failed to parse shader", comment: "Shader failed to compile"),
-                    NSLocalizedFailureReasonErrorKey: String(cString: msg),
-                ]
-                throw NSError(domain: OEShaderErrorDomain,
-                              code: OEShaderCompilePreprocessError,
-                              userInfo: userInfo)
+                throw SlangCompilerError.parse(reason: String(cString: msg))
             }
             
             let program = CGLSLangProgram()
@@ -119,13 +107,7 @@ class SlangCompiler {
                 os_log(.error, log: .default, "Error linking shader info log: %{public}s", infoLog)
                 os_log(.error, log: .default, "Error linking shader info debug log: %{public}s", infoDebugLog)
                 
-                let userInfo: [String: Any] = [
-                    NSLocalizedDescriptionKey: NSLocalizedString("Failed to link shader", comment: "Shader failed to compile"),
-                    NSLocalizedFailureReasonErrorKey: String(cString: infoLog),
-                ]
-                throw NSError(domain: OEShaderErrorDomain,
-                              code: OEShaderCompilePreprocessError,
-                              userInfo: userInfo)
+                throw SlangCompilerError.link(reason: String(cString: infoLog))
             }
             
             program.spirv_generate(stage: stage)
@@ -159,5 +141,47 @@ class SlangCompiler {
             return spirv
         }
     }
+}
+
+public enum SlangCompilerError: LocalizedError, CustomNSError {
+    case preprocess(reason: String?)
+    case parse(reason: String?)
+    case link(reason: String?)
     
+    public static var errorDomain: String { "OEShaderErrorDomain" }
+    
+    public var errorCode: Int {
+        switch self {
+        case .preprocess:
+            return -1000
+        case .parse:
+            return -1001
+        case .link:
+            return -1002
+        }
+    }
+    
+    public var errorDescription: String? {
+        switch self {
+        case .preprocess:
+            return NSLocalizedString("Failed to preprocess shader", comment: "Shader failed to compile")
+            
+        case .parse:
+            return NSLocalizedString("Failed to parse shader", comment: "Shader failed to compile")
+            
+        case .link:
+            return NSLocalizedString("Failed to link shader", comment: "Shader failed to compile")
+        }
+    }
+    
+    public var failureReason: String? {
+        switch self {
+        case .preprocess(let reason):
+            return reason
+        case .parse(let reason):
+            return reason
+        case .link(let reason):
+            return reason
+        }
+    }
 }

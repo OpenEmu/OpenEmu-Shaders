@@ -23,22 +23,23 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
+import Metal
 
-@objc public class PixelBuffer: NSObject {
+public class PixelBuffer {
     let device: MTLDevice
-    @objc public let format: OEMTLPixelFormat
+    public let format: OEMTLPixelFormat
     let bpp: Int // bytes per pixel
     
     let sourceBytesPerRow: Int
     let sourceBuffer: MTLBuffer
-    @objc public let sourceSize: CGSize
-    @objc public var outputRect: CGRect = .zero {
+    public let sourceSize: CGSize
+    public var outputRect: CGRect = .zero {
         didSet {
             // short copy if the buffer > 1MB and were copying < 50% of the buffer.
             shortCopy = bufferLenBytes > 1_000_000 && Int(outputRect.width) * bpp * Int(outputRect.height) <= bufferLenBytes / 2
         }
     }
-    @objc public let contents: UnsafeMutableRawPointer
+    public let contents: UnsafeMutableRawPointer
     
     // for unaligned buffers
     let buffer: UnsafeMutableRawPointer
@@ -109,7 +110,7 @@ import Foundation
                           format: format, height: height, bytesPerRow: bytesPerRow,
                           bytes: nil)
     }
-
+    
     static public func makeBuffer(withDevice device: MTLDevice, converter: MTLPixelConverter, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int, bytes: UnsafeMutableRawPointer?) -> PixelBuffer {
         if format.isNative {
             return NativePixelBuffer(withDevice: device, format: format,
@@ -126,7 +127,7 @@ import Foundation
     
     // MARK: - Class cluster
     
-    @objc class NativePixelBuffer: PixelBuffer {
+    class NativePixelBuffer: PixelBuffer {
         override init(withDevice device: MTLDevice, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int, pointer: UnsafeMutableRawPointer?) {
             super.init(withDevice: device, format: format, height: height, bytesPerRow: bytesPerRow, pointer: pointer)
         }
@@ -156,7 +157,7 @@ import Foundation
         }
     }
     
-    @objc class IntermediatePixelBuffer: PixelBuffer {
+    class IntermediatePixelBuffer: PixelBuffer {
         let converter: MTLPixelConverter.BufferConverter
         
         init(withDevice device: MTLDevice, converter: MTLPixelConverter.BufferConverter, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int, pointer: UnsafeMutableRawPointer?) {

@@ -24,12 +24,18 @@
 
 import Foundation
 import Metal
+import simd
 
 public class MTLPixelConverter {
     enum Error: LocalizedError {
         case missingFunction(String)
     }
     
+    @frozen @usableFromInline struct BufferUniforms {
+        let origin: SIMD2<UInt32>
+        let stride: UInt32
+    }
+
     public class BufferConverter {
         let kernel: MTLComputePipelineState
         let bytesPerPixel: Int
@@ -49,7 +55,7 @@ public class MTLPixelConverter {
                                       stride: UInt32(sourceBytesPerRow / bytesPerPixel))
             
             ce.setBuffer(src, offset: 0, index: 0)
-            ce.setBytes(&unif, length: MemoryLayout.size(ofValue: unif), index: 1)
+            ce.setBytes(&unif, length: MemoryLayout.stride(ofValue: unif), index: 1)
             ce.setTexture(dst, index: 0)
             
             let size  = MTLSizeMake(16, 16, 1)
@@ -111,8 +117,8 @@ public class MTLPixelConverter {
         let bundle = Bundle(for: type(of: self))
         library = try device.makeDefaultLibrary(bundle: bundle)
         
-        var texToTex = [TextureConverter?](repeating: nil, count: OEMTLPixelFormat.count.rawValue)
-        var bufToTex = [BufferConverter?](repeating: nil, count: OEMTLPixelFormat.count.rawValue)
+        var texToTex = [TextureConverter?](repeating: nil, count: OEMTLPixelFormat.allCases.count)
+        var bufToTex = [BufferConverter?](repeating: nil, count: OEMTLPixelFormat.allCases.count)
         
         for (source, format, name) in MTLPixelConverter.converters {
             guard let fn = library.makeFunction(name: name) else {

@@ -23,6 +23,24 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
+import Metal
+
+public enum OEMTLPixelFormat: Int, RawRepresentable, CaseIterable {
+    case invalid
+    
+    // 16-bit formats
+    case bgra4Unorm
+    case b5g6r5Unorm
+    case r5g5b5a1Unorm
+    
+    // 32-bit formats, 8 bits per pixel
+    case rgba8Unorm
+    case abgr8Unorm
+    
+    // native, no conversion
+    case bgra8Unorm
+    case bgrx8Unorm // no alpha
+}
 
 enum ShaderTextureSemantic: Int, RawRepresentable, CaseIterable, CustomStringConvertible {
     /// Identifies the input texture to the filter chain.
@@ -168,7 +186,7 @@ public enum ShaderPassScale: CaseIterable {
         .absolute: .absolute,
         .viewport: .viewport,
     ]
-
+    
     init(_ scale: Compiled.ShaderPassScale) {
         self = Self.mapFrom[scale]!
     }

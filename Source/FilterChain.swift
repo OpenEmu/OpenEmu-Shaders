@@ -26,8 +26,9 @@ import Foundation
 import Metal
 import MetalKit
 import os.log
+
 // swiftlint: disable type_body_length
-@objc final public class FilterChain: NSObject, ScreenshotSource {
+final public class FilterChain: ScreenshotSource {
     enum InitError: Error {
         case invalidSamplerState
     }
@@ -59,7 +60,6 @@ import os.log
     private var frameCount: UInt = 0
     private var passCount: Int = 0
     private var lastPassIndex: Int = 0
-    private var lutCount: Int = 0
     private var historyCount: Int = 0
     
     private var texture: MTLTexture? // final render texture
@@ -104,22 +104,22 @@ import os.log
     private var renderTargetsNeedResize = true
     private var historyNeedsInit        = false
     
-    @objc public private(set) var sourceRect = CGRect.zero
-    @objc public var sourceTextureIsFlipped  = false
+    public private(set) var sourceRect = CGRect.zero
+    public var sourceTextureIsFlipped  = false
     
     private var aspectSize = CGSize.zero
     
-    @objc public private(set) var outputBounds = CGRect.zero
+    public private(set) var outputBounds = CGRect.zero
     
-    @objc public var frameDirection: Int = 1
+    public var frameDirection: Int = 1
     
     // render target layer state
     private let pipelineState: MTLRenderPipelineState
     
     private var _rotation: Float = 0
-
-    private var uniforms         = Uniforms()
-    private var uniformsNoRotate = Uniforms()
+    
+    private var uniforms         = Uniforms.empty
+    private var uniformsNoRotate = Uniforms.empty
     
     private lazy var checkers: MTLTexture = {
         // swiftlint: disable identifier_name force_try
@@ -155,7 +155,7 @@ import os.log
     private var parametersCount = 0
     private var parametersMap   = [String: Int]()
     
-    @objc public init(device: MTLDevice) throws {
+    public init(device: MTLDevice) throws {
         self.device = device
         if #available(macOS 10.15, iOS 11, *) {
             deviceHasUnifiedMemory = device.hasUnifiedMemory
@@ -168,9 +168,7 @@ import os.log
         converter       = try .init(device: device)
         pipelineState   = try Self.makePipelineState(device, library)
         samplers        = try Self.makeSamplers(device)
-        vertexSizeBytes = MemoryLayout<Vertex>.size * vertex.count
-        
-        super.init()
+        vertexSizeBytes = MemoryLayout<Vertex>.stride * vertex.count
         
         rotation = 0
         setDefaultFilteringLinear(false)
@@ -185,7 +183,7 @@ import os.log
             attr.format      = .float4
             attr.bufferIndex = BufferIndex.positions.rawValue
         }
-        if let attr = vd.attributes[VertexAttribute.texcoord.rawValue] {
+        if let attr = vd.attributes[VertexAttribute.texCoord.rawValue] {
             attr.offset      = MemoryLayout<Vertex>.offset(of: \Vertex.texCoord)!
             attr.format      = .float2
             attr.bufferIndex = BufferIndex.positions.rawValue
@@ -205,7 +203,7 @@ import os.log
             ca.destinationAlphaBlendFactor = .oneMinusSourceAlpha
             ca.destinationRGBBlendFactor   = .oneMinusSourceAlpha
         }
-
+        
         psd.sampleCount      = 1
         psd.vertexDescriptor = vd
         psd.vertexFunction   = library.makeFunction(name: "basic_vertex_proj_tex")
@@ -288,7 +286,7 @@ import os.log
     ///
     /// - parameters:
     ///     - linear: `true` to use linear filtering
-    @objc public func setDefaultFilteringLinear(_ linear: Bool) {
+    public func setDefaultFilteringLinear(_ linear: Bool) {
         if linear {
             samplers[.unspecified] = samplers[.linear]
         } else {
@@ -296,7 +294,7 @@ import os.log
         }
     }
     
-    @objc public var sourceTexture: MTLTexture? {
+    public var sourceTexture: MTLTexture? {
         didSet {
             pixelBuffer = nil
             texture     = nil
@@ -391,7 +389,7 @@ import os.log
         }
     }
     
-    @objc public func setSourceRect(_ rect: CGRect, aspect: CGSize) {
+    public func setSourceRect(_ rect: CGRect, aspect: CGSize) {
         if sourceRect == rect && aspectSize == aspect {
             return
         }
@@ -404,13 +402,13 @@ import os.log
         resize()
     }
     
-    @objc public var drawableSize: CGSize = .zero {
+    public var drawableSize: CGSize = .zero {
         didSet {
             resize()
         }
     }
     
-    @objc public func newBuffer(withFormat format: OEMTLPixelFormat, height: UInt, bytesPerRow: UInt) -> PixelBuffer {
+    public func newBuffer(withFormat format: OEMTLPixelFormat, height: UInt, bytesPerRow: UInt) -> PixelBuffer {
         let pb = PixelBuffer.makeBuffer(withDevice: device,
                                         converter: converter,
                                         format: format,
@@ -421,7 +419,7 @@ import os.log
         return pb
     }
     
-    @objc public func newBuffer(withFormat format: OEMTLPixelFormat, height: UInt, bytesPerRow: UInt, bytes pointer: UnsafeMutableRawPointer) -> PixelBuffer {
+    public func newBuffer(withFormat format: OEMTLPixelFormat, height: UInt, bytesPerRow: UInt, bytes pointer: UnsafeMutableRawPointer) -> PixelBuffer {
         let pb = PixelBuffer.makeBuffer(withDevice: device,
                                         converter: converter,
                                         format: format,
@@ -436,7 +434,7 @@ import os.log
     private func clearTextures(_ textures: [MTLTexture], withCommandBuffer commandBuffer: MTLCommandBuffer) {
         if #available(macOS 10.15, *) {
             /**
-              Find the size of the largest texture, in order to allocate a buffer with at least enough space for all textures.
+             Find the size of the largest texture, in order to allocate a buffer with at least enough space for all textures.
              */
             var sizeMax = 0
             for t in textures {
@@ -454,7 +452,7 @@ import os.log
              Allocate a buffer over the entire heap and fill it with zeros
              */
             if let bce = commandBuffer.makeBlitCommandEncoder(),
-                let buf = device.makeBuffer(length: sizeMax, options: [.storageModePrivate]) {
+               let buf = device.makeBuffer(length: sizeMax, options: [.storageModePrivate]) {
                 bce.fill(buffer: buf, range: 0..<sizeMax, value: 0)
                 
                 /**
@@ -497,16 +495,16 @@ import os.log
             pixelBuffer.prepare(withCommandBuffer: commandBuffer, texture: texture)
             return
         }
-
+        
         if historyCount == 0 {
             // When historyCount is 0, sourceTextures[0].view == sourceTexture
             return
         }
-
+        
         if let sourceTexture = sourceTexture {
-            let orig: MTLOrigin = .init(x: Int(sourceRect.origin.x), y: Int(sourceRect.origin.y), z: 0)
-            let size: MTLSize = .init(width: Int(sourceRect.width), height: Int(sourceRect.height), depth: 1)
-            let zero: MTLOrigin = .init()
+            let orig = MTLOrigin(x: Int(sourceRect.origin.x), y: Int(sourceRect.origin.y), z: 0)
+            let size = MTLSize(width: Int(sourceRect.width), height: Int(sourceRect.height), depth: 1)
+            let zero = MTLOrigin()
             
             if let bce = commandBuffer.makeBlitCommandEncoder() {
                 bce.copy(from: sourceTexture, sourceSlice: 0, sourceLevel: 0, sourceOrigin: orig, sourceSize: size,
@@ -533,7 +531,7 @@ import os.log
                                                           mipmapped: false)
         td.storageMode = .private
         td.usage = [.shaderRead, .shaderWrite]
-
+        
         var texs = [MTLTexture]()
         for i in 0...historyCount {
             initTexture(&sourceTextures[i], withDescriptor: td)
@@ -552,13 +550,13 @@ import os.log
         rce.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
     }
     
-    @objc public func renderSource(withCommandBuffer commandBuffer: MTLCommandBuffer) -> MTLTexture {
+    public func renderSource(withCommandBuffer commandBuffer: MTLCommandBuffer) -> MTLTexture {
         prepareNextFrameWithCommandBuffer(commandBuffer)
         return texture!
     }
     
-    @objc public func render(withCommandBuffer commandBuffer: MTLCommandBuffer,
-                             renderPassDescriptor rpd: MTLRenderPassDescriptor) {
+    public func render(withCommandBuffer commandBuffer: MTLCommandBuffer,
+                       renderPassDescriptor rpd: MTLRenderPassDescriptor) {
         renderOffscreenPassesWithCommandBuffer(commandBuffer)
         if let rce = commandBuffer.makeRenderCommandEncoder(descriptor: rpd) {
             renderFinalPass(withCommandEncoder: rce)
@@ -566,7 +564,7 @@ import os.log
         }
     }
     
-    @objc public func renderOffscreenPassesWithCommandBuffer(_ commandBuffer: MTLCommandBuffer) {
+    public func renderOffscreenPassesWithCommandBuffer(_ commandBuffer: MTLCommandBuffer) {
         prepareNextFrameWithCommandBuffer(commandBuffer)
         updateBuffersForPasses()
         
@@ -654,7 +652,7 @@ import os.log
         rce.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
     }
     
-    @objc public func renderFinalPass(withCommandEncoder rce: MTLRenderCommandEncoder) {
+    public func renderFinalPass(withCommandEncoder rce: MTLRenderCommandEncoder) {
         rce.setViewport(outputFrame.viewport)
         if sourceTexture != nil && sourceTextureIsFlipped {
             rce.setVertexBytes(&vertexFlipped, length: vertexSizeBytes, index: BufferIndex.positions.rawValue)
@@ -677,7 +675,7 @@ import os.log
     
     private func resizeRenderTargets() -> [MTLTexture]? {
         guard renderTargetsNeedResize else { return nil }
-
+        
         for i in 0..<passCount {
             pass[i].renderTarget = .init()
             pass[i].feedbackTarget = .init()
@@ -750,7 +748,7 @@ import os.log
                 initTexture(&self.pass[i].renderTarget, withDescriptor: td)
                 // textures should be cleared before first use
                 textures.append(self.pass[i].renderTarget.view!)
-
+                
                 let label = String(format: "Pass %02d Output", i)
                 self.pass[i].renderTarget.view?.label = label
                 if self.pass[i].hasFeedback {
@@ -781,7 +779,6 @@ import os.log
         historyCount = 0
         passCount = 0
         lastPassIndex = 0
-        lutCount = 0
         hasShader = false
     }
     
@@ -792,7 +789,6 @@ import os.log
         
         passCount       = ss.passes.count
         lastPassIndex   = passCount - 1
-        lutCount        = ss.luts.count
         
         parametersCount = ss.parameters.count
         parametersMap   = .init(uniqueKeysWithValues: ss.parameters.enumerated().map({ index, param in (param.name, index) }))
@@ -859,9 +855,13 @@ import os.log
             }
             
             if passNumber == lastPassIndex {
-                sem.addUniformData(&uniforms.projectionMatrix, semantic: .mvp)
+                withUnsafePointer(to: &uniforms.projectionMatrix) {
+                    sem.addUniformData(UnsafeRawPointer($0), semantic: .mvp)
+                }
             } else {
-                sem.addUniformData(&uniformsNoRotate.projectionMatrix, semantic: .mvp)
+                withUnsafePointer(to: &uniformsNoRotate.projectionMatrix) {
+                    sem.addUniformData(UnsafeRawPointer($0), semantic: .mvp)
+                }
             }
             
             withUnsafePointer(to: &pass[passNumber]) {
@@ -874,7 +874,7 @@ import os.log
             withUnsafePointer(to: &outputFrame.outputSize) {
                 sem.addUniformData(UnsafeRawPointer($0), semantic: .finalViewportSize)
             }
-
+            
             for i in 0..<parametersCount {
                 withUnsafePointer(to: &parameters[i]) {
                     sem.addUniformData(UnsafeRawPointer($0), forParameterAt: i)
@@ -904,7 +904,7 @@ import os.log
                 attr.format = .float4
                 attr.bufferIndex = BufferIndex.positions.rawValue
             }
-            if let attr = vd.attributes[VertexAttribute.texcoord.rawValue] {
+            if let attr = vd.attributes[VertexAttribute.texCoord.rawValue] {
                 attr.offset = MemoryLayout<Vertex>.offset(of: \Vertex.texCoord)!
                 attr.format = .float2
                 attr.bufferIndex = BufferIndex.positions.rawValue
@@ -928,7 +928,7 @@ import os.log
                 ca.destinationAlphaBlendFactor = .oneMinusSourceAlpha
                 ca.destinationRGBBlendFactor   = .oneMinusSourceAlpha
             }
-
+            
             psd.sampleCount = 1
             psd.vertexDescriptor = vd
             
@@ -977,7 +977,7 @@ import os.log
         historyNeedsInit        = true
     }
     
-    @objc public func setShader(fromURL url: URL, options shaderOptions: ShaderCompilerOptions) throws {
+    public func setShader(fromURL url: URL, options shaderOptions: ShaderCompilerOptions) throws {
         os_log("Loading shader from '%{public}@'", log: .default, type: .debug, url.absoluteString)
         
         let start = CACurrentMediaTime()
@@ -1024,13 +1024,13 @@ import os.log
         }
     }
     
-    @objc public func setValue(_ value: CGFloat, forParameterName name: String) {
+    public func setValue(_ value: CGFloat, forParameterName name: String) {
         if let index = parametersMap[name] {
             parameters[index] = Float(value)
         }
     }
     
-    @objc public func setValue(_ value: CGFloat, forParameterIndex index: Int) {
+    public func setValue(_ value: CGFloat, forParameterIndex index: Int) {
         if case 0..<parametersCount = index {
             parameters[index] = Float(value)
         }
@@ -1054,38 +1054,58 @@ extension FilterChain.SamplerFilterArray {
     }
 }
 
+// MARK: - Types shared between Metal shaders and Swift
+
 extension FilterChain {
-    fileprivate struct TextureSize {
-        static let zero: Self = .init()
-        
-        let x: Float
-        let y: Float
-        let z: Float
-        let w: Float
-        
-        init() {
-            x = 0
-            y = 0
-            z = 0
-            w = 0
-        }
-        
-        init(width w: Int, height h: Int) {
-            self.init(width: CGFloat(w), height: CGFloat(h))
-        }
-        
-        init(width w: CGFloat, height h: CGFloat) {
-            let width = Float(w)
-            let height = Float(h)
-            self.x = width
-            self.y = height
-            self.z = 1 / width
-            self.w = 1 / height
-        }
+    enum BufferIndex: Int {
+        case uniforms = 1
+        case positions = 4
     }
     
-    fileprivate struct Texture {
-        var view: MTLTexture?
-        var size: TextureSize = .zero
+    enum VertexAttribute: Int {
+        case position = 0
+        case texCoord = 1
     }
+    
+    enum TextureIndex: Int {
+        case color = 0
+    }
+    
+    enum SamplerIndex: Int {
+        case draw = 0
+    }
+    
+    @frozen @usableFromInline struct Vertex {
+        let position: simd_float4
+        let texCoord: simd_float2
+    }
+    
+    @frozen @usableFromInline struct Uniforms {
+        static let empty: Uniforms = .init(projectionMatrix: simd_float4x4(), outputSize: simd_float2(), time: 0)
+        
+        var projectionMatrix: simd_float4x4
+        var outputSize: simd_float2
+        var time: simd_float1
+    }
+}
+
+private typealias TextureSize = SIMD4<Float>
+
+extension TextureSize {
+    static let zero: Self = .init(x: 0, y: 0, z: 0, w: 0)
+    
+    init(width w: Int, height h: Int) {
+        self.init(width: CGFloat(w), height: CGFloat(h))
+    }
+    
+    init(width w: CGFloat, height h: CGFloat) {
+        let width = Float(w)
+        let height = Float(h)
+        self = .init(x: width, y: height, z: 1.0 / width, w: 1.0 / height)
+    }
+}
+
+private struct Texture {
+    var view: MTLTexture?
+    var size: TextureSize = .zero
 }

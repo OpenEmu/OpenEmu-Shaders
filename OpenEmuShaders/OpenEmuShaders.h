@@ -29,6 +29,3 @@ FOUNDATION_EXPORT double OpenEmuShadersVersionNumber;
 
 //! Project version string for OpenEmuShaders.
 FOUNDATION_EXPORT const unsigned char OpenEmuShadersVersionString[];
-
-#import <OpenEmuShaders/OEEnums.h>
-#import <OpenEmuShaders/ShaderTypes.h>

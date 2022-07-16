@@ -23,6 +23,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
+import Metal
 
 public final class SlangShader {
     public enum Errors: LocalizedError {

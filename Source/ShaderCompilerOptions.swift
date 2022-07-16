@@ -23,20 +23,23 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
+import Metal
 
-@objc public class ShaderCompilerOptions: NSObject {
-    @objc public var languageVersion: MTLLanguageVersion = {
+public class ShaderCompilerOptions {
+    public var languageVersion: MTLLanguageVersion = {
         // The best version based on the current OS
         MTLCompileOptions().languageVersion
     }()
     
-    @objc public var isCacheDisabled: Bool = false
+    public var isCacheDisabled: Bool = false
     
-    @objc public var cacheDir: URL? = {
+    public var cacheDir: URL? = {
         guard
             let url = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
         else { return nil }
         
         return url.appendingPathComponent("OpenEmuShaders", isDirectory: true).appendingPathComponent("Shaders", isDirectory: true)
     }()
+    
+    public init() {}
 }

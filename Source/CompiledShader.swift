@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Metal
 
 public enum Compiled {
     /// Shader is the root object of a compiled shader.

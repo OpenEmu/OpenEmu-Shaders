@@ -26,7 +26,7 @@ import Foundation
 import CoreImage
 import CoreGraphics
 
-@objc public protocol ScreenshotSource {
+public protocol ScreenshotSource {
     var drawableSize: CGSize { get }
     var outputBounds: CGRect { get }
     var sourceTexture: MTLTexture? { get }
@@ -36,11 +36,11 @@ import CoreGraphics
     func renderSource(withCommandBuffer commandBuffer: MTLCommandBuffer) -> MTLTexture
 }
 
-@objc public class Screenshot: NSObject {
+public class Screenshot: NSObject {
     let device: MTLDevice
     let commandQueue: MTLCommandQueue
     
-    @objc public init(device: MTLDevice) {
+    public init(device: MTLDevice) {
         self.device = device
         self.commandQueue = device.makeCommandQueue()!
     }
@@ -94,7 +94,7 @@ import CoreGraphics
     /// 
     /// The image dimensions are equal to the source pixel
     /// buffer and therefore not aspect corrected.
-    @objc public func getCGImageFromSourceWithFilterChain(_ f: ScreenshotSource) -> CGImage {
+    public func getCGImageFromSourceWithFilterChain(_ f: ScreenshotSource) -> CGImage {
         guard let commandBuffer = commandQueue.makeCommandBuffer()
         else { return blackImage }
         
@@ -114,9 +114,9 @@ import CoreGraphics
         }
         return imageWithCIImage(img)
     }
-
+    
     /// Returns an image of the last source image after all shaders have been applied
-    @objc public func getCGImageFromOutputWithFilterChain(_ f: ScreenshotSource) -> CGImage {
+    public func getCGImageFromOutputWithFilterChain(_ f: ScreenshotSource) -> CGImage {
         guard let tex = screenshotTexture(f.drawableSize)
         else { return blackImage }
         
