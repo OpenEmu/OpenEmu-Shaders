@@ -85,7 +85,7 @@ final public class FilterChain: ScreenshotSource {
         var feedbackTarget  = Texture()
         var frameCount      = UInt32(0)
         var frameCountMod   = UInt32(0)
-        var frameDirection  = UInt32(0)
+        var frameDirection  = Int32(0)
         var bindings: ShaderPassBindings?
         var viewport = MTLViewport()
         var state: MTLRenderPipelineState?
@@ -593,7 +593,7 @@ final public class FilterChain: ScreenshotSource {
     
     private func updateBuffersForPasses() {
         for i in 0..<passCount {
-            pass[i].frameDirection = UInt32(frameDirection)
+            pass[i].frameDirection = Int32(frameDirection)
             pass[i].frameCount     = UInt32(frameCount)
             if pass[i].frameCountMod != 0 {
                 pass[i].frameCount %= pass[i].frameCountMod
