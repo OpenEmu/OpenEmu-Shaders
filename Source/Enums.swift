@@ -232,7 +232,7 @@ extension OEMTLPixelFormat {
 }
 
 extension MTLPixelFormat {
-    // swiftlint: disable cyclomatic_complexity
+    // swiftlint:disable cyclomatic_complexity
     /// Converts a GL Slang format string to Metal
     init(glslangFormat str: String) {
         switch str {

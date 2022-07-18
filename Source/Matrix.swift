@@ -8,7 +8,7 @@
 import simd
 
 extension simd_float4x4 {
-    // swiftlint: disable identifier_name colon
+    // swiftlint:disable identifier_name colon
     static func makeOrtho(left: Float, right: Float, top: Float, bottom: Float) -> Self {
         let near: Float = 0.0
         let far: Float = 1.0

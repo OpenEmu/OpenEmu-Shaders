@@ -102,7 +102,7 @@ public enum Compiled {
     }
     
     public enum LanguageVersion: String, CaseIterable, Codable {
-        // swiftlint: disable identifier_name
+        // swiftlint:disable:next identifier_name
         case version2_4, version2_3, version2_2, version2_1
         
         init(_ mtl: MTLLanguageVersion) throws {
@@ -361,8 +361,7 @@ public enum Compiled {
         case rgba8Unorm
         case rgba8Uint
         case rgba8Sint
-        // swiftlint: disable identifier_name
-        case rgba8Unorm_srgb
+        case rgba8Unorm_srgb    // swiftlint:disable:this identifier_name
         case rgb10a2Unorm
         case rgb10a2Uint
         case r16Uint
@@ -383,7 +382,7 @@ public enum Compiled {
         case rgba32Uint
         case rgba32Sint
         case rgba32Float
-        case bgra8Unorm_srgb
+        case bgra8Unorm_srgb    // swiftlint:disable:this identifier_name
         case bgra8Unorm
         
         private static let mapFrom: [MTLPixelFormat: Self] = [

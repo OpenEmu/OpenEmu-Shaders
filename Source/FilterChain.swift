@@ -27,7 +27,7 @@ import Metal
 import MetalKit
 import os.log
 
-// swiftlint: disable type_body_length
+// swiftlint:disable type_body_length
 final public class FilterChain: ScreenshotSource {
     enum InitError: Error {
         case invalidSamplerState
@@ -122,7 +122,7 @@ final public class FilterChain: ScreenshotSource {
     private var uniformsNoRotate = Uniforms.empty
     
     private lazy var checkers: MTLTexture = {
-        // swiftlint: disable identifier_name force_try
+        // swiftlint:disable identifier_name force_try
         let T0 = UInt32(0xff000000)
         let T1 = UInt32(0xffffffff)
         var checkerboard = [
@@ -266,7 +266,7 @@ final public class FilterChain: ScreenshotSource {
             }
         }
         
-        // swiftlint: disable force_cast
+        // swiftlint:disable:next force_cast
         return samplers.map { $0.compactMap { $0 } } as! SamplerFilterArray<MTLSamplerState>
     }
     

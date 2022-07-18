@@ -55,7 +55,7 @@ extension ShaderPassCompiler {
         return sym
     }
     
-    // swiftlint: disable cyclomatic_complexity
+    // swiftlint:disable cyclomatic_complexity
     func reflect(passNumber: Int, withSymbols sym: ShaderSymbols, withVertexCompiler vsCompiler: SPVCompiler, fragmentCompiler fsCompiler: SPVCompiler) -> ShaderPassReflection? {
         let ref = ShaderPassReflection(passNumber: passNumber)
         
