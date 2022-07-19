@@ -301,7 +301,7 @@ final public class FilterChain: ScreenshotSource {
         }
     }
     
-    private func updateHistory() -> [MTLTexture]? {
+    private func updateHistory() {
         if hasShader {
             if historyCount > 0 {
                 if historyNeedsInit {
@@ -318,7 +318,7 @@ final public class FilterChain: ScreenshotSource {
         
         if let sourceTexture = sourceTexture, historyCount == 0 {
             initTexture(&sourceTextures[0], withTexture: sourceTexture)
-            return nil
+            return
         }
         
         // either no history, or we moved a texture of a different size in the front slot
@@ -331,10 +331,8 @@ final public class FilterChain: ScreenshotSource {
             td.usage = [.shaderRead, .shaderWrite]
             initTexture(&sourceTextures[0], withDescriptor: td)
             // Ensure the history texture is cleared before first use
-            return [sourceTextures[0].view!]
+            _clearTextures.append(sourceTextures[0].view!)
         }
-        
-        return nil
     }
     
     /*
@@ -431,13 +429,20 @@ final public class FilterChain: ScreenshotSource {
         return pb
     }
     
-    private func clearTextures(_ textures: [MTLTexture], withCommandBuffer commandBuffer: MTLCommandBuffer) {
+    /// A list of textures to be cleared before rendering begins.
+    var _clearTextures = [MTLTexture]()
+    
+    private func clearTexturesWithCommandBuffer(_ commandBuffer: MTLCommandBuffer) {
+        guard !_clearTextures.isEmpty else { return }
+        
+        defer { _clearTextures.removeAll(keepingCapacity: true) }
+        
         if #available(macOS 10.15, *) {
             /**
              Find the size of the largest texture, in order to allocate a buffer with at least enough space for all textures.
              */
             var sizeMax = 0
-            for t in textures {
+            for t in _clearTextures {
                 let bytesPerPixel = t.pixelFormat.bytesPerPixel
                 precondition(bytesPerPixel > 0, "Unable to determine bytes per pixel for pixel format \(t.pixelFormat)")
                 
@@ -458,7 +463,7 @@ final public class FilterChain: ScreenshotSource {
                 /**
                  Use the cleared buffer to clear the destination texture.
                  */
-                for t in textures {
+                for t in _clearTextures {
                     let bytesPerPixel = t.pixelFormat.bytesPerPixel
                     let bytesPerRow   = t.width  * bytesPerPixel
                     let bytesPerImage = t.height * bytesPerRow
@@ -474,19 +479,9 @@ final public class FilterChain: ScreenshotSource {
     private func prepareNextFrameWithCommandBuffer(_ commandBuffer: MTLCommandBuffer) {
         frameCount += 1
         
-        let clear0 = resizeRenderTargets()
-        let clear1 = updateHistory()
-        
-        if clear0 != nil || clear1 != nil {
-            var textures = [MTLTexture]()
-            if let clear0 = clear0 {
-                textures.append(contentsOf: clear0)
-            }
-            if let clear1 = clear1 {
-                textures.append(contentsOf: clear1)
-            }
-            clearTextures(textures, withCommandBuffer: commandBuffer)
-        }
+        resizeRenderTargets()
+        updateHistory()
+        clearTexturesWithCommandBuffer(commandBuffer)
         
         texture = sourceTextures[0].view
         guard let texture = texture else { return }
@@ -524,7 +519,7 @@ final public class FilterChain: ScreenshotSource {
         t.size = .init(width: tex.width, height: tex.height)
     }
     
-    private func initHistory() -> [MTLTexture] {
+    private func initHistory() {
         let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
                                                           width: Int(sourceRect.width),
                                                           height: Int(sourceRect.height),
@@ -532,13 +527,11 @@ final public class FilterChain: ScreenshotSource {
         td.storageMode = .private
         td.usage = [.shaderRead, .shaderWrite]
         
-        var texs = [MTLTexture]()
         for i in 0...historyCount {
             initTexture(&sourceTextures[i], withDescriptor: td)
-            texs.append(sourceTextures[i].view!)
+            _clearTextures.append(sourceTextures[i].view!)
         }
         historyNeedsInit = false
-        return texs
     }
     
     private func renderTexture(_ texture: MTLTexture, renderCommandEncoder rce: MTLRenderCommandEncoder) {
@@ -673,15 +666,13 @@ final public class FilterChain: ScreenshotSource {
         }
     }
     
-    private func resizeRenderTargets() -> [MTLTexture]? {
-        guard renderTargetsNeedResize else { return nil }
+    private func resizeRenderTargets() {
+        guard renderTargetsNeedResize else { return }
         
         for i in 0..<passCount {
             pass[i].renderTarget = .init()
             pass[i].feedbackTarget = .init()
         }
-        
-        var textures = [MTLTexture]()
         
         // width and height represent the size of the Source image to the current
         // pass
@@ -747,14 +738,14 @@ final public class FilterChain: ScreenshotSource {
                 td.usage = [.shaderRead, .renderTarget]
                 initTexture(&self.pass[i].renderTarget, withDescriptor: td)
                 // textures should be cleared before first use
-                textures.append(self.pass[i].renderTarget.view!)
+                _clearTextures.append(self.pass[i].renderTarget.view!)
                 
                 let label = String(format: "Pass %02d Output", i)
                 self.pass[i].renderTarget.view?.label = label
                 if self.pass[i].hasFeedback {
                     initTexture(&self.pass[i].feedbackTarget, withDescriptor: td)
                     self.pass[i].feedbackTarget.view?.label = label
-                    textures.append(self.pass[i].feedbackTarget.view!)
+                    _clearTextures.append(self.pass[i].feedbackTarget.view!)
                 }
             } else {
                 // last pass can render directly to the output render target
@@ -763,8 +754,6 @@ final public class FilterChain: ScreenshotSource {
         }
         
         renderTargetsNeedResize = false
-        
-        return textures.isEmpty ? nil : textures
     }
     
     private func freeShaderResources() {
