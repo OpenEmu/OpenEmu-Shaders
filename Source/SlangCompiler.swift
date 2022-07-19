@@ -23,9 +23,9 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
-import CGLSLang
-import CSPIRVTools
-import os.log
+@_implementationOnly import CGLSLang
+@_implementationOnly import CSPIRVTools
+@_implementationOnly import os.log
 
 var initialized: Bool = {
     glslang_initialize_process()

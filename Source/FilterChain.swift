@@ -25,7 +25,7 @@
 import Foundation
 import Metal
 import MetalKit
-import os.log
+@_implementationOnly import os.log
 
 // swiftlint:disable type_body_length
 final public class FilterChain: ScreenshotSource {

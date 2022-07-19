@@ -24,7 +24,7 @@
 
 import Foundation
 import Metal
-import CommonCrypto
+@_implementationOnly import CommonCrypto
 
 enum SourceParserError: LocalizedError {
     case missingVersion

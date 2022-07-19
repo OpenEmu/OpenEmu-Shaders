@@ -23,7 +23,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
-import CSPIRVCross
+@_implementationOnly import CSPIRVCross
 
 extension ShaderPassCompiler {
     public func compile(options: ShaderCompilerOptions) throws -> Compiled.Shader {

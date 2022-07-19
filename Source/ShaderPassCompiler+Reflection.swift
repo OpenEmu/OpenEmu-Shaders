@@ -23,8 +23,8 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import Foundation
-import CSPIRVCross
-import os.log
+@_implementationOnly import CSPIRVCross
+@_implementationOnly import os.log
 
 extension ShaderPassCompiler {
     
