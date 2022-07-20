@@ -106,13 +106,11 @@ public final class ShaderPass {
     public var url: URL
     public var index: Int
     public var frameCountMod: UInt
-    public var scaleX: ShaderPassScale = .invalid
-    public var scaleY: ShaderPassScale = .invalid
+    
+    public var scaleX: ShaderPassScale?
+    public var scaleY: ShaderPassScale?
     public var filter: ShaderPassFilter
     public var wrapMode: ShaderPassWrap
-    public var scale: CGSize = CGSize(width: 1, height: 1)
-    public var size: CGSize = CGSize(width: 0, height: 0)
-    public var isScaled: Bool = false
     public var isFloat: Bool
     public var issRGB: Bool
     public var isMipmap: Bool
@@ -146,44 +144,40 @@ public final class ShaderPass {
         isFloat         = d["floatFramebuffer"] as? Bool ?? false
         isMipmap        = d["mipmapInput"] as? Bool ?? false
         
-        if d["scaleType"] != nil || d["scaleTypeX"] != nil || d["scaleTypeY"] != nil {
-            isScaled  = true
-            scaleX    = .source
-            scaleY    = .source
-            
-            if let scaleType = ShaderPassScale(string: d["scaleType"] as? String) {
-                scaleX = scaleType
-                scaleY = scaleType
-            } else {
-                if let scaleType = ShaderPassScale(string: d["scaleTypeX"] as? String) {
-                    scaleX = scaleType
-                }
-                
-                if let scaleType = ShaderPassScale(string: d["scaleTypeY"] as? String) {
-                    scaleY = scaleType
-                }
-            }
-            
-            if let val = d["scale"] as? Double ?? d["scaleX"] as? Double {
-                if scaleX == .absolute {
-                    size.width = CGFloat(val)
-                } else {
-                    scale.width = CGFloat(val)
-                }
-            }
-
-            if let val = d["scale"] as? Double ?? d["scaleY"] as? Double {
-                if scaleY == .absolute {
-                    size.height = CGFloat(val)
-                } else {
-                    scale.height = CGFloat(val)
-                }
-            }
+        if Self.isValidScale(d) {
+            scaleX = Self.readScale("X", d) ?? .source(scale: 1)
+            scaleY = Self.readScale("Y", d) ?? .source(scale: 1)
         }
         
         let source  = try SourceParser(fromURL: url)
         alias       = d["alias"] as? String ?? source.name
         self.source = source
+    }
+    
+    static func isValidScale(_ d: [String: AnyObject]) -> Bool {
+        // Either the shader pass specifies a scale_type
+        d["scaleType"] != nil ||
+        // or both a scale type for the X and Y
+        (d["scaleTypeX"] != nil && d["scaleTypeY"] != nil)
+    }
+    
+    static func readScale(_ axis: String, _ d: [String: AnyObject]) -> ShaderPassScale? {
+        guard let scaleType = d["scaleType"] as? String ?? d["scaleType\(axis)"] as? String else {
+            return nil
+        }
+        
+        let val = d["scale"] as? Double ?? d["scale\(axis)"] as? Double
+        
+        switch scaleType {
+        case "source":
+            return .source(scale: val ?? 1)
+        case "viewport":
+            return .viewport(scale: val ?? 1)
+        case "absolute":
+            return .absolute(size: Int(val?.rounded() ?? 0))
+        default:
+            return nil
+        }
     }
 }
 
@@ -235,21 +229,6 @@ extension ShaderPassWrap {
         default:
             // user specified an invalid value
             self = .default
-        }
-    }
-}
-
-extension ShaderPassScale {
-    init?(string: String?) {
-        switch string {
-        case "source":
-            self = .source
-        case "viewport":
-            self = .viewport
-        case "absolute":
-            self = .absolute
-        default:
-            return nil
         }
     }
 }

@@ -90,33 +90,31 @@ final public class FilterChain: ScreenshotSource {
         var viewport = MTLViewport()
         var state: MTLRenderPipelineState?
         var hasFeedback = false
-        var scaleX      = ShaderPassScale.invalid
-        var scaleY      = ShaderPassScale.invalid
-        var scale       = CGSize(width: 1, height: 1)
-        var size        = CGSize(width: 0, height: 0)
-        var isScaled    = false
+        var scaleX: ShaderPassScale?
+        var scaleY: ShaderPassScale?
+        var isScaled: Bool { scaleX != nil && scaleY != nil }
         
         func getOutputSize(viewport: CGSize, source: CGSize) -> CGSize {
             let width: CGFloat
             switch scaleX {
-            case .source:
-                width = source.width * scale.width
-            case .absolute:
-                width = size.width
-            case .viewport:
-                width = viewport.width * scale.width
+            case .source(let scale):
+                width = source.width * scale
+            case .absolute(let size):
+                width = Double(size)
+            case .viewport(let scale):
+                width = viewport.width * scale
             default:
                 width = source.width
             }
             
             let height: CGFloat
             switch scaleY {
-            case .source:
-                height = source.height * scale.height
-            case .absolute:
-                height = size.height
-            case .viewport:
-                height = viewport.height * scale.height
+            case .source(let scale):
+                height = source.height * scale
+            case .absolute(let size):
+                height = Double(size)
+            case .viewport(let scale):
+                height = viewport.height * scale
             default:
                 height = source.height
             }
@@ -886,11 +884,8 @@ final public class FilterChain: ScreenshotSource {
             self.pass[passNumber].frameCountMod = UInt32(pass.frameCountMod)
             
             // update scaling
-            self.pass[passNumber].scaleX    = .init(pass.scaleX)
-            self.pass[passNumber].scaleY    = .init(pass.scaleY)
-            self.pass[passNumber].scale     = pass.scale
-            self.pass[passNumber].size      = pass.size
-            self.pass[passNumber].isScaled  = pass.isScaled
+            self.pass[passNumber].scaleX = pass.scaleX
+            self.pass[passNumber].scaleY = pass.scaleY
             
             let vd = MTLVertexDescriptor()
             if let attr = vd.attributes[VertexAttribute.position.rawValue] {

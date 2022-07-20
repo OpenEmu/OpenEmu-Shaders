@@ -51,13 +51,10 @@ public enum Compiled {
         public let vertexSource: String
         public let fragmentSource: String
         public let frameCountMod: UInt
-        public let scaleX: ShaderPassScale
-        public let scaleY: ShaderPassScale
+        public let scaleX: ShaderPassScale?
+        public let scaleY: ShaderPassScale?
         public let filter: ShaderPassFilter
         public let wrapMode: ShaderPassWrap
-        public let scale: CGSize
-        public let size: CGSize
-        public let isScaled: Bool
         public let format: PixelFormat
         public internal(set) var isFeedback: Bool
         public let buffers: [BufferDescriptor]
@@ -120,21 +117,6 @@ public enum Compiled {
             default:
                 throw LanguageVersionError.unsupportedVersion
             }
-        }
-    }
-    
-    public enum ShaderPassScale: String, CaseIterable, Codable {
-        case invalid, source, absolute, viewport
-        
-        private static let mapFrom: [OpenEmuShaders.ShaderPassScale: Self] = [
-            .invalid: .invalid,
-            .source: .source,
-            .absolute: .absolute,
-            .viewport: .viewport,
-        ]
-        
-        init(_ scale: OpenEmuShaders.ShaderPassScale) {
-            self = Self.mapFrom[scale]!
         }
     }
     
