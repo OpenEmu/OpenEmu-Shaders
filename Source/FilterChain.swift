@@ -95,6 +95,34 @@ final public class FilterChain: ScreenshotSource {
         var scale       = CGSize(width: 1, height: 1)
         var size        = CGSize(width: 0, height: 0)
         var isScaled    = false
+        
+        func getOutputSize(viewport: CGSize, source: CGSize) -> CGSize {
+            let width: CGFloat
+            switch scaleX {
+            case .source:
+                width = source.width * scale.width
+            case .absolute:
+                width = size.width
+            case .viewport:
+                width = viewport.width * scale.width
+            default:
+                width = source.width
+            }
+            
+            let height: CGFloat
+            switch scaleY {
+            case .source:
+                height = source.height * scale.height
+            case .absolute:
+                height = size.height
+            case .viewport:
+                height = viewport.height * scale.height
+            default:
+                height = source.height
+            }
+            
+            return CGSize(width: width.rounded(), height: height.rounded())
+        }
     }
     
     private var pass = [Pass](repeating: .init(), count: Constants.maxShaderPasses)
@@ -476,6 +504,10 @@ final public class FilterChain: ScreenshotSource {
         }
     }
     
+    private func preparePixelBuffer(_ pixelBuffer: PixelBuffer, commandBuffer: MTLCommandBuffer) {
+        
+    }
+    
     private func prepareNextFrameWithCommandBuffer(_ commandBuffer: MTLCommandBuffer) {
         frameCount += 1
         
@@ -674,58 +706,31 @@ final public class FilterChain: ScreenshotSource {
             pass[i].feedbackTarget = .init()
         }
         
-        // width and height represent the size of the Source image to the current
-        // pass
-        var (width, height) = (sourceRect.width, sourceRect.height)
+        // current source size
+        var sourceSize = sourceRect.size
         
         let viewportSize = CGSize(width: outputFrame.viewport.width, height: outputFrame.viewport.height)
         
         for i in 0..<passCount {
             let pass = pass[i]
             
-            if pass.isScaled {
-                switch pass.scaleX {
-                case .source:
-                    width *= pass.scale.width
-                case .viewport:
-                    width = viewportSize.width * pass.scale.width
-                case .absolute:
-                    width = pass.size.width
-                default:
-                    break
-                }
-                
-                if width == 0 {
-                    width = viewportSize.width
-                }
-                
-                switch pass.scaleY {
-                case .source:
-                    height *= pass.scale.height
-                case .viewport:
-                    height = viewportSize.height * pass.scale.height
-                case .absolute:
-                    height = pass.size.height
-                default:
-                    break
-                }
-                
-                if height == 0 {
-                    height = viewportSize.height
-                }
-            } else if i == lastPassIndex {
-                (width, height) = (viewportSize.width, viewportSize.height)
+            let passSize: CGSize
+            if !pass.isScaled {
+                passSize = i == lastPassIndex ? viewportSize : sourceSize
+            } else {
+                passSize = pass.getOutputSize(viewport: viewportSize, source: sourceSize)
             }
             
-            os_log("pass %d, render target size %0.0f x %0.0f", log: .default, type: .debug, i, width, height)
+            sourceSize = passSize // capture source size for next pass
+            
+            os_log("pass %d, render target size %0.0f x %0.0f", log: .default, type: .debug, i, passSize.width, passSize.height)
             
             let fmt = self.pass[i].format
             if i != lastPassIndex
-                || width != viewportSize.width
-                || height != viewportSize.height
+                || passSize != viewportSize
                 || fmt != .bgra8Unorm {
                 
-                let (width, height) = (Int(width), Int(height))
+                let (width, height) = (Int(passSize.width), Int(passSize.height))
                 self.pass[i].viewport = .init(originX: 0, originY: 0,
                                               width: Double(width), height: Double(height),
                                               znear: 0, zfar: 1)
@@ -749,7 +754,7 @@ final public class FilterChain: ScreenshotSource {
                 }
             } else {
                 // last pass can render directly to the output render target
-                self.pass[i].renderTarget.size = .init(width: width, height: height)
+                self.pass[i].renderTarget.size = .init(width: passSize.width, height: passSize.height)
             }
         }
         
