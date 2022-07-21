@@ -53,7 +53,7 @@ extension ShaderConfigSerialization {
         return ShaderModel(passes: passes, textures: textures, parameters: parameters)
     }
     
-    fileprivate static func makeShaderPassModel(pass i: Int, from d: [String: String]) throws -> ShaderPassModel {
+    private static func makeShaderPassModel(pass i: Int, from d: [String: String]) throws -> ShaderPassModel {
         let key = "shader\(i)"
         guard let shader = d[key] else {
             throw Errors.missingKey(key)
@@ -87,7 +87,7 @@ extension ShaderConfigSerialization {
         return pass
     }
     
-    fileprivate static func makeTextures(from d: [String: String]) -> [ShaderTextureModel] {
+    private static func makeTextures(from d: [String: String]) -> [ShaderTextureModel] {
         guard let tv = d["textures"] else {
             return []
         }
@@ -120,7 +120,7 @@ extension ShaderConfigSerialization {
         return res
     }
     
-    fileprivate static func makeParameters(from d: [String: String]) -> [ShaderParameterModel] {
+    private static func makeParameters(from d: [String: String]) -> [ShaderParameterModel] {
         guard let pv = d["parameters"] else {
             return []
         }
@@ -159,10 +159,6 @@ extension ShaderConfigSerialization {
         ("scale_x", \ShaderPassModel.scaleX),
         ("scale_y", \ShaderPassModel.scaleY),
     ]
-}
-
-extension String {
-    fileprivate var boolValue: Bool? { Bool(self) }
 }
 
 public class ShaderModel {
