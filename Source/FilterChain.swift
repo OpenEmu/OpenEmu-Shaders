@@ -62,8 +62,8 @@ final public class FilterChain: ScreenshotSource {
     private var lastPassIndex: Int = 0
     private var historyCount: Int = 0
     
-    private var texture: MTLTexture? // final render texture
-    private var sourceTextures = [Texture](repeating: .init(), count: Constants.maxFrameHistory + 1)
+    // The OriginalHistory(N) semantic
+    private var historyTextures = [Texture](repeating: .init(), count: Constants.maxFrameHistory + 1)
     
     private struct OutputFrame {
         var viewport: MTLViewport
@@ -322,42 +322,22 @@ final public class FilterChain: ScreenshotSource {
     
     public var sourceTexture: MTLTexture? {
         didSet {
-            pixelBuffer = nil
-            texture     = nil
+            pixelBuffer         = nil
+            _pixelBufferTexture = nil
         }
     }
     
     private func updateHistory() {
-        if hasShader {
-            if historyCount > 0 {
-                if historyNeedsInit {
-                    return initHistory()
-                } else {
-                    let tmp = sourceTextures[historyCount]
-                    for k in (1...historyCount).reversed() {
-                        sourceTextures[k] = sourceTextures[k - 1]
-                    }
-                    sourceTextures[0] = tmp
-                }
+        guard historyCount > 0 else { return }
+        
+        if historyNeedsInit {
+            initHistory()
+        } else {
+            let tmp = historyTextures[historyCount]
+            for k in (1...historyCount).reversed() {
+                historyTextures[k] = historyTextures[k - 1]
             }
-        }
-        
-        if let sourceTexture = sourceTexture, historyCount == 0 {
-            initTexture(&sourceTextures[0], withTexture: sourceTexture)
-            return
-        }
-        
-        // either no history, or we moved a texture of a different size in the front slot
-        if sourceTextures[0].size.x != Float(sourceRect.width) || sourceTextures[0].size.y != Float(sourceRect.height) {
-            let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
-                                                              width: Int(sourceRect.width),
-                                                              height: Int(sourceRect.height),
-                                                              mipmapped: false)
-            td.storageMode = .private
-            td.usage = [.shaderRead, .shaderWrite]
-            initTexture(&sourceTextures[0], withDescriptor: td)
-            // Ensure the history texture is cleared before first use
-            _clearTextures.append(sourceTextures[0].view!)
+            historyTextures[0] = tmp
         }
     }
     
@@ -502,31 +482,67 @@ final public class FilterChain: ScreenshotSource {
         }
     }
     
-    private func preparePixelBuffer(_ pixelBuffer: PixelBuffer, commandBuffer: MTLCommandBuffer) {
+    private func fetchNextHistoryTexture() -> MTLTexture {
+        precondition(historyCount > 0, "Current shader does not require history")
         
+        // either no history, or we moved a texture of a different size in the front slot
+        if historyTextures[0].size.x != Float(sourceRect.width) || historyTextures[0].size.y != Float(sourceRect.height) {
+            let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
+                                                              width: Int(sourceRect.width),
+                                                              height: Int(sourceRect.height),
+                                                              mipmapped: false)
+            td.storageMode = .private
+            td.usage = [.shaderRead, .shaderWrite]
+            initTexture(&historyTextures[0], withDescriptor: td)
+        }
+        
+        return historyTextures[0].view!
     }
     
-    private func prepareNextFrameWithCommandBuffer(_ commandBuffer: MTLCommandBuffer) {
-        frameCount += 1
-        
-        resizeRenderTargets()
-        updateHistory()
-        clearTexturesWithCommandBuffer(commandBuffer)
-        
-        texture = sourceTextures[0].view
-        guard let texture = texture else { return }
-        
-        if let pixelBuffer = pixelBuffer {
-            pixelBuffer.prepare(withCommandBuffer: commandBuffer, texture: texture)
-            return
+    /// Target texture used by pixel buffer when the current shader does not require history
+    private var _pixelBufferTexture: MTLTexture?
+    
+    private var pixelBufferTexture: MTLTexture {
+        if let _pixelBufferTexture = _pixelBufferTexture,
+           _pixelBufferTexture.width == Int(sourceRect.width) &&
+            _pixelBufferTexture.height == Int(sourceRect.height) {
+            return _pixelBufferTexture
         }
         
+        let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
+                                                          width: Int(sourceRect.width),
+                                                          height: Int(sourceRect.height),
+                                                          mipmapped: false)
+        td.storageMode = .private
+        td.usage = [.shaderRead, .shaderWrite]
+        if let tex = device.makeTexture(descriptor: td) {
+            _pixelBufferTexture = tex
+            return tex
+        }
+        
+        fatalError("Unable to create pixelBufferTexture")
+    }
+    
+    private func preparePixelBuffer(_ pixelBuffer: PixelBuffer, commandBuffer: MTLCommandBuffer) {
+        var texture: MTLTexture
         if historyCount == 0 {
-            // When historyCount is 0, sourceTextures[0].view == sourceTexture
-            return
+            texture = pixelBufferTexture
+            if historyTextures[0].view == nil {
+                initTexture(&historyTextures[0], withTexture: texture)
+            }
+        } else {
+            texture = fetchNextHistoryTexture()
         }
-        
-        if let sourceTexture = sourceTexture {
+        pixelBuffer.prepare(withCommandBuffer: commandBuffer, texture: texture)
+    }
+    
+    private func prepareSourceTexture(_ sourceTexture: MTLTexture, commandBuffer: MTLCommandBuffer) {
+        if historyCount == 0 {
+            // save a copy by setting the sourceTexture to Original / OriginalHistory0
+            initTexture(&historyTextures[0], withTexture: sourceTexture)
+        } else {
+            let texture = fetchNextHistoryTexture()
+            
             let orig = MTLOrigin(x: Int(sourceRect.origin.x), y: Int(sourceRect.origin.y), z: 0)
             let size = MTLSize(width: Int(sourceRect.width), height: Int(sourceRect.height), depth: 1)
             let zero = MTLOrigin()
@@ -536,6 +552,20 @@ final public class FilterChain: ScreenshotSource {
                          to: texture, destinationSlice: 0, destinationLevel: 0, destinationOrigin: zero)
                 bce.endEncoding()
             }
+        }
+    }
+    
+    private func prepareNextFrameWithCommandBuffer(_ commandBuffer: MTLCommandBuffer) {
+        frameCount += 1
+        
+        resizeRenderTargets()
+        updateHistory()
+        clearTexturesWithCommandBuffer(commandBuffer)
+        
+        if let pixelBuffer = pixelBuffer {
+            preparePixelBuffer(pixelBuffer, commandBuffer: commandBuffer)
+        } else if let sourceTexture = sourceTexture {
+            prepareSourceTexture(sourceTexture, commandBuffer: commandBuffer)
         }
     }
     
@@ -558,8 +588,8 @@ final public class FilterChain: ScreenshotSource {
         td.usage = [.shaderRead, .shaderWrite]
         
         for i in 0...historyCount {
-            initTexture(&sourceTextures[i], withDescriptor: td)
-            _clearTextures.append(sourceTextures[i].view!)
+            initTexture(&historyTextures[i], withDescriptor: td)
+            _clearTextures.append(historyTextures[i].view!)
         }
         historyNeedsInit = false
     }
@@ -575,7 +605,7 @@ final public class FilterChain: ScreenshotSource {
     
     public func renderSource(withCommandBuffer commandBuffer: MTLCommandBuffer) -> MTLTexture {
         prepareNextFrameWithCommandBuffer(commandBuffer)
-        return texture!
+        return historyTextures[0].view!
     }
     
     public func render(withCommandBuffer commandBuffer: MTLCommandBuffer,
@@ -684,7 +714,7 @@ final public class FilterChain: ScreenshotSource {
         }
         
         if !hasShader || passCount == 0 {
-            guard let texture = texture else { return }
+            guard let texture = historyTextures[0].view else { return }
             return renderTexture(texture, renderCommandEncoder: rce)
         }
         
@@ -762,7 +792,7 @@ final public class FilterChain: ScreenshotSource {
     private func freeShaderResources() {
         pass = .init(repeating: .init(), count: Constants.maxShaderPasses)
         luts = .init(repeating: .init(), count: Constants.maxTextures)
-        sourceTextures = .init(repeating: .init(), count: Constants.maxFrameHistory + 1)
+        historyTextures = .init(repeating: .init(), count: Constants.maxFrameHistory + 1)
         
         parameters = .init(repeating: 0, count: Constants.maxParameters)
         parametersMap = [:]
@@ -797,7 +827,7 @@ final public class FilterChain: ScreenshotSource {
         for passNumber in 0..<passCount {
             let sem = ShaderPassSemantics()
             
-            withUnsafePointer(to: &sourceTextures[0]) {
+            withUnsafePointer(to: &historyTextures[0]) {
                 let p = UnsafeRawPointer($0)
                 sem.addTexture(p.advanced(by: texViewOffset),
                                size: p.advanced(by: texSizeOffset),
@@ -808,7 +838,7 @@ final public class FilterChain: ScreenshotSource {
                                semantic: .originalHistory)
                 
                 if passNumber == 0 {
-                    // The source texture for first pass is the original input
+                    // The source texture for first pass is the original input texture
                     sem.addTexture(p.advanced(by: texViewOffset),
                                    size: p.advanced(by: texSizeOffset),
                                    semantic: .source)

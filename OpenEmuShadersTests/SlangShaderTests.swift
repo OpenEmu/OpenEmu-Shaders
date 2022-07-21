@@ -105,14 +105,11 @@ shader0 = mem:///root/foo.slang
             let pass = ss.passes[0]
             XCTAssertEqual(pass.url, URL(string: "mem:///root/foo.slang")!)
             XCTAssertEqual(pass.frameCountMod, 0)
-            XCTAssertEqual(pass.scaleX, .invalid)
-            XCTAssertEqual(pass.scaleY, .invalid)
+            XCTAssertNil(pass.scaleX)
+            XCTAssertNil(pass.scaleY)
             XCTAssertEqual(pass.format, .bgra8Unorm)
             XCTAssertEqual(pass.filter, .unspecified)
             XCTAssertEqual(pass.wrapMode, .default)
-            XCTAssertEqual(pass.scale, .one)
-            XCTAssertEqual(pass.size, .zero)
-            XCTAssertFalse(pass.isScaled)
             XCTAssertFalse(pass.isFloat)
             XCTAssertFalse(pass.issRGB)
             XCTAssertFalse(pass.isMipmap)
@@ -155,7 +152,7 @@ frame_count_mod2 = 100
     func testShaderPassScale() {
         let cfg =
 """
-shaders = 13
+shaders = 14
 
 # shader zero verifies defaults
 shader0 = mem:///root/foo.slang
@@ -173,6 +170,7 @@ scale_y2    = 200
 shader3 = mem:///root/foo.slang
 scale_type_x3 = absolute
 scale_x3      = 100
+scale_type_y3 = source
 
 # source
 
@@ -187,6 +185,7 @@ scale_y5    = 0.55
 shader6 = mem:///root/foo.slang
 scale_type_x6 = source
 scale_x6      = 2.5
+scale_type_y6 = source
 
 # viewport
 
@@ -201,6 +200,7 @@ scale_y8    = 0.55
 shader9 = mem:///root/foo.slang
 scale_type_x9 = viewport
 scale_x9      = 2.5
+scale_type_y9 = source
 
 # scale
 
@@ -216,6 +216,14 @@ shader12 = mem:///root/foo.slang
 scale_type12 = viewport
 scale12      = 1.50
 
+# invalid
+
+# invalid because it only specifies one axis
+
+shader13 = mem:///root/foo.slang
+scale_type_x13 = viewport
+scale_x13      = 1.50
+
 """
         
         InMemProtocol.requests = [
@@ -230,46 +238,43 @@ scale12      = 1.50
             do {
                 // test default
                 let passes = ss.passes[0...0]
-                XCTAssertEqual(passes.map(\.scaleX), [.invalid])
-                XCTAssertEqual(passes.map(\.scaleY), [.invalid])
-                XCTAssertEqual(passes.map(\.scale), [.one])
-                XCTAssertEqual(passes.map(\.size), [.zero])
+                XCTAssertEqual(passes.compactMap(\.scaleX), [])
+                XCTAssertEqual(passes.compactMap(\.scaleY), [])
             }
             
             do {
                 // test passes using absolute
                 let passes = ss.passes[1...3]
-                XCTAssertEqual(passes.map(\.scaleX), [.absolute, .absolute, .absolute])
-                XCTAssertEqual(passes.map(\.scaleY), [.absolute, .absolute, .source])
-                XCTAssertEqual(passes.map(\.scale), [.one, .one, .one])
-                XCTAssertEqual(passes.map(\.size), [.zero, CGSize(width: 100, height: 200), CGSize(width: 100, height: 0)])
+                XCTAssertEqual(passes.compactMap(\.scaleX), [.absolute(size: 0), .absolute(size: 100), .absolute(size: 100)])
+                XCTAssertEqual(passes.compactMap(\.scaleY), [.absolute(size: 0), .absolute(size: 200), .source(scale: 1)])
             }
             
             do {
                 // test passes using source
                 let passes = ss.passes[4...6]
-                XCTAssertEqual(passes.map(\.scaleX), [.source, .source, .source])
-                XCTAssertEqual(passes.map(\.scaleY), [.source, .source, .source])
-                XCTAssertEqual(passes.map(\.scale), [.one, CGSize(width: 0.25, height: 0.55), CGSize(width: 2.5, height: 1)])
-                XCTAssertEqual(passes.map(\.size), [.zero, .zero, .zero])
+                XCTAssertEqual(passes.compactMap(\.scaleX), [.source(scale: 1), .source(scale: 0.25), .source(scale: 2.5)])
+                XCTAssertEqual(passes.compactMap(\.scaleY), [.source(scale: 1), .source(scale: 0.55), .source(scale: 1.0)])
             }
             
             do {
                 // test passes using viewport
                 let passes = ss.passes[7...9]
-                XCTAssertEqual(passes.map(\.scaleX), [.viewport, .viewport, .viewport])
-                XCTAssertEqual(passes.map(\.scaleY), [.viewport, .viewport, .source])
-                XCTAssertEqual(passes.map(\.scale), [.one, CGSize(width: 0.25, height: 0.55), CGSize(width: 2.5, height: 1)])
-                XCTAssertEqual(passes.map(\.size), [.zero, .zero, .zero])
+                XCTAssertEqual(passes.compactMap(\.scaleX), [.viewport(scale: 1), .viewport(scale: 0.25), .viewport(scale: 2.5)])
+                XCTAssertEqual(passes.compactMap(\.scaleY), [.viewport(scale: 1), .viewport(scale: 0.55), .source(scale: 1.0)])
             }
 
             do {
                 // test passes using single scale scalar
                 let passes = ss.passes[10...12]
-                XCTAssertEqual(passes.map(\.scaleX), [.absolute, .source, .viewport])
-                XCTAssertEqual(passes.map(\.scaleY), [.absolute, .source, .viewport])
-                XCTAssertEqual(passes.map(\.scale), [.one, CGSize(width: 0.75, height: 0.75), CGSize(width: 1.50, height: 1.50)])
-                XCTAssertEqual(passes.map(\.size), [CGSize(width: 150, height: 150), .zero, .zero])
+                XCTAssertEqual(passes.compactMap(\.scaleX), [.absolute(size: 150), .source(scale: 0.75), .viewport(scale: 1.50)])
+                XCTAssertEqual(passes.compactMap(\.scaleY), [.absolute(size: 150), .source(scale: 0.75), .viewport(scale: 1.50)])
+            }
+
+            do {
+                // test with invalid scale definitions
+                let passes = ss.passes[13...13]
+                XCTAssertEqual(passes.compactMap(\.scaleX), [])
+                XCTAssertEqual(passes.compactMap(\.scaleY), [])
             }
 
         } catch {
