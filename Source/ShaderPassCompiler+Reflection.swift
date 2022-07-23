@@ -341,9 +341,9 @@ extension ShaderPassCompiler {
 }
 
 class ShaderSymbols {
-    private(set) var floatParameterSemanticMap: [String: ShaderSemanticMap] = [:]
+    private(set) var floatParameterSemanticMap: [String: ShaderBufferSemanticMap] = [:]
     private(set) var textureSemanticMap: [String: ShaderTextureSemanticMap] = [:]
-    private(set) var textureUniformSemanticMap: [String: ShaderTextureSemanticMap] = [:]
+    private(set) var textureUniformSemanticMap: [String: ShaderTextureUniformSemanticMap] = [:]
     
     func addTextureSemantic(_ semantic: ShaderTextureSemantic, atIndex i: Int, name: String) -> Bool {
         if textureSemanticMap[name] != nil {
@@ -364,7 +364,7 @@ class ShaderSymbols {
             return false
         }
         
-        textureUniformSemanticMap[name] = ShaderTextureSemanticMap(textureSemantic: semantic, index: i, name: name)
+        textureUniformSemanticMap[name] = ShaderTextureUniformSemanticMap(textureSemantic: semantic, index: i, name: name)
         
         return true
     }
@@ -376,12 +376,12 @@ class ShaderSymbols {
             return false
         }
         
-        floatParameterSemanticMap[name] = ShaderSemanticMap(semantic: .floatParameter, index: i, name: name, baseType: .fp32, vecSize: 1, cols: 1)
+        floatParameterSemanticMap[name] = ShaderBufferSemanticMap(semantic: .floatParameter, index: i, name: name, baseType: .fp32, vecSize: 1, cols: 1)
         
         return true
     }
     
-    func bufferSemantic(forUniformName name: String) -> ShaderSemanticMap? {
+    func bufferSemantic(forUniformName name: String) -> ShaderBufferSemanticMap? {
         floatParameterSemanticMap[name] ?? Self.semanticUniformNames[name]
     }
     
@@ -389,17 +389,33 @@ class ShaderSymbols {
         Self.textureSemanticArrays.contains(semantic)
     }
     
-    func textureSemantic(forUniformName name: String) -> ShaderTextureSemanticMap? {
+    func textureSemantic(forUniformName name: String) -> ShaderTextureUniformSemanticMap? {
         textureUniformSemanticMap[name] ?? textureSemanticForUniformName(name, names: Self.textureSemanticUniformNames)
     }
     
     func textureSemantic(forName name: String) -> ShaderTextureSemanticMap? {
-        textureSemanticMap[name] ?? textureSemanticForUniformName(name, names: Self.textureSemanticNames)
+        textureSemanticMap[name] ?? textureSemanticForName(name, names: Self.textureSemanticNames)
     }
     
     // MARK: - Private functions
     
-    private func textureSemanticForUniformName(_ name: String, names: [String: ShaderTextureSemantic]) -> ShaderTextureSemanticMap? {
+    private func textureSemanticForUniformName(_ name: String, names: [String: ShaderTextureSemantic]) -> ShaderTextureUniformSemanticMap? {
+        for (key, sem) in names {
+            if textureSemanticIsArray(sem) {
+                // An array texture may be referred to as PassOutput0, PassOutput1, etc
+                if name.hasPrefix(key) {
+                    // TODO: Validate the suffix is a number and within range
+                    let index = Int(name.suffix(from: key.endIndex))
+                    return ShaderTextureUniformSemanticMap(textureSemantic: sem, index: index ?? 0, name: name)
+                }
+            } else if name == key {
+                return ShaderTextureUniformSemanticMap(textureSemantic: sem, index: 0, name: name)
+            }
+        }
+        return nil
+    }
+    
+    private func textureSemanticForName(_ name: String, names: [String: ShaderTextureSemantic]) -> ShaderTextureSemanticMap? {
         for (key, sem) in names {
             if textureSemanticIsArray(sem) {
                 // An array texture may be referred to as PassOutput0, PassOutput1, etc
@@ -414,7 +430,7 @@ class ShaderSymbols {
         }
         return nil
     }
-    
+
     // MARK: - Static variables
     
     static let textureSemanticArrays: Set<ShaderTextureSemantic> = [.originalHistory, .passOutput, .passFeedback, .user]
@@ -453,7 +469,7 @@ class ShaderSymbols {
         .user: "UserSize",
     ]
     
-    static let semanticUniformNames: [String: ShaderSemanticMap] = [
+    static let semanticUniformNames: [String: ShaderBufferSemanticMap] = [
         "MVP": .init(semantic: .mvp, baseType: .fp32, vecSize: 4, cols: 4),
         "OutputSize": .init(semantic: .outputSize, baseType: .fp32, vecSize: 4, cols: 1),
         "FinalViewportSize": .init(semantic: .finalViewportSize, baseType: .fp32, vecSize: 4, cols: 1),
@@ -487,7 +503,16 @@ class ShaderPassReflection {
         .user: [:],
     ]
     
-    private(set) var semantics: [ShaderBufferSemantic: ShaderSemanticMeta] = [
+    private(set) var textureUniforms: [ShaderTextureSemantic: [Int: ShaderBufferSemanticMeta]] = [
+        .original: [:],
+        .source: [:],
+        .originalHistory: [:],
+        .passOutput: [:],
+        .passFeedback: [:],
+        .user: [:],
+    ]
+    
+    private(set) var semantics: [ShaderBufferSemantic: ShaderBufferSemanticMeta] = [
         .mvp: .init(.mvp),
         .outputSize: .init(.outputSize),
         .finalViewportSize: .init(.finalViewportSize),
@@ -495,14 +520,14 @@ class ShaderPassReflection {
         .frameDirection: .init(.frameDirection),
     ]
     
-    private(set) var floatParameters: [Int: ShaderSemanticMeta] = [:]
+    private(set) var floatParameters: [Int: ShaderBufferSemanticMeta] = [:]
 
     func setOffset(_ offset: Int, vecSize: Int, forFloatParameterAt index: Int, name: String, ubo: Bool) -> Bool {
-        let sem: ShaderSemanticMeta
+        let sem: ShaderBufferSemanticMeta
         if let tmp = floatParameters[index] {
             sem = tmp
         } else {
-            sem = ShaderSemanticMeta(index: index, name: name)
+            sem = ShaderBufferSemanticMeta(index: index, name: name)
             floatParameters[index] = sem
         }
         
@@ -564,14 +589,14 @@ class ShaderPassReflection {
     }
     
     func setOffset(_ offset: Int, forTextureSemantic semantic: ShaderTextureSemantic, at index: Int, name: String, ubo: Bool) -> Bool {
-        guard var map = textures[semantic] else { return false }
-        var sem: ShaderTextureSemanticMeta
+        guard var map = textureUniforms[semantic] else { return false }
+        var sem: ShaderBufferSemanticMeta
         if let tmp = map[index] {
             sem = tmp
         } else {
-            sem = ShaderTextureSemanticMeta(index: index, name: name)
+            sem = ShaderBufferSemanticMeta(index: index, name: name)
             map[index] = sem
-            textures[semantic] = map
+            textureUniforms[semantic] = map
         }
         
         if ubo {
@@ -638,7 +663,7 @@ extension ShaderPassReflection: CustomDebugStringConvertible {
         }
         
         for sem in ShaderTextureSemantic.allCases {
-            guard let t = textures[sem] else { continue }
+            guard let t = textureUniforms[sem] else { continue }
             for meta in t.values.sorted(by: { $0.index < $1.index }) where meta.uboOffset != nil {
                 desc.append(String(format: "      %@ (#%lu) (offset: %lu)\n",
                                    meta.name as NSString, meta.index, meta.uboOffset!))
@@ -658,7 +683,7 @@ extension ShaderPassReflection: CustomDebugStringConvertible {
         }
         
         for sem in ShaderTextureSemantic.allCases {
-            guard let t = textures[sem] else { continue }
+            guard let t = textureUniforms[sem] else { continue }
             for meta in t.values.sorted(by: { $0.index < $1.index }) where meta.pushOffset != nil {
                 desc.append(String(format: "      %@ (#%lu) (offset: %lu)\n",
                                    meta.name as NSString, meta.index, meta.pushOffset!))

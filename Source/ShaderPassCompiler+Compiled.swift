@@ -110,8 +110,8 @@ extension ShaderPassCompiler {
         }
         
         let buffers  = [
-            makeBuffersForSemantics(ref, source: \.ubo, offset: \.uboOffset, textureOffset: \.uboOffset),
-            makeBuffersForSemantics(ref, source: \.push, offset: \.pushOffset, textureOffset: \.pushOffset),
+            makeBuffersForSemantics(ref, source: \.ubo, offset: \.uboOffset),
+            makeBuffersForSemantics(ref, source: \.push, offset: \.pushOffset),
         ]
         
         let textures = makeTextures(ref, symbols: sym)
@@ -165,8 +165,7 @@ extension ShaderPassCompiler {
     /// Find all the bound buffer values for the pass
     private func makeBuffersForSemantics(_ ref: ShaderPassReflection,
                                          source: KeyPath<ShaderPassReflection, BufferBindingDescriptor?>,
-                                         offset: KeyPath<ShaderSemanticMeta, Int?>,
-                                         textureOffset: KeyPath<ShaderTextureSemanticMeta, Int?>
+                                         offset: KeyPath<ShaderBufferSemanticMeta, Int?>
     ) -> Compiled.BufferDescriptor {
         guard let b = ref[keyPath: source]
         else { return .init(bindingVert: nil, bindingFrag: nil, size: 0, uniforms: []) }
@@ -196,9 +195,9 @@ extension ShaderPassCompiler {
         }
         
         // Find bound texture sizes such as OriginalSize, <LUT alias>Size, etc
-        let textures = ref.textures.flatMap { sem, a in
+        let textures = ref.textureUniforms.flatMap { sem, a in
             a.values.compactMap { meta -> Compiled.BufferUniformDescriptor? in
-                if let offset = meta[keyPath: textureOffset] {
+                if let offset = meta[keyPath: offset] {
                     return Compiled.BufferUniformDescriptor(semantic: .init(sem),
                                                             index: meta.index,
                                                             name: meta.name,

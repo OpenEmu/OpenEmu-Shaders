@@ -30,8 +30,6 @@ class ShaderTextureSemanticMeta {
     let index: Int
     let name: String
     var binding: Int?
-    var uboOffset: Int?
-    var pushOffset: Int?
     
     init(index: Int, name: String) {
         self.index = index
@@ -39,7 +37,7 @@ class ShaderTextureSemanticMeta {
     }
 }
 
-class ShaderSemanticMeta {
+class ShaderBufferSemanticMeta {
     let index: Int
     let name: String
     var uboOffset: Int?
@@ -70,6 +68,18 @@ class ShaderTextureSemanticMap {
         self.index    = index
         self.name     = name
     }
+}
+
+class ShaderTextureUniformSemanticMap {
+    let semantic: ShaderTextureSemantic
+    let index: Int
+    let name: String
+    
+    init(textureSemantic semantic: ShaderTextureSemantic, index: Int, name: String) {
+        self.semantic = semantic
+        self.index    = index
+        self.name     = name
+    }
     
     func validateSizeType(_ type: __SPVType) -> Bool {
         type.num_array_dimensions == 0 &&
@@ -79,7 +89,7 @@ class ShaderTextureSemanticMap {
     }
 }
 
-class ShaderSemanticMap {
+class ShaderBufferSemanticMap {
     let semantic: ShaderBufferSemantic
     let index: Int
     let name: String
