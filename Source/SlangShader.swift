@@ -109,8 +109,8 @@ public final class ShaderPass {
     
     public var scaleX: ShaderPassScale?
     public var scaleY: ShaderPassScale?
-    public var filter: ShaderPassFilter
-    public var wrapMode: ShaderPassWrap
+    public var filter: Compiled.ShaderPassFilter
+    public var wrapMode: Compiled.ShaderPassWrap
     public var isFloat: Bool
     public var issRGB: Bool
     public var isMipmap: Bool
@@ -137,8 +137,8 @@ public final class ShaderPass {
     init(from url: URL, index: Int, dictionary d: [String: AnyObject]) throws {
         self.url        = url
         self.index      = index
-        filter          = ShaderPassFilter(bool: d["filterLinear"] as? Bool)
-        wrapMode        = ShaderPassWrap(string: d["wrapMode"] as? String)
+        filter          = Compiled.ShaderPassFilter(bool: d["filterLinear"] as? Bool)
+        wrapMode        = Compiled.ShaderPassWrap(string: d["wrapMode"] as? String)
         frameCountMod   = d["frameCountMod"] as? UInt ?? 0
         issRGB          = d["srgbFramebuffer"] as? Bool ?? false
         isFloat         = d["floatFramebuffer"] as? Bool ?? false
@@ -184,20 +184,20 @@ public final class ShaderPass {
 public final class ShaderLUT {
     public var url: URL
     public var name: String
-    public var filter: ShaderPassFilter
-    public var wrapMode: ShaderPassWrap
+    public var filter: Compiled.ShaderPassFilter
+    public var wrapMode: Compiled.ShaderPassWrap
     public var isMipmap: Bool
     
     init(url: URL, name: String, dictionary d: [String: AnyObject]) {
         self.url      = url
         self.name     = name
-        self.filter   = ShaderPassFilter(bool: d["linear"] as? Bool)
-        self.wrapMode = ShaderPassWrap(string: d["wrapMode"] as? String)
+        self.filter   = Compiled.ShaderPassFilter(bool: d["linear"] as? Bool)
+        self.wrapMode = Compiled.ShaderPassWrap(string: d["wrapMode"] as? String)
         self.isMipmap = d["mipmapInput"] as? Bool ?? false
     }
 }
 
-extension ShaderPassFilter {
+extension Compiled.ShaderPassFilter {
     init(bool: Bool?) {
         switch bool {
         case true:
@@ -210,10 +210,10 @@ extension ShaderPassFilter {
     }
 }
 
-extension ShaderPassWrap {
+extension Compiled.ShaderPassWrap {
     init(string: String?) {
         guard let v = string else {
-            self = .default
+            self = .border
             return
         }
         
@@ -228,7 +228,7 @@ extension ShaderPassWrap {
             self = .mirroredRepeat
         default:
             // user specified an invalid value
-            self = .default
+            self = .border
         }
     }
 }

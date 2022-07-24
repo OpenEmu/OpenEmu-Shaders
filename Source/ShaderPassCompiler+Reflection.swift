@@ -444,14 +444,6 @@ class ShaderSymbols {
         "PassFeedback": .passFeedback,
         "User": .user,
     ]
-    static let textureSemanticToName: [Compiled.ShaderTextureSemantic: String] = [
-        .original: "Original",
-        .source: "Source",
-        .originalHistory: "OriginalHistory",
-        .passOutput: "PassOutput",
-        .passFeedback: "PassFeedback",
-        .user: "User",
-    ]
     
     static let textureSemanticUniformNames: [String: Compiled.ShaderBufferSemantic] = [
         "OriginalSize": .originalSize,
@@ -461,14 +453,6 @@ class ShaderSymbols {
         "PassFeedbackSize": .passFeedbackSize,
         "UserSize": .userSize,
     ]
-    static let textureSemanticToUniformName: [Compiled.ShaderBufferSemantic: String] = [
-        .originalSize: "OriginalSize",
-        .sourceSize: "SourceSize",
-        .originalHistorySize: "OriginalHistorySize",
-        .passOutputSize: "PassOutputSize",
-        .passFeedbackSize: "PassFeedbackSize",
-        .userSize: "UserSize",
-    ]
     
     static let semanticUniformNames: [String: ShaderBufferSemanticMap] = [
         "MVP": .init(semantic: .mvp, baseType: .fp32, vecSize: 4, cols: 4),
@@ -476,13 +460,6 @@ class ShaderSymbols {
         "FinalViewportSize": .init(semantic: .finalViewportSize, baseType: .fp32, vecSize: 4, cols: 1),
         "FrameCount": .init(semantic: .frameCount, baseType: .uint32, vecSize: 1, cols: 1),
         "FrameDirection": .init(semantic: .frameDirection, baseType: .int32, vecSize: 1, cols: 1),
-    ]
-    static let semanticToUniformName: [ShaderBufferSemantic: String] = [
-        .mvp: "MVP",
-        .outputSize: "OutputSize",
-        .finalViewportSize: "FinalViewportSize",
-        .frameCount: "FrameCount",
-        .frameDirection: "FrameDirection",
     ]
 }
 

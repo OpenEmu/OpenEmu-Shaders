@@ -122,31 +122,10 @@ public enum Compiled {
     
     public enum ShaderPassFilter: String, CaseIterable, Codable {
         case unspecified, linear, nearest
-        
-        private static let mapFrom: [OpenEmuShaders.ShaderPassFilter: Self] = [
-            .unspecified: .unspecified,
-            .linear: .linear,
-            .nearest: .nearest,
-        ]
-        
-        init(_ filter: OpenEmuShaders.ShaderPassFilter) {
-            self = Self.mapFrom[filter]!
-        }
     }
     
     public enum ShaderPassWrap: String, CaseIterable, Codable {
         case border, edge, `repeat`, mirroredRepeat
-        
-        private static let mapFrom: [OpenEmuShaders.ShaderPassWrap: Self] = [
-            .border: .border,
-            .edge: .edge,
-            .repeat: .repeat,
-            .mirroredRepeat: .mirroredRepeat,
-        ]
-        
-        init(_ wrap: OpenEmuShaders.ShaderPassWrap) {
-            self = Self.mapFrom[wrap]!
-        }
     }
     
     public enum ShaderTextureSemantic: String, CaseIterable, Codable, CustomStringConvertible {

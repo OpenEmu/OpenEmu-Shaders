@@ -54,8 +54,8 @@ extension ShaderPassCompiler {
             .map {
                 Compiled.LUT(url: $0.url,
                              name: $0.name,
-                             filter: .init($0.filter),
-                             wrapMode: .init($0.wrapMode),
+                             filter: $0.filter,
+                             wrapMode: $0.wrapMode,
                              isMipmap: $0.isMipmap)
             }
         
@@ -122,8 +122,8 @@ extension ShaderPassCompiler {
                      frameCountMod: pass.frameCountMod,
                      scaleX: pass.scaleX,
                      scaleY: pass.scaleY,
-                     filter: .init(pass.filter),
-                     wrapMode: .init(pass.wrapMode),
+                     filter: pass.filter,
+                     wrapMode: pass.wrapMode,
                      format: try .init(pass.format),
                      isFeedback: false,
                      buffers: buffers,
@@ -141,11 +141,11 @@ extension ShaderPassCompiler {
                     let wrap: Compiled.ShaderPassWrap
                     let filter: Compiled.ShaderPassFilter
                     if sem == .user {
-                        wrap   = .init(shader.luts[meta.index].wrapMode)
-                        filter = .init(shader.luts[meta.index].filter)
+                        wrap   = shader.luts[meta.index].wrapMode
+                        filter = shader.luts[meta.index].filter
                     } else {
-                        wrap   = .init(shader.passes[ref.passNumber].wrapMode)
-                        filter = .init(shader.passes[ref.passNumber].filter)
+                        wrap   = shader.passes[ref.passNumber].wrapMode
+                        filter = shader.passes[ref.passNumber].filter
                     }
                     
                     textures.append(Compiled.TextureDescriptor(name: meta.name,
