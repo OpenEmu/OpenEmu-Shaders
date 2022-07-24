@@ -120,6 +120,12 @@ public enum Compiled {
         }
     }
     
+    public enum ShaderPassScale: Equatable, Codable {
+        case source(scale: CGFloat)
+        case absolute(size: Int)
+        case viewport(scale: CGFloat)
+    }
+    
     public enum ShaderPassFilter: String, CaseIterable, Codable {
         case unspecified, linear, nearest
     }
@@ -462,30 +468,5 @@ public enum Compiled {
                 return .bgra8Unorm
             }
         }
-    }
-}
-
-extension ShaderPassFilter {
-    private static let fromCompiled: [Compiled.ShaderPassFilter: Self] = [
-        .unspecified: .unspecified,
-        .linear: .linear,
-        .nearest: .nearest,
-    ]
-    
-    init(_ sem: Compiled.ShaderPassFilter) {
-        self = Self.fromCompiled[sem]!
-    }
-}
-
-extension ShaderPassWrap {
-    private static let fromCompiled: [Compiled.ShaderPassWrap: Self] = [
-        .border: .border,
-        .edge: .edge,
-        .repeat: .repeat,
-        .mirroredRepeat: .mirroredRepeat,
-    ]
-    
-    init(_ sem: Compiled.ShaderPassWrap) {
-        self = Self.fromCompiled[sem]!
     }
 }

@@ -50,7 +50,7 @@ class ShaderPassTextureSemantics {
     }
 }
 
-public class ShaderPassSemantics {
+class ShaderPassSemantics {
     private(set) var textures: [ShaderTextureSemantic: ShaderPassTextureSemantics] = [:]
     private(set) var uniforms: [ShaderBufferSemantic: ShaderPassBufferSemantics] = [:]
     private(set) var parameters: [Int: ShaderPassBufferSemantics] = [:]
@@ -258,5 +258,57 @@ enum ShaderBufferSemantic: Int, CaseIterable, CustomStringConvertible {
         } else {
             return nil
         }
+    }
+}
+
+enum ShaderPassScale: Equatable, Codable {
+    case source(scale: CGFloat)
+    case absolute(size: Int)
+    case viewport(scale: CGFloat)
+    
+    init?(_ scale: Compiled.ShaderPassScale?) {
+        guard let scale = scale else {
+            return nil
+        }
+        
+        switch scale {
+        case .source(scale: let scale):
+            self = .source(scale: scale)
+        case .absolute(size: let size):
+            self = .absolute(size: size)
+        case .viewport(scale: let scale):
+            self = .viewport(scale: scale)
+        }
+    }
+}
+
+enum ShaderPassFilter: Int, CaseIterable {
+    case unspecified, linear, nearest
+    
+    private static let fromCompiled: [Compiled.ShaderPassFilter: Self] = [
+        .unspecified: .unspecified,
+        .linear: .linear,
+        .nearest: .nearest,
+    ]
+    
+    init(_ sem: Compiled.ShaderPassFilter) {
+        self = Self.fromCompiled[sem]!
+    }
+}
+
+enum ShaderPassWrap: Int, CaseIterable {
+    case border, edge, `repeat`, mirroredRepeat
+    
+    static let `default`: Self = .border
+    
+    private static let fromCompiled: [Compiled.ShaderPassWrap: Self] = [
+        .border: .border,
+        .edge: .edge,
+        .repeat: .repeat,
+        .mirroredRepeat: .mirroredRepeat,
+    ]
+    
+    init(_ sem: Compiled.ShaderPassWrap) {
+        self = Self.fromCompiled[sem]!
     }
 }

@@ -914,8 +914,8 @@ final public class FilterChain: ScreenshotSource {
             self.pass[passNumber].frameCountMod = UInt32(pass.frameCountMod)
             
             // update scaling
-            self.pass[passNumber].scaleX = pass.scaleX
-            self.pass[passNumber].scaleY = pass.scaleY
+            self.pass[passNumber].scaleX = .init(pass.scaleX)
+            self.pass[passNumber].scaleY = .init(pass.scaleY)
             
             let vd = MTLVertexDescriptor()
             if let attr = vd.attributes[VertexAttribute.position.rawValue] {

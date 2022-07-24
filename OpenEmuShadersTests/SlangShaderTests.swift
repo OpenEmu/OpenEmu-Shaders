@@ -109,7 +109,7 @@ shader0 = mem:///root/foo.slang
             XCTAssertNil(pass.scaleY)
             XCTAssertEqual(pass.format, .bgra8Unorm)
             XCTAssertEqual(pass.filter, .unspecified)
-            XCTAssertEqual(pass.wrapMode, .default)
+            XCTAssertEqual(pass.wrapMode, .border)
             XCTAssertFalse(pass.isFloat)
             XCTAssertFalse(pass.issRGB)
             XCTAssertFalse(pass.isMipmap)
@@ -311,7 +311,7 @@ wrap_mode4 = repeat
         let url = URL(string: "mem:///root/foo.slangp")!
         do {
             let ss = try SlangShader(fromURL: url)
-            XCTAssertEqual(ss.passes.map(\.wrapMode), [.default, .border, .edge, .mirroredRepeat, .repeat])
+            XCTAssertEqual(ss.passes.map(\.wrapMode), [.border, .border, .edge, .mirroredRepeat, .repeat])
         } catch {
             XCTFail(error.localizedDescription)
         }
@@ -426,7 +426,7 @@ e_mipmap    = true
             let luts = ss.luts.sorted { $0.name < $1.name }
             XCTAssertEqual(luts.map(\.url.lastPathComponent), ["a", "b", "c", "d", "e"].map({ "image_\($0).png" }))
             XCTAssertEqual(luts.map(\.name), ["a", "b", "c", "d", "e"])
-            XCTAssertEqual(luts.map(\.wrapMode), [.default, .border, .edge, .mirroredRepeat, .repeat])
+            XCTAssertEqual(luts.map(\.wrapMode), [.border, .border, .edge, .mirroredRepeat, .repeat])
             XCTAssertEqual(luts.map(\.isMipmap), [false, false, false, true, true])
             XCTAssertEqual(luts.map(\.filter), [.unspecified, .nearest, .linear, .nearest, .linear])
         } catch {

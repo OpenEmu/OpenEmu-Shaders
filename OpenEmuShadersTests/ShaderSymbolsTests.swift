@@ -38,7 +38,7 @@ class ShaderSymbolsTests: XCTestCase {
     func testExample() throws {
         let sym = ShaderSymbols()
         let res = sym.textureSemantic(forUniformName: "OriginalHistorySize2")
-        XCTAssertEqual(res?.semantic, .originalHistory)
+        XCTAssertEqual(res?.semantic, .originalHistorySize)
     }
 
     func testPerformanceExample() throws {

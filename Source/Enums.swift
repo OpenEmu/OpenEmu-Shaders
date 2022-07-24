@@ -25,68 +25,6 @@
 import Foundation
 import Metal
 
-public enum OEMTLPixelFormat: Int, RawRepresentable, CaseIterable {
-    case invalid
-    
-    // 16-bit formats
-    case bgra4Unorm
-    case b5g6r5Unorm
-    case r5g5b5a1Unorm
-    
-    // 32-bit formats, 8 bits per pixel
-    case rgba8Unorm
-    case abgr8Unorm
-    
-    // native, no conversion
-    case bgra8Unorm
-    case bgrx8Unorm // no alpha
-}
-
-public enum ShaderPassScale: Equatable, Codable {
-    case source(scale: CGFloat)
-    case absolute(size: Int)
-    case viewport(scale: CGFloat)
-}
-
-public enum ShaderPassFilter: Int, CaseIterable {
-    case unspecified, linear, nearest
-}
-
-public enum ShaderPassWrap: Int, CaseIterable {
-    case border, edge, `repeat`, mirroredRepeat
-    
-    static let `default`: Self = .border
-}
-
-extension OEMTLPixelFormat {
-    var isNative: Bool {
-        switch self {
-        case .abgr8Unorm, .rgba8Unorm, .r5g5b5a1Unorm, .b5g6r5Unorm, .bgra4Unorm:
-            return false
-            
-        case .bgra8Unorm, .bgrx8Unorm:
-            return true
-            
-        default:
-            return false
-        }
-    }
-    
-    // Returns the number of bytes per pixel for the given format; otherwise, 0 if the format is not supported
-    var bytesPerPixel: Int {
-        switch self {
-        case .abgr8Unorm, .rgba8Unorm, .bgra8Unorm, .bgrx8Unorm:
-            return 4
-            
-        case .b5g6r5Unorm, .r5g5b5a1Unorm, .bgra4Unorm:
-            return 2
-            
-        default:
-            return 4
-        }
-    }
-}
-
 extension MTLPixelFormat {
     // swiftlint:disable cyclomatic_complexity
     /// Converts a GL Slang format string to Metal

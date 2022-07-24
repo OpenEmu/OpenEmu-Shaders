@@ -42,12 +42,12 @@ public final class SlangShader {
         }
     }
     
-    public var url: URL
-    public var passes: [ShaderPass] = []
-    public var parameters: [ShaderParameter] = []
-    public var luts: [ShaderLUT] = []
+    public let url: URL
+    public let passes: [ShaderPass]
+    public let parameters: [ShaderParameter]
+    public let luts: [ShaderLUT]
     
-    private var parametersMap: [String: ShaderParameter] = [:]
+    private let parametersMap: [String: ShaderParameter]
     
     public init(fromURL url: URL) throws {
         self.url = url
@@ -58,25 +58,34 @@ public final class SlangShader {
         
         // process passes
         guard let specs = d["passes"] as? [[String: AnyObject]] else { throw Errors.missingKey("passes") }
+        var passes = [ShaderPass]()
         passes.reserveCapacity(specs.count)
         for (i, spec) in specs.enumerated() {
             guard let path = spec["shader"] as? String else { throw Errors.missingKey("shader") }
             passes.append(try ShaderPass(from: URL(string: path, relativeTo: base)!, index: i, dictionary: spec))
         }
+        self.passes = passes
         
         // process lookup textures
         if let textures = d["textures"] as? [String: [String: AnyObject]] {
+            var luts = [ShaderLUT]()
             luts.reserveCapacity(textures.count)
             for (key, spec) in textures {
                 guard let path = spec["path"] as? String else { throw Errors.missingKey("path") }
                 luts.append(ShaderLUT(url: URL(string: path, relativeTo: base)!, name: key, dictionary: spec))
             }
+            self.luts = luts
+        } else {
+            self.luts = []
         }
         
         // NOTE: using lazy.flatMap SIGABRTs the XPC process in DEBUG builds:
         // for param in passes.lazy.flatMap({ $0.source.parameters }) {
         
         // collect #pragma parameter declarations from passes
+        var parameters    = [ShaderParameter]()
+        var parametersMap = [String: ShaderParameter]()
+        
         for pass in passes {
             for param in pass.source.parameters {
                 if let existing = parametersMap[param.name] {
@@ -91,6 +100,9 @@ public final class SlangShader {
             }
         }
         
+        self.parameters     = parameters
+        self.parametersMap  = parametersMap
+        
         // resolve parameter overrides from config
         if let params = d["parameters"] as? [String: NSNumber] {
             for (key, val) in params {
@@ -103,18 +115,17 @@ public final class SlangShader {
 }
 
 public final class ShaderPass {
-    public var url: URL
-    public var index: Int
-    public var frameCountMod: UInt
-    
-    public var scaleX: ShaderPassScale?
-    public var scaleY: ShaderPassScale?
-    public var filter: Compiled.ShaderPassFilter
-    public var wrapMode: Compiled.ShaderPassWrap
-    public var isFloat: Bool
-    public var issRGB: Bool
-    public var isMipmap: Bool
-    public var alias: String?
+    public let url: URL
+    public let index: Int
+    public let frameCountMod: UInt
+    public let scaleX: Compiled.ShaderPassScale?
+    public let scaleY: Compiled.ShaderPassScale?
+    public let filter: Compiled.ShaderPassFilter
+    public let wrapMode: Compiled.ShaderPassWrap
+    public let isFloat: Bool
+    public let issRGB: Bool
+    public let isMipmap: Bool
+    public let alias: String?
     
     public var format: MTLPixelFormat {
         let format = source.format
@@ -147,6 +158,9 @@ public final class ShaderPass {
         if Self.isValidScale(d) {
             scaleX = Self.readScale("X", d) ?? .source(scale: 1)
             scaleY = Self.readScale("Y", d) ?? .source(scale: 1)
+        } else {
+            scaleX = nil
+            scaleY = nil
         }
         
         let source  = try SourceParser(fromURL: url)
@@ -161,7 +175,7 @@ public final class ShaderPass {
         (d["scaleTypeX"] != nil && d["scaleTypeY"] != nil)
     }
     
-    static func readScale(_ axis: String, _ d: [String: AnyObject]) -> ShaderPassScale? {
+    static func readScale(_ axis: String, _ d: [String: AnyObject]) -> Compiled.ShaderPassScale? {
         guard let scaleType = d["scaleType"] as? String ?? d["scaleType\(axis)"] as? String else {
             return nil
         }
@@ -182,11 +196,11 @@ public final class ShaderPass {
 }
 
 public final class ShaderLUT {
-    public var url: URL
-    public var name: String
-    public var filter: Compiled.ShaderPassFilter
-    public var wrapMode: Compiled.ShaderPassWrap
-    public var isMipmap: Bool
+    public let url: URL
+    public let name: String
+    public let filter: Compiled.ShaderPassFilter
+    public let wrapMode: Compiled.ShaderPassWrap
+    public let isMipmap: Bool
     
     init(url: URL, name: String, dictionary d: [String: AnyObject]) {
         self.url      = url

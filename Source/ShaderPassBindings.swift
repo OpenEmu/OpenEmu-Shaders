@@ -24,7 +24,7 @@
 
 import Foundation
 
-public class ShaderPassUniformBinding: CustomDebugStringConvertible {
+class ShaderPassUniformBinding: CustomDebugStringConvertible {
     let data: UnsafeRawPointer
     let size: Int
     let offset: Int
