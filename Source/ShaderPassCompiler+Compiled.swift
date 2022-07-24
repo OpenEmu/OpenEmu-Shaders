@@ -37,7 +37,7 @@ extension ShaderPassCompiler {
         let feedback = Set<Int>(passes.flatMap { pass in
             pass.textures
                 .filter { $0.semantic == .passFeedback }
-                .compactMap(\.index)
+                .map(\.index)
         })
         
         for passNumber in feedback {
@@ -65,7 +65,7 @@ extension ShaderPassCompiler {
             .flatMap {
                 $0.textures
                     .filter { $0.semantic == .originalHistory }
-                    .map { $0.index! }
+                    .map { $0.index }
             }
             .max() ?? 0
         

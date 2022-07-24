@@ -125,7 +125,6 @@ final public class FilterChain: ScreenshotSource {
     
     private var pass = [Pass](repeating: .init(), count: Constants.maxShaderPasses)
     private var luts = [Texture](repeating: .init(), count: Constants.maxTextures)
-    private var lutsFlipped = false
     
     private var renderTargetsNeedResize = true
     private var historyNeedsInit        = false
@@ -794,14 +793,14 @@ final public class FilterChain: ScreenshotSource {
         luts = .init(repeating: .init(), count: Constants.maxTextures)
         historyTextures = .init(repeating: .init(), count: Constants.maxFrameHistory + 1)
         
-        parameters = .init(repeating: 0, count: Constants.maxParameters)
-        parametersMap = [:]
+        parameters      = .init(repeating: 0, count: Constants.maxParameters)
+        parametersMap   = [:]
         parametersCount = 0
         
-        historyCount = 0
-        passCount = 0
-        lastPassIndex = 0
-        hasShader = false
+        historyCount    = 0
+        passCount       = 0
+        lastPassIndex   = 0
+        hasShader       = false
     }
     
     public func setCompiledShader(_ ss: Compiled.Shader) throws {

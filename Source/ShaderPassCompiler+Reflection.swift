@@ -294,7 +294,7 @@ extension ShaderPassCompiler {
                 }
                 
                 if !texSem.validateType(type) {
-                    // os_log_error(OE_LOG_DEFAULT, "invalid type for %{public}s; expected a vec4", name);
+                    // os_log_error(OE_LOG_DEFAULT, "invalid type for %{public}s; expected a vec4 of type float", name);
                     return false
                 }
                 
@@ -341,9 +341,9 @@ extension ShaderPassCompiler {
 }
 
 class ShaderSymbols {
-    private(set) var floatParameterSemanticMap: [String: ShaderBufferSemanticMap] = [:]
-    private(set) var textureSemanticMap: [String: ShaderTextureSemanticMap] = [:]
-    private(set) var textureUniformSemanticMap: [String: ShaderBufferSemanticMap] = [:]
+    private(set) var floatParameterSemanticMap: [String: ShaderBufferSemanticMap]   = [:]
+    private(set) var textureSemanticMap: [String: ShaderTextureSemanticMap]         = [:]
+    private(set) var textureUniformSemanticMap: [String: ShaderBufferSemanticMap]   = [:]
     
     func addTextureSemantic(_ semantic: Compiled.ShaderTextureSemantic, atIndex i: Int, name: String) -> Bool {
         if textureSemanticMap[name] != nil {

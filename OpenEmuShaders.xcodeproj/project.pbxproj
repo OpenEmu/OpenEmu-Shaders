@@ -18,13 +18,13 @@
 		056AC379228BA8D9005018DA /* ShaderParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC378228BA8D9005018DA /* ShaderParameter.swift */; };
 		056AC3A7228BB3E9005018DA /* SourceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC3A6228BB3E9005018DA /* SourceParser.swift */; };
 		056AC3A9228BD73F005018DA /* Scanner+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC3A8228BD73F005018DA /* Scanner+Extensions.swift */; };
+		05742BA4288CB98B006EA3D0 /* CompilerEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05742BA3288CB98B006EA3D0 /* CompilerEnums.swift */; };
 		057847CE25C1250300A842E7 /* ShaderCompilerOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057847CD25C1250300A842E7 /* ShaderCompilerOptions.swift */; };
 		057848C225C2151900A842E7 /* ShaderPassCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057848C125C2151900A842E7 /* ShaderPassCompiler.swift */; };
 		057DDA8F283065D4002A5877 /* libCGLSLang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 057DDA7D2830615F002A5877 /* libCGLSLang.a */; };
 		057DDA90283065D4002A5877 /* libCSPIRVCross.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 057DDA812830615F002A5877 /* libCSPIRVCross.a */; };
 		057DDA91283065D4002A5877 /* libCSPIRVTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 057DDA852830615F002A5877 /* libCSPIRVTools.a */; };
 		058AB98B28507F3A009A35FA /* PixelBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058AB98A28507F3A009A35FA /* PixelBuffer.swift */; };
-		058AB98E28509CB1009A35FA /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058AB98D28509CB1009A35FA /* Enums.swift */; };
 		058AB9AF285130A4009A35FA /* OEShaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058AB9AE285130A4009A35FA /* OEShaders.swift */; };
 		058AB9B5285130EE009A35FA /* ShaderCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058AB9B4285130EE009A35FA /* ShaderCommand.swift */; };
 		058AB9B72851313C009A35FA /* ShaderCommand+Thumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058AB9B62851313C009A35FA /* ShaderCommand+Thumbnail.swift */; };
@@ -158,11 +158,11 @@
 		056AC378228BA8D9005018DA /* ShaderParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderParameter.swift; sourceTree = "<group>"; };
 		056AC3A6228BB3E9005018DA /* SourceParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceParser.swift; sourceTree = "<group>"; };
 		056AC3A8228BD73F005018DA /* Scanner+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Scanner+Extensions.swift"; sourceTree = "<group>"; };
+		05742BA3288CB98B006EA3D0 /* CompilerEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompilerEnums.swift; sourceTree = "<group>"; };
 		057847CD25C1250300A842E7 /* ShaderCompilerOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderCompilerOptions.swift; sourceTree = "<group>"; };
 		057848C125C2151900A842E7 /* ShaderPassCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderPassCompiler.swift; sourceTree = "<group>"; };
 		057DDA712830615E002A5877 /* SPIRV.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SPIRV.xcodeproj; path = 3rdparty/SPIRV/SPIRV.xcodeproj; sourceTree = "<group>"; };
 		058AB98A28507F3A009A35FA /* PixelBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelBuffer.swift; sourceTree = "<group>"; };
-		058AB98D28509CB1009A35FA /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		058AB9AC285130A4009A35FA /* oeshaders */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = oeshaders; sourceTree = BUILT_PRODUCTS_DIR; };
 		058AB9AE285130A4009A35FA /* OEShaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OEShaders.swift; sourceTree = "<group>"; };
 		058AB9B4285130EE009A35FA /* ShaderCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderCommand.swift; sourceTree = "<group>"; };
@@ -255,6 +255,7 @@
 			isa = PBXGroup;
 			children = (
 				0521355B246E3A240085A598 /* CompiledShader.swift */,
+				05742BA3288CB98B006EA3D0 /* CompilerEnums.swift */,
 				057848C125C2151900A842E7 /* ShaderPassCompiler.swift */,
 				051C31EC2865076900281C57 /* ShaderPassCompiler+Reflection.swift */,
 				05059BB72863F7F70081E53C /* ShaderPassCompiler+Compiled.swift */,
@@ -405,7 +406,6 @@
 				056AC378228BA8D9005018DA /* ShaderParameter.swift */,
 				056AC3A6228BB3E9005018DA /* SourceParser.swift */,
 				056AC3A8228BD73F005018DA /* Scanner+Extensions.swift */,
-				058AB98D28509CB1009A35FA /* Enums.swift */,
 				05D043532439043E00B6BDBF /* String+Version.swift */,
 			);
 			name = "Shader Reader";
@@ -681,6 +681,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				05F54957229BBA8800561C14 /* Shaders.metal in Sources */,
+				05742BA4288CB98B006EA3D0 /* CompilerEnums.swift in Sources */,
 				05ABBEAF2849DF9B006F1A8C /* Matrix.swift in Sources */,
 				05ABBEAD284979BA006F1A8C /* Screenshot.swift in Sources */,
 				058AB98B28507F3A009A35FA /* PixelBuffer.swift in Sources */,
@@ -689,7 +690,6 @@
 				051C31F7286891CE00281C57 /* FilterChain+Bindings.swift in Sources */,
 				056AC3A9228BD73F005018DA /* Scanner+Extensions.swift in Sources */,
 				05AA59F7246625A20031B73E /* ShaderModel.swift in Sources */,
-				058AB98E28509CB1009A35FA /* Enums.swift in Sources */,
 				056696F02460EF5D000A5BE3 /* SlangShader.swift in Sources */,
 				056AC3A7228BB3E9005018DA /* SourceParser.swift in Sources */,
 				05D043542439043E00B6BDBF /* String+Version.swift in Sources */,

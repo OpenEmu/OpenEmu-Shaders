@@ -89,7 +89,7 @@ public enum Compiled {
         public let binding: Int
         public let wrap: ShaderPassWrap
         public let filter: ShaderPassFilter
-        public let index: Int?
+        public let index: Int
     }
     
     // MARK: - Enumerations
@@ -360,7 +360,7 @@ public enum Compiled {
         case bgra8Unorm
         
         // swiftlint:disable cyclomatic_complexity
-        /// Converts a GL Slang format string to Metal
+        /// Converts a GL Slang format string to PixelFormat
         init?(glslangFormat str: String) {
             switch str {
             case "R8_UNORM":

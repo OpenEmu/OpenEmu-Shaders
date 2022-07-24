@@ -168,9 +168,9 @@ public final class ShaderPass {
     }
     
     static func isValidScale(_ d: [String: AnyObject]) -> Bool {
-        // Either the shader pass specifies a scale_type
+        // Either the shader pass specifies a scale_type for both axes
         d["scaleType"] != nil ||
-        // or both a scale type for the X and Y
+        // or individual scale type for the X and Y axis
         (d["scaleTypeX"] != nil && d["scaleTypeY"] != nil)
     }
     

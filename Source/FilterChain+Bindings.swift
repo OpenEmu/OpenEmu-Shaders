@@ -36,24 +36,25 @@ extension FilterChain {
             bind.size        = (desc.size + 0xf) & ~0xf // round up to nearest 16 bytes
             
             for u in desc.uniforms {
-                if let sem = ShaderBufferSemantic(u.semantic) {
-                    if sem == .floatParameter {
-                        guard let param = passSemantics.parameter(at: u.index!)
-                        else { fatalError("Unable to find parameter at index \(u.index!)") }
-                        bind.addUniformData(param.data,
-                                            size: u.size,
-                                            offset: u.offset,
-                                            name: u.name)
-                    } else {
-                        bind.addUniformData(passSemantics.uniforms[sem]!.data,
-                                            size: u.size,
-                                            offset: u.offset,
-                                            name: u.name)
-                    }
-                } else if let sem = ShaderTextureSemantic(u.semantic) {
-                    let tex = passSemantics.textures[sem]!
+                switch u.semantic {
+                case .floatParameter:
+                    guard let param = passSemantics.parameter(at: u.index!)
+                    else { fatalError("Unable to find parameter at index \(u.index!)") }
+                    bind.addUniformData(param.data,
+                                        size: u.size,
+                                        offset: u.offset,
+                                        name: u.name)
                     
-                    bind.addUniformData(tex.textureSize.advanced(by: u.index! * tex.sizeStride),
+                case .mvp, .outputSize, .finalViewportSize, .frameCount, .frameDirection:
+                    bind.addUniformData(passSemantics.uniforms[u.semantic]!.data,
+                                        size: u.size,
+                                        offset: u.offset,
+                                        name: u.name)
+
+                case .originalSize, .sourceSize, .originalHistorySize, .passOutputSize, .passFeedbackSize, .userSize:
+                    let tex = passSemantics.textureUniforms[u.semantic]!
+                    
+                    bind.addUniformData(tex.size.advanced(by: u.index! * tex.stride),
                                         size: u.size,
                                         offset: u.offset,
                                         name: u.name)
@@ -67,11 +68,8 @@ extension FilterChain {
         addUniforms(bufferIndex: 1)
         
         for t in pass.textures {
-            guard let sem = ShaderTextureSemantic(t.semantic)
-            else { continue }
-            
-            let tex  = passSemantics.textures[sem]!
-            let bind = passBindings.addTexture(tex.texture.advanced(by: t.index! * tex.textureStride),
+            let tex  = passSemantics.textures[t.semantic]!
+            let bind = passBindings.addTexture(tex.texture.advanced(by: t.index * tex.stride),
                                                binding: t.binding,
                                                name: t.name)
             bind.wrap   = .init(t.wrap)
