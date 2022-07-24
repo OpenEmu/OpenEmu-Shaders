@@ -149,16 +149,16 @@ public enum Compiled {
         }
     }
     
-    public enum ShaderTextureSemantic: String, Codable {
+    public enum ShaderTextureSemantic: String, CaseIterable, Codable, CustomStringConvertible {
         /// Identifies the input texture to the filter chain.
         ///
-        /// Shaders refer to the input texture via the `Original` and `OriginalSize` symbols.
+        /// Shaders refer to the input texture via the `Original` symbol.
         case original
         
         /// Identifies the output texture from the previous pass.
         ///
         /// Shaders can refer to the previous source texture via
-        /// the `Source` and `SourceSize` symbols.
+        /// the `Source` symbol.
         ///
         /// - Note: If the filter chain is executing the first pass, this is the same as
         /// `Original`.
@@ -167,30 +167,30 @@ public enum Compiled {
         /// Identifies the historical input textures.
         ///
         /// Shaders can refer to the history textures via the
-        /// `OriginalHistoryN` and `OriginalSizeN` symbols, where `N`
+        /// `OriginalHistoryN` symbols, where `N`
         /// specifies the number of `Original` frames back to read.
         ///
-        /// - Note: To read 2 frames prior, use `OriginalHistory2` and `OriginalSize2`.
+        /// - Note: To read 2 frames prior, use `OriginalHistory2`.
         case originalHistory
         
         /// Identifies the pass output textures.
         ///
         /// Shaders can refer to the output of prior passes via the
-        /// `PassOutputN` and `PassOutputSizeN` symbols, where `N` specifies the
+        /// `PassOutputN` symbols, where `N` specifies the
         /// pass number.
         ///
         /// - NOTE: In pass 5, sampling the output of pass 2
-        /// would use `PassOutput2` and `PassOutputSize2`.
+        /// would use `PassOutput2`.
         case passOutput
         
         /// Identifies the pass feedback textures.
         ///
         /// Shaders can refer to the output of the previous
-        /// frame of pass `N` via the `PassFeedbackN` and `PassFeedbackSizeN`
+        /// frame of pass `N` via the `PassFeedbackN`
         /// symbols, where `N` specifies the pass number.
         ///
         /// - NOTE: To sample the output of pass 2 from the prior frame,
-        /// use `PassFeedback2` and `PassFeedbackSize2`.
+        /// use `PassFeedback2`.
         case passFeedback
         
         /// Identifies the lookup or user textures.
@@ -199,21 +199,25 @@ public enum Compiled {
         /// in the `.slangp` file.
         case user
         
-        static let mapFrom: [OpenEmuShaders.ShaderTextureSemantic: Self] = [
-            .original: .original,
-            .source: .source,
-            .originalHistory: .originalHistory,
-            .passOutput: .passOutput,
-            .passFeedback: .passFeedback,
-            .user: .user,
-        ]
-        
-        init(_ sem: OpenEmuShaders.ShaderTextureSemantic) {
-            self = Self.mapFrom[sem]!
+        public var description: String {
+            switch self {
+            case .original:
+                return "Original"
+            case .source:
+                return "Source"
+            case .originalHistory:
+                return "OriginalHistory"
+            case .passOutput:
+                return "PassOutput"
+            case .passFeedback:
+                return "PassFeedback"
+            case .user:
+                return "User"
+            }
         }
     }
     
-    public enum ShaderBufferSemantic: String, Codable {
+    public enum ShaderBufferSemantic: String, CaseIterable, Codable, CustomStringConvertible {
         /// Identifies the 4x4 float model-view-projection matrix buffer.
         ///
         /// Shaders refer to the matrix constant via the `MVP` symbol.
@@ -302,30 +306,33 @@ public enum Compiled {
         /// in the `.slangp` file.
         case userSize
         
-        private static let shaderBufferSemanticMap: [OpenEmuShaders.ShaderBufferSemantic: Self] = [
-            .mvp: .mvp,
-            .outputSize: .outputSize,
-            .finalViewportSize: .finalViewportSize,
-            .frameCount: .frameCount,
-            .frameDirection: .frameDirection,
-            .floatParameter: .floatParameter,
-        ]
-        
-        private static let shaderTextureSemanticMap: [OpenEmuShaders.ShaderTextureSemantic: Self] = [
-            .original: .originalSize,
-            .source: .sourceSize,
-            .originalHistory: .originalHistorySize,
-            .passOutput: .passOutputSize,
-            .passFeedback: .passFeedbackSize,
-            .user: .userSize,
-        ]
-        
-        init(_ sem: OpenEmuShaders.ShaderBufferSemantic) {
-            self = Self.shaderBufferSemanticMap[sem]!
-        }
-        
-        init(_ sem: OpenEmuShaders.ShaderTextureSemantic) {
-            self = Self.shaderTextureSemanticMap[sem]!
+        public var description: String {
+            switch self {
+            case .mvp:
+                return "MVP"
+            case .outputSize:
+                return "OutputSize"
+            case .finalViewportSize:
+                return "FinalViewportSize"
+            case .frameCount:
+                return "FrameCount"
+            case .frameDirection:
+                return "FrameDirection"
+            case .floatParameter:
+                return "FloatParameter"
+            case .originalSize:
+                return "OriginalSize"
+            case .sourceSize:
+                return "SourceSize"
+            case .originalHistorySize:
+                return "OriginalHistorySize"
+            case .passOutputSize:
+                return "PassOutputSize"
+            case .passFeedbackSize:
+                return "PassFeedbackSize"
+            case .userSize:
+                return "UserSize"
+            }
         }
     }
     
@@ -475,60 +482,6 @@ public enum Compiled {
             case .bgra8Unorm:
                 return .bgra8Unorm
             }
-        }
-    }
-}
-
-extension ShaderTextureSemantic {
-    private static let fromShaderBufferSemantic: [Compiled.ShaderBufferSemantic: Self] = [
-        .originalSize: .original,
-        .sourceSize: .source,
-        .originalHistorySize: .originalHistory,
-        .passOutputSize: .passOutput,
-        .passFeedbackSize: .passFeedback,
-    ]
-    
-    init?(_ sem: Compiled.ShaderBufferSemantic) {
-        if let v = Self.fromShaderBufferSemantic[sem] {
-            self = v
-        } else {
-            return nil
-        }
-    }
-    
-    private static let fromShaderTextureSemantic: [Compiled.ShaderTextureSemantic: Self] = [
-        .original: .original,
-        .source: .source,
-        .originalHistory: .originalHistory,
-        .passOutput: .passOutput,
-        .passFeedback: .passFeedback,
-        .user: .user,
-    ]
-    
-    init?(_ sem: Compiled.ShaderTextureSemantic) {
-        if let v = Self.fromShaderTextureSemantic[sem] {
-            self = v
-        } else {
-            return nil
-        }
-    }
-}
-
-extension ShaderBufferSemantic {
-    private static let fromShaderBufferSemantic: [Compiled.ShaderBufferSemantic: Self] = [
-        .mvp: .mvp,
-        .outputSize: .outputSize,
-        .finalViewportSize: .finalViewportSize,
-        .frameCount: .frameCount,
-        .frameDirection: .frameDirection,
-        .floatParameter: .floatParameter,
-    ]
-    
-    init?(_ sem: Compiled.ShaderBufferSemantic) {
-        if let v = Self.fromShaderBufferSemantic[sem] {
-            self = v
-        } else {
-            return nil
         }
     }
 }

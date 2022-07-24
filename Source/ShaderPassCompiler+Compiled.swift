@@ -149,7 +149,7 @@ extension ShaderPassCompiler {
                     }
                     
                     textures.append(Compiled.TextureDescriptor(name: meta.name,
-                                                               semantic: .init(sem),
+                                                               semantic: sem,
                                                                binding: binding,
                                                                wrap: wrap,
                                                                filter: filter,
@@ -173,7 +173,7 @@ extension ShaderPassCompiler {
         // Find bound global semantics, like MVP, FrameCount, etc
         let semantics = ref.semantics.compactMap { (sem, meta) -> Compiled.BufferUniformDescriptor? in
             if let offset = meta[keyPath: offset] {
-                return Compiled.BufferUniformDescriptor(semantic: .init(sem),
+                return Compiled.BufferUniformDescriptor(semantic: sem,
                                                         index: nil,
                                                         name: meta.name,
                                                         size: meta.numberOfComponents * MemoryLayout<Float>.size,
@@ -198,7 +198,7 @@ extension ShaderPassCompiler {
         let textures = ref.textureUniforms.flatMap { sem, a in
             a.values.compactMap { meta -> Compiled.BufferUniformDescriptor? in
                 if let offset = meta[keyPath: offset] {
-                    return Compiled.BufferUniformDescriptor(semantic: .init(sem),
+                    return Compiled.BufferUniformDescriptor(semantic: sem,
                                                             index: meta.index,
                                                             name: meta.name,
                                                             size: 4 * MemoryLayout<Float>.size,

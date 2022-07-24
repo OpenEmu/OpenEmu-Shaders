@@ -48,7 +48,7 @@ class ShaderBufferSemanticMeta {
         self.init(index: 0, name: name)
     }
     
-    convenience init(_ sem: ShaderBufferSemantic) {
+    convenience init(_ sem: Compiled.ShaderBufferSemantic) {
         self.init(index: 0, name: sem.description)
     }
     
@@ -59,11 +59,11 @@ class ShaderBufferSemanticMeta {
 }
 
 class ShaderTextureSemanticMap {
-    let semantic: ShaderTextureSemantic
+    let semantic: Compiled.ShaderTextureSemantic
     let index: Int
     let name: String
     
-    init(textureSemantic semantic: ShaderTextureSemantic, index: Int, name: String) {
+    init(textureSemantic semantic: Compiled.ShaderTextureSemantic, index: Int, name: String) {
         self.semantic = semantic
         self.index    = index
         self.name     = name
@@ -71,11 +71,11 @@ class ShaderTextureSemanticMap {
 }
 
 class ShaderTextureUniformSemanticMap {
-    let semantic: ShaderTextureSemantic
+    let semantic: Compiled.ShaderBufferSemantic
     let index: Int
     let name: String
     
-    init(textureSemantic semantic: ShaderTextureSemantic, index: Int, name: String) {
+    init(textureSemantic semantic: Compiled.ShaderBufferSemantic, index: Int, name: String) {
         self.semantic = semantic
         self.index    = index
         self.name     = name
@@ -90,7 +90,7 @@ class ShaderTextureUniformSemanticMap {
 }
 
 class ShaderBufferSemanticMap {
-    let semantic: ShaderBufferSemantic
+    let semantic: Compiled.ShaderBufferSemantic
     let index: Int
     let name: String
     
@@ -98,7 +98,7 @@ class ShaderBufferSemanticMap {
     let vecSize: Int
     let cols: Int
     
-    init(semantic: ShaderBufferSemantic, index: Int, name: String, baseType: SPVBaseType, vecSize: Int, cols: Int) {
+    init(semantic: Compiled.ShaderBufferSemantic, index: Int, name: String, baseType: SPVBaseType, vecSize: Int, cols: Int) {
         self.semantic = semantic
         self.index    = index
         self.name     = name
@@ -107,7 +107,7 @@ class ShaderBufferSemanticMap {
         self.cols     = cols
     }
     
-    init(semantic: ShaderBufferSemantic, baseType: SPVBaseType, vecSize: Int, cols: Int) {
+    init(semantic: Compiled.ShaderBufferSemantic, baseType: SPVBaseType, vecSize: Int, cols: Int) {
         self.semantic = semantic
         self.index    = 0
         self.name     = semantic.description
