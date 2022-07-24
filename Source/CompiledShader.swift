@@ -359,113 +359,72 @@ public enum Compiled {
         case bgra8Unorm_srgb    // swiftlint:disable:this identifier_name
         case bgra8Unorm
         
-        private static let mapFrom: [MTLPixelFormat: Self] = [
-            .r8Unorm: .r8Unorm,
-            .r8Uint: .r8Uint,
-            .r8Sint: .r8Sint,
-            .rg8Unorm: .rg8Unorm,
-            .rg8Uint: .rg8Uint,
-            .rg8Sint: .rg8Sint,
-            .rgba8Unorm: .rgba8Unorm,
-            .rgba8Uint: .rgba8Uint,
-            .rgba8Sint: .rgba8Sint,
-            .rgba8Unorm_srgb: .rgba8Unorm_srgb,
-            .rgb10a2Unorm: .rgb10a2Unorm,
-            .rgb10a2Uint: .rgb10a2Uint,
-            .r16Uint: .r16Uint,
-            .r16Sint: .r16Sint,
-            .r16Float: .r16Float,
-            .rg16Uint: .rg16Uint,
-            .rg16Sint: .rg16Sint,
-            .rg16Float: .rg16Float,
-            .rgba16Uint: .rgba16Uint,
-            .rgba16Sint: .rgba16Sint,
-            .rgba16Float: .rgba16Float,
-            .r32Uint: .r32Uint,
-            .r32Sint: .r32Sint,
-            .r32Float: .r32Float,
-            .rg32Uint: .rg32Uint,
-            .rg32Sint: .rg32Sint,
-            .rg32Float: .rg32Float,
-            .rgba32Uint: .rgba32Uint,
-            .rgba32Sint: .rgba32Sint,
-            .rgba32Float: .rgba32Float,
-            .bgra8Unorm_srgb: .bgra8Unorm_srgb,
-            .bgra8Unorm: .bgra8Unorm,
-        ]
-        
-        init(_ pf: MTLPixelFormat) throws {
-            guard let v = Self.mapFrom[pf]
-            else { throw PixelFormatError.invalidFormat(val: pf) }
-            self = v
-        }
-        
-        var metalPixelFormat: MTLPixelFormat {
-            switch self {
-            case .r8Unorm:
-                return .r8Unorm
-            case .r8Uint:
-                return .r8Uint
-            case .r8Sint:
-                return .r8Sint
-            case .rg8Unorm:
-                return .rg8Unorm
-            case .rg8Uint:
-                return .rg8Uint
-            case .rg8Sint:
-                return .rg8Sint
-            case .rgba8Unorm:
-                return .rgba8Unorm
-            case .rgba8Uint:
-                return .rgba8Uint
-            case .rgba8Sint:
-                return .rgba8Sint
-            case .rgba8Unorm_srgb:
-                return .rgba8Unorm_srgb
-            case .rgb10a2Unorm:
-                return .rgb10a2Unorm
-            case .rgb10a2Uint:
-                return .rgb10a2Uint
-            case .r16Uint:
-                return .r16Uint
-            case .r16Sint:
-                return .r16Sint
-            case .r16Float:
-                return .r16Float
-            case .rg16Uint:
-                return .rg16Uint
-            case .rg16Sint:
-                return .rg16Sint
-            case .rg16Float:
-                return .rg16Float
-            case .rgba16Uint:
-                return .rgba16Uint
-            case .rgba16Sint:
-                return .rgba16Sint
-            case .rgba16Float:
-                return .rgba16Float
-            case .r32Uint:
-                return .r32Uint
-            case .r32Sint:
-                return .r32Sint
-            case .r32Float:
-                return .r32Float
-            case .rg32Uint:
-                return .rg32Uint
-            case .rg32Sint:
-                return .rg32Sint
-            case .rg32Float:
-                return .rg32Float
-            case .rgba32Uint:
-                return .rgba32Uint
-            case .rgba32Sint:
-                return .rgba32Sint
-            case .rgba32Float:
-                return .rgba32Float
-            case .bgra8Unorm_srgb:
-                return .bgra8Unorm_srgb
-            case .bgra8Unorm:
-                return .bgra8Unorm
+        // swiftlint:disable cyclomatic_complexity
+        /// Converts a GL Slang format string to Metal
+        init?(glslangFormat str: String) {
+            switch str {
+            case "R8_UNORM":
+                self = .r8Unorm
+            case "R8_UINT":
+                self = .r8Uint
+            case "R8_SINT":
+                self = .r8Sint
+            case "R8G8_UNORM":
+                self = .rg8Unorm
+            case "R8G8_UINT":
+                self = .rg8Uint
+            case "R8G8_SINT":
+                self = .rg8Sint
+            case "R8G8B8A8_UNORM":
+                self = .rgba8Unorm
+            case "R8G8B8A8_UINT":
+                self = .rgba8Uint
+            case "R8G8B8A8_SINT":
+                self = .rgba8Sint
+            case "R8G8B8A8_SRGB":
+                self = .rgba8Unorm_srgb
+            case "A2B10G10R10_UNORM_PACK32":
+                self = .rgb10a2Unorm
+            case "A2B10G10R10_UINT_PACK32":
+                self = .rgb10a2Uint
+            case "R16_UINT":
+                self = .r16Uint
+            case "R16_SINT":
+                self = .r16Sint
+            case "R16_SFLOAT":
+                self = .r16Float
+            case "R16G16_UINT":
+                self = .rg16Uint
+            case "R16G16_SINT":
+                self = .rg16Sint
+            case "R16G16_SFLOAT":
+                self = .rg16Float
+            case "R16G16B16A16_UINT":
+                self = .rgba16Uint
+            case "R16G16B16A16_SINT":
+                self = .rgba16Sint
+            case "R16G16B16A16_SFLOAT":
+                self = .rgba16Float
+            case "R32_UINT":
+                self = .r32Uint
+            case "R32_SINT":
+                self = .r32Sint
+            case "R32_SFLOAT":
+                self = .r32Float
+            case "R32G32_UINT":
+                self = .rg32Uint
+            case "R32G32_SINT":
+                self = .rg32Sint
+            case "R32G32_SFLOAT":
+                self = .rg32Float
+            case "R32G32B32A32_UINT":
+                self = .rgba32Uint
+            case "R32G32B32A32_SINT":
+                self = .rgba32Sint
+            case "R32G32B32A32_SFLOAT":
+                self = .rgba32Float
+            default:
+                return nil
             }
         }
     }

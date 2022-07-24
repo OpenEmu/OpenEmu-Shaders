@@ -127,20 +127,19 @@ public final class ShaderPass {
     public let isMipmap: Bool
     public let alias: String?
     
-    public var format: MTLPixelFormat {
-        let format = source.format
-        if format == .invalid {
-            if issRGB {
-                return .bgra8Unorm_srgb
-            }
-            
-            if isFloat {
-                return .rgba16Float
-            }
-            
-            return .bgra8Unorm
+    public var format: Compiled.PixelFormat {
+        if let format = source.format {
+            return format
         }
-        return format
+        if issRGB {
+            return .bgra8Unorm_srgb
+        }
+        
+        if isFloat {
+            return .rgba16Float
+        }
+        
+        return .bgra8Unorm
     }
     
     internal let source: SourceParser

@@ -103,7 +103,7 @@ class SourceParser {
     
     var parameters: [ShaderParameter]
     
-    var format: MTLPixelFormat
+    var format: Compiled.PixelFormat?
     
     lazy var sha256: String = {
         let data = Array(buffer.joined().utf8)
@@ -132,7 +132,7 @@ class SourceParser {
         buffer = []
         parametersMap = [:]
         parameters = []
-        format = .invalid
+        format = nil
         basename = (url.lastPathComponent as NSString).deletingPathExtension
         
         try autoreleasepool {
@@ -289,7 +289,7 @@ class SourceParser {
                 throw SourceParserError.invalidParameterPragma
             }
         } else if line.hasPrefix(Prefixes.pragmaFormat) {
-            if format != .invalid {
+            if format != nil {
                 throw SourceParserError.invalidParameterPragma
             }
             
@@ -300,7 +300,7 @@ class SourceParser {
             if let fmt = tmp as String? {
                 format = .init(glslangFormat: fmt)
             }
-            if format == .invalid {
+            if format == nil {
                 throw SourceParserError.invalidFormatPragma
             }
         }

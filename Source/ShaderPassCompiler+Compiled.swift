@@ -124,7 +124,7 @@ extension ShaderPassCompiler {
                      scaleY: pass.scaleY,
                      filter: pass.filter,
                      wrapMode: pass.wrapMode,
-                     format: try .init(pass.format),
+                     format: pass.format,
                      isFeedback: false,
                      buffers: buffers,
                      textures: textures,

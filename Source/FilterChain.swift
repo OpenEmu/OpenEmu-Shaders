@@ -910,7 +910,7 @@ final public class FilterChain: ScreenshotSource {
                            passSemantics: sem,
                            pass: pass)
             self.pass[passNumber].bindings = bindings
-            self.pass[passNumber].format   = pass.format.metalPixelFormat
+            self.pass[passNumber].format   = .init(pass.format)
             self.pass[passNumber].frameCountMod = UInt32(pass.frameCountMod)
             
             // update scaling
@@ -1127,4 +1127,109 @@ extension TextureSize {
 private struct Texture {
     var view: MTLTexture?
     var size: TextureSize = .zero
+}
+
+extension MTLPixelFormat {
+    
+    // swiftlint:disable cyclomatic_complexity
+    init(_ pixelFormat: Compiled.PixelFormat) {
+        switch pixelFormat {
+        case .r8Unorm:
+            self = .r8Unorm
+        case .r8Uint:
+            self = .r8Uint
+        case .r8Sint:
+            self = .r8Sint
+        case .rg8Unorm:
+            self = .rg8Unorm
+        case .rg8Uint:
+            self = .rg8Uint
+        case .rg8Sint:
+            self = .rg8Sint
+        case .rgba8Unorm:
+            self = .rgba8Unorm
+        case .rgba8Uint:
+            self = .rgba8Uint
+        case .rgba8Sint:
+            self = .rgba8Sint
+        case .rgba8Unorm_srgb:
+            self = .rgba8Unorm_srgb
+        case .rgb10a2Unorm:
+            self = .rgb10a2Unorm
+        case .rgb10a2Uint:
+            self = .rgb10a2Uint
+        case .r16Uint:
+            self = .r16Uint
+        case .r16Sint:
+            self = .r16Sint
+        case .r16Float:
+            self = .r16Float
+        case .rg16Uint:
+            self = .rg16Uint
+        case .rg16Sint:
+            self = .rg16Sint
+        case .rg16Float:
+            self = .rg16Float
+        case .rgba16Uint:
+            self = .rgba16Uint
+        case .rgba16Sint:
+            self = .rgba16Sint
+        case .rgba16Float:
+            self = .rgba16Float
+        case .r32Uint:
+            self = .r32Uint
+        case .r32Sint:
+            self = .r32Sint
+        case .r32Float:
+            self = .r32Float
+        case .rg32Uint:
+            self = .rg32Uint
+        case .rg32Sint:
+            self = .rg32Sint
+        case .rg32Float:
+            self = .rg32Float
+        case .rgba32Uint:
+            self = .rgba32Uint
+        case .rgba32Sint:
+            self = .rgba32Sint
+        case .rgba32Float:
+            self = .rgba32Float
+        case .bgra8Unorm_srgb:
+            self = .bgra8Unorm_srgb
+        case .bgra8Unorm:
+            self = .bgra8Unorm
+        }
+    }
+    
+    /// Returns the number of bytes per pixel for the given format; otherwise, 0 if the format is not supported
+    var bytesPerPixel: Int {
+        switch self {
+        case .a8Unorm, .r8Unorm, .r8Unorm_srgb, .r8Snorm, .r8Uint, .r8Sint:
+            return 1
+            
+        case .r16Unorm, .r16Snorm, .r16Uint, .r16Sint, .r16Float:
+            return 2
+            
+        case .rg8Unorm, .rg8Unorm_srgb, .rg8Snorm, .rg8Uint, .rg8Sint, .b5g6r5Unorm, .a1bgr5Unorm, .abgr4Unorm,
+                .bgr5A1Unorm:
+            return 2
+            
+        case .r32Uint, .r32Sint, .r32Float, .rg16Unorm, .rg16Snorm, .rg16Uint, .rg16Sint, .rg16Float, .rgba8Unorm,
+                .rgba8Unorm_srgb, .rgba8Snorm, .rgba8Uint, .rgba8Sint, .bgra8Unorm, .bgra8Unorm_srgb, .rgb10a2Unorm,
+                .rgb10a2Uint, .rg11b10Float, .rgb9e5Float, .bgr10a2Unorm, .bgr10_xr, .bgr10_xr_srgb:
+            return 4
+            
+        case .rg32Uint, .rg32Sint, .rg32Float, .rgba16Unorm, .rgba16Snorm, .rgba16Uint, .rgba16Sint, .rgba16Float,
+                .bgra10_xr, .bgra10_xr_srgb:
+            return 8
+            
+        case .rgba32Uint, .rgba32Sint, .rgba32Float:
+            return 16
+            
+        case .invalid:
+            return 0
+        default:
+            return 0
+        }
+    }
 }
