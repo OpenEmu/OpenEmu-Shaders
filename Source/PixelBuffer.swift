@@ -175,9 +175,7 @@ public class PixelBuffer {
     }
 }
 
-public enum OEMTLPixelFormat: Int, RawRepresentable, CaseIterable {
-    case invalid
-    
+public enum OEMTLPixelFormat: Int, CaseIterable {
     // 16-bit formats
     case bgra4Unorm
     case b5g6r5Unorm
@@ -198,9 +196,6 @@ public enum OEMTLPixelFormat: Int, RawRepresentable, CaseIterable {
             
         case .bgra8Unorm, .bgrx8Unorm:
             return true
-            
-        default:
-            return false
         }
     }
     
@@ -212,9 +207,6 @@ public enum OEMTLPixelFormat: Int, RawRepresentable, CaseIterable {
             
         case .b5g6r5Unorm, .r5g5b5a1Unorm, .bgra4Unorm:
             return 2
-            
-        default:
-            return 4
         }
     }
 }

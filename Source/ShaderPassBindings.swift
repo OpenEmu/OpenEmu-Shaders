@@ -71,13 +71,8 @@ class ShaderPassTextureBinding {
 }
 
 class ShaderPassBindings {
-    public let index: Int
     public private(set) var buffers = [ShaderPassBufferBinding(), ShaderPassBufferBinding()] // equivalent to Constants.maxConstantBuffers
     public private(set) var textures: [ShaderPassTextureBinding] = []
-    
-    init(index: Int) {
-        self.index = index
-    }
     
     func addTexture(_ texture: UnsafeRawPointer, binding: Int, name: String) -> ShaderPassTextureBinding {
         let t = ShaderPassTextureBinding(texture: texture, binding: binding, name: name)

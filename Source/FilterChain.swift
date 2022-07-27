@@ -76,7 +76,7 @@ final public class FilterChain: ScreenshotSource {
     }
     private var outputFrame: OutputFrame = .init()
     
-    fileprivate struct Pass {
+    private struct Pass {
         var format          = MTLPixelFormat.bgra8Unorm
         var buffers         = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers)
         var vBuffers        = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for vertex binding
@@ -332,6 +332,7 @@ final public class FilterChain: ScreenshotSource {
         if historyNeedsInit {
             initHistory()
         } else {
+            // shift history and move last texture into first position
             let tmp = historyTextures[historyCount]
             for k in (1...historyCount).reversed() {
                 historyTextures[k] = historyTextures[k - 1]
@@ -372,7 +373,7 @@ final public class FilterChain: ScreenshotSource {
     
     private func resize() {
         let bounds = Self.fitAspectRectIntoRect(aspectSize: aspectSize, size: drawableSize)
-        if outputBounds.origin == bounds.origin && outputBounds.size == bounds.size {
+        if outputBounds == bounds {
             return
         }
         
@@ -442,42 +443,42 @@ final public class FilterChain: ScreenshotSource {
         
         defer { _clearTextures.removeAll(keepingCapacity: true) }
         
-        if #available(macOS 10.15, *) {
-            /**
-             Find the size of the largest texture, in order to allocate a buffer with at least enough space for all textures.
-             */
-            var sizeMax = 0
-            for t in _clearTextures {
-                let bytesPerPixel = t.pixelFormat.bytesPerPixel
-                precondition(bytesPerPixel > 0, "Unable to determine bytes per pixel for pixel format \(t.pixelFormat)")
-                
-                let bytesPerRow   = t.width  * bytesPerPixel
-                let bytesPerImage = t.height * bytesPerRow
-                if bytesPerImage > sizeMax {
-                    sizeMax = bytesPerImage
-                }
+        guard #available(macOS 10.15, *) else { return }
+        
+        /**
+         Find the size of the largest texture, in order to allocate a buffer with at least enough space for all textures.
+         */
+        var sizeMax = 0
+        for t in _clearTextures {
+            let bytesPerPixel = t.pixelFormat.bytesPerPixel
+            precondition(bytesPerPixel > 0, "Unable to determine bytes per pixel for pixel format \(t.pixelFormat)")
+            
+            let bytesPerRow   = t.width  * bytesPerPixel
+            let bytesPerImage = t.height * bytesPerRow
+            if bytesPerImage > sizeMax {
+                sizeMax = bytesPerImage
             }
+        }
+        
+        /**
+         Allocate a buffer over the entire heap and fill it with zeros
+         */
+        if let bce = commandBuffer.makeBlitCommandEncoder(),
+           let buf = device.makeBuffer(length: sizeMax, options: [.storageModePrivate]) {
+            bce.fill(buffer: buf, range: 0..<sizeMax, value: 0)
             
             /**
-             Allocate a buffer over the entire heap and fill it with zeros
+             Use the cleared buffer to clear the destination texture.
              */
-            if let bce = commandBuffer.makeBlitCommandEncoder(),
-               let buf = device.makeBuffer(length: sizeMax, options: [.storageModePrivate]) {
-                bce.fill(buffer: buf, range: 0..<sizeMax, value: 0)
-                
-                /**
-                 Use the cleared buffer to clear the destination texture.
-                 */
-                for t in _clearTextures {
-                    let bytesPerPixel = t.pixelFormat.bytesPerPixel
-                    let bytesPerRow   = t.width  * bytesPerPixel
-                    let bytesPerImage = t.height * bytesPerRow
-                    let sourceSize    = MTLSize(width: t.width, height: t.height, depth: 1)
-                    bce.copy(from: buf, sourceOffset: 0, sourceBytesPerRow: bytesPerRow, sourceBytesPerImage: bytesPerImage, sourceSize: sourceSize,
-                             to: t, destinationSlice: 0, destinationLevel: 0, destinationOrigin: .init())
-                }
-                bce.endEncoding()
+            for t in _clearTextures {
+                let bytesPerPixel = t.pixelFormat.bytesPerPixel
+                let bytesPerRow   = t.width  * bytesPerPixel
+                let bytesPerImage = t.height * bytesPerRow
+                let sourceSize    = MTLSize(width: t.width, height: t.height, depth: 1)
+                bce.copy(from: buf, sourceOffset: 0, sourceBytesPerRow: bytesPerRow, sourceBytesPerImage: bytesPerImage, sourceSize: sourceSize,
+                         to: t, destinationSlice: 0, destinationLevel: 0, destinationOrigin: .init())
             }
+            bce.endEncoding()
         }
     }
     
@@ -537,7 +538,7 @@ final public class FilterChain: ScreenshotSource {
     
     private func prepareSourceTexture(_ sourceTexture: MTLTexture, commandBuffer: MTLCommandBuffer) {
         if historyCount == 0 {
-            // save a copy by setting the sourceTexture to Original / OriginalHistory0
+            // save a copy by setting the sourceTexture to Original / OriginalHistory0 semantic
             initTexture(&historyTextures[0], withTexture: sourceTexture)
         } else {
             let texture = fetchNextHistoryTexture()
@@ -902,7 +903,7 @@ final public class FilterChain: ScreenshotSource {
                 }
             }
             
-            let bindings = ShaderPassBindings(index: passNumber)
+            let bindings = ShaderPassBindings()
             let pass = ss.passes[passNumber]
             updateBindings(passBindings: bindings,
                            forPassNumber: passNumber,
