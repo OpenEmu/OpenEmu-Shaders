@@ -64,19 +64,42 @@ extension OEShaders.Shader {
             }
             
             let imgSize = CGSize(width: ctx.width, height: ctx.height)
-            fi.setSourceRect(CGRect(x: 0, y: 0, width: ctx.width, height: ctx.height), aspect: imgSize)
+            let sourceRect = CGRect(x: 0, y: 0, width: ctx.width, height: ctx.height)
+            fi.setSourceRect(sourceRect, aspect: imgSize)
             fi.drawableSize = imgSize.applying(.init(scaleX: CGFloat(outputScale), y: CGFloat(outputScale)))
             
-            let buf = fi.newBuffer(withFormat: .bgra8Unorm, height: UInt(ctx.height), bytesPerRow: UInt(ctx.bytesPerRow))
+            let converter = try MTLPixelConverter(device: dev)
+            let buf = PixelBuffer.makeBuffer(withDevice: dev,
+                                             converter: converter,
+                                             format: .bgra8Unorm,
+                                             height: ctx.height,
+                                             bytesPerRow: ctx.bytesPerRow)
+
+            buf.outputRect = sourceRect
             buf.contents.copyMemory(from: ctx.data!, byteCount: ctx.height * ctx.bytesPerRow)
             
-            let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
-                                                              width: Int(fi.drawableSize.width), height: Int(fi.drawableSize.height),
-                                                              mipmapped: false)
-            td.storageMode = .private
-            td.usage = .renderTarget
-            
-            let tex = dev.makeTexture(descriptor: td)
+            // make the buffer target texture
+            let bufferTexture: MTLTexture
+            do {
+                let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
+                                                                  width: Int(ctx.width),
+                                                                  height: Int(ctx.height),
+                                                                  mipmapped: false)
+                td.storageMode = .private
+                td.usage = [.shaderRead, .shaderWrite]
+                bufferTexture = dev.makeTexture(descriptor: td)!
+            }
+
+            // make render texture
+            let tex: MTLTexture
+            do {
+                let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
+                                                                  width: Int(fi.drawableSize.width), height: Int(fi.drawableSize.height),
+                                                                  mipmapped: false)
+                td.storageMode = .private
+                td.usage = .renderTarget
+                tex = dev.makeTexture(descriptor: td)!
+            }
             
             let rpd = MTLRenderPassDescriptor()
             rpd.colorAttachments[0].clearColor = .init(red: 0, green: 0, blue: 0, alpha: 1)
@@ -87,7 +110,8 @@ extension OEShaders.Shader {
             // warm up
             do {
                 let cb = cq.makeCommandBuffer()!
-                fi.render(withCommandBuffer: cb, renderPassDescriptor: rpd)
+                buf.prepare(withCommandBuffer: cb, texture: bufferTexture)
+                fi.render(sourceTexture: bufferTexture, commandBuffer: cb, renderPassDescriptor: rpd)
                 cb.commit()
                 cb.waitUntilCompleted()
             }
@@ -101,7 +125,8 @@ extension OEShaders.Shader {
                 autoreleasepool {
                     scope.begin()
                     let cb = cq.makeCommandBuffer()!
-                    fi.render(withCommandBuffer: cb, renderPassDescriptor: rpd)
+                    buf.prepare(withCommandBuffer: cb, texture: bufferTexture)
+                    fi.render(sourceTexture: bufferTexture, commandBuffer: cb, renderPassDescriptor: rpd)
                     cb.commit()
                     cb.waitUntilCompleted()
                     scope.end()

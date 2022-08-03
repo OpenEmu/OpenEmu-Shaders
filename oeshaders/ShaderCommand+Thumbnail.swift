@@ -67,15 +67,42 @@ This command generates a thumbnail image of a shader using a user-specified sour
             }
             
             let imgSize = CGSize(width: ctx.width, height: ctx.height)
-            fi.setSourceRect(CGRect(x: 0, y: 0, width: ctx.width, height: ctx.height), aspect: imgSize)
+            let sourceRect = CGRect(x: 0, y: 0, width: ctx.width, height: ctx.height)
+            fi.setSourceRect(sourceRect, aspect: imgSize)
             fi.drawableSize = imgSize.applying(.init(scaleX: CGFloat(outputScale), y: CGFloat(outputScale)))
             
-            let buf = fi.newBuffer(withFormat: .bgra8Unorm, height: UInt(ctx.height), bytesPerRow: UInt(ctx.bytesPerRow))
+            let converter = try MTLPixelConverter(device: dev)
+            let buf = PixelBuffer.makeBuffer(withDevice: dev,
+                                             converter: converter,
+                                             format: .bgra8Unorm,
+                                             height: ctx.height,
+                                             bytesPerRow: ctx.bytesPerRow)
+            buf.outputRect = sourceRect
             buf.contents.copyMemory(from: ctx.data!, byteCount: ctx.height * ctx.bytesPerRow)
             
-            let ss = Screenshot(device: dev)
-            let outRep = ss.getCGImageFromOutputWithFilterChain(fi)
+            // make the buffer target texture
+            let bufferTexture: MTLTexture
+            do {
+                let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
+                                                                  width: Int(ctx.width),
+                                                                  height: Int(ctx.height),
+                                                                  mipmapped: false)
+                td.storageMode = .private
+                td.usage = [.shaderRead, .shaderWrite]
+                bufferTexture = dev.makeTexture(descriptor: td)!
+            }
+            
+            let cq = dev.makeCommandQueue()!
+            let cb = cq.makeCommandBuffer()!
+            
+            buf.prepare(withCommandBuffer: cb, texture: bufferTexture)
 
+            let ss = Screenshot(device: dev)
+            guard let outRep = ss.applyFilterChain(fi, to: bufferTexture, commandBuffer: cb) else {
+                FileHandle.standardError.write("Unable to generate image.\n".data(using: .utf8)!)
+                throw ExitCode.failure
+            }
+            
             let data = NSMutableData()
             if let dest = CGImageDestinationCreateWithData(data, UTType.png.identifier as CFString, 1, nil) {
                 CGImageDestinationAddImage(dest, outRep, nil)

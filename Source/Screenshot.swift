@@ -26,99 +26,23 @@ import Foundation
 import CoreImage
 import CoreGraphics
 
-public protocol ScreenshotSource {
-    var drawableSize: CGSize { get }
-    var outputBounds: CGRect { get }
-    var sourceTexture: MTLTexture? { get }
-    var sourceTextureIsFlipped: Bool { get }
-    func render(withCommandBuffer commandBuffer: MTLCommandBuffer,
-                renderPassDescriptor rpd: MTLRenderPassDescriptor)
-    func renderSource(withCommandBuffer commandBuffer: MTLCommandBuffer) -> MTLTexture
-}
-
-public class Screenshot: NSObject {
-    let device: MTLDevice
-    let commandQueue: MTLCommandQueue
+public class Screenshot {
+    private let device: MTLDevice
+    private let commandQueue: MTLCommandQueue
     
     public init(device: MTLDevice) {
         self.device = device
         self.commandQueue = device.makeCommandQueue()!
     }
     
-    var screenshotTexture: MTLTexture?
-    
-    func screenshotTexture(_ size: CGSize) -> MTLTexture? {
-        if let screenshotTexture = screenshotTexture,
-           screenshotTexture.width == Int(size.width) && screenshotTexture.height == Int(size.height) {
-            return screenshotTexture
-        }
-        
-        let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
-                                                          width: Int(size.width),
-                                                          height: Int(size.height),
-                                                          mipmapped: false)
-        td.storageMode = .private
-        td.usage = [.shaderRead, .renderTarget]
-        screenshotTexture = device.makeTexture(descriptor: td)
-        return screenshotTexture
-    }
-    
-    func fromMTLTexture(tex: MTLTexture, rect: CGRect) -> CIImage? {
-        let opts: [CIImageOption: Any] = [
-            .nearestSampling: true,
-        ]
-        
-        guard var img = CIImage(mtlTexture: tex, options: opts)
-        else { return nil }
-        img = img.settingAlphaOne(in: img.extent)
-        img = img.cropped(to: rect)
-        return img.transformed(by: .identity.scaledBy(x: 1, y: -1).translatedBy(x: 0, y: img.extent.size.height))
-    }
-    
-    lazy var ciContext: CIContext = {
-        CIContext(mtlDevice: device)
-    }()
-    
-    func imageWithCIImage(_ img: CIImage) -> CGImage {
-        let cs = CGColorSpace(name: CGColorSpace.sRGB)!
-        let ctx = ciContext
-        if let cgImgTmp = ctx.createCGImage(img, from: img.extent, format: .BGRA8, colorSpace: img.colorSpace) {
-            if let cgImg = cgImgTmp.copy(colorSpace: cs) {
-                return cgImg
-            }
-        }
-        return blackImage
-    }
-    
-    /// Returns a raw image of the last rendered source pixel buffer.
-    /// 
-    /// The image dimensions are equal to the source pixel
-    /// buffer and therefore not aspect corrected.
-    public func getCGImageFromSourceWithFilterChain(_ f: ScreenshotSource) -> CGImage {
-        guard let commandBuffer = commandQueue.makeCommandBuffer()
-        else { return blackImage }
-        
-        let tex = f.renderSource(withCommandBuffer: commandBuffer)
-        commandBuffer.commit()
-        commandBuffer.waitUntilCompleted()
-        
-        let opts: [CIImageOption: Any] = [
-            .nearestSampling: true,
-        ]
-        
-        guard var img = CIImage(mtlTexture: tex, options: opts)
-        else { return blackImage }
-        img = img.settingAlphaOne(in: img.extent)
-        if f.sourceTexture == nil || !f.sourceTextureIsFlipped {
-            img = img.transformed(by: .identity.scaledBy(x: 1, y: -1).translatedBy(x: 0, y: img.extent.size.height))
-        }
-        return imageWithCIImage(img)
-    }
-    
-    /// Returns an image of the last source image after all shaders have been applied
-    public func getCGImageFromOutputWithFilterChain(_ f: ScreenshotSource) -> CGImage {
-        guard let tex = screenshotTexture(f.drawableSize)
-        else { return blackImage }
+    /// Apples the filter chain to the source texture and returns the result of the operation.
+    /// - Parameters:
+    ///   - f: The source filter chain.
+    ///   - sourceTexture: The texture to apply the filter effects to.
+    ///   - flip: `true` to flip the final output image.
+    /// - Returns: A transformed version of `sourceTexture`.
+    public func applyFilterChain(_ f: FilterChain, to sourceTexture: MTLTexture, flip: Bool = false, commandBuffer: MTLCommandBuffer? = nil) -> CGImage? {
+        guard let tex = outputTexture(f.drawableSize) else { return nil }
         
         let rpd = MTLRenderPassDescriptor()
         if let ca = rpd.colorAttachments[0] {
@@ -127,30 +51,71 @@ public class Screenshot: NSObject {
             ca.texture = tex
         }
         
-        guard let commandBuffer = commandQueue.makeCommandBuffer()
-        else { return blackImage }
+        guard let commandBuffer = commandBuffer ?? commandQueue.makeCommandBuffer() else { return nil }
         
-        f.render(withCommandBuffer: commandBuffer, renderPassDescriptor: rpd)
+        f.render(sourceTexture: sourceTexture,
+                 commandBuffer: commandBuffer,
+                 renderPassDescriptor: rpd,
+                 flipVertically: flip)
         commandBuffer.commit()
         commandBuffer.waitUntilCompleted()
         
-        if let img = fromMTLTexture(tex: tex, rect: f.outputBounds) {
-            return imageWithCIImage(img)
+        guard let img = ciImagefromTexture(tex: tex, crop: f.outputBounds) else {
+            return nil
         }
-        return blackImage
+        return cgImageFromCIImage(img)
     }
     
-    lazy var blackImage: CGImage = {
-        let cs = CGColorSpace(name: CGColorSpace.sRGB)!
-        let ctx: CGContext = .init(data: nil,
-                                   width: 32, height: 32,
-                                   bitsPerComponent: 8,
-                                   bytesPerRow: 32 * 4,
-                                   space: cs,
-                                   bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue)!
+    // MARK: - Image helper functions
+    
+    public func ciImagefromTexture(tex: MTLTexture, crop: CGRect = .zero, flip: Bool = true) -> CIImage? {
+        let opts: [CIImageOption: Any] = [
+            .nearestSampling: true,
+        ]
         
-        ctx.setFillColor(.black)
-        ctx.fill(CGRect(x: 0, y: 0, width: 32, height: 32))
-        return ctx.makeImage()!
+        guard var img = CIImage(mtlTexture: tex, options: opts) else { return nil }
+        img = img.settingAlphaOne(in: img.extent)
+        
+        if !crop.isEmpty {
+            img = img.cropped(to: crop)
+        }
+        
+        if flip {
+            img = img.transformed(by: .identity.scaledBy(x: 1, y: -1).translatedBy(x: 0, y: img.extent.size.height))
+        }
+        
+        return img
+    }
+    
+    public func cgImageFromCIImage(_ img: CIImage) -> CGImage? {
+        let cs = CGColorSpace(name: CGColorSpace.sRGB)!
+        guard let cgImgTmp = ciContext.createCGImage(img, from: img.extent, format: .BGRA8, colorSpace: img.colorSpace) else {
+            return nil
+        }
+        return cgImgTmp.copy(colorSpace: cs)
+    }
+
+    // MARK: - Implemenation
+    
+    private var outputTexture: MTLTexture?
+    
+    private func outputTexture(_ size: CGSize) -> MTLTexture? {
+        if let outputTexture = outputTexture,
+           outputTexture.width == Int(size.width) && outputTexture.height == Int(size.height) {
+            return outputTexture
+        }
+        
+        let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
+                                                          width: Int(size.width),
+                                                          height: Int(size.height),
+                                                          mipmapped: false)
+        td.storageMode = .private
+        td.usage = [.shaderRead, .renderTarget]
+        outputTexture = device.makeTexture(descriptor: td)
+        return outputTexture
+    }
+    
+    private lazy var ciContext: CIContext = {
+        CIContext(mtlDevice: device)
     }()
 }

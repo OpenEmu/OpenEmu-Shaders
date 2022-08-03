@@ -28,7 +28,7 @@ import MetalKit
 @_implementationOnly import os.log
 
 // swiftlint:disable type_body_length
-final public class FilterChain: ScreenshotSource {
+final public class FilterChain {
     enum InitError: Error {
         case invalidSamplerState
     }
@@ -36,7 +36,6 @@ final public class FilterChain: ScreenshotSource {
     private let device: MTLDevice
     private let library: MTLLibrary
     private let loader: MTKTextureLoader
-    private let converter: MTLPixelConverter
     
     private var vertex = [
         Vertex(position: simd_float4(x: 0, y: 1, z: 0, w: 1), texCoord: simd_float2(x: 0, y: 1)),
@@ -52,7 +51,6 @@ final public class FilterChain: ScreenshotSource {
     ]
     let vertexSizeBytes: Int
     
-    private var pixelBuffer: PixelBuffer?
     private var samplers: SamplerFilterArray<MTLSamplerState>
     
     public var hasShader: Bool = false
@@ -130,7 +128,6 @@ final public class FilterChain: ScreenshotSource {
     private var historyNeedsInit        = false
     
     public private(set) var sourceRect = CGRect.zero
-    public var sourceTextureIsFlipped  = false
     
     private var aspectSize = CGSize.zero
     
@@ -190,7 +187,6 @@ final public class FilterChain: ScreenshotSource {
         
         library         = try device.makeDefaultLibrary(bundle: Bundle(for: Self.self))
         loader          = .init(device: device)
-        converter       = try .init(device: device)
         pipelineState   = try Self.makePipelineState(device, library)
         samplers        = try Self.makeSamplers(device)
         vertexSizeBytes = MemoryLayout<Vertex>.stride * vertex.count
@@ -295,7 +291,7 @@ final public class FilterChain: ScreenshotSource {
         return samplers.map { $0.compactMap { $0 } } as! SamplerFilterArray<MTLSamplerState>
     }
     
-    var rotation: Float {
+    public var rotation: Float {
         get { _rotation }
         set {
             _rotation = newValue * 270
@@ -316,13 +312,6 @@ final public class FilterChain: ScreenshotSource {
             samplers[.unspecified] = samplers[.linear]
         } else {
             samplers[.unspecified] = samplers[.nearest]
-        }
-    }
-    
-    public var sourceTexture: MTLTexture? {
-        didSet {
-            pixelBuffer         = nil
-            _pixelBufferTexture = nil
         }
     }
     
@@ -399,9 +388,6 @@ final public class FilterChain: ScreenshotSource {
         }
         
         sourceRect = rect
-        if let pixelBuffer = pixelBuffer {
-            pixelBuffer.outputRect = rect
-        }
         aspectSize = aspect
         resize()
     }
@@ -410,29 +396,6 @@ final public class FilterChain: ScreenshotSource {
         didSet {
             resize()
         }
-    }
-    
-    public func newBuffer(withFormat format: OEMTLPixelFormat, height: UInt, bytesPerRow: UInt) -> PixelBuffer {
-        let pb = PixelBuffer.makeBuffer(withDevice: device,
-                                        converter: converter,
-                                        format: format,
-                                        height: Int(height),
-                                        bytesPerRow: Int(bytesPerRow))
-        pb.outputRect = sourceRect
-        pixelBuffer = pb
-        return pb
-    }
-    
-    public func newBuffer(withFormat format: OEMTLPixelFormat, height: UInt, bytesPerRow: UInt, bytes pointer: UnsafeMutableRawPointer) -> PixelBuffer {
-        let pb = PixelBuffer.makeBuffer(withDevice: device,
-                                        converter: converter,
-                                        format: format,
-                                        height: Int(height),
-                                        bytesPerRow: Int(bytesPerRow),
-                                        bytes: pointer)
-        pb.outputRect = sourceRect
-        pixelBuffer = pb
-        return pb
     }
     
     /// A list of textures to be cleared before rendering begins.
@@ -499,46 +462,15 @@ final public class FilterChain: ScreenshotSource {
         return historyTextures[0].view!
     }
     
-    /// Target texture used by pixel buffer when the current shader does not require history
-    private var _pixelBufferTexture: MTLTexture?
-    
-    private var pixelBufferTexture: MTLTexture {
-        if let _pixelBufferTexture = _pixelBufferTexture,
-           _pixelBufferTexture.width == Int(sourceRect.width) &&
-            _pixelBufferTexture.height == Int(sourceRect.height) {
-            return _pixelBufferTexture
-        }
+    private func prepareNextFrame(sourceTexture: MTLTexture, commandBuffer: MTLCommandBuffer) {
+        frameCount += 1
         
-        let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm,
-                                                          width: Int(sourceRect.width),
-                                                          height: Int(sourceRect.height),
-                                                          mipmapped: false)
-        td.storageMode = .private
-        td.usage = [.shaderRead, .shaderWrite]
-        if let tex = device.makeTexture(descriptor: td) {
-            _pixelBufferTexture = tex
-            return tex
-        }
+        resizeRenderTargets()
+        updateHistory()
+        clearTexturesWithCommandBuffer(commandBuffer)
         
-        fatalError("Unable to create pixelBufferTexture")
-    }
-    
-    private func preparePixelBuffer(_ pixelBuffer: PixelBuffer, commandBuffer: MTLCommandBuffer) {
-        var texture: MTLTexture
         if historyCount == 0 {
-            texture = pixelBufferTexture
-            if historyTextures[0].view == nil {
-                initTexture(&historyTextures[0], withTexture: texture)
-            }
-        } else {
-            texture = fetchNextHistoryTexture()
-        }
-        pixelBuffer.prepare(withCommandBuffer: commandBuffer, texture: texture)
-    }
-    
-    private func prepareSourceTexture(_ sourceTexture: MTLTexture, commandBuffer: MTLCommandBuffer) {
-        if historyCount == 0 {
-            // save a copy by setting the sourceTexture to Original / OriginalHistory0 semantic
+            // No need to copy, set the sourceTexture to Original / OriginalHistory0 semantic
             initTexture(&historyTextures[0], withTexture: sourceTexture)
         } else {
             let texture = fetchNextHistoryTexture()
@@ -552,20 +484,6 @@ final public class FilterChain: ScreenshotSource {
                          to: texture, destinationSlice: 0, destinationLevel: 0, destinationOrigin: zero)
                 bce.endEncoding()
             }
-        }
-    }
-    
-    private func prepareNextFrameWithCommandBuffer(_ commandBuffer: MTLCommandBuffer) {
-        frameCount += 1
-        
-        resizeRenderTargets()
-        updateHistory()
-        clearTexturesWithCommandBuffer(commandBuffer)
-        
-        if let pixelBuffer = pixelBuffer {
-            preparePixelBuffer(pixelBuffer, commandBuffer: commandBuffer)
-        } else if let sourceTexture = sourceTexture {
-            prepareSourceTexture(sourceTexture, commandBuffer: commandBuffer)
         }
     }
     
@@ -603,22 +521,19 @@ final public class FilterChain: ScreenshotSource {
         rce.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
     }
     
-    public func renderSource(withCommandBuffer commandBuffer: MTLCommandBuffer) -> MTLTexture {
-        prepareNextFrameWithCommandBuffer(commandBuffer)
-        return historyTextures[0].view!
-    }
-    
-    public func render(withCommandBuffer commandBuffer: MTLCommandBuffer,
-                       renderPassDescriptor rpd: MTLRenderPassDescriptor) {
-        renderOffscreenPassesWithCommandBuffer(commandBuffer)
+    public func render(sourceTexture: MTLTexture,
+                       commandBuffer: MTLCommandBuffer,
+                       renderPassDescriptor rpd: MTLRenderPassDescriptor,
+                       flipVertically: Bool = false) {
+        renderOffscreenPasses(sourceTexture: sourceTexture, commandBuffer: commandBuffer)
         if let rce = commandBuffer.makeRenderCommandEncoder(descriptor: rpd) {
-            renderFinalPass(withCommandEncoder: rce)
+            renderFinalPass(withCommandEncoder: rce, flipVertically: flipVertically)
             rce.endEncoding()
         }
     }
     
-    public func renderOffscreenPassesWithCommandBuffer(_ commandBuffer: MTLCommandBuffer) {
-        prepareNextFrameWithCommandBuffer(commandBuffer)
+    public func renderOffscreenPasses(sourceTexture: MTLTexture, commandBuffer: MTLCommandBuffer) {
+        prepareNextFrame(sourceTexture: sourceTexture, commandBuffer: commandBuffer)
         updateBuffersForPasses()
         
         guard hasShader && passCount > 0 else { return }
@@ -705,9 +620,9 @@ final public class FilterChain: ScreenshotSource {
         rce.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
     }
     
-    public func renderFinalPass(withCommandEncoder rce: MTLRenderCommandEncoder) {
+    public func renderFinalPass(withCommandEncoder rce: MTLRenderCommandEncoder, flipVertically: Bool) {
         rce.setViewport(outputFrame.viewport)
-        if sourceTexture != nil && sourceTextureIsFlipped {
+        if flipVertically {
             rce.setVertexBytes(&vertexFlipped, length: vertexSizeBytes, index: BufferIndex.positions.rawValue)
         } else {
             rce.setVertexBytes(&vertex, length: vertexSizeBytes, index: BufferIndex.positions.rawValue)
@@ -1015,18 +930,12 @@ final public class FilterChain: ScreenshotSource {
     }
     
     private func loadLuts(_ images: [Compiled.LUT]) {
-        var opts: [MTKTextureLoader.Option: Any] = [
+        let opts: [MTKTextureLoader.Option: Any] = [
             .generateMipmaps: true,
             .allocateMipmaps: true,
             .SRGB: false,
             .textureStorageMode: MTLStorageMode.private.rawValue,
         ]
-        
-        // if the source texture exists and is flipped
-        if sourceTexture != nil && sourceTextureIsFlipped {
-            // NOTE: causes Kurozumi to render colors incorrectly (purple) due to LUT being flipped
-            // opts[.origin] = MTKTextureLoader.Origin.flippedVertically.rawValue
-        }
         
         var i: Int = 0
         for lut in images {
