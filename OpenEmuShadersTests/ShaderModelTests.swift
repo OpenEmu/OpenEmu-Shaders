@@ -35,7 +35,8 @@ shadow           = "some/path.png"
 shadow_wrap_mode = clamp_to_border
 """
         do {
-            _ = try ShaderConfigSerialization.makeShaderModel(from: d)
+            let model = try ShaderConfigSerialization.makeShaderModel(from: d)
+            XCTAssertEqual(model.passes.count, 1)
         } catch {
             XCTFail("unexpected failure: \(error)")
         }

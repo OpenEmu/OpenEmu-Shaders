@@ -143,6 +143,7 @@ final public class FilterChain {
     private var uniforms         = Uniforms.empty
     private var uniformsNoRotate = Uniforms.empty
     
+    /// Used as a fallback image when a look-up texture cannot be loaded.
     private lazy var checkers: MTLTexture = {
         // swiftlint:disable identifier_name force_try
         let T0 = UInt32(0xff000000)
@@ -217,7 +218,7 @@ final public class FilterChain {
         psd.label = "Pipeline+No Alpha"
         
         if let ca = psd.colorAttachments[0] {
-            ca.pixelFormat                 = .bgra8Unorm // NOTE(sgc): expected layer format (could be taken from layer.pixelFormat)
+            ca.pixelFormat                 = .bgra8Unorm // NOTE(sgc): Required layer format (could be taken from layer.pixelFormat)
             ca.isBlendingEnabled           = false
             ca.sourceAlphaBlendFactor      = .sourceAlpha
             ca.sourceRGBBlendFactor        = .sourceAlpha
@@ -408,9 +409,7 @@ final public class FilterChain {
         
         guard #available(macOS 10.15, *) else { return }
         
-        /**
-         Find the size of the largest texture, in order to allocate a buffer with at least enough space for all textures.
-         */
+        // Find the size of the largest texture, in order to allocate a buffer with at least enough space for all textures.
         var sizeMax = 0
         for t in _clearTextures {
             let bytesPerPixel = t.pixelFormat.bytesPerPixel
@@ -423,16 +422,12 @@ final public class FilterChain {
             }
         }
         
-        /**
-         Allocate a buffer over the entire heap and fill it with zeros
-         */
+        // Allocate a buffer over the entire heap and fill it with zeros
         if let bce = commandBuffer.makeBlitCommandEncoder(),
            let buf = device.makeBuffer(length: sizeMax, options: [.storageModePrivate]) {
             bce.fill(buffer: buf, range: 0..<sizeMax, value: 0)
             
-            /**
-             Use the cleared buffer to clear the destination texture.
-             */
+            // Use the cleared buffer to clear the destination texture.
             for t in _clearTextures {
                 let bytesPerPixel = t.pixelFormat.bytesPerPixel
                 let bytesPerRow   = t.width  * bytesPerPixel

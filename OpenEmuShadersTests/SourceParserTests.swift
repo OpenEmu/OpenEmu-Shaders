@@ -100,7 +100,7 @@ class SourceParserTests: XCTestCase {
             let url = URL(string: "mem://foo.slang")!
             let p   = try SourceParser(fromURL: url)
             XCTAssertEqual(p.name, "this_is_the_name")
-            XCTAssertEqual(p.format, MTLPixelFormat.r8Unorm)
+            XCTAssertEqual(p.format, .r8Unorm)
             let pp = p.parametersMap["FrameColor_R"]
             XCTAssertNotNil(pp)
 

@@ -246,7 +246,6 @@
 		0578144A243EA2390093CDF3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				0524FF892459E6C7005C5E83 /* ShaderModel.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -402,6 +401,7 @@
 		05F5494C229BBA6500561C14 /* Shader Reader */ = {
 			isa = PBXGroup;
 			children = (
+				0524FF892459E6C7005C5E83 /* ShaderModel.swift */,
 				A90203E4FFF77BAF2B3ECC24 /* Config.swift */,
 				0524FF842458B798005C5E83 /* SlangShader.swift */,
 				056AC378228BA8D9005018DA /* ShaderParameter.swift */,

@@ -26,14 +26,11 @@ import Foundation
 
 public class ShaderConfigSerialization {
     public enum Errors: LocalizedError {
-        case invalidPathExtension(String)
         case missingKey(String)
         case zeroShaders
         
         public var errorDescription: String? {
             switch self {
-            case .invalidPathExtension(let ext):
-                return String(format: NSLocalizedString("unsupported path extension '%@'", comment: "unexpected path extension"), ext)
             case .missingKey(let key):
                 return String(format: NSLocalizedString("missing key '%@'", comment: "shader is missing expected key"), key)
             case .zeroShaders:
@@ -42,25 +39,12 @@ public class ShaderConfigSerialization {
         }
     }
     
-    public class func config(fromURL url: URL) throws -> [String: AnyObject] {
-        if url.pathExtension == "plist" {
-            let data = try Data(contentsOf: url)
-            var fmt  = PropertyListSerialization.PropertyListFormat.xml
-            return try PropertyListSerialization.propertyList(from: data, format: &fmt) as? [String: AnyObject] ?? [:]
-        }
-        
-        if url.pathExtension == "slangp" {
-            return try self.parseConfig(try String(contentsOf: url))
-        }
-        
-        throw Errors.invalidPathExtension(url.pathExtension)
-    }
-
-    class func parseConfig(_ from: String) throws -> [String: AnyObject] {
-        var scanner = ConfigScanner(from)
+    public class func makeShaderModel(from s: String) throws -> ShaderModel {
+        var scanner = ConfigScanner(s)
         
         var d: [String: String] = [:]
-        scanning: while true {
+    scanning:
+        while true {
             switch scanner.scan() {
             case .keyval(let key, let val):
                 d[key] = val
@@ -77,149 +61,120 @@ public class ShaderConfigSerialization {
             throw Errors.zeroShaders
         }
         
-        var res    = [String: AnyObject]()
-        var passes = [[String: AnyObject]]()
-        for i in 0..<shaders {
-            passes.append(try Pass.parse(pass: i, d: d))
-        }
+        let passes = try (0..<shaders).map { try makeShaderPassModel(pass: $0, from: d) }
+        let textures = makeTextures(from: d)
+        let parameters = makeParameters(from: d)
         
-        res["passes"] = passes as AnyObject
-        
-        if let textures = Textures.parse(d: d) {
-            res["textures"] = textures as AnyObject
-        }
-        
-        if let parameters = Parameters.parse(d: d) {
-            res["parameters"] = parameters as AnyObject
-        }
-        
-        return res
+        return ShaderModel(passes: passes, textures: textures, parameters: parameters)
     }
     
-    struct Textures {
-        static func parse(d: [String: String]) -> [String: AnyObject]? {
-            guard let tv = d["textures"] else {
-                return nil
-            }
-            
-            let textures = tv.split(separator: ";")
-            if textures.isEmpty {
-                return nil
-            }
-            
-            var res = [String: AnyObject]()
-            
-            for t in textures {
-                let name    = String(t)
-                var texture = [String: AnyObject]()
-                
-                if let path = d[name] {
-                    texture["path"] = path as AnyObject
-                } else {
-                    // skip if no <name> = <path> key
-                    continue
-                }
-                
-                if let v = d["\(name)_wrap_mode"] {
-                    texture["wrapMode"] = v as AnyObject
-                }
-                if let v = d["\(name)_linear"], let bv = Bool(v) {
-                    texture["linear"] = bv as AnyObject
-                }
-                if let v = d["\(name)_mipmap"], let bv = Bool(v) {
-                    texture["mipmapInput"] = bv as AnyObject
-                }
-                
-                res[name] = texture as AnyObject
-            }
-            
-            return res
+    private static func makeShaderPassModel(pass i: Int, from d: [String: String]) throws -> ShaderPassModel {
+        let key = "shader\(i)"
+        guard let shader = d[key] else {
+            throw Errors.missingKey(key)
         }
+        
+        let pass = ShaderPassModel(pass: i, shader: shader)
+        
+        pass.wrapMode = d["wrap_mode\(i)"]
+        
+        for (from, to) in strings {
+            if let v = d["\(from)\(i)"] {
+                pass[keyPath: to] = v
+            }
+        }
+        for (from, to) in bools {
+            if let v = d["\(from)\(i)"], let bv = Bool(v) {
+                pass[keyPath: to] = bv
+            }
+        }
+        for (from, to) in uints {
+            if let v = d["\(from)\(i)"], let iv = UInt(v) {
+                pass[keyPath: to] = iv
+            }
+        }
+        for (from, to) in doubles {
+            if let v = d["\(from)\(i)"], let dv = Double(v) {
+                pass[keyPath: to] = dv
+            }
+        }
+        
+        return pass
     }
     
-    struct Parameters {
-        static func parse(d: [String: String]) -> [String: AnyObject]? {
-            guard let pv = d["parameters"] else {
-                return nil
-            }
-            
-            let parameters = pv.split(separator: ";")
-            if parameters.isEmpty {
-                return nil
-            }
-            
-            var res = [String: NSNumber]()
-            
-            for t in parameters {
-                let name = String(t)
-                if let v = d[name], let dv = Double(v) {
-                    res[name] = dv as NSNumber
-                }
-            }
-            
-            return res
+    private static func makeTextures(from d: [String: String]) -> [ShaderTextureModel]? {
+        guard let tv = d["textures"] else {
+            return nil
         }
+        
+        var res = [ShaderTextureModel]()
+        for t in tv.split(separator: ";") {
+            let name = String(t)
+            guard let path = d[name] else { continue }
+            
+            let wrapMode = d["\(name)_wrap_mode"]
+            let linear: Bool?
+            if let v = d["\(name)_linear"], let bv = Bool(v) {
+                linear = bv
+            } else {
+                linear = nil
+            }
+            let mipmapInput: Bool?
+            if let v = d["\(name)_mipmap"], let bv = Bool(v) {
+                mipmapInput = bv
+            } else {
+                mipmapInput = nil
+            }
+            
+            res.append(.init(name: name,
+                             path: path,
+                             wrapMode: wrapMode,
+                             linear: linear,
+                             mipmapInput: mipmapInput))
+        }
+        
+        return res.isEmpty ? nil : res
     }
     
-    struct Pass {
-        static func parse(pass i: Int, d: [String: String]) throws -> [String: AnyObject] {
-            var pass = [String: AnyObject]()
-            
-            let key = "shader\(i)"
-            guard let shader = d[key] else {
-                throw Errors.missingKey(key)
-            }
-            pass["shader"] = shader as AnyObject
-            
-            for (from, to) in strings {
-                if let v = d["\(from)\(i)"] {
-                    pass[to] = v as AnyObject
-                }
-            }
-            for (from, to) in bools {
-                if let v = d["\(from)\(i)"], let bv = Bool(v) {
-                    pass[to] = bv as AnyObject
-                }
-            }
-            for (from, to) in uints {
-                if let v = d["\(from)\(i)"], let iv = UInt(v) {
-                    pass[to] = iv as AnyObject
-                }
-            }
-            for (from, to) in doubles {
-                if let v = d["\(from)\(i)"], let dv = Double(v) {
-                    pass[to] = dv as AnyObject
-                }
-            }
-            
-            return pass
+    private static func makeParameters(from d: [String: String]) -> [ShaderParameterModel]? {
+        guard let pv = d["parameters"] else {
+            return nil
         }
         
-        static let strings = [
-            ("wrap_mode", "wrapMode"),
-            ("alias", "alias"),
-            ("scale_type", "scaleType"),
-            ("scale_type_x", "scaleTypeX"),
-            ("scale_type_y", "scaleTypeY"),
-        ]
+        var res = [ShaderParameterModel]()
+        for t in pv.split(separator: ";") {
+            let name = String(t)
+            if let v = d[name], let dv = Decimal(string: v) {
+                res.append(ShaderParameterModel(name: name, value: dv))
+            }
+        }
         
-        static let bools = [
-            ("filter_linear", "filterLinear"),
-            ("srgb_framebuffer", "srgbFramebuffer"),
-            ("float_framebuffer", "floatFramebuffer"),
-            ("mipmap_input", "mipmapInput"),
-        ]
-        
-        static let uints = [
-            ("frame_count_mod", "frameCountMod"),
-        ]
-        
-        static let doubles = [
-            ("scale", "scale"),
-            ("scale_x", "scaleX"),
-            ("scale_y", "scaleY"),
-        ]
+        return res.isEmpty ? nil : res
     }
+    
+    static let strings = [
+        ("alias", \ShaderPassModel.alias),
+        ("scale_type", \ShaderPassModel.scaleType),
+        ("scale_type_x", \ShaderPassModel.scaleTypeX),
+        ("scale_type_y", \ShaderPassModel.scaleTypeY),
+    ]
+    
+    static let bools = [
+        ("filter_linear", \ShaderPassModel.filterLinear),
+        ("srgb_framebuffer", \ShaderPassModel.srgbFramebuffer),
+        ("float_framebuffer", \ShaderPassModel.floatFramebuffer),
+        ("mipmap_input", \ShaderPassModel.mipmapInput),
+    ]
+    
+    static let uints = [
+        ("frame_count_mod", \ShaderPassModel.frameCountMod),
+    ]
+    
+    static let doubles = [
+        ("scale", \ShaderPassModel.scale),
+        ("scale_x", \ShaderPassModel.scaleX),
+        ("scale_y", \ShaderPassModel.scaleY),
+    ]
 }
 
 enum ConfigKeyValue {
