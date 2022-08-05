@@ -87,7 +87,7 @@ public final class SlangShader {
         sm.parameters?
             .forEach {
                 if let existing = parametersMap[$0.name] {
-                    existing.initial = NSDecimalNumber(decimal: $0.value).floatValue
+                    existing.initial = $0.value
                 }
             }
     }

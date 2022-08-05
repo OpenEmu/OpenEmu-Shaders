@@ -261,11 +261,11 @@ class SourceParser {
                 throw SourceParserError.invalidParameterPragma
             }
             count += 1
-            var initial: Float = 0, minimum: Float = 0, maximum: Float = 0, step: Float = 0
-            count += s.scanFloat(&initial) ? 1 : 0
-            count += s.scanFloat(&minimum) ? 1 : 0
-            count += s.scanFloat(&maximum) ? 1 : 0
-            count += s.scanFloat(&step) ? 1 : 0
+            var initial: Decimal = 0, minimum: Decimal = 0, maximum: Decimal = 0, step: Decimal = 0
+            count += s.scanDecimal(&initial) ? 1 : 0
+            count += s.scanDecimal(&minimum) ? 1 : 0
+            count += s.scanDecimal(&maximum) ? 1 : 0
+            count += s.scanDecimal(&step) ? 1 : 0
             
             if count == 5 {
                 step = 0.1 * (maximum - minimum)

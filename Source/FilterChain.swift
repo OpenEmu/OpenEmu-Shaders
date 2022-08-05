@@ -724,7 +724,7 @@ final public class FilterChain {
         
         parametersCount = ss.parameters.count
         parametersMap   = .init(uniqueKeysWithValues: ss.parameters.enumerated().map({ index, param in (param.name, index) }))
-        parameters      = .init(ss.parameters.map(\.initial))
+        parameters      = .init(ss.parameters.map({ ($0.initial as NSDecimalNumber).floatValue }))
         
         let options = MTLCompileOptions()
         options.fastMathEnabled = true

@@ -27,10 +27,10 @@ import Foundation
 public class ShaderParameter: CustomStringConvertible {
     public var name: String
     public var desc: String
-    public var initial: Float = 0.0
-    public var minimum: Float = 0.0
-    public var maximum: Float = 1.0
-    public var step: Float = 0.01
+    public var initial: Decimal = 0.0
+    public var minimum: Decimal = 0.0
+    public var maximum: Decimal = 1.0
+    public var step: Decimal = 0.01
 
     public init(name: String, desc: String) {
         self.name = name

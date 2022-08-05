@@ -30,10 +30,10 @@ public enum Compiled {
         public let index: Int
         public let name: String
         public let desc: String
-        public let initial: Float
-        public let minimum: Float
-        public let maximum: Float
-        public let step: Float
+        public let initial: Decimal
+        public let minimum: Decimal
+        public let maximum: Decimal
+        public let step: Decimal
         
         init(index: Int, source p: ShaderParameter) {
             self.index   = index
