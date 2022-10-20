@@ -728,8 +728,6 @@ final public class FilterChain {
         parametersMap   = .init(uniqueKeysWithValues: ss.parameters.enumerated().map({ index, param in (param.name, index) }))
         parameters      = .init(ss.parameters.map({ ($0.initial as NSDecimalNumber).floatValue }))
         
-        // TODO: Store ss.languageVersion in Compiled.Shader
-        // options.languageVersion = ss.languageVersion
         let texStride     = MemoryLayout<Texture>.stride
         let texViewOffset = MemoryLayout<Texture>.offset(of: \Texture.view)!
         let texSizeOffset = MemoryLayout<Texture>.offset(of: \Texture.size)!
@@ -862,7 +860,7 @@ final public class FilterChain {
             psd.vertexDescriptor = vd
             
             let options = MTLCompileOptions()
-            
+            options.languageVersion = try MTLLanguageVersion(ss.languageVersion)
             do {
                 let lib = try device.makeLibrary(source: pass.vertexSource, options: options)
                 psd.vertexFunction = lib.makeFunction(name: "main0")
