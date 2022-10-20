@@ -25,38 +25,72 @@
 import Foundation
 import ArgumentParser
 import OpenEmuShaders
+import Compression
 
 extension OEShaders {
-    struct Compile: ParsableCommand {
-        static var configuration = CommandConfiguration(abstract: "Commands for compiling shader effects.")
+    enum LanguageVersion: String, Codable, ExpressibleByArgument {
+        // case v30 = "3.0"
+        case v24 = "2.4"
+        case v23 = "2.3"
+        case v22 = "2.2"
+        case v21 = "2.1"
         
-        @Argument
-        var shaderPath: String
+        static var `default`: Self {
+            .v24
+        }
+    }
+
+    struct Compile: ParsableCommand {
+        static var configuration = CommandConfiguration(abstract: "Compile a shader effects into a single bundle.")
+        
+        @Flag(inversion: .prefixedEnableDisable)
+        var cache: Bool = true
+        
+        @Argument(help: "Name of Slang shader",
+                  transform: { URL(fileURLWithPath: $0) })
+        var shaderPath: URL
+        
+        @Argument(help: .init("Name of shader bundle",
+                              discussion: "If omitted, will default to the shader path name and .oecompiledshader extension."),
+                  transform: { URL(fileURLWithPath: $0) })
+        var outputPath: URL?
+        
+        @Argument(help: .init("Metal language version",
+                             discussion: "Specify the desired Metal language version used to generate the compiled shader."))
+        var languageVersion: LanguageVersion = .default
         
         func run() throws {
-            let shaderURL = URL(fileURLWithPath: shaderPath).absoluteURL
             let shader: SlangShader
             do {
-                shader = try SlangShader(fromURL: shaderURL)
+                shader = try SlangShader(fromURL: shaderPath)
             } catch {
                 print("Failed to load shader: \(error.localizedDescription)")
                 throw ExitCode.failure
             }
             
             let options = ShaderCompilerOptions()
-            options.isCacheDisabled = true
+            options.isCacheDisabled = cache == false
+            switch languageVersion {
+            case .v24:
+                options.languageVersion = .version2_4
+            case .v23:
+                options.languageVersion = .version2_3
+            case .v22:
+                options.languageVersion = .version2_2
+            case .v21:
+                options.languageVersion = .version2_1
+            }
             let compiler = ShaderPassCompiler(shaderModel: shader)
             let res = try compiler.compile(options: options)
-
-            let je = JSONEncoder()
-            je.outputFormatting = [.prettyPrinted, .sortedKeys]
-            let data = try je.encode(res)
             
-//            let pe = PropertyListEncoder()
-//            pe.outputFormat = .xml
-//            let data = try pe.encode(res)
+            var out: URL
+            if let outputPath {
+                out = outputPath
+            } else {
+                out = URL(fileURLWithPath: shaderPath.deletingPathExtension().lastPathComponent.appending(".oecompiledshader"))
+            }
             
-            print(String(data: data, encoding: .utf8)!)
+            try ZipCompiledShaderContainer.encode(shader: res, to: out)
         }
     }
 }

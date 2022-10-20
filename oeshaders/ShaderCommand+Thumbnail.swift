@@ -55,10 +55,15 @@ This command generates a thumbnail image of a shader using a user-specified sour
                 throw ExitCode.failure
             }
             
-            let options = ShaderCompilerOptions()
-            
             let fi = try FilterChain(device: dev)
-            try fi.setShader(fromURL: URL(fileURLWithPath: shaderPath), options: options)
+            
+            let shaderURL = URL(fileURLWithPath: shaderPath)
+            if shaderURL.pathExtension == "oecompiledshader" {
+                let container = try ZipCompiledShaderContainer.Decoder(url: shaderURL)
+                try fi.setCompiledShader(container)
+            } else {
+                try fi.setShader(fromURL: URL(fileURLWithPath: shaderPath), options: ShaderCompilerOptions())
+            }
             
             guard let ctx = CGContext.make(URL(fileURLWithPath: imagePath))
             else {

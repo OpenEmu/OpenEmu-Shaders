@@ -82,11 +82,3 @@ typedef struct
     simd_float2     outputSize;
     float time;
 } Uniforms;
-
-#pragma mark - Structs for pixel conversion
-
-typedef struct
-{
-    simd_uint2  origin;
-    uint        stride;
-} BufferUniforms;

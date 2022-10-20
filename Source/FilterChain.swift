@@ -714,10 +714,12 @@ final public class FilterChain {
         hasShader       = false
     }
     
-    public func setCompiledShader(_ ss: Compiled.Shader) throws {
+    public func setCompiledShader(_ container: CompiledShaderContainer) throws {
         freeShaderResources()
         
         let start = CACurrentMediaTime()
+        
+        let ss = container.shader
         
         passCount       = ss.passes.count
         lastPassIndex   = passCount - 1
@@ -726,8 +728,6 @@ final public class FilterChain {
         parametersMap   = .init(uniqueKeysWithValues: ss.parameters.enumerated().map({ index, param in (param.name, index) }))
         parameters      = .init(ss.parameters.map({ ($0.initial as NSDecimalNumber).floatValue }))
         
-        let options = MTLCompileOptions()
-        options.fastMathEnabled = true
         // TODO: Store ss.languageVersion in Compiled.Shader
         // options.languageVersion = ss.languageVersion
         let texStride     = MemoryLayout<Texture>.stride
@@ -861,6 +861,8 @@ final public class FilterChain {
             psd.sampleCount = 1
             psd.vertexDescriptor = vd
             
+            let options = MTLCompileOptions()
+            
             do {
                 let lib = try device.makeLibrary(source: pass.vertexSource, options: options)
                 psd.vertexFunction = lib.makeFunction(name: "main0")
@@ -900,31 +902,13 @@ final public class FilterChain {
         let end = CACurrentMediaTime() - start
         os_log("Shader load completed in %{xcode:interval}f seconds", log: .default, type: .debug, end)
         
-        loadLuts(ss.luts)
+        loadLuts(container)
         hasShader               = true
         renderTargetsNeedResize = true
         historyNeedsInit        = true
     }
     
-    public func setShader(fromURL url: URL, options shaderOptions: ShaderCompilerOptions) throws {
-        os_log("Loading shader from '%{public}@'", log: .default, type: .debug, url.absoluteString)
-        
-        let start = CACurrentMediaTime()
-        
-        let shader = try SlangShader(fromURL: url)
-        let compiler = ShaderPassCompiler(shaderModel: shader)
-        
-        os_log("Compiling shader from '%{public}@'", log: .default, type: .debug, url.absoluteString)
-        
-        let compiled = try compiler.compile(options: shaderOptions)
-        
-        let end = CACurrentMediaTime() - start
-        os_log("Shader compilation completed in %{xcode:interval}f seconds", log: .default, type: .debug, end)
-        
-        try setCompiledShader(compiled)
-    }
-    
-    private func loadLuts(_ images: [Compiled.LUT]) {
+    private func loadLuts(_ cc: CompiledShaderContainer) {
         let opts: [MTKTextureLoader.Option: Any] = [
             .generateMipmaps: true,
             .allocateMipmaps: true,
@@ -932,18 +916,73 @@ final public class FilterChain {
             .textureStorageMode: MTLStorageMode.private.rawValue,
         ]
         
+        let images = cc.shader.luts
+        
         var i: Int = 0
         for lut in images {
             let t: MTLTexture
             do {
-                t = try loader.newTexture(URL: lut.url, options: opts)
+                let data = try cc.getLUTByName(lut.name)
+                t = try loader.newTexture(data: data, options: opts)
             } catch {
                 os_log("Unable to load LUT texture, using default. Path '%{public}@: %{public}@", log: .default, type: .error,
                        lut.url.absoluteString, error.localizedDescription)
                 t = checkers
             }
             initTexture(&luts[i], withTexture: t)
-            i+=1
+            i += 1
+        }
+    }
+    
+    func updateBindings(passBindings: ShaderPassBindings, forPassNumber passNumber: Int, passSemantics: ShaderPassSemantics, pass: Compiled.ShaderPass) {
+        func addUniforms(bufferIndex: Int) {
+            let desc = pass.buffers[bufferIndex]
+            guard desc.size > 0 else { return }
+
+            let bind = passBindings.buffers[bufferIndex]
+            bind.bindingVert = desc.bindingVert
+            bind.bindingFrag = desc.bindingFrag
+            bind.size        = (desc.size + 0xf) & ~0xf // round up to nearest 16 bytes
+            
+            for u in desc.uniforms {
+                switch u.semantic {
+                case .floatParameter:
+                    guard let param = passSemantics.parameter(at: u.index!)
+                    else { fatalError("Unable to find parameter at index \(u.index!)") }
+                    bind.addUniformData(param.data,
+                                        size: u.size,
+                                        offset: u.offset,
+                                        name: u.name)
+                    
+                case .mvp, .outputSize, .finalViewportSize, .frameCount, .frameDirection:
+                    bind.addUniformData(passSemantics.uniforms[u.semantic]!.data,
+                                        size: u.size,
+                                        offset: u.offset,
+                                        name: u.name)
+
+                case .originalSize, .sourceSize, .originalHistorySize, .passOutputSize, .passFeedbackSize, .userSize:
+                    let tex = passSemantics.textureUniforms[u.semantic]!
+                    
+                    bind.addUniformData(tex.size.advanced(by: u.index! * tex.stride),
+                                        size: u.size,
+                                        offset: u.offset,
+                                        name: u.name)
+                }
+            }
+        }
+        
+        // UBO
+        addUniforms(bufferIndex: 0)
+        // Push
+        addUniforms(bufferIndex: 1)
+        
+        for t in pass.textures {
+            let tex  = passSemantics.textures[t.semantic]!
+            let bind = passBindings.addTexture(tex.texture.advanced(by: t.index * tex.stride),
+                                               binding: t.binding,
+                                               name: t.name)
+            bind.wrap   = .init(t.wrap)
+            bind.filter = .init(t.filter)
         }
     }
     
@@ -1031,6 +1070,44 @@ extension TextureSize {
 private struct Texture {
     var view: MTLTexture?
     var size: TextureSize = .zero
+}
+
+public enum MTLLangageVersionError: LocalizedError {
+    case versionUnavailable
+    
+    public var errorDescription: String? {
+        switch self {
+        case .versionUnavailable:
+            return "The specified Metal version is unavailable for this OS or version of OpenEmuShaders"
+        }
+    }
+}
+
+extension MTLLanguageVersion {
+    init(_ languageVersion: Compiled.LanguageVersion) throws {
+        switch languageVersion {
+        case .version2_4:
+            if #available(macOS 12.0, iOS 15.0, *) {
+                self = .version2_4
+            } else {
+                throw MTLLangageVersionError.versionUnavailable
+            }
+        case .version2_3:
+            if #available(macOS 11.0, iOS 14.0, *) {
+                self = .version2_3
+            } else {
+                throw MTLLangageVersionError.versionUnavailable
+            }
+        case .version2_2:
+            if #available(macOS 10.15, iOS 13.0, *) {
+                self = .version2_2
+            } else {
+                throw MTLLangageVersionError.versionUnavailable
+            }
+        case .version2_1:
+            self = .version2_1
+        }
+    }
 }
 
 extension MTLPixelFormat {

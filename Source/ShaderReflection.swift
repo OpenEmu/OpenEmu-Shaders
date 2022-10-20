@@ -70,25 +70,6 @@ class ShaderTextureSemanticMap {
     }
 }
 
-class ShaderTextureUniformSemanticMap {
-    let semantic: Compiled.ShaderBufferSemantic
-    let index: Int
-    let name: String
-    
-    init(textureSemantic semantic: Compiled.ShaderBufferSemantic, index: Int, name: String) {
-        self.semantic = semantic
-        self.index    = index
-        self.name     = name
-    }
-    
-    func validateSizeType(_ type: __SPVType) -> Bool {
-        type.num_array_dimensions == 0 &&
-        type.basetype == .fp32 &&
-        type.vector_size == 4 &&
-        type.columns == 1
-    }
-}
-
 class ShaderBufferSemanticMap {
     let semantic: Compiled.ShaderBufferSemantic
     let index: Int

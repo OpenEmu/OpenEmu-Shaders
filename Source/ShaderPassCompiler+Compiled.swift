@@ -72,7 +72,8 @@ extension ShaderPassCompiler {
         return Compiled.Shader(passes: passes,
                                parameters: parameters,
                                luts: luts,
-                               historyCount: historyCount)
+                               historyCount: historyCount,
+                               languageVersion: try .init(options.languageVersion))
     }
     
     func compilePass(_ pass: ShaderPass, options: ShaderCompilerOptions) throws -> Compiled.ShaderPass {

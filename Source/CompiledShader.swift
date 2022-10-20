@@ -16,6 +16,7 @@ public enum Compiled {
         public let parameters: [Parameter]
         public let luts: [LUT]
         public let historyCount: Int
+        public let languageVersion: LanguageVersion
     }
     
     public struct LUT: Codable {
@@ -104,6 +105,10 @@ public enum Compiled {
         
         init(_ mtl: MTLLanguageVersion) throws {
             switch mtl {
+#if swift(>=5.7)
+            case .version3_0:
+                self = .version2_4
+#endif
 #if swift(>=5.5)
             case .version2_4:
                 self = .version2_4

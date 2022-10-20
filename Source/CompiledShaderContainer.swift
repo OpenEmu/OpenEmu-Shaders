@@ -1,4 +1,4 @@
-// Copyright (c) 2019, OpenEmu Team
+// Copyright (c) 2022, OpenEmu Team
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -22,30 +22,14 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <metal_stdlib>
-#include <simd/simd.h>
+import Foundation
 
-// Including header shared between this Metal shader code and Swift/C code executing Metal API commands
-#import "ShaderTypes.h"
-
-using namespace metal;
-
-#pragma mark - functions using projected coordinates
-
-vertex ColorInOut basic_vertex_proj_tex(const Vertex in [[ stage_in ]],
-                                        const device Uniforms &uniforms [[ buffer(BufferIndexUniforms) ]])
-{
-    ColorInOut out;
-    out.position = uniforms.projectionMatrix * in.position;
-    out.texCoord = in.texCoord;
-    return out;
+/// Common errors shared by all ``CompiledShaderContainer`` implementations.
+enum CompiledShaderContainerError: Swift.Error {
+    case invalidLUTName
 }
 
-fragment float4 basic_fragment_proj_tex(ColorInOut in [[stage_in]],
-                                        constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]],
-                                        texture2d<half> tex          [[ texture(TextureIndexColor) ]],
-                                        sampler samp                 [[ sampler(SamplerIndexDraw) ]])
-{
-    half4 colorSample = tex.sample(samp, in.texCoord.xy);
-    return float4(colorSample);
+public protocol CompiledShaderContainer {
+    var shader: Compiled.Shader { get }
+    func getLUTByName(_ name: String) throws -> Data
 }

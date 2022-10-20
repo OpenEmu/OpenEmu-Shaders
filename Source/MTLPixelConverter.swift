@@ -92,8 +92,6 @@ public class MTLPixelConverter {
         }
     }
     
-    let device: MTLDevice
-    let library: MTLLibrary
     let texToTex: [TextureConverter?]
     let bufToTex: [BufferConverter?]
     
@@ -113,9 +111,8 @@ public class MTLPixelConverter {
     ]
     
     public init(device: MTLDevice) throws {
-        self.device = device
         let bundle = Bundle(for: type(of: self))
-        library = try device.makeDefaultLibrary(bundle: bundle)
+        let library = try device.makeDefaultLibrary(bundle: bundle)
         
         var texToTex = [TextureConverter?](repeating: nil, count: OEMTLPixelFormat.allCases.count)
         var bufToTex = [BufferConverter?](repeating: nil, count: OEMTLPixelFormat.allCases.count)

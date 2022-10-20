@@ -8,11 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		05059BB82863F7F70081E53C /* ShaderPassCompiler+Compiled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05059BB72863F7F70081E53C /* ShaderPassCompiler+Compiled.swift */; };
+		050C0E9A28FFBC6900923E9C /* ZipCompiledShaderContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050C0E9928FFBC6900923E9C /* ZipCompiledShaderContainer.swift */; };
+		050C0E9C28FFBC9100923E9C /* FileCompiledShaderContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050C0E9B28FFBC9100923E9C /* FileCompiledShaderContainer.swift */; };
+		050C0E9E28FFBF4C00923E9C /* FilterChain+Shader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050C0E9D28FFBF4C00923E9C /* FilterChain+Shader.swift */; };
 		051C31ED2865076900281C57 /* ShaderPassCompiler+Reflection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051C31EC2865076900281C57 /* ShaderPassCompiler+Reflection.swift */; };
-		051C31F7286891CE00281C57 /* FilterChain+Bindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051C31F6286891CE00281C57 /* FilterChain+Bindings.swift */; };
 		0521355C246E3A240085A598 /* CompiledShader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0521355B246E3A240085A598 /* CompiledShader.swift */; };
 		052BE009228D184600942C12 /* SourceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE008228D184600942C12 /* SourceParserTests.swift */; };
 		052BE020228D187E00942C12 /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE01F228D187E00942C12 /* TestHelpers.swift */; };
+		053E094728FE7EC20034CCB4 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 053E094628FE7EC20034CCB4 /* ZIPFoundation */; };
 		05410EDE22F5FF7400303424 /* SlangShaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05410EDD22F5FF7400303424 /* SlangShaderTests.swift */; };
 		056696F02460EF5D000A5BE3 /* SlangShader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0524FF842458B798005C5E83 /* SlangShader.swift */; };
 		056AC379228BA8D9005018DA /* ShaderParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056AC378228BA8D9005018DA /* ShaderParameter.swift */; };
@@ -45,11 +48,14 @@
 		05ABBEAB2849795F006F1A8C /* FilterChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEAA2849795F006F1A8C /* FilterChain.swift */; };
 		05ABBEAF2849DF9B006F1A8C /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEAE2849DF9B006F1A8C /* Matrix.swift */; };
 		05D043542439043E00B6BDBF /* String+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D043532439043E00B6BDBF /* String+Version.swift */; };
+		05D44C5E28C1576B00660A18 /* Converters.metal in Sources */ = {isa = PBXBuildFile; fileRef = 05D44C5D28C1576B00660A18 /* Converters.metal */; };
+		05D44C6028C159FC00660A18 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05D44C5F28C159FC00660A18 /* .swiftlint.yml */; };
 		05D532962895FA30004DC253 /* Screenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D532952895FA30004DC253 /* Screenshot.swift */; };
 		05EEE342227CC35D007D011B /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; };
 		05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE33B227CC35D007D011B /* OpenEmuShaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05F54957229BBA8800561C14 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 05F5494F229BBA8800561C14 /* Shaders.metal */; };
 		05F54959229BBA8800561C14 /* ShaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 05F54951229BBA8800561C14 /* ShaderTypes.h */; };
+		05FF59E5289CDCF500153164 /* CompiledShaderContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FF59E4289CDCF500153164 /* CompiledShaderContainer.swift */; };
 		A9020051FEB9717E8F2ABA14 /* ConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9020E619BC7ACEF5904D318 /* ConfigTests.swift */; };
 		A90203772A0E044990C034EA /* NSScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A902023035423BDAFACA21E6 /* NSScannerTests.swift */; };
 		A9020AE1BBCE1F965F5F8436 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90203E4FFF77BAF2B3ECC24 /* Config.swift */; };
@@ -143,8 +149,10 @@
 
 /* Begin PBXFileReference section */
 		05059BB72863F7F70081E53C /* ShaderPassCompiler+Compiled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShaderPassCompiler+Compiled.swift"; sourceTree = "<group>"; };
+		050C0E9928FFBC6900923E9C /* ZipCompiledShaderContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipCompiledShaderContainer.swift; sourceTree = "<group>"; };
+		050C0E9B28FFBC9100923E9C /* FileCompiledShaderContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCompiledShaderContainer.swift; sourceTree = "<group>"; };
+		050C0E9D28FFBF4C00923E9C /* FilterChain+Shader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FilterChain+Shader.swift"; sourceTree = "<group>"; };
 		051C31EC2865076900281C57 /* ShaderPassCompiler+Reflection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShaderPassCompiler+Reflection.swift"; sourceTree = "<group>"; };
-		051C31F6286891CE00281C57 /* FilterChain+Bindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FilterChain+Bindings.swift"; sourceTree = "<group>"; };
 		05201D6D277C542E0028CBE0 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		0521355B246E3A240085A598 /* CompiledShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompiledShader.swift; sourceTree = "<group>"; };
 		0524FF842458B798005C5E83 /* SlangShader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlangShader.swift; sourceTree = "<group>"; };
@@ -181,6 +189,8 @@
 		05ABBEAA2849795F006F1A8C /* FilterChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterChain.swift; sourceTree = "<group>"; };
 		05ABBEAE2849DF9B006F1A8C /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
 		05D043532439043E00B6BDBF /* String+Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Version.swift"; sourceTree = "<group>"; };
+		05D44C5D28C1576B00660A18 /* Converters.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Converters.metal; sourceTree = "<group>"; };
+		05D44C5F28C159FC00660A18 /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		05D532952895FA30004DC253 /* Screenshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Screenshot.swift; sourceTree = "<group>"; };
 		05EEE338227CC35D007D011B /* OpenEmuShaders.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OpenEmuShaders.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EEE33B227CC35D007D011B /* OpenEmuShaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenEmuShaders.h; sourceTree = "<group>"; };
@@ -190,6 +200,7 @@
 		05F5494F229BBA8800561C14 /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		05F54951229BBA8800561C14 /* ShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 		05F5BB1022875C0B004D713C /* OpenEmuShadersTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenEmuShadersTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		05FF59E4289CDCF500153164 /* CompiledShaderContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompiledShaderContainer.swift; sourceTree = "<group>"; };
 		A902023035423BDAFACA21E6 /* NSScannerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSScannerTests.swift; sourceTree = "<group>"; };
 		A90203E4FFF77BAF2B3ECC24 /* Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		A9020E619BC7ACEF5904D318 /* ConfigTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigTests.swift; sourceTree = "<group>"; };
@@ -213,6 +224,7 @@
 				057DDA91283065D4002A5877 /* libCSPIRVTools.a in Frameworks */,
 				057DDA8F283065D4002A5877 /* libCGLSLang.a in Frameworks */,
 				057DDA90283065D4002A5877 /* libCSPIRVCross.a in Frameworks */,
+				053E094728FE7EC20034CCB4 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,6 +250,7 @@
 		052A2B5C22A421B400483370 /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				05D44C5F28C159FC00660A18 /* .swiftlint.yml */,
 				052A2B5D22A421CB00483370 /* Config.xcconfig */,
 			);
 			name = Config;
@@ -261,6 +274,9 @@
 				057847CD25C1250300A842E7 /* ShaderCompilerOptions.swift */,
 				05ABBEA22845FB1C006F1A8C /* ShaderReflection.swift */,
 				05ABBE9B2842EA5A006F1A8C /* SlangCompiler.swift */,
+				05FF59E4289CDCF500153164 /* CompiledShaderContainer.swift */,
+				050C0E9928FFBC6900923E9C /* ZipCompiledShaderContainer.swift */,
+				050C0E9B28FFBC9100923E9C /* FileCompiledShaderContainer.swift */,
 			);
 			name = Compiler;
 			sourceTree = "<group>";
@@ -416,7 +432,7 @@
 			isa = PBXGroup;
 			children = (
 				05ABBEAA2849795F006F1A8C /* FilterChain.swift */,
-				051C31F6286891CE00281C57 /* FilterChain+Bindings.swift */,
+				050C0E9D28FFBF4C00923E9C /* FilterChain+Shader.swift */,
 				05ABBEAE2849DF9B006F1A8C /* Matrix.swift */,
 				05ABBEA828483072006F1A8C /* ShaderPassBindings.swift */,
 				05ABBEA62847283F006F1A8C /* ShaderPassSemantics.swift */,
@@ -440,6 +456,7 @@
 				A9020FD6E09797E3851BD2F2 /* MTLPixelConverter.swift */,
 				058AB98A28507F3A009A35FA /* PixelBuffer.swift */,
 				05D532952895FA30004DC253 /* Screenshot.swift */,
+				05D44C5D28C1576B00660A18 /* Converters.metal */,
 			);
 			name = Conversion;
 			sourceTree = "<group>";
@@ -496,6 +513,7 @@
 			);
 			name = OpenEmuShaders;
 			packageProductDependencies = (
+				053E094628FE7EC20034CCB4 /* ZIPFoundation */,
 			);
 			productName = OpenEmuShaders;
 			productReference = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */;
@@ -554,6 +572,7 @@
 			mainGroup = 05EEE32E227CC35C007D011B;
 			packageReferences = (
 				058AB9A228512DF6009A35FA /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
+				053E094528FE7EC20034CCB4 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
 			productRefGroup = 05EEE339227CC35D007D011B /* Products */;
 			projectDirPath = "";
@@ -636,6 +655,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05D44C6028C159FC00660A18 /* .swiftlint.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -694,8 +714,8 @@
 				058AB98B28507F3A009A35FA /* PixelBuffer.swift in Sources */,
 				05ABBE922842D0C0006F1A8C /* Logging.swift in Sources */,
 				0521355C246E3A240085A598 /* CompiledShader.swift in Sources */,
-				051C31F7286891CE00281C57 /* FilterChain+Bindings.swift in Sources */,
 				056AC3A9228BD73F005018DA /* Scanner+Extensions.swift in Sources */,
+				050C0E9E28FFBF4C00923E9C /* FilterChain+Shader.swift in Sources */,
 				05AA59F7246625A20031B73E /* ShaderModel.swift in Sources */,
 				056696F02460EF5D000A5BE3 /* SlangShader.swift in Sources */,
 				056AC3A7228BB3E9005018DA /* SourceParser.swift in Sources */,
@@ -705,10 +725,14 @@
 				05ABBEA928483072006F1A8C /* ShaderPassBindings.swift in Sources */,
 				05ABBEA72847283F006F1A8C /* ShaderPassSemantics.swift in Sources */,
 				05D532962895FA30004DC253 /* Screenshot.swift in Sources */,
+				05FF59E5289CDCF500153164 /* CompiledShaderContainer.swift in Sources */,
 				051C31ED2865076900281C57 /* ShaderPassCompiler+Reflection.swift in Sources */,
 				056AC379228BA8D9005018DA /* ShaderParameter.swift in Sources */,
 				057847CE25C1250300A842E7 /* ShaderCompilerOptions.swift in Sources */,
+				05D44C5E28C1576B00660A18 /* Converters.metal in Sources */,
 				05ABBEA32845FB1C006F1A8C /* ShaderReflection.swift in Sources */,
+				050C0E9C28FFBC9100923E9C /* FileCompiledShaderContainer.swift in Sources */,
+				050C0E9A28FFBC6900923E9C /* ZipCompiledShaderContainer.swift in Sources */,
 				A9020AE1BBCE1F965F5F8436 /* Config.swift in Sources */,
 				05ABBE9C2842EA5A006F1A8C /* SlangCompiler.swift in Sources */,
 				A9020C552A8D57277535094F /* MTLPixelConverter.swift in Sources */,
@@ -753,7 +777,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.oeshaders;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -770,7 +794,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = "";
-				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.openemu.oeshaders;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1054,6 +1078,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		053E094528FE7EC20034CCB4 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				branch = development;
+				kind = branch;
+			};
+		};
 		058AB9A228512DF6009A35FA /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
@@ -1065,6 +1097,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		053E094628FE7EC20034CCB4 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 053E094528FE7EC20034CCB4 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
 		058AB9BD285135D9009A35FA /* ArgumentParser */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 058AB9A228512DF6009A35FA /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
