@@ -33,9 +33,9 @@ class SlangShaderTests: XCTestCase {
     
     func testEmpty() {
         let cfg =
-"""
-shaders = 0
-"""
+            """
+            shaders = 0
+            """
         InMemProtocol.requests = [
             "mem:///root/foo.slangp": cfg,
         ]
@@ -47,27 +47,26 @@ shaders = 0
         } catch {
             XCTFail(error.localizedDescription)
         }
-        
     }
     
     func testOneFile() {
         let cfg =
-"""
-shaders = 1
-shader0 = mem:///root/foo.slang
-"""
+            """
+            shaders = 1
+            shader0 = mem:///root/foo.slang
+            """
         
         let src =
-"""
-#version 450
+            """
+            #version 450
 
-#pragma name this_is_the_name
+            #pragma name this_is_the_name
 
-#pragma stage vertex
-// vertex
-#pragma stage fragment
-// fragment
-"""
+            #pragma stage vertex
+            // vertex
+            #pragma stage fragment
+            // fragment
+            """
         InMemProtocol.requests = [
             "mem:///root/foo.slangp": cfg,
             "mem:///root/foo.slang": src,
@@ -85,12 +84,12 @@ shader0 = mem:///root/foo.slang
     
     func testShaderPassDefaultProperties() {
         let cfg =
-"""
-shaders = 1
+            """
+            shaders = 1
 
-# shader zero verifies defaults
-shader0 = mem:///root/foo.slang
-"""
+            # shader zero verifies defaults
+            shader0 = mem:///root/foo.slang
+            """
         
         InMemProtocol.requests = [
             "mem:///root/foo.slangp": cfg,
@@ -121,19 +120,19 @@ shader0 = mem:///root/foo.slang
     
     func testShaderPassFrameCountMod() {
         let cfg =
-"""
-shaders = 3
+            """
+            shaders = 3
 
-# shader zero verifies defaults
-shader0 = mem:///root/foo.slang
+            # shader zero verifies defaults
+            shader0 = mem:///root/foo.slang
 
-shader1 = mem:///root/foo.slang
-frame_count_mod1 = 1
+            shader1 = mem:///root/foo.slang
+            frame_count_mod1 = 1
 
-shader2 = mem:///root/foo.slang
-frame_count_mod2 = 100
+            shader2 = mem:///root/foo.slang
+            frame_count_mod2 = 100
 
-"""
+            """
         
         InMemProtocol.requests = [
             "mem:///root/foo.slangp": cfg,
@@ -151,80 +150,80 @@ frame_count_mod2 = 100
     
     func testShaderPassScale() {
         let cfg =
-"""
-shaders = 14
+            """
+            shaders = 14
 
-# shader zero verifies defaults
-shader0 = mem:///root/foo.slang
+            # shader zero verifies defaults
+            shader0 = mem:///root/foo.slang
 
-# absolute
+            # absolute
 
-shader1 = mem:///root/foo.slang
-scale_type1 = absolute
+            shader1 = mem:///root/foo.slang
+            scale_type1 = absolute
 
-shader2 = mem:///root/foo.slang
-scale_type2 = absolute
-scale_x2    = 100
-scale_y2    = 200
+            shader2 = mem:///root/foo.slang
+            scale_type2 = absolute
+            scale_x2    = 100
+            scale_y2    = 200
 
-shader3 = mem:///root/foo.slang
-scale_type_x3 = absolute
-scale_x3      = 100
-scale_type_y3 = source
+            shader3 = mem:///root/foo.slang
+            scale_type_x3 = absolute
+            scale_x3      = 100
+            scale_type_y3 = source
 
-# source
+            # source
 
-shader4 = mem:///root/foo.slang
-scale_type4 = source
+            shader4 = mem:///root/foo.slang
+            scale_type4 = source
 
-shader5 = mem:///root/foo.slang
-scale_type5 = source
-scale_x5    = 0.25
-scale_y5    = 0.55
+            shader5 = mem:///root/foo.slang
+            scale_type5 = source
+            scale_x5    = 0.25
+            scale_y5    = 0.55
 
-shader6 = mem:///root/foo.slang
-scale_type_x6 = source
-scale_x6      = 2.5
-scale_type_y6 = source
+            shader6 = mem:///root/foo.slang
+            scale_type_x6 = source
+            scale_x6      = 2.5
+            scale_type_y6 = source
 
-# viewport
+            # viewport
 
-shader7 = mem:///root/foo.slang
-scale_type7 = viewport
+            shader7 = mem:///root/foo.slang
+            scale_type7 = viewport
 
-shader8 = mem:///root/foo.slang
-scale_type8 = viewport
-scale_x8    = 0.25
-scale_y8    = 0.55
+            shader8 = mem:///root/foo.slang
+            scale_type8 = viewport
+            scale_x8    = 0.25
+            scale_y8    = 0.55
 
-shader9 = mem:///root/foo.slang
-scale_type_x9 = viewport
-scale_x9      = 2.5
-scale_type_y9 = source
+            shader9 = mem:///root/foo.slang
+            scale_type_x9 = viewport
+            scale_x9      = 2.5
+            scale_type_y9 = source
 
-# scale
+            # scale
 
-shader10 = mem:///root/foo.slang
-scale_type10 = absolute
-scale10      = 150
+            shader10 = mem:///root/foo.slang
+            scale_type10 = absolute
+            scale10      = 150
 
-shader11 = mem:///root/foo.slang
-scale_type11 = source
-scale11      = 0.75
+            shader11 = mem:///root/foo.slang
+            scale_type11 = source
+            scale11      = 0.75
 
-shader12 = mem:///root/foo.slang
-scale_type12 = viewport
-scale12      = 1.50
+            shader12 = mem:///root/foo.slang
+            scale_type12 = viewport
+            scale12      = 1.50
 
-# invalid
+            # invalid
 
-# invalid because it only specifies one axis
+            # invalid because it only specifies one axis
 
-shader13 = mem:///root/foo.slang
-scale_type_x13 = viewport
-scale_x13      = 1.50
+            shader13 = mem:///root/foo.slang
+            scale_type_x13 = viewport
+            scale_x13      = 1.50
 
-"""
+            """
         
         InMemProtocol.requests = [
             "mem:///root/foo.slangp": cfg,
@@ -284,24 +283,24 @@ scale_x13      = 1.50
     
     func testShaderPassWrap() {
         let cfg =
-"""
-shaders = 5
+            """
+            shaders = 5
 
-# shader zero verifies defaults
-shader0 = mem:///root/foo.slang
+            # shader zero verifies defaults
+            shader0 = mem:///root/foo.slang
 
-shader1 = mem:///root/foo.slang
-wrap_mode1 = clamp_to_border
+            shader1 = mem:///root/foo.slang
+            wrap_mode1 = clamp_to_border
 
-shader2 = mem:///root/foo.slang
-wrap_mode2 = clamp_to_edge
+            shader2 = mem:///root/foo.slang
+            wrap_mode2 = clamp_to_edge
 
-shader3 = mem:///root/foo.slang
-wrap_mode3 = mirrored_repeat
+            shader3 = mem:///root/foo.slang
+            wrap_mode3 = mirrored_repeat
 
-shader4 = mem:///root/foo.slang
-wrap_mode4 = repeat
-"""
+            shader4 = mem:///root/foo.slang
+            wrap_mode4 = repeat
+            """
         
         InMemProtocol.requests = [
             "mem:///root/foo.slangp": cfg,
@@ -319,24 +318,24 @@ wrap_mode4 = repeat
     
     func testShaderPassFormat() {
         let cfg =
-"""
-shaders = 5
+            """
+            shaders = 5
 
-# shader zero verifies defaults
-shader0 = mem:///root/foo.slang
+            # shader zero verifies defaults
+            shader0 = mem:///root/foo.slang
 
-shader1 = mem:///root/foo.slang
-float_framebuffer1 = true
+            shader1 = mem:///root/foo.slang
+            float_framebuffer1 = true
 
-shader2 = mem:///root/foo.slang
-srgb_framebuffer2 = true
+            shader2 = mem:///root/foo.slang
+            srgb_framebuffer2 = true
 
-shader3 = mem:///root/bar.slang
+            shader3 = mem:///root/bar.slang
 
-# verifies #pragma format takes precedence
-shader4 = mem:///root/cat.slang
-srgb_framebuffer4 = true
-"""
+            # verifies #pragma format takes precedence
+            shader4 = mem:///root/cat.slang
+            srgb_framebuffer4 = true
+            """
         
         InMemProtocol.requests = [
             "mem:///root/foo.slangp": cfg,
@@ -356,18 +355,18 @@ srgb_framebuffer4 = true
     
     func testShaderPassFilter() {
         let cfg =
-"""
-shaders = 3
+            """
+            shaders = 3
 
-# shader zero verifies defaults
-shader0 = mem:///root/foo.slang
+            # shader zero verifies defaults
+            shader0 = mem:///root/foo.slang
 
-shader1 = mem:///root/foo.slang
-filter_linear1 = false
+            shader1 = mem:///root/foo.slang
+            filter_linear1 = false
 
-shader2 = mem:///root/foo.slang
-filter_linear2 = true
-"""
+            shader2 = mem:///root/foo.slang
+            filter_linear2 = true
+            """
         
         InMemProtocol.requests = [
             "mem:///root/foo.slangp": cfg,
@@ -385,35 +384,35 @@ filter_linear2 = true
     
     func testShaderLUT() {
         let cfg =
-"""
-shaders = 1
+            """
+            shaders = 1
 
-shader0 = mem:///root/foo.slang
+            shader0 = mem:///root/foo.slang
 
-textures = "a;b;c;d;e"
-# defaults
-a = "image_a.png"
+            textures = "a;b;c;d;e"
+            # defaults
+            a = "image_a.png"
 
-b = "image_b.png"
-b_wrap_mode = "clamp_to_border"
-b_linear    = false
-b_mipmap    = false
+            b = "image_b.png"
+            b_wrap_mode = "clamp_to_border"
+            b_linear    = false
+            b_mipmap    = false
 
-c = "image_c.png"
-c_wrap_mode = "clamp_to_edge"
-c_linear    = true
-c_mipmap    = false
+            c = "image_c.png"
+            c_wrap_mode = "clamp_to_edge"
+            c_linear    = true
+            c_mipmap    = false
 
-d = "image_d.png"
-d_wrap_mode = "mirrored_repeat"
-d_linear    = false
-d_mipmap    = true
+            d = "image_d.png"
+            d_wrap_mode = "mirrored_repeat"
+            d_linear    = false
+            d_mipmap    = true
 
-e = "image_e.png"
-e_wrap_mode = "repeat"
-e_linear    = true
-e_mipmap    = true
-"""
+            e = "image_e.png"
+            e_wrap_mode = "repeat"
+            e_linear    = true
+            e_mipmap    = true
+            """
         
         InMemProtocol.requests = [
             "mem:///root/foo.slangp": cfg,
@@ -424,7 +423,7 @@ e_mipmap    = true
         do {
             let ss = try SlangShader(fromURL: url)
             let luts = ss.luts.sorted { $0.name < $1.name }
-            XCTAssertEqual(luts.map(\.url.lastPathComponent), ["a", "b", "c", "d", "e"].map({ "image_\($0).png" }))
+            XCTAssertEqual(luts.map(\.url.lastPathComponent), ["a", "b", "c", "d", "e"].map { "image_\($0).png" })
             XCTAssertEqual(luts.map(\.name), ["a", "b", "c", "d", "e"])
             XCTAssertEqual(luts.map(\.wrapMode), [.border, .border, .edge, .mirroredRepeat, .repeat])
             XCTAssertEqual(luts.map(\.isMipmap), [false, false, false, true, true])
@@ -436,23 +435,23 @@ e_mipmap    = true
     
     func testShaderParameter() {
         let cfg =
-"""
-shaders = 1
+            """
+            shaders = 1
 
-shader0 = mem:///root/foo.slang
+            shader0 = mem:///root/foo.slang
 
-parameters = "PARAM1"
+            parameters = "PARAM1"
 
-PARAM1 = 0.75
+            PARAM1 = 0.75
 
-"""
+            """
         
         let src =
-"""
-#version 450
-#pragma parameter PARAM1 "Param 1" 0.50 0.25 1.00 0.01
-#pragma parameter PARAM2 "Param 2" 1.00 0.00 3.00 1.00
-"""
+            """
+            #version 450
+            #pragma parameter PARAM1 "Param 1" 0.50 0.25 1.00 0.01
+            #pragma parameter PARAM2 "Param 2" 1.00 0.00 3.00 1.00
+            """
         
         InMemProtocol.requests = [
             "mem:///root/foo.slangp": cfg,
@@ -475,26 +474,26 @@ PARAM1 = 0.75
     
     func testOneFileParametersInConfig() {
         let cfg =
-"""
-shaders = 1
-shader0 = mem:///root/foo.slang
-"""
+            """
+            shaders = 1
+            shader0 = mem:///root/foo.slang
+            """
         
         let src =
-"""
-#version 450
+            """
+            #version 450
 
-#pragma name this_is_the_name
-#pragma parameter foo1 "Foo 1 param" 0.5 0.0 1.0 0.01
-#pragma parameter bar1 "Bar 1 param" 0.5 0.0 1.0 0.01
-#pragma parameter foo2 "Foo 2 param" 0.5 0.0 1.0 0.01
-#pragma parameter bar2 "Bar 2 param" 0.5 0.0 1.0 0.01
+            #pragma name this_is_the_name
+            #pragma parameter foo1 "Foo 1 param" 0.5 0.0 1.0 0.01
+            #pragma parameter bar1 "Bar 1 param" 0.5 0.0 1.0 0.01
+            #pragma parameter foo2 "Foo 2 param" 0.5 0.0 1.0 0.01
+            #pragma parameter bar2 "Bar 2 param" 0.5 0.0 1.0 0.01
 
-#pragma stage vertex
-// vertex
-#pragma stage fragment
-// fragment
-"""
+            #pragma stage vertex
+            // vertex
+            #pragma stage fragment
+            // fragment
+            """
         InMemProtocol.requests = [
             "mem:///root/foo.slangp": cfg,
             "mem:///root/foo.slang": src,
@@ -511,8 +510,7 @@ shader0 = mem:///root/foo.slang
                 Param(name: "foo1", desc: "Foo 1 param"),
                 Param(name: "bar1", desc: "Bar 1 param"),
                 Param(name: "foo2", desc: "Foo 2 param"),
-                Param(name: "bar2", desc: "Bar 2 param")
-            )
+                Param(name: "bar2", desc: "Bar 2 param"))
             
             let params = ss.parameters
             XCTAssertEqual(params, exp)
@@ -522,6 +520,6 @@ shader0 = mem:///root/foo.slang
     }
 }
 
-fileprivate extension CGSize {
+private extension CGSize {
     static let one = CGSize(width: 1, height: 1)
 }

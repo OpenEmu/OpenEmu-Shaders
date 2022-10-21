@@ -41,32 +41,31 @@ class InMemProtocol: URLProtocol {
     static var requests: [String: String] = [:]
 
     override class func canonicalRequest(for req: URLRequest) -> URLRequest {
-        return req
+        req
     }
 
     override class func canInit(with request: URLRequest) -> Bool {
-        return request.url?.scheme == "mem"
+        request.url?.scheme == "mem"
     }
 
     override func startLoading() {
-        guard let url = self.request.url else {
-            self.client!.urlProtocol(self, didFailWithError: InMemProtocolError.missingURL)
+        guard let url = request.url else {
+            client!.urlProtocol(self, didFailWithError: InMemProtocolError.missingURL)
             return
         }
 
         if let s = InMemProtocol.requests[url.absoluteString] {
             let data = s.data(using: .utf8)!
-            let res  = URLResponse(url: url, mimeType: "text/plain", expectedContentLength: data.count, textEncodingName: nil)
-            self.client!.urlProtocol(self, didReceive: res, cacheStoragePolicy: .allowedInMemoryOnly)
-            self.client!.urlProtocol(self, didLoad: s.data(using: .utf8)!)
-            self.client!.urlProtocolDidFinishLoading(self)
+            let res = URLResponse(url: url, mimeType: "text/plain", expectedContentLength: data.count, textEncodingName: nil)
+            client!.urlProtocol(self, didReceive: res, cacheStoragePolicy: .allowedInMemoryOnly)
+            client!.urlProtocol(self, didLoad: s.data(using: .utf8)!)
+            client!.urlProtocolDidFinishLoading(self)
         } else {
-            self.client!.urlProtocol(self, didFailWithError: InMemProtocolError.urlNotFound(url))
+            client!.urlProtocol(self, didFailWithError: InMemProtocolError.urlNotFound(url))
         }
     }
 
-    override func stopLoading() {
-    }
+    override func stopLoading() {}
 }
 
 struct Param {
@@ -80,7 +79,7 @@ struct Param {
 
 extension ShaderParameter {
     static func list(_ items: Param...) -> [ShaderParameter] {
-        return items.map { d in
+        items.map { d in
             let p = ShaderParameter(name: d.name, desc: d.desc)
             p.initial = d.initial
             return p

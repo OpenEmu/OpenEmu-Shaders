@@ -22,8 +22,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
 import ArgumentParser
+import Foundation
 
 @main struct OEShaders: ParsableCommand {
     static var configuration = CommandConfiguration(
@@ -31,6 +31,5 @@ import ArgumentParser
         abstract: "A utility for working with OpenEmuShaders.",
         version: "1.0.0",
         subcommands: [Shader.self, Compile.self],
-        defaultSubcommand: Shader.self
-    )
+        defaultSubcommand: Shader.self)
 }

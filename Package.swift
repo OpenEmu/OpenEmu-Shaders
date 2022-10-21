@@ -12,7 +12,5 @@ let package = Package(
         .binaryTarget(
             name: "OpenEmuShaders",
             url: url,
-            checksum: checksum
-        ),
-    ]
-)
+            checksum: checksum),
+    ])

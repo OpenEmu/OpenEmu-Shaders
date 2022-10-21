@@ -22,9 +22,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
 @_implementationOnly import CGLSLang
 @_implementationOnly import CSPIRVTools
+import Foundation
 @_implementationOnly import os.log
 
 var initialized: Bool = {
@@ -130,7 +130,7 @@ class SlangCompiler {
             let vec = opt.run(original: program.spirv_pointer, size: program.spirv_size, options: opts)
             
             var spirv: Data
-            if let vec = vec {
+            if let vec {
                 let buf = UnsafeBufferPointer(start: vec.ptr.assumingMemoryBound(to: UInt32.self), count: vec.size / MemoryLayout<UInt32>.size)
                 spirv = Data(buffer: buf)
             } else {

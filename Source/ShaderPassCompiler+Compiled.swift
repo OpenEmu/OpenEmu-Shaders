@@ -22,8 +22,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
 @_implementationOnly import CSPIRVCross
+import Foundation
 
 extension ShaderPassCompiler {
     public func compile(options: ShaderCompilerOptions) throws -> Compiled.Shader {
@@ -46,7 +46,7 @@ extension ShaderPassCompiler {
         
         let parameters = shader.parameters
             .enumerated()
-            .map { (index, p) in
+            .map { index, p in
                 Compiled.Parameter(index: index, source: p)
             }
         
@@ -65,7 +65,7 @@ extension ShaderPassCompiler {
             .flatMap {
                 $0.textures
                     .filter { $0.semantic == .originalHistory }
-                    .map { $0.index }
+                    .map(\.index)
             }
             .max() ?? 0
         
@@ -79,15 +79,15 @@ extension ShaderPassCompiler {
     func compilePass(_ pass: ShaderPass, options: ShaderCompilerOptions) throws -> Compiled.ShaderPass {
         var ctx: __SPVContext?
         __spvc_context_create(&ctx)
-        guard let ctx = ctx else {
+        guard let ctx else {
             throw ShaderError.buildFailed
         }
         defer { ctx.destroy() }
         
         let errorHandler: @convention(c) (UnsafeMutableRawPointer?, UnsafePointer<Int8>?) -> Void = { userData, errorMsg in
             guard
-                let userData = userData,
-                let errorMsg = errorMsg
+                let userData,
+                let errorMsg
             else { return }
             
             let compiler = Unmanaged<ShaderPassCompiler>.fromOpaque(userData).takeUnretainedValue()
@@ -110,7 +110,7 @@ extension ShaderPassCompiler {
             throw ShaderError.processFailed
         }
         
-        let buffers  = [
+        let buffers = [
             makeBuffersForSemantics(ref, source: \.ubo, offset: \.uboOffset),
             makeBuffersForSemantics(ref, source: \.push, offset: \.pushOffset),
         ]
@@ -142,10 +142,10 @@ extension ShaderPassCompiler {
                     let wrap: Compiled.ShaderPassWrap
                     let filter: Compiled.ShaderPassFilter
                     if sem == .user {
-                        wrap   = shader.luts[meta.index].wrapMode
+                        wrap = shader.luts[meta.index].wrapMode
                         filter = shader.luts[meta.index].filter
                     } else {
-                        wrap   = shader.passes[ref.passNumber].wrapMode
+                        wrap = shader.passes[ref.passNumber].wrapMode
                         filter = shader.passes[ref.passNumber].filter
                     }
                     
@@ -155,7 +155,6 @@ extension ShaderPassCompiler {
                                                                wrap: wrap,
                                                                filter: filter,
                                                                index: meta.index))
-                    
                 }
             }
         }
@@ -166,13 +165,13 @@ extension ShaderPassCompiler {
     /// Find all the bound buffer values for the pass
     private func makeBuffersForSemantics(_ ref: ShaderPassReflection,
                                          source: KeyPath<ShaderPassReflection, BufferBindingDescriptor?>,
-                                         offset: KeyPath<ShaderBufferSemanticMeta, Int?>
-    ) -> Compiled.BufferDescriptor {
+                                         offset: KeyPath<ShaderBufferSemanticMeta, Int?>) -> Compiled.BufferDescriptor
+    {
         guard let b = ref[keyPath: source]
         else { return .init(bindingVert: nil, bindingFrag: nil, size: 0, uniforms: []) }
         
         // Find bound global semantics, like MVP, FrameCount, etc
-        let semantics = ref.semantics.compactMap { (sem, meta) -> Compiled.BufferUniformDescriptor? in
+        let semantics = ref.semantics.compactMap { sem, meta -> Compiled.BufferUniformDescriptor? in
             if let offset = meta[keyPath: offset] {
                 return Compiled.BufferUniformDescriptor(semantic: sem,
                                                         index: nil,

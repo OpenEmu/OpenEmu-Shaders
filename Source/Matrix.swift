@@ -1,6 +1,8 @@
+// swiftformat:disable consecutiveSpaces
+
 //
 //  File.swift
-//  
+//
 //
 //  Created by Stuart Carnie on 25/5/2022.
 //

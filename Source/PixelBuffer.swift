@@ -36,9 +36,10 @@ public class PixelBuffer {
     public var outputRect: CGRect = .zero {
         didSet {
             // short copy if the buffer > 1MB and were copying < 50% of the buffer.
-            shortCopy = bufferLenBytes > 1_000_000 && Int(outputRect.width) * bpp * Int(outputRect.height) <= bufferLenBytes / 2
+            shortCopy = bufferLenBytes > 1000000 && Int(outputRect.width) * bpp * Int(outputRect.height) <= bufferLenBytes / 2
         }
     }
+
     public let contents: UnsafeMutableRawPointer
     
     // for unaligned buffers
@@ -47,6 +48,7 @@ public class PixelBuffer {
     let bufferFree: Bool
     var shortCopy: Bool = false
     
+    // swiftformat:disable consecutiveSpaces redundantSelf
     private init(withDevice device: MTLDevice, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int, pointer: UnsafeMutableRawPointer?) {
         let length = height * bytesPerRow
         
@@ -58,7 +60,7 @@ public class PixelBuffer {
         self.bufferLenBytes     = length
         self.sourceBuffer       = device.makeBuffer(length: length, options: .storageModeShared)!
         
-        if let pointer = pointer {
+        if let pointer {
             buffer      = pointer
             bufferFree  = false
         } else {
@@ -68,6 +70,8 @@ public class PixelBuffer {
         
         contents = buffer
     }
+    
+    // swiftformat:enable all
     
     deinit {
         if bufferFree {
@@ -105,13 +109,13 @@ public class PixelBuffer {
     
     // MARK: - Static initializers
     
-    static public func makeBuffer(withDevice device: MTLDevice, converter: MTLPixelConverter, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int) -> PixelBuffer {
-        return makeBuffer(withDevice: device, converter: converter,
-                          format: format, height: height, bytesPerRow: bytesPerRow,
-                          bytes: nil)
+    public static func makeBuffer(withDevice device: MTLDevice, converter: MTLPixelConverter, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int) -> PixelBuffer {
+        makeBuffer(withDevice: device, converter: converter,
+                   format: format, height: height, bytesPerRow: bytesPerRow,
+                   bytes: nil)
     }
     
-    static public func makeBuffer(withDevice device: MTLDevice, converter: MTLPixelConverter, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int, bytes: UnsafeMutableRawPointer?) -> PixelBuffer {
+    public static func makeBuffer(withDevice device: MTLDevice, converter: MTLPixelConverter, format: OEMTLPixelFormat, height: Int, bytesPerRow: Int, bytes: UnsafeMutableRawPointer?) -> PixelBuffer {
         if format.isNative {
             return NativePixelBuffer(withDevice: device, format: format,
                                      height: height, bytesPerRow: bytesPerRow,
@@ -149,7 +153,7 @@ public class PixelBuffer {
             let size = MTLSize(width: Int(outputRect.width), height: Int(outputRect.height), depth: 1)
             if let bce = commandBuffer.makeBlitCommandEncoder() {
                 let offset = (Int(outputRect.origin.y) * sourceBytesPerRow) + Int(outputRect.origin.x) * 4 // 4 bpp
-                let len    = sourceBuffer.length - (Int(outputRect.origin.y) * sourceBytesPerRow)
+                let len = sourceBuffer.length - (Int(outputRect.origin.y) * sourceBytesPerRow)
                 bce.copy(from: sourceBuffer, sourceOffset: offset, sourceBytesPerRow: sourceBytesPerRow, sourceBytesPerImage: len, sourceSize: size,
                          to: texture, destinationSlice: 0, destinationLevel: 0, destinationOrigin: .init())
                 bce.endEncoding()

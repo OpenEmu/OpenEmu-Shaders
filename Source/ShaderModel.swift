@@ -31,7 +31,8 @@ public class ShaderModel {
     
     init(passes: [ShaderPassModel],
          textures: [ShaderTextureModel]?,
-         parameters: [ShaderParameterModel]?) {
+         parameters: [ShaderParameterModel]?)
+    {
         self.passes = passes
         self.textures = textures
         self.parameters = parameters
@@ -39,7 +40,6 @@ public class ShaderModel {
 }
 
 public class ShaderPassModel {
-    
     public enum ScaleAxis {
         case x, y
     }

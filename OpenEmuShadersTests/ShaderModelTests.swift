@@ -11,7 +11,6 @@ import XCTest
 @testable import OpenEmuShaders
 
 class ShaderModelTests: XCTestCase {
-
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -22,18 +21,18 @@ class ShaderModelTests: XCTestCase {
 
     func testExample() throws {
         let d = """
-shaders = 1
+        shaders = 1
 
-shader0     = "foo"
-alias0      = firstPass
-scale_type0 = absolute
-scale_x0    = 100
-scale_y0    = 200
+        shader0     = "foo"
+        alias0      = firstPass
+        scale_type0 = absolute
+        scale_x0    = 100
+        scale_y0    = 200
 
-textures         = "shadow"
-shadow           = "some/path.png"
-shadow_wrap_mode = clamp_to_border
-"""
+        textures         = "shadow"
+        shadow           = "some/path.png"
+        shadow_wrap_mode = clamp_to_border
+        """
         do {
             let model = try ShaderConfigSerialization.makeShaderModel(from: d)
             XCTAssertEqual(model.passes.count, 1)
@@ -41,5 +40,4 @@ shadow_wrap_mode = clamp_to_border
             XCTFail("unexpected failure: \(error)")
         }
     }
-
 }

@@ -43,8 +43,9 @@ public class ShaderConfigSerialization {
         var scanner = ConfigScanner(s)
         
         var d: [String: String] = [:]
-    scanning:
-        while true {
+        scanning:
+            while true
+        {
             switch scanner.scan() {
             case .keyval(let key, let val):
                 d[key] = val
@@ -196,7 +197,7 @@ struct ConfigScanner {
     }
     
     private var text: String {
-        return lines[line]
+        lines[line]
     }
     
     mutating func reset() {
@@ -219,7 +220,7 @@ struct ConfigScanner {
                 continue
             }
             
-            guard let key = self.scanKey(), let val = self.scanValue() else {
+            guard let key = scanKey(), let val = scanValue() else {
                 return .eof
             }
             
@@ -252,10 +253,10 @@ struct ConfigScanner {
     
     private mutating func scanKey() -> String? {
         if CharacterSet.letters.contains(text.unicodeScalars[pos]) {
-            let scalars    = text.unicodeScalars
+            let scalars = text.unicodeScalars
             let startIndex = pos
             pos = scalars.index(after: pos)
-            while pos < scalars.endIndex && CharacterSet.identifierCharacters.contains(scalars[pos]) {
+            while pos < scalars.endIndex, CharacterSet.identifierCharacters.contains(scalars[pos]) {
                 pos = scalars.index(after: pos)
             }
             
@@ -265,7 +266,7 @@ struct ConfigScanner {
     }
     
     private mutating func scanValue() -> String? {
-        if !self.skipWhitespace() {
+        if !skipWhitespace() {
             return nil
         }
         
@@ -277,14 +278,14 @@ struct ConfigScanner {
         
         pos = scalars.index(after: pos)
         
-        if !self.skipWhitespace() {
+        if !skipWhitespace() {
             return nil
         }
         
         if CharacterSet.doubleQuotes.contains(scalars[pos]) {
             pos = scalars.index(after: pos)
             let startIndex = pos
-            while pos < scalars.endIndex && !CharacterSet.doubleQuotes.contains(scalars[pos]) {
+            while pos < scalars.endIndex, !CharacterSet.doubleQuotes.contains(scalars[pos]) {
                 pos = scalars.index(after: pos)
             }
             let v = String(scalars[startIndex..<pos])
@@ -298,7 +299,7 @@ struct ConfigScanner {
         }
         
         let startIndex = pos
-        while pos < scalars.endIndex && !CharacterSet.whitespacesAndComment.contains(scalars[pos]) {
+        while pos < scalars.endIndex, !CharacterSet.whitespacesAndComment.contains(scalars[pos]) {
             pos = scalars.index(after: pos)
         }
         

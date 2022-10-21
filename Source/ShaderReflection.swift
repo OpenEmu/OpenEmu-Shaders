@@ -22,8 +22,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
 @_implementationOnly import CSPIRVCross
+import Foundation
 @_implementationOnly import os.log
 
 class ShaderTextureSemanticMeta {
@@ -33,7 +33,7 @@ class ShaderTextureSemanticMeta {
     
     init(index: Int, name: String) {
         self.index = index
-        self.name  = name
+        self.name = name
     }
 }
 
@@ -54,7 +54,7 @@ class ShaderBufferSemanticMeta {
     
     init(index: Int, name: String) {
         self.index = index
-        self.name  = name
+        self.name = name
     }
 }
 
@@ -65,8 +65,8 @@ class ShaderTextureSemanticMap {
     
     init(textureSemantic semantic: Compiled.ShaderTextureSemantic, index: Int, name: String) {
         self.semantic = semantic
-        self.index    = index
-        self.name     = name
+        self.index = index
+        self.name = name
     }
 }
 
@@ -81,27 +81,27 @@ class ShaderBufferSemanticMap {
     
     init(semantic: Compiled.ShaderBufferSemantic, index: Int, name: String, baseType: SPVBaseType, vecSize: Int, cols: Int) {
         self.semantic = semantic
-        self.index    = index
-        self.name     = name
+        self.index = index
+        self.name = name
         self.baseType = baseType
-        self.vecSize  = vecSize
-        self.cols     = cols
+        self.vecSize = vecSize
+        self.cols = cols
     }
     
     init(semantic: Compiled.ShaderBufferSemantic, baseType: SPVBaseType, vecSize: Int, cols: Int) {
         self.semantic = semantic
-        self.index    = 0
-        self.name     = semantic.description
+        index = 0
+        name = semantic.description
         self.baseType = baseType
-        self.vecSize  = vecSize
-        self.cols     = cols
+        self.vecSize = vecSize
+        self.cols = cols
     }
     
     func validateType(_ type: __SPVType) -> Bool {
         type.num_array_dimensions == 0 &&
-        type.basetype == baseType &&
-        type.vector_size == vecSize &&
-        type.columns == cols
+            type.basetype == baseType &&
+            type.vector_size == vecSize &&
+            type.columns == cols
     }
 }
 

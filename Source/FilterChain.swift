@@ -28,7 +28,7 @@ import MetalKit
 @_implementationOnly import os.log
 
 // swiftlint:disable type_body_length
-final public class FilterChain {
+public final class FilterChain {
     enum InitError: Error {
         case invalidSamplerState
     }
@@ -68,22 +68,23 @@ final public class FilterChain {
         var outputSize: TextureSize
         
         init() {
-            viewport   = .init()
+            viewport = .init()
             outputSize = .init()
         }
     }
+
     private var outputFrame: OutputFrame = .init()
     
     private struct Pass {
-        var format          = MTLPixelFormat.bgra8Unorm
-        var buffers         = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers)
-        var vBuffers        = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for vertex binding
-        var fBuffers        = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for fragment binding
-        var renderTarget    = Texture()
-        var feedbackTarget  = Texture()
-        var frameCount      = UInt32(0)
-        var frameCountMod   = UInt32(0)
-        var frameDirection  = Int32(0)
+        var format = MTLPixelFormat.bgra8Unorm
+        var buffers = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers)
+        var vBuffers = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for vertex binding
+        var fBuffers = [MTLBuffer?](repeating: nil, count: Constants.maxConstantBuffers) // array used for fragment binding
+        var renderTarget = Texture()
+        var feedbackTarget = Texture()
+        var frameCount = UInt32(0)
+        var frameCountMod = UInt32(0)
+        var frameDirection = Int32(0)
         var bindings: ShaderPassBindings?
         var viewport = MTLViewport()
         var state: MTLRenderPipelineState?
@@ -125,7 +126,7 @@ final public class FilterChain {
     private var luts = [Texture](repeating: .init(), count: Constants.maxTextures)
     
     private var renderTargetsNeedResize = true
-    private var historyNeedsInit        = false
+    private var historyNeedsInit = false
     
     public private(set) var sourceRect = CGRect.zero
     
@@ -140,7 +141,7 @@ final public class FilterChain {
     
     private var _rotation: Float = 0
     
-    private var uniforms         = Uniforms.empty
+    private var uniforms = Uniforms.empty
     private var uniformsNoRotate = Uniforms.empty
     
     /// Used as a fallback image when a look-up texture cannot be loaded.
@@ -174,9 +175,9 @@ final public class FilterChain {
     private let deviceHasUnifiedMemory: Bool
     
     // parameters state
-    private var parameters      = [Float](repeating: 0, count: Constants.maxParameters)
+    private var parameters = [Float](repeating: 0, count: Constants.maxParameters)
     private var parametersCount = 0
-    private var parametersMap   = [String: Int]()
+    private var parametersMap = [String: Int]()
     
     public init(device: MTLDevice) throws {
         self.device = device
@@ -186,10 +187,10 @@ final public class FilterChain {
             deviceHasUnifiedMemory = false
         }
         
-        library         = try device.makeDefaultLibrary(bundle: Bundle(for: Self.self))
-        loader          = .init(device: device)
-        pipelineState   = try Self.makePipelineState(device, library)
-        samplers        = try Self.makeSamplers(device)
+        library = try device.makeDefaultLibrary(bundle: Bundle(for: Self.self))
+        loader = .init(device: device)
+        pipelineState = try Self.makePipelineState(device, library)
+        samplers = try Self.makeSamplers(device)
         vertexSizeBytes = MemoryLayout<Vertex>.stride * vertex.count
         
         rotation = 0
@@ -201,13 +202,13 @@ final public class FilterChain {
     private static func makePipelineState(_ device: MTLDevice, _ library: MTLLibrary) throws -> MTLRenderPipelineState {
         let vd = MTLVertexDescriptor()
         if let attr = vd.attributes[VertexAttribute.position.rawValue] {
-            attr.offset      = MemoryLayout<Vertex>.offset(of: \Vertex.position)!
-            attr.format      = .float4
+            attr.offset = MemoryLayout<Vertex>.offset(of: \Vertex.position)!
+            attr.format = .float4
             attr.bufferIndex = BufferIndex.positions.rawValue
         }
         if let attr = vd.attributes[VertexAttribute.texCoord.rawValue] {
-            attr.offset      = MemoryLayout<Vertex>.offset(of: \Vertex.texCoord)!
-            attr.format      = .float2
+            attr.offset = MemoryLayout<Vertex>.offset(of: \Vertex.texCoord)!
+            attr.format = .float2
             attr.bufferIndex = BufferIndex.positions.rawValue
         }
         if let l = vd.layouts[BufferIndex.positions.rawValue] {
@@ -218,17 +219,17 @@ final public class FilterChain {
         psd.label = "Pipeline+No Alpha"
         
         if let ca = psd.colorAttachments[0] {
-            ca.pixelFormat                 = .bgra8Unorm // NOTE(sgc): Required layer format (could be taken from layer.pixelFormat)
-            ca.isBlendingEnabled           = false
-            ca.sourceAlphaBlendFactor      = .sourceAlpha
-            ca.sourceRGBBlendFactor        = .sourceAlpha
+            ca.pixelFormat = .bgra8Unorm // NOTE(sgc): Required layer format (could be taken from layer.pixelFormat)
+            ca.isBlendingEnabled = false
+            ca.sourceAlphaBlendFactor = .sourceAlpha
+            ca.sourceRGBBlendFactor = .sourceAlpha
             ca.destinationAlphaBlendFactor = .oneMinusSourceAlpha
-            ca.destinationRGBBlendFactor   = .oneMinusSourceAlpha
+            ca.destinationRGBBlendFactor = .oneMinusSourceAlpha
         }
         
-        psd.sampleCount      = 1
+        psd.sampleCount = 1
         psd.vertexDescriptor = vd
-        psd.vertexFunction   = library.makeFunction(name: "basic_vertex_proj_tex")
+        psd.vertexFunction = library.makeFunction(name: "basic_vertex_proj_tex")
         psd.fragmentFunction = library.makeFunction(name: "basic_fragment_proj_tex")
         
         return try device.makeRenderPipelineState(descriptor: psd)
@@ -345,11 +346,11 @@ final public class FilterChain {
         
         if viewAspect >= wantAspect {
             // Raw image is too wide (normal case), squish inwards
-            minFactor   = wantAspect / viewAspect
+            minFactor = wantAspect / viewAspect
             outRectSize = .init(width: size.width * minFactor, height: size.height)
         } else {
             // Raw image is too tall, squish upwards
-            minFactor   = viewAspect / wantAspect
+            minFactor = viewAspect / wantAspect
             outRectSize = .init(width: size.width, height: size.height * minFactor)
         }
         
@@ -384,7 +385,7 @@ final public class FilterChain {
     }
     
     public func setSourceRect(_ rect: CGRect, aspect: CGSize) {
-        if sourceRect == rect && aspectSize == aspect {
+        if sourceRect == rect, aspectSize == aspect {
             return
         }
         
@@ -415,7 +416,7 @@ final public class FilterChain {
             let bytesPerPixel = t.pixelFormat.bytesPerPixel
             precondition(bytesPerPixel > 0, "Unable to determine bytes per pixel for pixel format \(t.pixelFormat)")
             
-            let bytesPerRow   = t.width  * bytesPerPixel
+            let bytesPerRow = t.width * bytesPerPixel
             let bytesPerImage = t.height * bytesPerRow
             if bytesPerImage > sizeMax {
                 sizeMax = bytesPerImage
@@ -424,15 +425,16 @@ final public class FilterChain {
         
         // Allocate a buffer over the entire heap and fill it with zeros
         if let bce = commandBuffer.makeBlitCommandEncoder(),
-           let buf = device.makeBuffer(length: sizeMax, options: [.storageModePrivate]) {
+           let buf = device.makeBuffer(length: sizeMax, options: [.storageModePrivate])
+        {
             bce.fill(buffer: buf, range: 0..<sizeMax, value: 0)
             
             // Use the cleared buffer to clear the destination texture.
             for t in _clearTextures {
                 let bytesPerPixel = t.pixelFormat.bytesPerPixel
-                let bytesPerRow   = t.width  * bytesPerPixel
+                let bytesPerRow = t.width * bytesPerPixel
                 let bytesPerImage = t.height * bytesPerRow
-                let sourceSize    = MTLSize(width: t.width, height: t.height, depth: 1)
+                let sourceSize = MTLSize(width: t.width, height: t.height, depth: 1)
                 bce.copy(from: buf, sourceOffset: 0, sourceBytesPerRow: bytesPerRow, sourceBytesPerImage: bytesPerImage, sourceSize: sourceSize,
                          to: t, destinationSlice: 0, destinationLevel: 0, destinationOrigin: .init())
             }
@@ -519,7 +521,8 @@ final public class FilterChain {
     public func render(sourceTexture: MTLTexture,
                        commandBuffer: MTLCommandBuffer,
                        renderPassDescriptor rpd: MTLRenderPassDescriptor,
-                       flipVertically: Bool = false) {
+                       flipVertically: Bool = false)
+    {
         renderOffscreenPasses(sourceTexture: sourceTexture, commandBuffer: commandBuffer)
         if let rce = commandBuffer.makeRenderCommandEncoder(descriptor: rpd) {
             renderFinalPass(withCommandEncoder: rce, flipVertically: flipVertically)
@@ -531,7 +534,7 @@ final public class FilterChain {
         prepareNextFrame(sourceTexture: sourceTexture, commandBuffer: commandBuffer)
         updateBuffersForPasses()
         
-        guard hasShader && passCount > 0 else { return }
+        guard hasShader, passCount > 0 else { return }
         
         // swap feedback render targets
         for i in 0..<passCount where pass[i].hasFeedback {
@@ -557,7 +560,7 @@ final public class FilterChain {
     private func updateBuffersForPasses() {
         for i in 0..<passCount {
             pass[i].frameDirection = Int32(frameDirection)
-            pass[i].frameCount     = UInt32(frameCount)
+            pass[i].frameCount = UInt32(frameCount)
             if pass[i].frameCountMod != 0 {
                 pass[i].frameCount %= pass[i].frameCountMod
             }
@@ -566,8 +569,8 @@ final public class FilterChain {
                 let sem = pass[i].bindings!.buffers[j]
                 
                 guard
-                    (sem.bindingVert != nil || sem.bindingFrag != nil)
-                        && !sem.uniforms.isEmpty
+                    sem.bindingVert != nil || sem.bindingFrag != nil,
+                    !sem.uniforms.isEmpty
                 else { continue }
                 
                 if let buffer = pass[i].buffers[j] {
@@ -666,8 +669,8 @@ final public class FilterChain {
             let fmt = self.pass[i].format
             if i != lastPassIndex
                 || passSize != viewportSize
-                || fmt != .bgra8Unorm {
-                
+                || fmt != .bgra8Unorm
+            {
                 let (width, height) = (Int(passSize.width), Int(passSize.height))
                 self.pass[i].viewport = .init(originX: 0, originY: 0,
                                               width: Double(width), height: Double(height),
@@ -704,14 +707,14 @@ final public class FilterChain {
         luts = .init(repeating: .init(), count: Constants.maxTextures)
         historyTextures = .init(repeating: .init(), count: Constants.maxFrameHistory + 1)
         
-        parameters      = .init(repeating: 0, count: Constants.maxParameters)
-        parametersMap   = [:]
+        parameters = .init(repeating: 0, count: Constants.maxParameters)
+        parametersMap = [:]
         parametersCount = 0
         
-        historyCount    = 0
-        passCount       = 0
-        lastPassIndex   = 0
-        hasShader       = false
+        historyCount = 0
+        passCount = 0
+        lastPassIndex = 0
+        hasShader = false
     }
     
     public func setCompiledShader(_ container: CompiledShaderContainer) throws {
@@ -721,14 +724,14 @@ final public class FilterChain {
         
         let ss = container.shader
         
-        passCount       = ss.passes.count
-        lastPassIndex   = passCount - 1
+        passCount = ss.passes.count
+        lastPassIndex = passCount - 1
         
         parametersCount = ss.parameters.count
-        parametersMap   = .init(uniqueKeysWithValues: ss.parameters.enumerated().map({ index, param in (param.name, index) }))
-        parameters      = .init(ss.parameters.map({ ($0.initial as NSDecimalNumber).floatValue }))
+        parametersMap = .init(uniqueKeysWithValues: ss.parameters.enumerated().map { index, param in (param.name, index) })
+        parameters = .init(ss.parameters.map { ($0.initial as NSDecimalNumber).floatValue })
         
-        let texStride     = MemoryLayout<Texture>.stride
+        let texStride = MemoryLayout<Texture>.stride
         let texViewOffset = MemoryLayout<Texture>.offset(of: \Texture.view)!
         let texSizeOffset = MemoryLayout<Texture>.offset(of: \Texture.size)!
         
@@ -755,7 +758,7 @@ final public class FilterChain {
             
             if passNumber > 0 {
                 // The source texture for passes 1..<n is the output of the previous pass
-                withUnsafePointer(to: &pass[passNumber-1].renderTarget) {
+                withUnsafePointer(to: &pass[passNumber - 1].renderTarget) {
                     let p = UnsafeRawPointer($0)
                     sem.addTexture(p.advanced(by: texViewOffset),
                                    size: p.advanced(by: texSizeOffset),
@@ -818,7 +821,7 @@ final public class FilterChain {
                            passSemantics: sem,
                            pass: pass)
             self.pass[passNumber].bindings = bindings
-            self.pass[passNumber].format   = .init(pass.format)
+            self.pass[passNumber].format = .init(pass.format)
             self.pass[passNumber].frameCountMod = UInt32(pass.frameCountMod)
             
             // update scaling
@@ -848,12 +851,12 @@ final public class FilterChain {
             }
             
             if let ca = psd.colorAttachments[0] {
-                ca.pixelFormat                 = self.pass[passNumber].format
-                ca.isBlendingEnabled           = false
-                ca.sourceAlphaBlendFactor      = .sourceAlpha
-                ca.sourceRGBBlendFactor        = .sourceAlpha
+                ca.pixelFormat = self.pass[passNumber].format
+                ca.isBlendingEnabled = false
+                ca.sourceAlphaBlendFactor = .sourceAlpha
+                ca.sourceRGBBlendFactor = .sourceAlpha
                 ca.destinationAlphaBlendFactor = .oneMinusSourceAlpha
-                ca.destinationRGBBlendFactor   = .oneMinusSourceAlpha
+                ca.destinationRGBBlendFactor = .oneMinusSourceAlpha
             }
             
             psd.sampleCount = 1
@@ -901,9 +904,9 @@ final public class FilterChain {
         os_log("Shader load completed in %{xcode:interval}f seconds", log: .default, type: .debug, end)
         
         loadLuts(container)
-        hasShader               = true
+        hasShader = true
         renderTargetsNeedResize = true
-        historyNeedsInit        = true
+        historyNeedsInit = true
     }
     
     private func loadLuts(_ cc: CompiledShaderContainer) {
@@ -916,7 +919,7 @@ final public class FilterChain {
         
         let images = cc.shader.luts
         
-        var i: Int = 0
+        var i = 0
         for lut in images {
             let t: MTLTexture
             do {
@@ -940,7 +943,7 @@ final public class FilterChain {
             let bind = passBindings.buffers[bufferIndex]
             bind.bindingVert = desc.bindingVert
             bind.bindingFrag = desc.bindingFrag
-            bind.size        = (desc.size + 0xf) & ~0xf // round up to nearest 16 bytes
+            bind.size = (desc.size + 0xf) & ~0xf // round up to nearest 16 bytes
             
             for u in desc.uniforms {
                 switch u.semantic {
@@ -975,11 +978,11 @@ final public class FilterChain {
         addUniforms(bufferIndex: 1)
         
         for t in pass.textures {
-            let tex  = passSemantics.textures[t.semantic]!
+            let tex = passSemantics.textures[t.semantic]!
             let bind = passBindings.addTexture(tex.texture.advanced(by: t.index * tex.stride),
                                                binding: t.binding,
                                                name: t.name)
-            bind.wrap   = .init(t.wrap)
+            bind.wrap = .init(t.wrap)
             bind.filter = .init(t.filter)
         }
     }
@@ -1109,7 +1112,6 @@ extension MTLLanguageVersion {
 }
 
 extension MTLPixelFormat {
-    
     // swiftlint:disable cyclomatic_complexity
     init(_ pixelFormat: Compiled.PixelFormat) {
         switch pixelFormat {
@@ -1190,16 +1192,16 @@ extension MTLPixelFormat {
             return 2
             
         case .rg8Unorm, .rg8Unorm_srgb, .rg8Snorm, .rg8Uint, .rg8Sint, .b5g6r5Unorm, .a1bgr5Unorm, .abgr4Unorm,
-                .bgr5A1Unorm:
+             .bgr5A1Unorm:
             return 2
             
         case .r32Uint, .r32Sint, .r32Float, .rg16Unorm, .rg16Snorm, .rg16Uint, .rg16Sint, .rg16Float, .rgba8Unorm,
-                .rgba8Unorm_srgb, .rgba8Snorm, .rgba8Uint, .rgba8Sint, .bgra8Unorm, .bgra8Unorm_srgb, .rgb10a2Unorm,
-                .rgb10a2Uint, .rg11b10Float, .rgb9e5Float, .bgr10a2Unorm, .bgr10_xr, .bgr10_xr_srgb:
+             .rgba8Unorm_srgb, .rgba8Snorm, .rgba8Uint, .rgba8Sint, .bgra8Unorm, .bgra8Unorm_srgb, .rgb10a2Unorm,
+             .rgb10a2Uint, .rg11b10Float, .rgb9e5Float, .bgr10a2Unorm, .bgr10_xr, .bgr10_xr_srgb:
             return 4
             
         case .rg32Uint, .rg32Sint, .rg32Float, .rgba16Unorm, .rgba16Snorm, .rgba16Uint, .rgba16Sint, .rgba16Float,
-                .bgra10_xr, .bgra10_xr_srgb:
+             .bgra10_xr, .bgra10_xr_srgb:
             return 8
             
         case .rgba32Uint, .rgba32Sint, .rgba32Float:

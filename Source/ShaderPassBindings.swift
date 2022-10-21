@@ -31,10 +31,10 @@ class ShaderPassUniformBinding: CustomDebugStringConvertible {
     let name: String
     
     init(data: UnsafeRawPointer, size: Int, offset: Int, name: String) {
-        self.data   = data
-        self.size   = size
+        self.data = data
+        self.size = size
         self.offset = offset
-        self.name   = name
+        self.name = name
     }
     
     public var debugDescription: String {
@@ -66,7 +66,7 @@ class ShaderPassTextureBinding {
     init(texture: UnsafeRawPointer, binding: Int, name: String) {
         self.texture = texture
         self.binding = binding
-        self.name    = name
+        self.name = name
     }
 }
 

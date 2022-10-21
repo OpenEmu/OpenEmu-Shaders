@@ -58,8 +58,8 @@ public final class SlangShader {
         
         if let textures = sm.textures {
             luts = textures.map { spec in
-                    .init(url: URL(string: spec.path, relativeTo: base)!,
-                          spec: spec)
+                .init(url: URL(string: spec.path, relativeTo: base)!,
+                      spec: spec)
             }
         } else {
             luts = []
@@ -81,7 +81,7 @@ public final class SlangShader {
                 return true
             }
         
-        self.parametersMap  = parametersMap
+        self.parametersMap = parametersMap
         
         // resolve parameter overrides from config
         sm.parameters?
@@ -122,7 +122,8 @@ public final class ShaderPass {
     }
     
     internal let source: SourceParser
-    
+
+    // swiftformat:disable consecutiveSpaces redundantSelf
     init(from url: URL, pass: ShaderPassModel) throws {
         self.url        = url
         self.index      = pass.pass
@@ -141,17 +142,19 @@ public final class ShaderPass {
             scaleY = nil
         }
         
-        source  = try SourceParser(fromURL: url)
-        alias   = pass.alias ?? source.name
+        source = try SourceParser(fromURL: url)
+        alias = pass.alias ?? source.name
     }
+    
+    // swiftformat:enable all
     
     // MARK: - Model helpers
     
     static func isValidScale(_ pass: ShaderPassModel) -> Bool {
         // Either the shader pass specifies a scale_type for both axes
         pass.scaleType != nil ||
-        // or individual scale type for the X and Y axis
-        (pass.scaleTypeX != nil && pass.scaleTypeY != nil)
+            // or individual scale type for the X and Y axis
+            (pass.scaleTypeX != nil && pass.scaleTypeY != nil)
     }
     
     static func readScale(_ axis: ShaderPassModel.ScaleAxis, _ d: ShaderPassModel) -> Compiled.ShaderPassScale? {
@@ -181,6 +184,7 @@ public final class ShaderLUT {
     public let wrapMode: Compiled.ShaderPassWrap
     public let isMipmap: Bool
     
+    // swiftformat:disable consecutiveSpaces redundantSelf
     init(url: URL, spec: ShaderTextureModel) {
         self.url      = url
         self.name     = spec.name
@@ -188,6 +192,7 @@ public final class ShaderLUT {
         self.wrapMode = .init(string: spec.wrapMode)
         self.isMipmap = spec.mipmapInput ?? false
     }
+    // swiftformat:enable all
 }
 
 extension Compiled.ShaderPassFilter {

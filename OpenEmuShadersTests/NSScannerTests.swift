@@ -27,10 +27,9 @@ import XCTest
 @testable import OpenEmuShaders
 
 class NSScannerTests: XCTestCase {
-
     @available(macOS 10.16, *)
     func testScanQuotedString() {
-        let scan      = Scanner(string: #"3.0 "hello there" YES"#)
+        let scan = Scanner(string: #"3.0 "hello there" YES"#)
         let f = scan.scanDouble() ?? 0
         XCTAssertEqual(f, 3.0)
 

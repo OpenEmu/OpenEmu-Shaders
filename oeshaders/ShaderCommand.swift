@@ -22,8 +22,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
 import ArgumentParser
+import Foundation
 
 extension OEShaders {
     struct Shader: ParsableCommand {
@@ -32,7 +32,6 @@ extension OEShaders {
             subcommands: [
                 Thumbnail.self,
                 Benchmark.self,
-            ]
-        )
+            ])
     }
 }

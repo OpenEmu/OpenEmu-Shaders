@@ -38,7 +38,7 @@ struct ShaderPassTextureSemantics {
     
     init(texture: UnsafeRawPointer, stride: Int) {
         self.texture = texture
-        self.stride  = stride
+        self.stride = stride
     }
     
     init(texture: UnsafeRawPointer) {
@@ -51,7 +51,7 @@ struct ShaderPassTextureUniformSemantic {
     let stride: Int
     
     init(size: UnsafeRawPointer, stride: Int) {
-        self.size   = size
+        self.size = size
         self.stride = stride
     }
     
@@ -75,7 +75,8 @@ class ShaderPassSemantics {
                     stride ts: Int,
                     size: UnsafeRawPointer,
                     stride ss: Int,
-                    semantic: Compiled.ShaderTextureSemantic) {
+                    semantic: Compiled.ShaderTextureSemantic)
+    {
         textures[semantic] = .init(texture: texture, stride: ts)
         textureUniforms[semantic.uniformSemantic] = .init(size: size, stride: ss)
     }
@@ -119,7 +120,7 @@ enum ShaderPassScale: Equatable, Codable {
     case viewport(scale: CGFloat)
     
     init?(_ scale: Compiled.ShaderPassScale?) {
-        guard let scale = scale else {
+        guard let scale else {
             return nil
         }
         

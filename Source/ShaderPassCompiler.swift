@@ -22,8 +22,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
 @_implementationOnly import CSPIRVCross
+import Foundation
 @_implementationOnly import os.log
 
 public class ShaderPassCompiler {
@@ -35,12 +35,10 @@ public class ShaderPassCompiler {
     let shader: SlangShader
     
     public init(shaderModel shader: SlangShader) {
-        self.shader     = shader
+        self.shader = shader
     }
     
-    func compileError(_ error: String) {
-        
-    }
+    func compileError(_ error: String) {}
     
     private func makeVersion(major: Int, minor: Int, patch: Int = 0) -> UInt32 {
         UInt32(major * 10000 + minor * 100 + patch)
@@ -49,14 +47,14 @@ public class ShaderPassCompiler {
     func makeCompilersForPass(
         _ pass: ShaderPass,
         context ctx: __SPVContext,
-        options: ShaderCompilerOptions
-    ) throws -> (vsCompiler: SPVCompiler, fsCompiler: SPVCompiler) {
+        options: ShaderCompilerOptions) throws -> (vsCompiler: SPVCompiler, fsCompiler: SPVCompiler)
+    {
         let version: UInt32
         switch options.languageVersion {
-        #if swift(>=5.5)
+#if swift(>=5.5)
         case .version2_4:
             version = makeVersion(major: 2, minor: 4)
-        #endif
+#endif
         case .version2_3:
             version = makeVersion(major: 2, minor: 3)
         case .version2_2:
@@ -70,7 +68,7 @@ public class ShaderPassCompiler {
         vsData.withUnsafeBytes { buf in
             _ = ctx.parse(data: buf.bindMemory(to: SpvId.self).baseAddress, buf.count / MemoryLayout<SpvId>.size, &vsIR)
         }
-        guard let vsIR = vsIR else {
+        guard let vsIR else {
             // os_log_error(OE_LOG_DEFAULT, "error parsing vertex spirv '%@'", pass.url.absoluteString)
             throw ShaderError.buildFailed
         }
@@ -78,7 +76,7 @@ public class ShaderPassCompiler {
         var vsCompiler: SPVCompiler?
         ctx.create_compiler(backend: .msl, ir: vsIR, captureMode: .takeOwnership, compiler: &vsCompiler)
 
-        guard let vsCompiler = vsCompiler else {
+        guard let vsCompiler else {
             // os_log_error(OE_LOG_DEFAULT, "error creating vertex compiler '%@'", pass.url.absoluteString)
             throw ShaderError.buildFailed
         }
@@ -86,7 +84,7 @@ public class ShaderPassCompiler {
         // vertex compile
         var vsOptions: SPVCompilerOptions?
         vsCompiler.create_compiler_options(&vsOptions)
-        guard let vsOptions = vsOptions else {
+        guard let vsOptions else {
             throw ShaderError.buildFailed
         }
         vsOptions.set_uint(option: SPVC_COMPILER_OPTION_MSL_VERSION, with: version)
@@ -98,7 +96,7 @@ public class ShaderPassCompiler {
         fsData.withUnsafeBytes { buf in
             _ = ctx.parse(data: buf.bindMemory(to: SpvId.self).baseAddress, buf.count / MemoryLayout<SpvId>.size, &fsIR)
         }
-        guard let fsIR = fsIR else {
+        guard let fsIR else {
             // os_log_error(OE_LOG_DEFAULT, "error parsing fragment spirv '%@'", pass.url.absoluteString)
             throw ShaderError.buildFailed
         }
@@ -106,7 +104,7 @@ public class ShaderPassCompiler {
         var fsCompiler: SPVCompiler?
         ctx.create_compiler(backend: .msl, ir: fsIR, captureMode: .takeOwnership, compiler: &fsCompiler)
 
-        guard let fsCompiler = fsCompiler else {
+        guard let fsCompiler else {
             // os_log_error(OE_LOG_DEFAULT, "error creating fragment compiler '%@'", pass.url.absoluteString)
             throw ShaderError.buildFailed
         }
@@ -114,7 +112,7 @@ public class ShaderPassCompiler {
         // fragment compile
         var fsOptions: SPVCompilerOptions?
         fsCompiler.create_compiler_options(&fsOptions)
-        guard let fsOptions = fsOptions else {
+        guard let fsOptions else {
             throw ShaderError.buildFailed
         }
         fsOptions.set_uint(option: SPVC_COMPILER_OPTION_MSL_VERSION, with: version)
@@ -131,8 +129,8 @@ public class ShaderPassCompiler {
             try FileManager.default.createDirectory(at: cacheDir, withIntermediateDirectories: true)
             
             if let version = Bundle(for: Self.self).infoDictionary?["CFBundleShortVersionString"] as? String {
-                let vorf    = type == .vertex ? "vert" : "frag"
-                let file    = "\(pass.source.basename).\(pass.source.sha256).\(version.versionValue).\(vorf).spirv"
+                let vorf = type == .vertex ? "vert" : "frag"
+                let file = "\(pass.source.basename).\(pass.source.sha256).\(version.versionValue).\(vorf).spirv"
                 filename = cacheDir.appendingPathComponent(file)
                 if let data = try? Data(contentsOf: filename!) {
                     return data
@@ -143,7 +141,7 @@ public class ShaderPassCompiler {
         let source = type == .vertex ? pass.source.vertexSource : pass.source.fragmentSource
         let c = SlangCompiler()
         let data = try c.compileSource(source, ofType: type)
-        if let filename = filename {
+        if let filename {
             // Ignore any error if we can't write
             try? data.write(to: filename, options: .atomic)
         }
@@ -177,5 +175,5 @@ extension SPVResult {
         }
     }
     
-    var errorResult: ErrorResult? { return ErrorResult(self) }
+    var errorResult: ErrorResult? { ErrorResult(self) }
 }

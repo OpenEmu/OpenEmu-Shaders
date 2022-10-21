@@ -9,7 +9,6 @@
 import Foundation
 
 public enum FileCompiledShaderContainer {
-    
     enum Error: Swift.Error {
         /// The specified path does not exist.
         case pathNotExists
@@ -21,7 +20,7 @@ public enum FileCompiledShaderContainer {
         case missingCompiledShader
     }
     
-    final public class Decoder: CompiledShaderContainer {
+    public final class Decoder: CompiledShaderContainer {
         public let shader: Compiled.Shader
         
         public init(shader: Compiled.Shader) {

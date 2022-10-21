@@ -38,17 +38,17 @@ public class ShaderParameter: CustomStringConvertible {
     }
     
     public var description: String {
-        return "\(desc) (\(initial))"
+        "\(desc) (\(initial))"
     }
 }
 
 extension ShaderParameter: Equatable {
     public static func == (lhs: ShaderParameter, rhs: ShaderParameter) -> Bool {
-        return lhs.name == rhs.name &&
-                lhs.desc == rhs.desc &&
-                lhs.initial == rhs.initial &&
-                lhs.minimum == rhs.minimum &&
-                lhs.maximum == rhs.maximum &&
-                lhs.step == rhs.step
+        lhs.name == rhs.name &&
+            lhs.desc == rhs.desc &&
+            lhs.initial == rhs.initial &&
+            lhs.minimum == rhs.minimum &&
+            lhs.maximum == rhs.maximum &&
+            lhs.step == rhs.step
     }
 }

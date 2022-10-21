@@ -26,11 +26,11 @@ import Foundation
 
 public extension Scanner {
     func scanQuotedString() -> String? {
-        if !self.scanString("\"", into: nil) {
+        if !scanString("\"", into: nil) {
             return nil
         }
         var tmp: NSString?
-        if !self.scanUpTo("\"", into: &tmp) {
+        if !scanUpTo("\"", into: &tmp) {
             return nil
         }
         
@@ -38,7 +38,7 @@ public extension Scanner {
             return nil
         }
         
-        if !self.scanString("\"", into: nil) {
+        if !scanString("\"", into: nil) {
             return nil
         }
         

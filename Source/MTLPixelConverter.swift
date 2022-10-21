@@ -46,7 +46,8 @@ public class MTLPixelConverter {
         }
         
         public func convert(fromBuffer src: MTLBuffer, sourceOrigin: MTLOrigin, sourceBytesPerRow: Int,
-                            toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
+                            toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer)
+        {
             let ce = commandBuffer.makeComputeCommandEncoder()!
             ce.label = "pixel conversion"
             ce.setComputePipelineState(kernel)
@@ -58,7 +59,7 @@ public class MTLPixelConverter {
             ce.setBytes(&unif, length: MemoryLayout.stride(ofValue: unif), index: 1)
             ce.setTexture(dst, index: 0)
             
-            let size  = MTLSizeMake(16, 16, 1)
+            let size = MTLSizeMake(16, 16, 1)
             let count = MTLSizeMake(
                 (dst.width + size.width + 1) / size.width,
                 (dst.height + size.height + 1) / size.height,
@@ -82,7 +83,7 @@ public class MTLPixelConverter {
             
             ce.setTextures([src, dst], range: 0..<2)
             
-            let size  = MTLSizeMake(16, 16, 1)
+            let size = MTLSizeMake(16, 16, 1)
             let count = MTLSizeMake(
                 (src.width + size.width + 1) / size.width,
                 (src.height + size.height + 1) / size.height,
@@ -136,7 +137,8 @@ public class MTLPixelConverter {
     }
     
     public func convert(fromBuffer src: MTLBuffer, sourceFormat: OEMTLPixelFormat, sourceOrigin: MTLOrigin, sourceBytesPerRow: Int,
-                        toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {
+                        toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer)
+    {
         guard let filter = bufToTex[sourceFormat.rawValue] else {
             return
         }
@@ -145,11 +147,11 @@ public class MTLPixelConverter {
     }
     
     public func bufferConverter(withFormat sourceFormat: OEMTLPixelFormat) -> BufferConverter? {
-        return bufToTex[sourceFormat.rawValue]
+        bufToTex[sourceFormat.rawValue]
     }
     
     public func textureConverter(withFormat sourceFormat: OEMTLPixelFormat) -> TextureConverter? {
-        return texToTex[sourceFormat.rawValue]
+        texToTex[sourceFormat.rawValue]
     }
     
     public func convert(fromTexture src: MTLTexture, sourceFormat: OEMTLPixelFormat, toTexture dst: MTLTexture, commandBuffer: MTLCommandBuffer) {

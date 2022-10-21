@@ -22,9 +22,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+@_implementationOnly import CommonCrypto
 import Foundation
 import Metal
-@_implementationOnly import CommonCrypto
 
 enum SourceParserError: LocalizedError {
     case missingVersion
@@ -70,13 +70,13 @@ extension String {
     mutating func replaceOccurrences(of target: String, with replacement: String, options: String.CompareOptions = [], locale: Locale? = nil) {
         var range: Range<String.Index>?
         while let r = self.range(of: target, options: options, range: range.map { $0.lowerBound..<self.endIndex }, locale: locale) {
-            self.replaceSubrange(r, with: replacement)
+            replaceSubrange(r, with: replacement)
             range = r
         }
     }
 }
 
-extension Sequence where Self.Element == UInt8 {
+extension Sequence<UInt8> {
     var base64: String {
         var res = Data(self).base64EncodedString()
         res.replaceOccurrences(of: "+", with: "-")
@@ -92,7 +92,6 @@ extension Sequence where Self.Element == UInt8 {
  * Valid `#pragma` directives include `name`, `format` and `parameter`.
  */
 class SourceParser {
-    
     private var buffer: [String]
     var parametersMap: [String: ShaderParameter]
     var included: Set<String> = Set()
@@ -117,16 +116,12 @@ class SourceParser {
     /**
      Returns the vertex shader portion of the slang file
      */
-    lazy var vertexSource: String = {
-        return self.findSource(forStage: "vertex")
-    }()
+    lazy var vertexSource: String = self.findSource(forStage: "vertex")
     
     /**
      Returns the fragment shader portion of the slang file
      */
-    lazy var fragmentSource: String = {
-        return self.findSource(forStage: "fragment")
-    }()
+    lazy var fragmentSource: String = self.findSource(forStage: "fragment")
     
     init(fromURL url: URL) throws {
         buffer = []
@@ -140,9 +135,9 @@ class SourceParser {
         }
     }
     
-    fileprivate func findSource(forStage: String) -> String {
+    private func findSource(forStage: String) -> String {
         var src: [String] = []
-        var keep          = true
+        var keep = true
         for line in buffer {
             if line.hasPrefix(Prefixes.pragmaStage) {
                 let s = Scanner(string: line)
@@ -163,7 +158,9 @@ class SourceParser {
         return src.joined(separator: "\n")
     }
     
-    struct Prefixes {
+    // swiftformat:disable consecutiveSpaces
+    
+    enum Prefixes {
         static let version          = "#version "
         static let include          = "#include "
         static let endif            = "#endif"
@@ -173,11 +170,13 @@ class SourceParser {
         static let pragmaFormat     = "#pragma format "
         static let pragmaStage      = "#pragma stage "
     }
+
+    // swiftformat:enable all
     
-    fileprivate func load(_ url: URL, isRoot: Bool) throws {
-        let f        = try String(contentsOf: url)
+    private func load(_ url: URL, isRoot: Bool) throws {
+        let f = try String(contentsOf: url)
         let filename = url.lastPathComponent
-        var lines    = [String]()
+        var lines = [String]()
         f.enumerateLines { line, _ in lines.append(line) }
 
         var lno = 1
@@ -205,11 +204,11 @@ class SourceParser {
                     throw SourceParserError.includeNotFound
                 }
                 let file = URL(string: filepath, relativeTo: url.deletingLastPathComponent())!
-                if file.isFileURL && !FileManager.default.fileExists(atPath: file.path) {
+                if file.isFileURL, !FileManager.default.fileExists(atPath: file.path) {
                     throw SourceParserError.includeFileNotFound(file.path)
                 }
                 if !included.contains(file.absoluteString) {
-                    try self.load(file, isRoot: false)
+                    try load(file, isRoot: false)
                     buffer.append("#line \(lno) \"\(filename)\"")
                     included.insert(file.absoluteString)
                 }
@@ -219,7 +218,7 @@ class SourceParser {
                 var hasPreprocessor = false
                 if line.hasPrefix(Prefixes.pragma) {
                     hasPreprocessor = true
-                    try self.processPragma(line: line)
+                    try processPragma(line: line)
                 } else if line.hasPrefix(Prefixes.endif) {
                     hasPreprocessor = true
                 }
@@ -238,7 +237,7 @@ class SourceParser {
         return set as CharacterSet
     }
     
-    fileprivate func processPragma(line: String) throws {
+    private func processPragma(line: String) throws {
         if line.hasPrefix(Prefixes.pragmaName) {
             if name != nil {
                 throw SourceParserError.multipleNamePragma
@@ -314,9 +313,7 @@ extension CharacterSet {
         return set
     }()
     
-    static var doubleQuotes: CharacterSet = {
-        return CharacterSet(charactersIn: "\"")
-    }()
+    static var doubleQuotes: CharacterSet = .init(charactersIn: "\"")
     
     static var whitespacesAndComment: CharacterSet = {
         var set = CharacterSet.whitespaces

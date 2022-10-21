@@ -22,12 +22,11 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
 @_implementationOnly import CSPIRVCross
+import Foundation
 @_implementationOnly import os.log
 
 extension ShaderPassCompiler {
-    
     func makeSymbols() -> ShaderSymbols? {
         let sym = ShaderSymbols()
         
@@ -61,13 +60,13 @@ extension ShaderPassCompiler {
         
         var vsResources: SPVResources?
         vsCompiler.create_shader_resources(&vsResources)
-        guard let vsResources = vsResources else {
+        guard let vsResources else {
             return nil
         }
         
         var fsResources: SPVResources?
         fsCompiler.create_shader_resources(&fsResources)
-        guard let fsResources = fsResources else {
+        guard let fsResources else {
             return nil
         }
         
@@ -262,7 +261,7 @@ extension ShaderPassCompiler {
         var rangesPtr: UnsafePointer<spvc_buffer_range>?
         var numRanges = 0
         compiler.get_active_buffer_ranges(id: res.id, list: &rangesPtr, size: &numRanges)
-        guard let rangesPtr = rangesPtr else { return true }
+        guard let rangesPtr else { return true }
         
         let ranges = UnsafeBufferPointer(start: rangesPtr, count: numRanges)
         for range in ranges {
@@ -276,7 +275,7 @@ extension ShaderPassCompiler {
                 }
                 
                 let vecsz = Int(type.vector_size)
-                let cols  = Int(type.columns)
+                let cols = Int(type.columns)
                 
                 if bufferSem.semantic == .floatParameter {
                     if !ref.setOffset(range.offset, vecSize: vecsz, forFloatParameterAt: bufferSem.index, name: name, ubo: ubo) {
@@ -288,7 +287,7 @@ extension ShaderPassCompiler {
                     }
                 }
             } else if let texSem = sym.textureSemantic(forUniformName: name) {
-                if texSem.semantic == .passOutputSize && texSem.index >= ref.passNumber {
+                if texSem.semantic == .passOutputSize, texSem.index >= ref.passNumber {
                     // os_log_error(OE_LOG_DEFAULT, "shader pass #%lu is attempting to use output from self or later pass #%lu", ref.passNumber, texSem.index);
                     return false
                 }
@@ -302,7 +301,6 @@ extension ShaderPassCompiler {
                     return false
                 }
             }
-            
         }
 
         return true
@@ -314,7 +312,6 @@ extension ShaderPassCompiler {
     }
     
     private func validateResources(vsResources: SPVResources, fsResources: SPVResources) throws {
-        
         func checkEmpty(_ r: SPVResources, _ t: SPVResourceType) throws {
             var list: UnsafePointer<__spvc_reflected_resource>?
             var listSize = 0
@@ -341,9 +338,9 @@ extension ShaderPassCompiler {
 }
 
 class ShaderSymbols {
-    private(set) var floatParameterSemanticMap: [String: ShaderBufferSemanticMap]   = [:]
-    private(set) var textureSemanticMap: [String: ShaderTextureSemanticMap]         = [:]
-    private(set) var textureUniformSemanticMap: [String: ShaderBufferSemanticMap]   = [:]
+    private(set) var floatParameterSemanticMap: [String: ShaderBufferSemanticMap] = [:]
+    private(set) var textureSemanticMap: [String: ShaderTextureSemanticMap] = [:]
+    private(set) var textureUniformSemanticMap: [String: ShaderBufferSemanticMap] = [:]
     
     func addTextureSemantic(_ semantic: Compiled.ShaderTextureSemantic, atIndex i: Int, name: String) -> Bool {
         if textureSemanticMap[name] != nil {
@@ -376,7 +373,12 @@ class ShaderSymbols {
             return false
         }
         
-        floatParameterSemanticMap[name] = ShaderBufferSemanticMap(semantic: .floatParameter, index: i, name: name, baseType: .fp32, vecSize: 1, cols: 1)
+        floatParameterSemanticMap[name] = ShaderBufferSemanticMap(semantic: .floatParameter,
+                                                                  index: i,
+                                                                  name: name,
+                                                                  baseType: .fp32,
+                                                                  vecSize: 1,
+                                                                  cols: 1)
         
         return true
     }
@@ -509,7 +511,7 @@ class ShaderPassReflection {
             floatParameters[index] = sem
         }
         
-        if sem.numberOfComponents != vecSize && (sem.uboOffset != nil || sem.pushOffset != nil) {
+        if sem.numberOfComponents != vecSize, sem.uboOffset != nil || sem.pushOffset != nil {
             os_log(.error, log: .default, "vertex and fragment shaders have different data type sizes for same parameter #%lu (%lu / %lu)",
                    index, sem.numberOfComponents, vecSize)
             return false
@@ -539,7 +541,7 @@ class ShaderPassReflection {
     func setOffset(_ offset: Int, vecSize: Int, forSemantic semantic: Compiled.ShaderBufferSemantic, ubo: Bool) -> Bool {
         guard let sem = semantics[semantic] else { return false }
         
-        if sem.numberOfComponents != vecSize && (sem.uboOffset != nil || sem.pushOffset != nil) {
+        if sem.numberOfComponents != vecSize, sem.uboOffset != nil || sem.pushOffset != nil {
             os_log(.error, log: .default, "vertex and fragment shaders have different data type sizes for same semantic %@ (%lu / %lu)",
                    semantic.description as NSString, sem.numberOfComponents, vecSize)
             return false

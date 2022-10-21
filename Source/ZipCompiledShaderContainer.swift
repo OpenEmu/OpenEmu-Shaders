@@ -10,7 +10,6 @@ import Foundation
 import ZIPFoundation
 
 public enum ZipCompiledShaderContainer {
-    
     enum Error: Swift.Error {
         /// The specified path does not exist.
         case pathNotExists
@@ -45,11 +44,11 @@ public enum ZipCompiledShaderContainer {
         let data = try je.encode(shader)
         
         try ar.addEntry(with: "shader.json", type: .file, uncompressedSize: Int64(data.count), compressionMethod: .deflate) { position, size in
-            data.subdata(in: Int(position)..<Int(position)+size)
+            data.subdata(in: Int(position)..<Int(position) + size)
         }
     }
 
-    final public class Decoder: CompiledShaderContainer {
+    public final class Decoder: CompiledShaderContainer {
         public let shader: Compiled.Shader
         private let archive: Archive
         

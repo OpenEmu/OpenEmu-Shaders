@@ -74,8 +74,8 @@ public struct Style: OptionSet {
     public static let underlined = Style(rawValue: 1 << 3)
     public static let blink = Style(rawValue: 1 << 4)
     public static let inverse = Style(rawValue: 1 << 5)
-    public static let hidden = Style(rawValue: 1 << 6)  // for eg. passwords
-    public static let strikethrough = Style(rawValue: 1 << 7)  // not implemented in Terminal.app
+    public static let hidden = Style(rawValue: 1 << 6) // for eg. passwords
+    public static let strikethrough = Style(rawValue: 1 << 7) // not implemented in Terminal.app
     
     public let rawValue: Int
     
@@ -102,7 +102,7 @@ private extension String.StringInterpolation {
             codeStrings.append("\(background)")
         }
         
-        if let style = style {
+        if let style {
             let lookups: [(Style, Int)] = [
                 (.bold, 1), (.dim, 2), (.italic, 3), (.underlined, 4), (.blink, 5),
                 (.inverse, 7), (.hidden, 8), (.strikethrough, 9),
@@ -116,7 +116,7 @@ private extension String.StringInterpolation {
         
         appendLiteral("m")
         appendInterpolation("\(any)")
-        appendLiteral("\u{001B}[0m")  // reset color, background, and style
+        appendLiteral("\u{001B}[0m") // reset color, background, and style
     }
 }
 

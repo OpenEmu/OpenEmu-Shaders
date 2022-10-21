@@ -7,12 +7,11 @@
 //
 
 import Foundation
-@_implementationOnly import QuartzCore
 @_implementationOnly import os.log
+@_implementationOnly import QuartzCore
 
-extension FilterChain {
-    
-    public func setShader(fromURL url: URL, options shaderOptions: ShaderCompilerOptions) throws {
+public extension FilterChain {
+    func setShader(fromURL url: URL, options shaderOptions: ShaderCompilerOptions) throws {
         os_log("Loading shader from '%{public}@'", log: .default, type: .debug, url.absoluteString)
         
         let start = CACurrentMediaTime()
@@ -30,5 +29,4 @@ extension FilterChain {
         
         try setCompiledShader(sc)
     }
-    
 }

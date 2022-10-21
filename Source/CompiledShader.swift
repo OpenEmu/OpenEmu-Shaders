@@ -36,6 +36,7 @@ public enum Compiled {
         public let maximum: Decimal
         public let step: Decimal
         
+        // swiftformat:disable consecutiveSpaces redundantSelf
         init(index: Int, source p: ShaderParameter) {
             self.index   = index
             self.name    = p.name
@@ -45,8 +46,9 @@ public enum Compiled {
             self.maximum = p.maximum
             self.step    = p.step
         }
+        // swiftformat:enable all
     }
-    
+        
     public struct ShaderPass: Codable {
         public let index: Int
         public let vertexSource: String
@@ -340,7 +342,7 @@ public enum Compiled {
         case rgba8Unorm
         case rgba8Uint
         case rgba8Sint
-        case rgba8Unorm_srgb    // swiftlint:disable:this identifier_name
+        case rgba8Unorm_srgb // swiftlint:disable:this identifier_name
         case rgb10a2Unorm
         case rgb10a2Uint
         case r16Uint
@@ -361,7 +363,7 @@ public enum Compiled {
         case rgba32Uint
         case rgba32Sint
         case rgba32Float
-        case bgra8Unorm_srgb    // swiftlint:disable:this identifier_name
+        case bgra8Unorm_srgb // swiftlint:disable:this identifier_name
         case bgra8Unorm
         
         // swiftlint:disable cyclomatic_complexity

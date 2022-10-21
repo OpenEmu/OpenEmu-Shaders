@@ -22,21 +22,20 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import UniformTypeIdentifiers
 import ArgumentParser
-import OpenEmuShaders
 import CoreGraphics
 import ImageIO
 import Metal
+import OpenEmuShaders
+import UniformTypeIdentifiers
 
 extension OEShaders.Shader {
     struct Thumbnail: ParsableCommand {
         static var configuration = CommandConfiguration(
             abstract: "Generate thumbnail images of shaders.",
             discussion: """
-This command generates a thumbnail image of a shader using a user-specified source image.
-"""
-        )
+            This command generates a thumbnail image of a shader using a user-specified source image.
+            """)
         
         @Argument
         var shaderPath: String

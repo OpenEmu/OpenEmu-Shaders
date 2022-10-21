@@ -26,7 +26,6 @@ import Foundation
 import ImageIO
 
 extension CGContext {
-    
     /// make creates a context using the dimensions and contents from the image identified by the URL.
     /// - Parameter url: The URL of the source image.
     /// - Returns: a new CGContext with dimensions and contents matching the source image.

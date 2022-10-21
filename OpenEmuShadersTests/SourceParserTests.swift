@@ -41,9 +41,9 @@ class SourceParserTests: XCTestCase {
             #pragma stage vertex
             // vertex source
             """, """
-                 #pragma stage fragment
-                 // fragment source
-                 """,
+            #pragma stage fragment
+            // fragment source
+            """,
         ]
 
         let expected = [
@@ -69,7 +69,7 @@ class SourceParserTests: XCTestCase {
 
         do {
             let url = URL(string: "mem://foo.slang")!
-            let p   = try SourceParser(fromURL: url)
+            let p = try SourceParser(fromURL: url)
 
             XCTAssertEqual(p.vertexSource, expected[0])
             XCTAssertEqual(p.fragmentSource, expected[1])
@@ -80,25 +80,25 @@ class SourceParserTests: XCTestCase {
 
     func testSourceParserPragmas() {
         let src = """
-                  #version 450
+        #version 450
 
-                  #pragma name this_is_the_name
-                  #pragma parameter FrameColor_R "Frame Color R" 0.2 0.4 0.6 1.0
-                  #pragma format R8_UNORM
+        #pragma name this_is_the_name
+        #pragma parameter FrameColor_R "Frame Color R" 0.2 0.4 0.6 1.0
+        #pragma format R8_UNORM
 
-                  #pragma stage vertex
-                  // vertex
+        #pragma stage vertex
+        // vertex
 
-                  #pragma stage fragment
-                  // fragment
+        #pragma stage fragment
+        // fragment
 
-                  """
+        """
 
         InMemProtocol.requests["mem://foo.slang"] = src
 
         do {
             let url = URL(string: "mem://foo.slang")!
-            let p   = try SourceParser(fromURL: url)
+            let p = try SourceParser(fromURL: url)
             XCTAssertEqual(p.name, "this_is_the_name")
             XCTAssertEqual(p.format, .r8Unorm)
             let pp = p.parametersMap["FrameColor_R"]
@@ -182,7 +182,7 @@ class SourceParserTests: XCTestCase {
 
         do {
             let url = URL(string: "mem:///root/foo.slang")!
-            let p   = try SourceParser(fromURL: url)
+            let p = try SourceParser(fromURL: url)
             XCTAssertEqual(p.name, "this_is_the_name")
             XCTAssertEqual(p.vertexSource, expected[0])
             XCTAssertEqual(p.fragmentSource, expected[1])

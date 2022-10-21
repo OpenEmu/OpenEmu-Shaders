@@ -22,10 +22,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
 import ArgumentParser
-import OpenEmuShaders
 import Compression
+import Foundation
+import OpenEmuShaders
 
 extension OEShaders {
     enum LanguageVersion: String, Codable, ExpressibleByArgument {
@@ -56,7 +56,7 @@ extension OEShaders {
         var outputPath: URL?
         
         @Argument(help: .init("Metal language version",
-                             discussion: "Specify the desired Metal language version used to generate the compiled shader."))
+                              discussion: "Specify the desired Metal language version used to generate the compiled shader."))
         var languageVersion: LanguageVersion = .default
         
         func run() throws {

@@ -27,7 +27,6 @@ import XCTest
 @testable import OpenEmuShaders
 
 class ConfigScannerTests: XCTestCase {
-    
     func testConfigScan() {
         var c = ConfigScanner(
             """
@@ -72,7 +71,7 @@ class ConfigScannerTests: XCTestCase {
     
     @available(OSX 10.15, *)
     func testPerformanceExample() {
-        self.measure(metrics: [XCTCPUMetric(limitingToCurrentThread: true), XCTClockMetric()]) {
+        measure(metrics: [XCTCPUMetric(limitingToCurrentThread: true), XCTClockMetric()]) {
             var c = ConfigScanner(
                 """
                 shaders = 5
@@ -90,20 +89,20 @@ class ConfigScannerTests: XCTestCase {
                 """)
             
             scanning:
-                while true {
-                    switch c.scan() {
-                    case .keyval:
-                        continue
-                    case .eof:
-                        break scanning
-                    }
+                while true
+            {
+                switch c.scan() {
+                case .keyval:
+                    continue
+                case .eof:
+                    break scanning
+                }
             }
         }
     }
 }
 
 class ShaderConfigSerializationTests: XCTestCase {
-    
     func testSlangFromString() {
         do {
             let res = try ShaderConfigSerialization.makeShaderModel(from: Self.phosphorlut)
@@ -115,7 +114,7 @@ class ShaderConfigSerializationTests: XCTestCase {
     
     // swiftlint:disable line_length
     static let phosphorlut =
-    """
+        """
         shaders = 5
 
         shader0 = shaders/phosphorlut/scanlines-interlace-linearize.slang

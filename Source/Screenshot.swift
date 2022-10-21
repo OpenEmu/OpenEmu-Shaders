@@ -22,9 +22,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
-import CoreImage
 import CoreGraphics
+import CoreImage
+import Foundation
 
 public class Screenshot {
     private let device: MTLDevice
@@ -32,7 +32,7 @@ public class Screenshot {
     
     public init(device: MTLDevice) {
         self.device = device
-        self.commandQueue = device.makeCommandQueue()!
+        commandQueue = device.makeCommandQueue()!
     }
     
     /// Apples the filter chain to the source texture and returns the result of the operation.
@@ -100,8 +100,9 @@ public class Screenshot {
     private var outputTexture: MTLTexture?
     
     private func outputTexture(_ size: CGSize) -> MTLTexture? {
-        if let outputTexture = outputTexture,
-           outputTexture.width == Int(size.width) && outputTexture.height == Int(size.height) {
+        if let outputTexture,
+           outputTexture.width == Int(size.width), outputTexture.height == Int(size.height)
+        {
             return outputTexture
         }
         
@@ -115,7 +116,5 @@ public class Screenshot {
         return outputTexture
     }
     
-    private lazy var ciContext: CIContext = {
-        CIContext(mtlDevice: device)
-    }()
+    private lazy var ciContext: CIContext = .init(mtlDevice: device)
 }
