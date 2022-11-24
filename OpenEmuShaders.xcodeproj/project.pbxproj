@@ -55,7 +55,6 @@
 		05EEE342227CC35D007D011B /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; };
 		05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE33B227CC35D007D011B /* OpenEmuShaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05F54957229BBA8800561C14 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 05F5494F229BBA8800561C14 /* Shaders.metal */; };
-		05F54959229BBA8800561C14 /* ShaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 05F54951229BBA8800561C14 /* ShaderTypes.h */; };
 		05FF59E5289CDCF500153164 /* CompiledShaderContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FF59E4289CDCF500153164 /* CompiledShaderContainer.swift */; };
 		A9020051FEB9717E8F2ABA14 /* ConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9020E619BC7ACEF5904D318 /* ConfigTests.swift */; };
 		A90203772A0E044990C034EA /* NSScannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A902023035423BDAFACA21E6 /* NSScannerTests.swift */; };
@@ -200,7 +199,6 @@
 		05EEE341227CC35D007D011B /* OpenEmuShadersTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenEmuShadersTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		05EEE348227CC35D007D011B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		05F5494F229BBA8800561C14 /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
-		05F54951229BBA8800561C14 /* ShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 		05F5BB1022875C0B004D713C /* OpenEmuShadersTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenEmuShadersTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		05FF59E4289CDCF500153164 /* CompiledShaderContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompiledShaderContainer.swift; sourceTree = "<group>"; };
 		A902023035423BDAFACA21E6 /* NSScannerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSScannerTests.swift; sourceTree = "<group>"; };
@@ -440,7 +438,6 @@
 				05ABBEA828483072006F1A8C /* ShaderPassBindings.swift */,
 				05ABBEA62847283F006F1A8C /* ShaderPassSemantics.swift */,
 				05F5494F229BBA8800561C14 /* Shaders.metal */,
-				05F54951229BBA8800561C14 /* ShaderTypes.h */,
 			);
 			name = Renderer;
 			sourceTree = "<group>";
@@ -471,7 +468,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05F54959229BBA8800561C14 /* ShaderTypes.h in Headers */,
 				05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

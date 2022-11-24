@@ -227,7 +227,6 @@ public final class FilterChain {
             ca.destinationRGBBlendFactor = .oneMinusSourceAlpha
         }
         
-        psd.sampleCount = 1
         psd.vertexDescriptor = vd
         psd.vertexFunction = library.makeFunction(name: "basic_vertex_proj_tex")
         psd.fragmentFunction = library.makeFunction(name: "basic_fragment_proj_tex")
@@ -510,7 +509,7 @@ public final class FilterChain {
     }
     
     private func renderTexture(_ texture: MTLTexture, renderCommandEncoder rce: MTLRenderCommandEncoder) {
-        rce.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.size, index: BufferIndex.uniforms.rawValue)
+        rce.setVertexBytes(&uniforms, length: MemoryLayout<Uniforms>.stride, index: BufferIndex.uniforms.rawValue)
         rce.setRenderPipelineState(pipelineState)
         rce.setFragmentSamplerState(samplers[.nearest][.edge], index: SamplerIndex.draw.rawValue)
         rce.setViewport(outputFrame.viewport)
@@ -642,11 +641,6 @@ public final class FilterChain {
     private func resizeRenderTargets() {
         guard renderTargetsNeedResize else { return }
         
-        for i in 0..<passCount {
-            pass[i].renderTarget = .init()
-            pass[i].feedbackTarget = .init()
-        }
-        
         // current source size
         var sourceSize = sourceRect.size
         
@@ -667,15 +661,31 @@ public final class FilterChain {
             os_log("pass %d, render target size %0.0f x %0.0f", log: .default, type: .debug, i, passSize.width, passSize.height)
             
             let fmt = self.pass[i].format
-            if i != lastPassIndex
-                || passSize != viewportSize
-                || fmt != .bgra8Unorm
-            {
+            if i == lastPassIndex, passSize == viewportSize, fmt == .bgra8Unorm {
+                // last pass can render directly to the output render target
+                self.pass[i].renderTarget.size = .init(width: passSize.width, height: passSize.height)
+            } else {
                 let (width, height) = (Int(passSize.width), Int(passSize.height))
+                
                 self.pass[i].viewport = .init(originX: 0, originY: 0,
                                               width: Double(width), height: Double(height),
                                               znear: 0, zfar: 1)
                 
+                if let tex = self.pass[i].renderTarget.view,
+                    tex.width == width,
+                   tex.height == height,
+                   tex.width != 0, tex.height != 0
+                {
+                    os_log("pass %d: 🏎️🔥 skip resize, tex (w: %d, h: %d) == pass (w: %d, h: %d)",
+                           log: .default, type: .debug,
+                           i, tex.width, tex.height, width, height)
+                    let size = TextureSize(width: width, height: height)
+                    self.pass[i].renderTarget.size = size
+                    if self.pass[i].hasFeedback {
+                        self.pass[i].feedbackTarget.size = size
+                    }
+                    continue
+                }
                 let td = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: fmt,
                                                                   width: width,
                                                                   height: height,
@@ -693,9 +703,6 @@ public final class FilterChain {
                     self.pass[i].feedbackTarget.view?.label = label
                     _clearTextures.append(self.pass[i].feedbackTarget.view!)
                 }
-            } else {
-                // last pass can render directly to the output render target
-                self.pass[i].renderTarget.size = .init(width: passSize.width, height: passSize.height)
             }
         }
         

@@ -25,8 +25,48 @@
 #include <metal_stdlib>
 #include <simd/simd.h>
 
-// Including header shared between this Metal shader code and Swift/C code executing Metal API commands
-#import "ShaderTypes.h"
+typedef enum
+{
+    BufferIndexUniforms  = 1,
+    BufferIndexPositions = 4,
+} BufferIndex;
+
+typedef enum
+{
+    VertexAttributePosition = 0,
+    VertexAttributeTexcoord = 1,
+    VertexAttributeColor    = 2,
+} VertexAttribute;
+
+typedef enum
+{
+    TextureIndexColor = 0,
+} TextureIndex;
+
+typedef enum
+{
+    SamplerIndexDraw = 0,
+} SamplerIndex;
+
+typedef struct
+{
+    simd_float4 position [[attribute(VertexAttributePosition)]];
+    simd_float2 texCoord [[attribute(VertexAttributeTexcoord)]];
+} Vertex;
+
+typedef struct
+{
+    simd_float4 position [[position]];
+    simd_float2 texCoord;
+} ColorInOut;
+
+typedef struct
+{
+    simd_float4x4   projectionMatrix;
+    simd_float2     outputSize;
+    float time;
+} Uniforms;
+
 
 using namespace metal;
 
