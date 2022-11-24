@@ -159,6 +159,7 @@ final public class FilterChain {
             T1, T0, T1, T0, T1, T0, T1, T0,
         ]
         
+        #if canImport(AppKit)
         let ctx = CGContext(data: &checkerboard,
                             width: 8,
                             height: 8,
@@ -166,6 +167,15 @@ final public class FilterChain {
                             bytesPerRow: 32,
                             space: NSColorSpace.deviceRGB.cgColorSpace!,
                             bitmapInfo: CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue)!
+        #else
+        let ctx = CGContext(data: &checkerboard,
+                            width: 8,
+                            height: 8,
+                            bitsPerComponent: 8,
+                            bytesPerRow: 32,
+                            space: CGColorSpaceCreateDeviceRGB(),
+                            bitmapInfo: CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue)!
+        #endif
         let img = ctx.makeImage()!
         return try! loader.newTexture(cgImage: img)
     }()
@@ -252,7 +262,11 @@ final public class FilterChain {
                 }
                 
                 label = "clamp_to_border"
-                sd.sAddressMode = .clampToBorderColor
+                if #available(macOS 10.9, iOS 14.0, tvOS 16.0, *) {
+                    sd.sAddressMode = .clampToBorderColor
+                } else {
+                    // Fallback on earlier versions
+                }
                 
             case .edge:
                 label = "clamp_to_edge"
@@ -358,7 +372,11 @@ final public class FilterChain {
                              size: outRectSize)
         
         // This is going into a Nearest Neighbor, so the edges should be on pixels!
+        #if canImport(AppKit)
         return NSIntegralRectWithOptions(outRect, .alignAllEdgesNearest)
+        #else
+        return CGRectIntegral(outRect)
+        #endif
     }
     
     private func resize() {
@@ -576,9 +594,11 @@ final public class FilterChain {
                         data.advanced(by: uniform.offset).copyMemory(from: uniform.data, byteCount: uniform.size)
                     }
                     
+                    #if canImport(AppKit)
                     if !deviceHasUnifiedMemory {
                         buffer.didModifyRange(0..<buffer.length)
                     }
+                    #endif
                 }
             }
         }
@@ -878,7 +898,11 @@ final public class FilterChain {
                 
                 let size = sem.size
                 guard size > 0 else { continue }
+                #if canImport(AppKit)
                 let opts: MTLResourceOptions = deviceHasUnifiedMemory ? .storageModeShared : .storageModeManaged
+                #else
+                let opts: MTLResourceOptions = .storageModeShared
+                #endif
                 let buf = device.makeBuffer(length: size, options: opts)
                 self.pass[passNumber].buffers[j] = buf
                 
@@ -1085,7 +1109,7 @@ extension MTLLanguageVersion {
     init(_ languageVersion: Compiled.LanguageVersion) throws {
         switch languageVersion {
         case .version2_4:
-            if #available(macOS 12.0, iOS 15.0, *) {
+            if #available(macOS 12.0, iOS 15.0, tvOS 15.0, *) {
                 self = .version2_4
             } else {
                 throw MTLLangageVersionError.versionUnavailable
