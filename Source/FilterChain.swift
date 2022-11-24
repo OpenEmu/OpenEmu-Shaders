@@ -262,7 +262,11 @@ final public class FilterChain {
                 }
                 
                 label = "clamp_to_border"
-                sd.sAddressMode = .clampToBorderColor
+                if #available(macOS 10.9, iOS 14.0, tvOS 16.0, *) {
+                    sd.sAddressMode = .clampToBorderColor
+                } else {
+                    // Fallback on earlier versions
+                }
                 
             case .edge:
                 label = "clamp_to_edge"
@@ -1105,7 +1109,7 @@ extension MTLLanguageVersion {
     init(_ languageVersion: Compiled.LanguageVersion) throws {
         switch languageVersion {
         case .version2_4:
-            if #available(macOS 12.0, iOS 15.0, *) {
+            if #available(macOS 12.0, iOS 15.0, tvOS 15.0, *) {
                 self = .version2_4
             } else {
                 throw MTLLangageVersionError.versionUnavailable
