@@ -165,14 +165,16 @@ public final class FilterChain {
                             height: 8,
                             bitsPerComponent: 8,
                             bytesPerRow: 32,
-                            space: NSColorSpace.deviceRGB.cgColorSpace!,
+                            space: CGColorSpaceCreateDeviceRGB(),
                             bitmapInfo: CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue)!
         let img = ctx.makeImage()!
         return try! loader.newTexture(cgImage: img)
     }()
     
+#if os(macOS)
     // device behaviour
     private let deviceHasUnifiedMemory: Bool
+#endif
     
     // parameters state
     private var parameters = [Float](repeating: 0, count: Constants.maxParameters)
@@ -181,11 +183,13 @@ public final class FilterChain {
     
     public init(device: MTLDevice) throws {
         self.device = device
+#if os(macOS)
         if #available(macOS 10.15, iOS 11, *) {
             deviceHasUnifiedMemory = device.hasUnifiedMemory
         } else {
             deviceHasUnifiedMemory = false
         }
+#endif
         
         library = try device.makeDefaultLibrary(bundle: Bundle(for: Self.self))
         loader = .init(device: device)
@@ -250,9 +254,13 @@ public final class FilterChain {
                         break
                     }
                 }
-                
-                label = "clamp_to_border"
-                sd.sAddressMode = .clampToBorderColor
+                if #available(macOS 10.12, iOS 14, *) {
+                    label = "clamp_to_border"
+                    sd.sAddressMode = .clampToBorderColor
+                } else {
+                    label = "clamp_to_zero"
+                    sd.sAddressMode = .clampToZero
+                }
                 
             case .edge:
                 label = "clamp_to_edge"
@@ -358,7 +366,7 @@ public final class FilterChain {
                              size: outRectSize)
         
         // This is going into a Nearest Neighbor, so the edges should be on pixels!
-        return NSIntegralRectWithOptions(outRect, .alignAllEdgesNearest)
+        return outRect.integral
     }
     
     private func resize() {
@@ -577,10 +585,11 @@ public final class FilterChain {
                     for uniform in sem.uniforms {
                         data.advanced(by: uniform.offset).copyMemory(from: uniform.data, byteCount: uniform.size)
                     }
-                    
+#if os(macOS)
                     if !deviceHasUnifiedMemory {
                         buffer.didModifyRange(0..<buffer.length)
                     }
+#endif
                 }
             }
         }
@@ -888,7 +897,11 @@ public final class FilterChain {
                 
                 let size = sem.size
                 guard size > 0 else { continue }
+#if os(macOS)
                 let opts: MTLResourceOptions = deviceHasUnifiedMemory ? .storageModeShared : .storageModeManaged
+#else
+                let opts: MTLResourceOptions = .storageModeShared
+#endif
                 let buf = device.makeBuffer(length: size, options: opts)
                 self.pass[passNumber].buffers[j] = buf
                 
