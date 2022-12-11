@@ -206,12 +206,12 @@ public final class FilterChain {
     private static func makePipelineState(_ device: MTLDevice, _ library: MTLLibrary) throws -> MTLRenderPipelineState {
         let vd = MTLVertexDescriptor()
         if let attr = vd.attributes[VertexAttribute.position.rawValue] {
-            attr.offset = MemoryLayout<Vertex>.offset(of: \Vertex.position)!
+            attr.offset = MemoryLayout<Vertex>.offset(of: \.position)!
             attr.format = .float4
             attr.bufferIndex = BufferIndex.positions.rawValue
         }
         if let attr = vd.attributes[VertexAttribute.texCoord.rawValue] {
-            attr.offset = MemoryLayout<Vertex>.offset(of: \Vertex.texCoord)!
+            attr.offset = MemoryLayout<Vertex>.offset(of: \.texCoord)!
             attr.format = .float2
             attr.bufferIndex = BufferIndex.positions.rawValue
         }
@@ -378,10 +378,10 @@ public final class FilterChain {
         outputBounds = bounds
         let size = outputBounds.size
         
-        outputFrame.viewport = MTLViewport(originX: Double(outputBounds.origin.x),
-                                           originY: Double(outputBounds.origin.y),
-                                           width: Double(size.width),
-                                           height: Double(size.height),
+        outputFrame.viewport = MTLViewport(originX: outputBounds.origin.x,
+                                           originY: outputBounds.origin.y,
+                                           width: size.width,
+                                           height: size.height,
                                            znear: 0,
                                            zfar: 1)
         outputFrame.outputSize = .init(width: size.width, height: size.height)
@@ -748,8 +748,8 @@ public final class FilterChain {
         parameters = .init(ss.parameters.map { ($0.initial as NSDecimalNumber).floatValue })
         
         let texStride = MemoryLayout<Texture>.stride
-        let texViewOffset = MemoryLayout<Texture>.offset(of: \Texture.view)!
-        let texSizeOffset = MemoryLayout<Texture>.offset(of: \Texture.size)!
+        let texViewOffset = MemoryLayout<Texture>.offset(of: \.view)!
+        let texSizeOffset = MemoryLayout<Texture>.offset(of: \.size)!
         
         for passNumber in 0..<passCount {
             let sem = ShaderPassSemantics()
@@ -785,12 +785,12 @@ public final class FilterChain {
             withUnsafePointer(to: &pass[0]) {
                 let p = UnsafeRawPointer($0)
                 
-                let rt = p.advanced(by: MemoryLayout<Pass>.offset(of: \Pass.renderTarget)!)
+                let rt = p.advanced(by: MemoryLayout<Pass>.offset(of: \.renderTarget)!)
                 sem.addTexture(rt.advanced(by: texViewOffset), stride: MemoryLayout<Pass>.stride,
                                size: rt.advanced(by: texSizeOffset), stride: MemoryLayout<Pass>.stride,
                                semantic: .passOutput)
                 
-                let ft = p.advanced(by: MemoryLayout<Pass>.offset(of: \Pass.feedbackTarget)!)
+                let ft = p.advanced(by: MemoryLayout<Pass>.offset(of: \.feedbackTarget)!)
                 sem.addTexture(ft.advanced(by: texViewOffset), stride: MemoryLayout<Pass>.stride,
                                size: ft.advanced(by: texSizeOffset), stride: MemoryLayout<Pass>.stride,
                                semantic: .passFeedback)
@@ -815,9 +815,9 @@ public final class FilterChain {
             
             withUnsafePointer(to: &pass[passNumber]) {
                 let p = UnsafeRawPointer($0)
-                sem.addUniformData(p.advanced(by: MemoryLayout<Pass>.offset(of: \Pass.renderTarget.size)!), semantic: .outputSize)
-                sem.addUniformData(p.advanced(by: MemoryLayout<Pass>.offset(of: \Pass.frameCount)!), semantic: .frameCount)
-                sem.addUniformData(p.advanced(by: MemoryLayout<Pass>.offset(of: \Pass.frameDirection)!), semantic: .frameDirection)
+                sem.addUniformData(p.advanced(by: MemoryLayout<Pass>.offset(of: \.renderTarget.size)!), semantic: .outputSize)
+                sem.addUniformData(p.advanced(by: MemoryLayout<Pass>.offset(of: \.frameCount)!), semantic: .frameCount)
+                sem.addUniformData(p.advanced(by: MemoryLayout<Pass>.offset(of: \.frameDirection)!), semantic: .frameDirection)
             }
             
             withUnsafePointer(to: &outputFrame.outputSize) {
@@ -846,12 +846,12 @@ public final class FilterChain {
             
             let vd = MTLVertexDescriptor()
             if let attr = vd.attributes[VertexAttribute.position.rawValue] {
-                attr.offset = MemoryLayout<Vertex>.offset(of: \Vertex.position)!
+                attr.offset = MemoryLayout<Vertex>.offset(of: \.position)!
                 attr.format = .float4
                 attr.bufferIndex = BufferIndex.positions.rawValue
             }
             if let attr = vd.attributes[VertexAttribute.texCoord.rawValue] {
-                attr.offset = MemoryLayout<Vertex>.offset(of: \Vertex.texCoord)!
+                attr.offset = MemoryLayout<Vertex>.offset(of: \.texCoord)!
                 attr.format = .float2
                 attr.bufferIndex = BufferIndex.positions.rawValue
             }

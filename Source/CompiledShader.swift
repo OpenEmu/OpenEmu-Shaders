@@ -111,10 +111,8 @@ public enum Compiled {
             case .version3_0:
                 self = .version2_4
 #endif
-#if swift(>=5.5)
             case .version2_4:
                 self = .version2_4
-#endif
             case .version2_3:
                 self = .version2_3
             case .version2_2:
