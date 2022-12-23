@@ -80,18 +80,18 @@ class SlangCompiler {
             
             guard shader.preprocess(input: &inp)
             else {
-                let msg = shader.preprocessed_code
-                os_log(.error, log: .default, "Error preprocessing shader: %{public}s", msg)
+                let msg = String(cString: shader.info_log)
+                os_log(.error, log: .default, "Error preprocessing shader: %{public}@", msg)
                 
-                throw SlangCompilerError.preprocess(reason: String(cString: msg))
+                throw SlangCompilerError.preprocess(reason: msg)
             }
             
             guard shader.parse(input: &inp)
             else {
-                let msg = shader.preprocessed_code
-                os_log(.error, log: .default, "Error parsing shader: %{public}s", msg)
+                let msg = String(cString: shader.info_log)
+                os_log(.error, log: .default, "Error parsing shader: %{public}@", msg)
                 
-                throw SlangCompilerError.parse(reason: String(cString: msg))
+                throw SlangCompilerError.parse(reason: msg)
             }
             
             let program = CGLSLangProgram()
@@ -101,13 +101,13 @@ class SlangCompiler {
             
             guard program.link(messages: inp.messages)
             else {
-                let infoLog = program.info_log
-                let infoDebugLog = program.info_debug_log
+                let infoLog = String(cString: program.info_log)
+                let infoDebugLog = String(cString: program.info_debug_log)
                 
-                os_log(.error, log: .default, "Error linking shader info log: %{public}s", infoLog)
-                os_log(.error, log: .default, "Error linking shader info debug log: %{public}s", infoDebugLog)
+                os_log(.error, log: .default, "Error linking shader info log: %{public}@", infoLog)
+                os_log(.error, log: .default, "Error linking shader info debug log: %{public}@", infoDebugLog)
                 
-                throw SlangCompilerError.link(reason: String(cString: infoLog))
+                throw SlangCompilerError.link(reason: infoLog)
             }
             
             program.spirv_generate(stage: stage)

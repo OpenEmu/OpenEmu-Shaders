@@ -248,6 +248,14 @@ struct ConfigScanner {
             return false
         }
         
+        if scalars[pos] == "/" {
+            let peek = scalars.index(after: pos)
+            if peek != scalars.endIndex, scalars[pos] == "/" {
+                // comments can also be //
+                return false
+            }
+        }
+        
         return true
     }
     

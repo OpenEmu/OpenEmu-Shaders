@@ -944,7 +944,11 @@ public final class FilterChain {
             let t: MTLTexture
             do {
                 let data = try cc.getLUTByName(lut.name)
-                t = try loader.newTexture(data: data, options: opts)
+                if let cgImg = CGContext.makeForTexture(data: data)?.makeImage() {
+                    t = try loader.newTexture(cgImage: cgImg, options: opts)
+                } else {
+                    t = checkers
+                }
             } catch {
                 os_log("Unable to load LUT texture, using default. Path '%{public}@: %{public}@", log: .default, type: .error,
                        lut.url.absoluteString, error.localizedDescription)
@@ -1232,5 +1236,30 @@ extension MTLPixelFormat {
         default:
             return 0
         }
+    }
+}
+
+extension CGContext {
+    /// Returns a context using the dimensions and contents from the image identified by the data.
+    /// The context data format is compatible with BGRA8
+    /// - Parameter data: The data of the source image.
+    /// - Returns: a new ``CGContext`` with dimensions and contents matching the source image.
+    static func makeForTexture(data: Data) -> CGContext? {
+        guard
+            let src = CGImageSourceCreateWithData(data as CFData, nil),
+            let img = CGImageSourceCreateImageAtIndex(src, CGImageSourceGetPrimaryImageIndex(src), nil)
+        else { return nil }
+        
+        guard let context = CGContext(data: nil,
+                                      width: img.width, height: img.height,
+                                      bitsPerComponent: 8, bytesPerRow: img.width * 4,
+                                      space: CGColorSpaceCreateDeviceRGB(),
+                                      bitmapInfo: CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue)
+        else { return nil }
+        
+        context.interpolationQuality = .none
+        context.draw(img, in: CGRect(x: 0, y: 0, width: img.width, height: img.height))
+        
+        return context
     }
 }

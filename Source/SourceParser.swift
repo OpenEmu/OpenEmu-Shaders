@@ -183,15 +183,12 @@ class SourceParser {
         
         var oe = lines.makeIterator()
         if isRoot {
-            let line = oe.next()
-            switch line?.hasPrefix(Prefixes.version) {
-            case .some(false), .none:
+            guard let line = oe.next(), line.hasPrefix(Prefixes.version) else {
                 throw SourceParserError.missingVersion
-            default:
-                buffer.append(line!)
-                buffer.append("#extension GL_GOOGLE_cpp_style_line_directive : require")
-                lno += 1
             }
+            buffer.append(line)
+            buffer.append("#extension GL_GOOGLE_cpp_style_line_directive : require")
+            lno += 1
         }
         
         buffer.append("#line \(lno) \"\(filename)\"")
@@ -213,15 +210,20 @@ class SourceParser {
                     included.insert(file.absoluteString)
                 }
             } else {
-                buffer.append(line)
-                
-                var hasPreprocessor = false
+                let hasPreprocessor: Bool
                 if line.hasPrefix(Prefixes.pragma) {
                     hasPreprocessor = true
-                    try processPragma(line: line)
+                    if try processPragma(line: line) {
+                        // skip line
+                        continue
+                    }
                 } else if line.hasPrefix(Prefixes.endif) {
                     hasPreprocessor = true
+                } else {
+                    hasPreprocessor = false
                 }
+                
+                buffer.append(line)
                 
                 if hasPreprocessor {
                     buffer.append("#line \(lno + 1) \"\(filename)\"")
@@ -237,7 +239,7 @@ class SourceParser {
         return set as CharacterSet
     }
     
-    private func processPragma(line: String) throws {
+    private func processPragma(line: String) throws -> Bool {
         if line.hasPrefix(Prefixes.pragmaName) {
             if name != nil {
                 throw SourceParserError.multipleNamePragma
@@ -303,6 +305,8 @@ class SourceParser {
                 throw SourceParserError.invalidFormatPragma
             }
         }
+        
+        return !line.hasPrefix(Prefixes.pragmaStage)
     }
 }
 
