@@ -25,8 +25,8 @@
 import Foundation
 
 @frozen enum Constants {
-    static let maxShaderPasses = 26
-    static let maxTextures = 8
+    static let maxShaderPasses = 64
+    static let maxTextures = 32
     static let maxParameters = 256
     static let maxFrameHistory = 128
     static let maxConstantBuffers = 2

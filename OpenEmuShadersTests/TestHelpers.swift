@@ -81,7 +81,7 @@ extension ShaderParameter {
     static func list(_ items: Param...) -> [ShaderParameter] {
         items.map { d in
             let p = ShaderParameter(name: d.name, desc: d.desc)
-            p.initial = d.initial
+            p.initial = Decimal(Double(d.initial))
             return p
         }
     }

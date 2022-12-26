@@ -39,4 +39,13 @@ class NSScannerTests: XCTestCase {
         let tmp = scan.scanCharacters(from: .alphanumerics)
         XCTAssertEqual(tmp, "YES")
     }
+    
+    func testScanLineBug1() {
+        let s = Scanner(string: "HSM_CRT_EMPTY_LINE\t\t\t\t\t\t\t\"  \" 0 0 0.001 0.001")
+        
+        let name = s.scanCharacters(from: .identifierCharacters)
+        XCTAssertEqual(name, "HSM_CRT_EMPTY_LINE")
+        let desc = s.scanQuotedString()
+        XCTAssertEqual(desc, "")
+    }
 }

@@ -29,19 +29,13 @@ public extension Scanner {
         if !scanString("\"", into: nil) {
             return nil
         }
-        var tmp: NSString?
-        if !scanUpTo("\"", into: &tmp) {
-            return nil
-        }
-        
-        guard let s = tmp as String? else {
-            return nil
-        }
+        var s: NSString?
+        scanUpTo("\"", into: &s)
         
         if !scanString("\"", into: nil) {
             return nil
         }
         
-        return s
+        return s as String?
     }
 }
