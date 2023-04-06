@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import ZIPFoundation
+@_implementationOnly import ZIPFoundation
 
 public enum ZipCompiledShaderContainer {
     enum Error: Swift.Error {
