@@ -111,10 +111,8 @@ public enum Compiled {
             case .version3_1:
                 self = .version2_4
 #endif
-#if swift(>=5.7)
             case .version3_0:
                 self = .version2_4
-#endif
             case .version2_4:
                 self = .version2_4
             case .version2_3:
@@ -124,7 +122,11 @@ public enum Compiled {
             case .version2_1:
                 self = .version2_1
             default:
-                throw LanguageVersionError.unsupportedVersion
+                if ((3 << 16)..<(4 << 16)).contains(mtl.rawValue) {
+                    self = .version2_4
+                } else {
+                    throw LanguageVersionError.unsupportedVersion
+                }
             }
         }
     }
