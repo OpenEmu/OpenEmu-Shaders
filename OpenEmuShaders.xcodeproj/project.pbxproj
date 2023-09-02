@@ -11,7 +11,6 @@
 		050C0E9A28FFBC6900923E9C /* ZipCompiledShaderContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050C0E9928FFBC6900923E9C /* ZipCompiledShaderContainer.swift */; };
 		050C0E9C28FFBC9100923E9C /* FileCompiledShaderContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050C0E9B28FFBC9100923E9C /* FileCompiledShaderContainer.swift */; };
 		050C0E9E28FFBF4C00923E9C /* FilterChain+Shader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050C0E9D28FFBF4C00923E9C /* FilterChain+Shader.swift */; };
-		050C0EA02901DC0E00923E9C /* .swiftformat in Resources */ = {isa = PBXBuildFile; fileRef = 050C0E9F2901DC0E00923E9C /* .swiftformat */; };
 		051C31ED2865076900281C57 /* ShaderPassCompiler+Reflection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 051C31EC2865076900281C57 /* ShaderPassCompiler+Reflection.swift */; };
 		0521355C246E3A240085A598 /* CompiledShader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0521355B246E3A240085A598 /* CompiledShader.swift */; };
 		052BE009228D184600942C12 /* SourceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052BE008228D184600942C12 /* SourceParserTests.swift */; };
@@ -50,7 +49,6 @@
 		05ABBEAF2849DF9B006F1A8C /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ABBEAE2849DF9B006F1A8C /* Matrix.swift */; };
 		05D043542439043E00B6BDBF /* String+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D043532439043E00B6BDBF /* String+Version.swift */; };
 		05D44C5E28C1576B00660A18 /* Converters.metal in Sources */ = {isa = PBXBuildFile; fileRef = 05D44C5D28C1576B00660A18 /* Converters.metal */; };
-		05D44C6028C159FC00660A18 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 05D44C5F28C159FC00660A18 /* .swiftlint.yml */; };
 		05D532962895FA30004DC253 /* Screenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D532952895FA30004DC253 /* Screenshot.swift */; };
 		05EEE342227CC35D007D011B /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EEE338227CC35D007D011B /* OpenEmuShaders.framework */; };
 		05EEE349227CC35D007D011B /* OpenEmuShaders.h in Headers */ = {isa = PBXBuildFile; fileRef = 05EEE33B227CC35D007D011B /* OpenEmuShaders.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -650,8 +648,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				050C0EA02901DC0E00923E9C /* .swiftformat in Resources */,
-				05D44C6028C159FC00660A18 /* .swiftlint.yml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
